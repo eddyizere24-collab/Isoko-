@@ -1,0 +1,12 @@
+# Copy to terraform.tfvars locally only after an OCI account exists.
+# Never commit terraform.tfvars or credentials to GitHub.
+tenancy_ocid     = "ocid1.tenancy.oc1..REPLACE_WITH_REAL_TENANCY_OCID"
+compartment_ocid = "ocid1.compartment.oc1..REPLACE_WITH_ISOKO_COMPARTMENT_OCID"
+region           = "af-johannesburg-1"
+availability_domain = ""
+image_ocid       = "ocid1.image.oc1..REPLACE_WITH_UBUNTU_ARM64_IMAGE_OCID"
+ssh_public_key   = "ssh-ed25519 REPLACE_WITH_PUBLIC_KEY"
+admin_ssh_cidr   = ""
+
+# Optional: bucket name must be unique in the tenancy Object Storage namespace.
+object_bucket_name = "isoko-private-assets"

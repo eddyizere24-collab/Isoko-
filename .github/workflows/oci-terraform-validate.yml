@@ -1,0 +1,44 @@
+name: OCI Terraform validation
+
+on:
+  push:
+    branches:
+      - infra/oci-free-tier-foundation-20261113
+    paths:
+      - "infra/oci/**"
+      - ".github/workflows/oci-terraform-validate.yml"
+  pull_request:
+    paths:
+      - "infra/oci/**"
+      - ".github/workflows/oci-terraform-validate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oci-terraform-validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Format and validate OCI Terraform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.17.2
+          terraform_wrapper: false
+
+      - name: Check formatting
+        run: terraform fmt -check -recursive infra/oci
+
+      - name: Initialize providers without a backend
+        run: terraform -chdir=infra/oci init -backend=false -input=false
+
+      - name: Validate configuration
+        run: terraform -chdir=infra/oci validate
