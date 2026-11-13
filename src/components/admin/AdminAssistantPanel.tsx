@@ -20,6 +20,8 @@ const QUICK_QUESTIONS = [
   'Ibibazo bishya ni bingahe?',
   'Ni ayahe maduka akurura abantu cyane?',
   'Ibicuruzwa bihagaze bite?',
+  'Ni ibihe byiciro by’ibibazo bikunze gutangwa?',
+  'Ni ibihe bicuruzwa bikurura abantu cyane?',
 ];
 
 function normalizeQuestion(value: string): string {
@@ -67,6 +69,9 @@ function answerQuestion(question: string, data: AdminControlCenterSnapshot): Ans
         'Bishya: ' + fmt(data.reports.new),
         'Biri gukorwaho: ' + fmt(data.reports.in_progress),
         'Byakemuwe: ' + fmt(data.reports.resolved),
+        'Ibibazo bikunze gutangwa: ' + (data.reportsByType.length
+          ? data.reportsByType.slice(0, 3).map((item) => item.type + ' (' + fmt(item.count) + ')').join(', ')
+          : 'Nta cyiciro cy’ikirego kirabikwa.'),
         data.riskShops.length ? 'Iduka rifite ibirego byinshi: ' + data.riskShops[0].shopName + ' (' + fmt(data.riskShops[0].totalReports) + ' byose, ' + fmt(data.riskShops[0].openReports) + ' biracyafunguye)' : 'Nta duka rifite ibirego byanditswe.',
       ],
       path: '/admin/ibirego',
@@ -124,20 +129,31 @@ function answerQuestion(question: string, data: AdminControlCenterSnapshot): Ans
     };
   }
 
-  if (/igicuruzwa|ibicuruzwa|product|products|stock|ibicuruzwa/.test(q)) {
+  if (/igicuruzwa|ibicuruzwa|product|products|stock/.test(q)) {
+    const wantsPopular = /gikurura|bikunzwe|gikunzwe|cyane|popular|top/.test(q);
     return {
-      title: 'Imiterere y’ibicuruzwa',
-      body: 'Iyi mibare ikomoka ku status z’ibicuruzwa biri muri database.',
-      facts: [
-        'Ibicuruzwa byose: ' + fmt(data.products.total),
-        'Biri ku isoko: ' + fmt(data.products.active),
-        'Draft: ' + fmt(data.products.draft),
-        'Byashizeho stock: ' + fmt(data.products.sold_out),
-        'Byahishwe: ' + fmt(data.products.hidden),
-        'Byarengeje igihe: ' + fmt(data.products.expired),
-      ],
+      title: wantsPopular ? 'Ibicuruzwa bikurura abantu' : 'Imiterere y’ibicuruzwa',
+      body: wantsPopular
+        ? 'Urutonde rushingiye kuri WhatsApp clicks, views na cart adds byanditswe mu minsi 30. Si ugupima ubuziranenge bw’igicuruzwa.'
+        : 'Iyi mibare ikomoka kuri status z’ibicuruzwa biri muri database.',
+      facts: wantsPopular
+        ? data.topProducts.length
+          ? data.topProducts.slice(0, 5).map((item, index) =>
+              (index + 1) + '. ' + item.productName + ' · ' + item.shopName + ' · views ' + fmt(item.views) + ' · WhatsApp ' + fmt(item.waClicks))
+          : ['Nta bicuruzwa biri ku isoko cyangwa nta mibare y’ibikorwa iraboneka.']
+        : [
+            'Ibicuruzwa byose: ' + fmt(data.products.total),
+            'Biri ku isoko: ' + fmt(data.products.active),
+            'Draft: ' + fmt(data.products.draft),
+            'Byashizeho stock: ' + fmt(data.products.sold_out),
+            'Byahishwe: ' + fmt(data.products.hidden),
+            'Byarengeje igihe: ' + fmt(data.products.expired),
+            data.topProducts.length
+              ? 'Igicuruzwa cya mbere: ' + data.topProducts[0].productName + ' (' + fmt(data.topProducts[0].waClicks) + ' WhatsApp clicks)'
+              : 'Nta gicuruzwa kirimo imibare y’imikoreshereze.',
+          ],
       path: '/admin/ibicuruzwa',
-      caution: noRecords ? 'Nta bicuruzwa by’umucuruzi nyakuri byinjijwe muri database kugeza ubu.' : undefined,
+      caution: noRecords ? 'Nta bicuruzwa by’umucuruzi nyakuri byinjijwe muri database kugeza ubu.' : wantsPopular && !trafficReady ? 'Nta traffic ihagije irabikwa ngo hamenyekane ibicuruzwa bikurura abantu.' : undefined,
     };
   }
 
@@ -407,6 +423,40 @@ export const AdminAssistantPanel: React.FC<Props> = ({ onNavigate }) => {
           )}
         </section>
       </div>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+        <h3 className="text-base font-bold text-[#1B1F23]">Ibicuruzwa bikurura abantu</h3>
+        <p className="mt-1 text-xs text-slate-500">Bigereranywa hakurikijwe views, WhatsApp clicks na cart adds mu minsi 30.</p>
+        {snapshot.topProducts.length === 0 ? (
+          <p className="mt-3 rounded-xl bg-[#F8FAF9] p-3 text-sm text-slate-600">Nta bicuruzwa cyangwa traffic ihagije iraboneka ubu.</p>
+        ) : (
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            {snapshot.topProducts.slice(0, 10).map((product, index) => (
+              <article key={product.productId} className="rounded-xl border border-slate-100 p-3">
+                <p className="text-sm font-semibold text-[#1B1F23]">{index + 1}. {product.productName}</p>
+                <p className="mt-1 text-xs text-slate-500">{product.shopName} · {product.district}</p>
+                <p className="mt-1 text-xs font-medium text-[#0B6E4F]">{fmt(product.views)} views · {fmt(product.waClicks)} WhatsApp · {fmt(product.cartAdds)} cart adds</p>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+        <h3 className="text-base font-bold text-[#1B1F23]">Ibyiciro by’ibirego</h3>
+        {snapshot.reportsByType.length === 0 ? (
+          <p className="mt-3 rounded-xl bg-[#F8FAF9] p-3 text-sm text-slate-600">Nta birego birabikwa.</p>
+        ) : (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {snapshot.reportsByType.map((item) => (
+              <div key={item.type} className="rounded-xl border border-slate-100 bg-[#F8FAF9] px-3 py-2">
+                <p className="text-xs text-slate-600">{item.type}</p>
+                <p className="text-lg font-bold tabular-nums text-[#1B1F23]">{fmt(item.count)}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       <div className="rounded-2xl border border-slate-200 bg-white p-4 text-xs leading-5 text-slate-600">
         <p className="font-semibold text-[#1B1F23]">Icyo iri shakiro rizi n’aho rigarukira</p>
