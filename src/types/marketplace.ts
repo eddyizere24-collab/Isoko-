@@ -254,3 +254,21 @@ export interface MySizePreference {
   clothingSize: string;
   enabled: boolean;
 }
+
+export interface PromoCampaign {
+  id: string;
+  title: string;
+  subtitle: string;
+  kicker: string;
+  ctaLabel: string;
+  targetPath: string;
+  imageUrl: string;
+  shopId: string | null;
+  shopName: string | null;
+  active: boolean;
+  sortOrder: number;
+  impressions: number;
+  clicks: number;
+  created_at: string;
+}
+

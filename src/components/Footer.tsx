@@ -4,6 +4,7 @@ import { useMarketplace } from '../context/MarketplaceContext';
 import { RW } from '../i18n/rw';
 import { subscribeUpdates } from '../lib/api';
 import { buildWhatsAppLink } from '../lib/whatsapp';
+import { IsokoWordmark } from './IsokoLogo';
 
 export const Footer: React.FC = () => {
   const { navigate, bootstrap, location } = useMarketplace();
@@ -45,8 +46,8 @@ export const Footer: React.FC = () => {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 md:grid-cols-3">
           <div>
-            <p className="text-xl font-bold text-[#0B6E4F]">{RW.app_name}</p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-600 max-w-xs">
+            <IsokoWordmark />
+            <p className="mt-3 text-sm leading-relaxed text-slate-600 max-w-xs">
               Isoko ry’abacuruzi benshi ryo kuri interineti ry’u Rwanda: imyambaro, inkweto,
               amasogisi n’ibyo kwambara. Nta komisiyo, uvugana n’umucuruzi kuri WhatsApp.
             </p>
@@ -165,7 +166,7 @@ export const Footer: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="imeri@urugero.rw"
-                  className="h-11 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
+                  className="h-11 min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
                 />
                 <button
                   type="submit"

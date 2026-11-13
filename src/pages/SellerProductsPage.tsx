@@ -3,6 +3,7 @@ import {
   ArrowLeft,
   Copy,
   Edit3,
+  FileEdit,
   Plus,
   RotateCcw,
   Search,
@@ -17,8 +18,9 @@ import {
   fetchSellerOverview,
   updateSellerProduct,
 } from '../lib/api';
+import { validateProductForm } from '../lib/validation';
 import { formatRwfCurrency } from '../lib/whatsapp';
-import type { Product, ProductStatus } from '../types/marketplace';
+import type { Product, ProductCondition, ProductStatus, ProductVariant } from '../types/marketplace';
 
 export const SellerProductsPage: React.FC = () => {
   const { navigate, authSession, refreshBootstrap } = useMarketplace();
@@ -33,6 +35,18 @@ export const SellerProductsPage: React.FC = () => {
   const [priceModalProduct, setPriceModalProduct] = useState<Product | null>(null);
   const [newPrice, setNewPrice] = useState('');
   const [useOldPrice, setUseOldPrice] = useState(true);
+
+  // Full Edit Product Modal state
+  const [editProduct, setEditProduct] = useState<Product | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editPrice, setEditPrice] = useState('');
+  const [editOldPrice, setEditOldPrice] = useState('');
+  const [editCondition, setEditCondition] = useState<ProductCondition>('new');
+  const [editBrand, setEditBrand] = useState('');
+  const [editAuthentic, setEditAuthentic] = useState(false);
+  const [editDesc, setEditDesc] = useState('');
+  const [editVariants, setEditVariants] = useState<ProductVariant[]>([]);
+  const [editError, setEditError] = useState<string | null>(null);
 
   const load = async () => {
     try {
@@ -92,6 +106,73 @@ export const SellerProductsPage: React.FC = () => {
     setPriceModalProduct(null);
   };
 
+  const openFullEdit = (p: Product) => {
+    setEditProduct(p);
+    setEditName(p.name);
+    setEditPrice(String(p.price));
+    setEditOldPrice(p.old_price ? String(p.old_price) : '');
+    setEditCondition(p.condition);
+    setEditBrand(p.brand ?? '');
+    setEditAuthentic(p.authentic);
+    setEditDesc(p.description);
+    setEditVariants(p.variants.map((v) => ({ ...v })));
+    setEditError(null);
+  };
+
+  const handleSaveFullEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editProduct) return;
+
+    const priceNum = Number(editPrice.replace(/\D/g, ''));
+    const oldPriceNum = editOldPrice.trim() ? Number(editOldPrice.replace(/\D/g, '')) : null;
+
+    const validationErrors = validateProductForm({
+      photosCount: Math.max(1, editProduct.images.length),
+      categoryId: editProduct.category_id,
+      name: editName,
+      price: priceNum,
+      oldPrice: oldPriceNum,
+      condition: editCondition,
+      brand: editBrand,
+      authentic: editAuthentic,
+      variants: editVariants.map((v) => ({
+        size_label: v.size_label,
+        in_stock: v.in_stock,
+        qty: v.qty,
+      })),
+      colors: editProduct.colors,
+      description: editDesc,
+    });
+
+    if (Object.keys(validationErrors).length > 0) {
+      setEditError(Object.values(validationErrors)[0]);
+      return;
+    }
+
+    setBusyId(editProduct.id);
+    setEditError(null);
+    await runAction(
+      () =>
+        updateSellerProduct(editProduct.id, {
+          name: editName.trim(),
+          price: priceNum,
+          old_price: oldPriceNum,
+          condition: editCondition,
+          brand: editBrand.trim() || null,
+          authentic: editAuthentic,
+          description: editDesc.trim(),
+          variants: editVariants.map((v) => ({
+            size_label: v.size_label,
+            in_stock: v.in_stock,
+            qty: v.qty,
+          })),
+        }).then(() => undefined),
+      'Amakuru y’igicuruzwa yavuguruwe neza.'
+    );
+    setBusyId(null);
+    setEditProduct(null);
+  };
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-slate-200">
@@ -105,7 +186,7 @@ export const SellerProductsPage: React.FC = () => {
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-[#1B1F23]">Ibicuruzwa byanjye</h1>
+            <h1 className="font-display text-xl font-bold text-[#1B1F23]">Ibicuruzwa byanjye</h1>
             <p className="text-xs text-slate-500 tabular-nums">
               Byose hamwe: {products.length}
             </p>
@@ -268,6 +349,15 @@ export const SellerProductsPage: React.FC = () => {
 
                 <button
                   type="button"
+                  onClick={() => openFullEdit(p)}
+                  className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-[#0B6E4F]/40 bg-[#F1F6F3] px-3 text-xs font-semibold text-[#0B6E4F] hover:bg-[#0B6E4F] hover:text-white transition-colors"
+                >
+                  <FileEdit className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>Hindura</span>
+                </button>
+
+                <button
+                  type="button"
                   disabled={busyId === p.id}
                   onClick={() => {
                     setBusyId(p.id);
@@ -303,7 +393,7 @@ export const SellerProductsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Quick Price Edit Modal (Section 6.6) */}
+      {/* Quick Price Edit Modal */}
       {priceModalProduct && (
         <div
           role="dialog"
@@ -374,6 +464,217 @@ export const SellerProductsPage: React.FC = () => {
               <button
                 type="submit"
                 className="min-h-[44px] flex-1 rounded-xl bg-[#0B6E4F] text-sm font-semibold text-white hover:bg-[#08553D]"
+              >
+                {RW.save}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Full Edit Product Modal */}
+      {editProduct && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="full-edit-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto"
+        >
+          <form
+            onSubmit={handleSaveFullEdit}
+            className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl space-y-4 my-8"
+          >
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <h2 id="full-edit-title" className="font-display text-lg font-bold text-[#1B1F23]">
+                Hindura amakuru y’igicuruzwa
+              </h2>
+              <button
+                type="button"
+                onClick={() => setEditProduct(null)}
+                aria-label="Funga"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-slate-500 hover:bg-[#F1F6F3]"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {editError && (
+              <p role="alert" className="rounded-xl bg-[#C0392B]/10 px-3.5 py-2 text-xs font-semibold text-[#C0392B]">
+                {editError}
+              </p>
+            )}
+
+            <div>
+              <label htmlFor="edit-prod-name" className="block text-xs font-semibold text-[#1B1F23]">
+                Izina ry’igicuruzwa (5–60)
+              </label>
+              <input
+                id="edit-prod-name"
+                type="text"
+                required
+                minLength={5}
+                maxLength={60}
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#0B6E4F] focus:outline-none"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="edit-prod-price" className="block text-xs font-semibold text-[#1B1F23]">
+                  Igiciro (RWF)
+                </label>
+                <input
+                  id="edit-prod-price"
+                  type="number"
+                  min={500}
+                  max={5000000}
+                  required
+                  value={editPrice}
+                  onChange={(e) => setEditPrice(e.target.value)}
+                  className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#0B6E4F] focus:outline-none"
+                />
+              </div>
+              <div>
+                <label htmlFor="edit-prod-old-price" className="block text-xs font-semibold text-[#1B1F23]">
+                  Igiciro cya kera (si itegeko)
+                </label>
+                <input
+                  id="edit-prod-old-price"
+                  type="number"
+                  min={0}
+                  max={5000000}
+                  value={editOldPrice}
+                  onChange={(e) => setEditOldPrice(e.target.value)}
+                  placeholder="Nta na kimwe"
+                  className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#0B6E4F] focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="edit-prod-condition" className="block text-xs font-semibold text-[#1B1F23]">
+                  Imiterere
+                </label>
+                <select
+                  id="edit-prod-condition"
+                  value={editCondition}
+                  onChange={(e) => setEditCondition(e.target.value as ProductCondition)}
+                  className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3 text-sm bg-white"
+                >
+                  <option value="new">{RW.condition_new}</option>
+                  <option value="used">{RW.condition_used}</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="edit-prod-brand" className="block text-xs font-semibold text-[#1B1F23]">
+                  Ikirango (Brand)
+                </label>
+                <input
+                  id="edit-prod-brand"
+                  type="text"
+                  maxLength={40}
+                  value={editBrand}
+                  onChange={(e) => setEditBrand(e.target.value)}
+                  placeholder="Urugero: Nike"
+                  className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm"
+                />
+              </div>
+            </div>
+
+            {editBrand.trim().length > 0 && (
+              <label className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={editAuthentic}
+                  onChange={(e) => setEditAuthentic(e.target.checked)}
+                  className="h-4 w-4 accent-[#0B6E4F]"
+                />
+                <span>Ndemeza ko iki gicuruzwa ari Original (nyacyo)</span>
+              </label>
+            )}
+
+            <div>
+              <label htmlFor="edit-prod-desc" className="block text-xs font-semibold text-[#1B1F23]">
+                Ibisobanuro (ntibirenze inyuguti 300)
+              </label>
+              <textarea
+                id="edit-prod-desc"
+                rows={3}
+                maxLength={300}
+                value={editDesc}
+                onChange={(e) => setEditDesc(e.target.value)}
+                className="mt-1 w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <p className="text-xs font-semibold text-[#1B1F23]">Imibare / Sizes mu bubiko</p>
+              <div className="mt-2 space-y-2 max-h-40 overflow-y-auto pr-1">
+                {editVariants.map((v, idx) => (
+                  <div
+                    key={v.id}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 px-3 py-2 text-xs"
+                  >
+                    <label className="inline-flex items-center gap-2 font-semibold text-[#1B1F23] cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={v.in_stock}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setEditVariants((prev) =>
+                            prev.map((item, i) =>
+                              i === idx
+                                ? { ...item, in_stock: checked, qty: checked ? Math.max(1, item.qty ?? 1) : 0 }
+                                : item
+                            )
+                          );
+                        }}
+                        className="h-4 w-4 accent-[#0B6E4F]"
+                      />
+                      <span>Size: {v.size_label}</span>
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <span className="text-slate-500">Ibisigaye:</span>
+                      <input
+                        type="number"
+                        min={0}
+                        max={999}
+                        value={v.qty ?? ''}
+                        onChange={(e) => {
+                          const raw = e.target.value;
+                          const nextQty = raw === '' ? null : Number(raw);
+                          setEditVariants((prev) =>
+                            prev.map((item, i) =>
+                              i === idx
+                                ? { ...item, qty: nextQty, in_stock: nextQty === 0 ? false : item.in_stock }
+                                : item
+                            )
+                          );
+                        }}
+                        aria-label={`Umubare wa size ${v.size_label}`}
+                        className="h-9 w-16 rounded-lg border border-slate-300 px-2 text-center tabular-nums"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex gap-2.5 pt-2 border-t border-slate-200">
+              <button
+                type="button"
+                onClick={() => setEditProduct(null)}
+                className="min-h-[44px] flex-1 rounded-xl border border-slate-300 text-sm font-semibold text-[#1B1F23]"
+              >
+                {RW.cancel}
+              </button>
+              <button
+                type="submit"
+                disabled={busyId === editProduct.id}
+                className="min-h-[44px] flex-1 rounded-xl bg-[#0B6E4F] text-sm font-semibold text-white hover:bg-[#08553D] disabled:opacity-50"
               >
                 {RW.save}
               </button>

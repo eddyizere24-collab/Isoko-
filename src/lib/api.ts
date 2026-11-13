@@ -7,6 +7,7 @@ import type {
   PriceHistoryEntry,
   Product,
   Profile,
+  PromoCampaign,
   Report,
   SellerKyc,
   Shop,
@@ -17,6 +18,7 @@ export interface BootstrapResponse {
   categories: Category[];
   areas: Area[];
   synonyms: Synonym[];
+  campaigns: PromoCampaign[];
   settings: MarketplaceSettings;
   shops: Shop[];
   products: Product[];
@@ -42,6 +44,18 @@ async function handleJson<T>(res: Response): Promise<T> {
 export async function fetchBootstrap(): Promise<BootstrapResponse> {
   const res = await fetch('/api/bootstrap');
   return handleJson<BootstrapResponse>(res);
+}
+
+export async function trackCampaignEvent(
+  campaignId: string,
+  action: 'impression' | 'click',
+  sessionId: string
+): Promise<void> {
+  await fetch(`/api/campaigns/${encodeURIComponent(campaignId)}/track`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action, sessionId }),
+  }).catch(() => undefined);
 }
 
 export async function fetchProductDetail(id: string): Promise<{
@@ -238,6 +252,7 @@ export interface AdminOverviewResponse {
   products: Product[];
   reports: Report[];
   synonyms: Synonym[];
+  campaigns: PromoCampaign[];
   settings: MarketplaceSettings;
   categories: Category[];
   auditLog: AuditLogEntry[];
@@ -310,6 +325,43 @@ export async function updateAdminSettings(payload: Partial<MarketplaceSettings>)
     method: 'PATCH',
     headers: authHeaders(),
     body: JSON.stringify(payload),
+  });
+  return handleJson(res);
+}
+
+export async function createAdminCampaign(payload: {
+  title: string;
+  subtitle: string;
+  kicker?: string;
+  ctaLabel: string;
+  targetPath: string;
+  imageUrl: string;
+  shopId?: string | null;
+}): Promise<{ campaign: PromoCampaign; campaigns: PromoCampaign[] }> {
+  const res = await fetch('/api/admin/campaigns', {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(payload),
+  });
+  return handleJson(res);
+}
+
+export async function updateAdminCampaign(
+  id: string,
+  payload: Partial<Pick<PromoCampaign, 'active' | 'sortOrder' | 'title' | 'subtitle' | 'ctaLabel' | 'targetPath'>>
+): Promise<{ campaign: PromoCampaign; campaigns: PromoCampaign[] }> {
+  const res = await fetch(`/api/admin/campaigns/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    headers: authHeaders(),
+    body: JSON.stringify(payload),
+  });
+  return handleJson(res);
+}
+
+export async function deleteAdminCampaign(id: string): Promise<{ ok: boolean; campaigns: PromoCampaign[] }> {
+  const res = await fetch(`/api/admin/campaigns/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
   });
   return handleJson(res);
 }

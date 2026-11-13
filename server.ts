@@ -4,12 +4,12 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { createServer as createViteServer } from 'vite';
 import { RWANDA_AREAS } from './src/data/rwandaAreas';
-import { calculateDiscountPercent, getSimilarProducts } from './src/lib/algorithm';
+import { calculateDiscountPercent, getSimilarProducts, rotateActiveCampaigns } from './src/lib/algorithm';
 import { validateProductForm, validateReportForm, validateShopProfile } from './src/lib/validation';
 import { formatRwfCurrency, isValidRwandaPhone, normalizeRwandaPhone } from './src/lib/whatsapp';
 import { hashPassword } from './src/server/seedData';
 import { enrichPublicProducts, getDb, getPublicShops, persistDb } from './src/server/store';
-import type { Product, Profile, ReportStatus, SellerStatus } from './src/types/marketplace';
+import type { Product, Profile, PromoCampaign, ReportStatus, SellerStatus } from './src/types/marketplace';
 
 const PORT = 3000;
 const UPLOADS_DIR = path.resolve(process.cwd(), 'uploads');
@@ -195,14 +195,37 @@ async function startServer() {
     const activeCategories = db.categories.filter(
       (c) => c.active || (c.phase === 'P3' && db.settings.PHONE_ACCESSORIES_ENABLED)
     );
+    const dayRotationSeed = Math.floor(Date.now() / (1000 * 60 * 60 * 6));
     res.json({
       categories: activeCategories,
       areas: RWANDA_AREAS,
       synonyms: db.synonyms,
+      campaigns: rotateActiveCampaigns(db.campaigns, dayRotationSeed),
       settings: db.settings,
       shops: getPublicShops(db),
       products: enrichPublicProducts(db),
     });
+  });
+
+  app.post('/api/campaigns/:id/track', (req, res) => {
+    const { action, sessionId } = req.body ?? {};
+    if (action !== 'impression' && action !== 'click') {
+      return res.status(400).json({ error: 'Invalid campaign action' });
+    }
+    const db = getDb();
+    const campaign = db.campaigns.find((c) => c.id === req.params.id);
+    if (!campaign) return res.status(404).json({ error: 'Campaign not found' });
+
+    const sid = String(sessionId || req.ip || 'anon').slice(0, 64);
+    const day = new Date().toISOString().slice(0, 10);
+    const dedupKey = `camp:${day}:${sid}:${action}:${campaign.id}`;
+    if (!db.event_dedup[dedupKey]) {
+      db.event_dedup[dedupKey] = true;
+      if (action === 'impression') campaign.impressions += 1;
+      if (action === 'click') campaign.clicks += 1;
+      persistDb();
+    }
+    res.json({ ok: true, impressions: campaign.impressions, clicks: campaign.clicks });
   });
 
   app.get('/api/products/:id', (req, res) => {
@@ -840,6 +863,9 @@ async function startServer() {
       if (typeof body.description === 'string') product.description = body.description.trim();
       if (typeof body.price === 'number') product.price = body.price;
       if (body.old_price !== undefined) product.old_price = body.old_price;
+      if (body.condition === 'new' || body.condition === 'used') product.condition = body.condition;
+      if (body.brand !== undefined) product.brand = body.brand ? String(body.brand).trim() : null;
+      if (typeof body.authentic === 'boolean') product.authentic = body.authentic;
       if (body.status && ['draft', 'active', 'sold_out'].includes(body.status)) {
         product.status = body.status;
       }
@@ -1008,6 +1034,7 @@ async function startServer() {
       products: allProducts,
       reports: db.reports,
       synonyms: db.synonyms,
+      campaigns: db.campaigns,
       settings: db.settings,
       categories: db.categories,
       auditLog: db.audit_log.slice(0, 100),
@@ -1207,6 +1234,95 @@ async function startServer() {
     }
     persistDb();
     res.json({ settings: db.settings });
+  });
+
+  app.post('/api/admin/campaigns', (req, res) => {
+    const auth = getAuthSession(req);
+    if (!auth || auth.role !== 'admin') return res.status(403).json({ error: 'Admin gusa.' });
+    const { title, subtitle, kicker, ctaLabel, targetPath, imageUrl, shopId } = req.body ?? {};
+    if (!title || String(title).trim().length < 4) {
+      return res.status(400).json({ error: 'Shyiramo umutwe w’ikimenyekanisha (nibura inyuguti 4).' });
+    }
+    const db = getDb();
+    const shop = shopId ? db.shops.find((s) => s.id === shopId) : undefined;
+    const nextOrder = db.campaigns.reduce((max, c) => Math.max(max, c.sortOrder), 0) + 1;
+    const newCampaign: PromoCampaign = {
+      id: `camp-${crypto.randomUUID().slice(0, 8)}`,
+      title: String(title).trim().slice(0, 90),
+      subtitle: String(subtitle ?? '').trim().slice(0, 160),
+      kicker: String(kicker ?? 'Kwamamaza · Isoko').trim().slice(0, 50),
+      ctaLabel: String(ctaLabel ?? 'Reba ibicuruzwa').trim().slice(0, 32),
+      targetPath: String(targetPath || '/shakisha').trim(),
+      imageUrl: String(imageUrl || '/src/assets/images/promo_kigali_market_1794567241262.jpg').trim(),
+      shopId: shop?.id ?? null,
+      shopName: shop?.name ?? null,
+      active: true,
+      sortOrder: nextOrder,
+      impressions: 0,
+      clicks: 0,
+      created_at: new Date().toISOString(),
+    };
+    db.campaigns.push(newCampaign);
+    db.audit_log.unshift({
+      id: `aud-${crypto.randomUUID().slice(0, 8)}`,
+      actor_id: auth.profile.id,
+      actor_name: auth.profile.full_name,
+      action: 'create_campaign',
+      target_type: 'campaign',
+      target_id: newCampaign.id,
+      details: { title: newCampaign.title },
+      created_at: new Date().toISOString(),
+    });
+    persistDb();
+    res.status(201).json({ campaign: newCampaign, campaigns: db.campaigns });
+  });
+
+  app.patch('/api/admin/campaigns/:id', (req, res) => {
+    const auth = getAuthSession(req);
+    if (!auth || auth.role !== 'admin') return res.status(403).json({ error: 'Admin gusa.' });
+    const db = getDb();
+    const campaign = db.campaigns.find((c) => c.id === req.params.id);
+    if (!campaign) return res.status(404).json({ error: 'Itangazo ntiryabonetse.' });
+    const body = req.body ?? {};
+    if (typeof body.active === 'boolean') campaign.active = body.active;
+    if (typeof body.sortOrder === 'number') campaign.sortOrder = body.sortOrder;
+    if (typeof body.title === 'string' && body.title.trim()) campaign.title = body.title.trim().slice(0, 90);
+    if (typeof body.subtitle === 'string') campaign.subtitle = body.subtitle.trim().slice(0, 160);
+    if (typeof body.ctaLabel === 'string' && body.ctaLabel.trim()) campaign.ctaLabel = body.ctaLabel.trim().slice(0, 32);
+    if (typeof body.targetPath === 'string' && body.targetPath.trim()) campaign.targetPath = body.targetPath.trim();
+    db.audit_log.unshift({
+      id: `aud-${crypto.randomUUID().slice(0, 8)}`,
+      actor_id: auth.profile.id,
+      actor_name: auth.profile.full_name,
+      action: 'update_campaign',
+      target_type: 'campaign',
+      target_id: campaign.id,
+      details: { active: campaign.active, sortOrder: campaign.sortOrder },
+      created_at: new Date().toISOString(),
+    });
+    persistDb();
+    res.json({ campaign, campaigns: db.campaigns });
+  });
+
+  app.delete('/api/admin/campaigns/:id', (req, res) => {
+    const auth = getAuthSession(req);
+    if (!auth || auth.role !== 'admin') return res.status(403).json({ error: 'Admin gusa.' });
+    const db = getDb();
+    const before = db.campaigns.length;
+    db.campaigns = db.campaigns.filter((c) => c.id !== req.params.id);
+    if (db.campaigns.length === before) return res.status(404).json({ error: 'Itangazo ntiryabonetse.' });
+    db.audit_log.unshift({
+      id: `aud-${crypto.randomUUID().slice(0, 8)}`,
+      actor_id: auth.profile.id,
+      actor_name: auth.profile.full_name,
+      action: 'delete_campaign',
+      target_type: 'campaign',
+      target_id: req.params.id,
+      details: {},
+      created_at: new Date().toISOString(),
+    });
+    persistDb();
+    res.json({ ok: true, campaigns: db.campaigns });
   });
 
   app.get('/api/admin/export.csv', (req, res) => {

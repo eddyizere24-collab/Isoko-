@@ -20,6 +20,10 @@ export function getDb(): DatabaseState {
     try {
       const raw = fs.readFileSync(DB_FILE, 'utf8');
       dbCache = JSON.parse(raw) as DatabaseState;
+      if (!Array.isArray(dbCache.campaigns) || dbCache.campaigns.length === 0) {
+        dbCache.campaigns = createInitialSeedData().campaigns;
+        persistDb();
+      }
       return dbCache;
     } catch {
       // Fall back to fresh seed if corrupted

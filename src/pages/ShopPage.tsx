@@ -1,14 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Bell,
-  CheckCircle2,
+  Clock,
   Flag,
   MapPin,
   MessageCircle,
   Phone,
   QrCode,
+  Search,
   Share2,
+  Truck,
 } from 'lucide-react';
+import { IsokoVerifiedSeal, RwandanGeometricPattern } from '../components/IsokoLogo';
 import { ProductCard } from '../components/ProductCard';
 import { QrCodeModal } from '../components/QrCodeModal';
 import { ReportModal } from '../components/ReportModal';
@@ -23,6 +26,8 @@ interface ShopPageProps {
   slug: string;
 }
 
+const DEFAULT_COVER = '/src/assets/images/promo_kigali_market_1794567241262.jpg';
+
 export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
   const { navigate, followedShops, toggleFollowShop } = useMarketplace();
   const [shop, setShop] = useState<Shop | null>(null);
@@ -30,6 +35,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filterCat, setFilterCat] = useState('');
+  const [shopSearch, setShopSearch] = useState('');
   const [qrOpen, setQrOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -57,16 +63,23 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
   }, [slug]);
 
   const filteredProducts = useMemo(() => {
-    if (!filterCat) return products;
-    return products.filter(
-      (p) => p.parent_category?.slug === filterCat || p.category?.slug === filterCat
-    );
-  }, [products, filterCat]);
+    const q = shopSearch.trim().toLowerCase();
+    return products.filter((p) => {
+      if (filterCat && p.parent_category?.slug !== filterCat && p.category?.slug !== filterCat) {
+        return false;
+      }
+      if (q) {
+        const hay = `${p.name} ${p.description} ${p.brand ?? ''}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [products, filterCat, shopSearch]);
 
   if (loading) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 space-y-6">
-        <div className="h-44 animate-pulse rounded-2xl bg-[#F1F6F3]" />
+        <div className="h-56 animate-pulse rounded-2xl bg-[#F1F6F3]" />
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="aspect-square animate-pulse rounded-xl bg-[#F1F6F3]" />
@@ -79,7 +92,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
   if (error || !shop) {
     return (
       <div className="mx-auto max-w-xl px-4 py-16 text-center">
-        <h1 className="text-xl font-bold text-[#1B1F23]">{RW.shop_missing}</h1>
+        <h1 className="font-display text-xl font-bold text-[#1B1F23]">{RW.shop_missing}</h1>
         <p className="mt-2 text-sm text-slate-600">{error || 'Iri duka ntiribonetse.'}</p>
         <button
           type="button"
@@ -134,113 +147,142 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 space-y-8">
-      {/* Shop Header (D-01, D-02) */}
-      <section className="rounded-2xl border border-slate-200 bg-[#F1F6F3] p-6">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex items-start gap-4">
-            {shop.logo_path ? (
-              <img
-                src={shop.logo_path}
-                alt={shop.name}
-                className="h-16 w-16 shrink-0 rounded-2xl border border-slate-200 bg-white object-cover sm:h-20 sm:w-20"
-              />
-            ) : (
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#0B6E4F] text-xl font-bold text-white">
-                {shop.name.slice(0, 2).toUpperCase()}
-              </div>
-            )}
+      {/* Storefront Hero Banner + Verified Merchant Profile */}
+      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
+        <div className="relative h-40 sm:h-52 w-full bg-[#0F1E18]">
+          <img
+            src={shop.cover_path || DEFAULT_COVER}
+            alt={`Ifoto y'iduka ${shop.name}`}
+            referrerPolicy="no-referrer"
+            className="h-full w-full object-cover"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent"
+          />
+          <div className="absolute bottom-3 sm:left-[120px] hidden sm:block text-xs font-medium text-white/95">
+            Iduka ryemewe ku Isoko · {shop.district_name}
+          </div>
+        </div>
+        <RwandanGeometricPattern className="h-2 w-full text-[#0B6E4F]/20 bg-[#F1F6F3]" />
 
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl font-bold text-[#1B1F23]">{shop.name}</h1>
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#0B6E4F]">
-                  <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-                  <span>{RW.verified}</span>
-                </span>
-              </div>
+        <div className="p-5 sm:p-6">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+              {shop.logo_path ? (
+                <img
+                  src={shop.logo_path}
+                  alt={shop.name}
+                  className="-mt-12 sm:-mt-14 relative z-10 h-20 w-20 shrink-0 rounded-2xl border-4 border-white bg-white object-cover shadow-md"
+                />
+              ) : (
+                <div className="-mt-12 sm:-mt-14 relative z-10 flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border-4 border-white bg-[#0B6E4F] text-xl font-bold text-white shadow-md">
+                  {shop.name.slice(0, 2).toUpperCase()}
+                </div>
+              )}
 
-              <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-600">
-                <span className="inline-flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
-                  {shop.district_name}
-                  {shop.sector_name ? `, ${shop.sector_name}` : ''}
-                </span>
-                <span aria-hidden="true">·</span>
-                <span>{RW.member_since.replace('{n}', String(memberDays))}</span>
-                <span aria-hidden="true">·</span>
-                <span className="tabular-nums">{products.length} ibicuruzwa</span>
-              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <h1 className="font-display text-2xl font-extrabold text-[#1B1F23]">{shop.name}</h1>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0B6E4F]">
+                    <IsokoVerifiedSeal className="h-4 w-4" />
+                    <span>{RW.verified}</span>
+                  </span>
+                </div>
 
-              {shop.about && <p className="mt-2 text-sm text-slate-700 max-w-xl">{shop.about}</p>}
+                <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-600">
+                  <span className="inline-flex items-center gap-1">
+                    <MapPin className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
+                    {shop.district_name}
+                    {shop.sector_name ? `, ${shop.sector_name}` : ''}
+                  </span>
+                  <span aria-hidden="true">·</span>
+                  <span>{RW.member_since.replace('{n}', String(memberDays))}</span>
+                  <span aria-hidden="true">·</span>
+                  <span className="tabular-nums font-medium">{products.length} ibicuruzwa</span>
+                </div>
 
-              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
-                {shop.delivery_text && <span>{shop.delivery_text}</span>}
-                {shop.hours_text && <span>Amasaha: {shop.hours_text}</span>}
-                {shop.landmark && <span>Aho biherereye: {shop.landmark}</span>}
+                {shop.about && <p className="mt-2.5 text-sm text-slate-700 max-w-xl">{shop.about}</p>}
+
+                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-slate-600">
+                  {shop.delivery_text && (
+                    <span className="inline-flex items-center gap-1.5">
+                      <Truck className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
+                      <span>{shop.delivery_text}</span>
+                    </span>
+                  )}
+                  {shop.hours_text && (
+                    <span className="inline-flex items-center gap-1.5">
+                      <Clock className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
+                      <span>{shop.hours_text}</span>
+                    </span>
+                  )}
+                  {shop.landmark && <span>Aho biherereye: {shop.landmark}</span>}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="flex flex-wrap gap-2 shrink-0">
-            <a
-              href={waUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackEvent('wa_click', null, shop.id)}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#25D366] px-4 text-sm font-semibold text-white hover:bg-[#1FB858]"
-            >
-              <MessageCircle className="h-4 w-4" aria-hidden="true" />
-              <span>WhatsApp</span>
-            </a>
-            <a
-              href={`tel:+${shop.phone}`}
-              onClick={() => trackEvent('call_click', null, shop.id)}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50"
-            >
-              <Phone className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
-              <span>{RW.call}</span>
-            </a>
-            <button
-              type="button"
-              onClick={handleShare}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-slate-300 bg-white px-3.5 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50"
-            >
-              <Share2 className="h-4 w-4" aria-hidden="true" />
-              <span>{copied ? RW.copied : RW.share_shop}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setQrOpen(true)}
-              aria-label="QR Code y'iduka"
-              className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50"
-            >
-              <QrCode className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
-              <span>QR</span>
-            </button>
-            <button
-              type="button"
-              onClick={handleFollow}
-              className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border px-3.5 text-sm font-semibold transition-colors ${
-                isFollowing
-                  ? 'border-[#0B6E4F] bg-[#0B6E4F] text-white'
-                  : 'border-slate-300 bg-white text-[#1B1F23] hover:border-[#0B6E4F]'
-              }`}
-            >
-              <Bell className="h-4 w-4" aria-hidden="true" />
-              <span>{isFollowing ? 'Ukurikira iri duka' : 'Kurikira iduka'}</span>
-            </button>
+            <div className="flex flex-wrap gap-2 shrink-0">
+              <a
+                href={waUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEvent('wa_click', null, shop.id)}
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#25D366] px-4 text-sm font-semibold text-white hover:bg-[#1FB858]"
+              >
+                <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                <span>WhatsApp</span>
+              </a>
+              <a
+                href={`tel:+${shop.phone}`}
+                onClick={() => trackEvent('call_click', null, shop.id)}
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50"
+              >
+                <Phone className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+                <span>{RW.call}</span>
+              </a>
+              <button
+                type="button"
+                onClick={handleShare}
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-slate-300 bg-white px-3.5 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50"
+              >
+                <Share2 className="h-4 w-4" aria-hidden="true" />
+                <span>{copied ? RW.copied : RW.share_shop}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setQrOpen(true)}
+                aria-label="QR Code y'iduka"
+                className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50"
+              >
+                <QrCode className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+                <span>QR</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleFollow}
+                className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border px-3.5 text-sm font-semibold transition-colors ${
+                  isFollowing
+                    ? 'border-[#0B6E4F] bg-[#0B6E4F] text-white'
+                    : 'border-slate-300 bg-white text-[#1B1F23] hover:border-[#0B6E4F]'
+                }`}
+              >
+                <Bell className="h-4 w-4" aria-hidden="true" />
+                <span>{isFollowing ? 'Ukurikira iri duka' : 'Kurikira iduka'}</span>
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Filter bar + Report link */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      {/* In-Shop Search, Category Filter Bar & Report */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-[#F1F6F3] p-1">
           <button
             type="button"
             onClick={() => setFilterCat('')}
             className={`min-h-[38px] rounded-lg px-3.5 text-xs font-semibold ${
-              filterCat === '' ? 'bg-white text-[#0B6E4F] shadow-sm' : 'text-slate-600'
+              filterCat === '' ? 'bg-white text-[#0B6E4F] shadow-xs' : 'text-slate-600'
             }`}
           >
             {RW.all} ({products.length})
@@ -251,7 +293,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
               type="button"
               onClick={() => setFilterCat(c.slug)}
               className={`min-h-[38px] rounded-lg px-3.5 text-xs font-semibold ${
-                filterCat === c.slug ? 'bg-white text-[#0B6E4F] shadow-sm' : 'text-slate-600'
+                filterCat === c.slug ? 'bg-white text-[#0B6E4F] shadow-xs' : 'text-slate-600'
               }`}
             >
               {c.name_rw}
@@ -259,21 +301,52 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
           ))}
         </div>
 
-        <button
-          type="button"
-          onClick={() => setReportOpen(true)}
-          className="inline-flex min-h-[40px] items-center gap-1.5 text-xs font-semibold text-[#C0392B] hover:underline"
-        >
-          <Flag className="h-3.5 w-3.5" aria-hidden="true" />
-          <span>{RW.report}</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="relative flex-1 sm:w-64">
+            <Search
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+              aria-hidden="true"
+            />
+            <input
+              type="search"
+              value={shopSearch}
+              onChange={(e) => setShopSearch(e.target.value)}
+              placeholder="Shakisha muri iri duka..."
+              aria-label="Shakisha muri iri duka"
+              className="min-h-[44px] w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setReportOpen(true)}
+            className="inline-flex min-h-[44px] items-center gap-1.5 text-xs font-semibold text-[#C0392B] hover:underline shrink-0"
+          >
+            <Flag className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>{RW.report}</span>
+          </button>
+        </div>
       </div>
 
       {/* Product Grid */}
       {filteredProducts.length === 0 ? (
-        <p className="rounded-xl bg-[#F1F6F3] p-8 text-center text-sm text-slate-600">
-          Nta bicuruzwa biri muri iki cyiciro ubu.
-        </p>
+        <div className="rounded-2xl bg-[#F1F6F3] p-8 text-center">
+          <p className="text-sm font-medium text-slate-700">
+            Nta bicuruzwa bihuye n'ibyo wasabye muri iri duka.
+          </p>
+          {(filterCat || shopSearch) && (
+            <button
+              type="button"
+              onClick={() => {
+                setFilterCat('');
+                setShopSearch('');
+              }}
+              className="mt-3 min-h-[44px] rounded-xl bg-[#0B6E4F] px-4 text-xs font-semibold text-white"
+            >
+              Reba byose ({products.length})
+            </button>
+          )}
+        </div>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:gap-5">
           {filteredProducts.map((product) => (

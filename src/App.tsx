@@ -34,8 +34,13 @@ const AppRouter: React.FC = () => {
     if (pathname === '/' || pathname === '') {
       return <HomePage />;
     }
-    if (pathname === '/shakisha' || pathname.startsWith('/icyiciro/')) {
+    if (pathname === '/shakisha') {
       return <SearchPage />;
+    }
+    if (pathname.startsWith('/c/') || pathname.startsWith('/icyiciro/')) {
+      const prefixLen = pathname.startsWith('/c/') ? 3 : 10;
+      const slug = decodeURIComponent(pathname.slice(prefixLen).split('/')[0]);
+      return <SearchPage initialCategorySlug={slug} />;
     }
     if (pathname.startsWith('/p/')) {
       const id = decodeURIComponent(pathname.slice(3).split('/')[0]);

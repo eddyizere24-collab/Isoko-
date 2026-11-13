@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import {
   AlertTriangle,
+  ArrowDown,
+  ArrowUp,
   CheckCircle2,
   Download,
   Eye,
   Flag,
-  Package,
+  Megaphone,
+  PauseCircle,
+  PlayCircle,
   Settings,
   Shield,
   Store,
@@ -16,20 +20,38 @@ import { useMarketplace } from '../context/MarketplaceContext';
 import { RW } from '../i18n/rw';
 import {
   addAdminSynonym,
+  createAdminCampaign,
+  deleteAdminCampaign,
   deleteAdminSynonym,
   fetchAdminKyc,
   fetchAdminOverview,
   moderateAdminProduct,
   resolveAdminReport,
   reviewAdminSeller,
+  updateAdminCampaign,
   updateAdminSettings,
   type AdminOverviewResponse,
 } from '../lib/api';
 import { formatRwfCurrency } from '../lib/whatsapp';
 import { loadAuthSession } from '../lib/storage';
-import type { SellerKyc } from '../types/marketplace';
+import type { PromoCampaign, SellerKyc } from '../types/marketplace';
 
-type AdminTab = 'overview' | 'sellers' | 'products' | 'reports' | 'settings';
+type AdminTab = 'overview' | 'sellers' | 'products' | 'reports' | 'campaigns' | 'settings';
+
+const CAMPAIGN_BANNER_PRESETS = [
+  {
+    label: 'Isoko ry’Inkweto (Kimironko)',
+    url: '/src/assets/images/promo_kigali_market_1794567241262.jpg',
+  },
+  {
+    label: 'Imyenda ya Ankara (Nyamirambo)',
+    url: '/src/assets/images/promo_ankara_craft_1794567240592.jpg',
+  },
+  {
+    label: 'Isoko rya Kigali (Hero)',
+    url: '/src/assets/images/hero_kigali_fashion_1794551814589.jpg',
+  },
+];
 
 const REJECTION_TEMPLATES = [
   'Ifoto y’indangamuntu ntisobanutse. Nyamuneka ongera uyifate neza ahantu habona.',
@@ -61,15 +83,26 @@ export const AdminPage: React.FC = () => {
   const [synTerm, setSynTerm] = useState('');
   const [synCanonical, setSynCanonical] = useState('');
 
+  // Campaign creation form
+  const [campKicker, setCampKicker] = useState('Kwamamaza · Kigali');
+  const [campTitle, setCampTitle] = useState('');
+  const [campSubtitle, setCampSubtitle] = useState('');
+  const [campCta, setCampCta] = useState('Reba ibicuruzwa');
+  const [campTarget, setCampTarget] = useState('/c/inkweto');
+  const [campImage, setCampImage] = useState(CAMPAIGN_BANNER_PRESETS[0].url);
+  const [campShopId, setCampShopId] = useState('');
+
   const activeTab: AdminTab = pathname.startsWith('/admin/abacuruzi')
     ? 'sellers'
     : pathname.startsWith('/admin/ibicuruzwa')
       ? 'products'
       : pathname.startsWith('/admin/ibirego')
         ? 'reports'
-        : pathname.startsWith('/admin/imiterere')
-          ? 'settings'
-          : 'overview';
+        : pathname.startsWith('/admin/kwamamaza')
+          ? 'campaigns'
+          : pathname.startsWith('/admin/imiterere')
+            ? 'settings'
+            : 'overview';
 
   const load = async () => {
     try {
@@ -161,6 +194,49 @@ export const AdminPage: React.FC = () => {
     refreshBootstrap();
   };
 
+  const handleCreateCampaign = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!campTitle.trim()) return;
+    try {
+      await createAdminCampaign({
+        kicker: campKicker.trim(),
+        title: campTitle.trim(),
+        subtitle: campSubtitle.trim(),
+        ctaLabel: campCta.trim() || 'Reba ibicuruzwa',
+        targetPath: campTarget.trim() || '/shakisha',
+        imageUrl: campImage,
+        shopId: campShopId || null,
+      });
+      setCampTitle('');
+      setCampSubtitle('');
+      setFeedback('Itangazo rishya ryashyizwe kuri carousel.');
+      await load();
+      refreshBootstrap();
+    } catch (err) {
+      setFeedback(err instanceof Error ? err.message : 'Ntibishobotse gushyiraho itangazo.');
+    }
+  };
+
+  const handleToggleCampaign = async (c: PromoCampaign) => {
+    await updateAdminCampaign(c.id, { active: !c.active });
+    setFeedback(c.active ? 'Itangazo ryahagaritswe.' : 'Itangazo ryasubijwe kuri carousel.');
+    await load();
+    refreshBootstrap();
+  };
+
+  const handleShiftCampaignOrder = async (c: PromoCampaign, delta: number) => {
+    await updateAdminCampaign(c.id, { sortOrder: Math.max(1, c.sortOrder + delta) });
+    await load();
+    refreshBootstrap();
+  };
+
+  const handleDeleteCampaign = async (id: string) => {
+    await deleteAdminCampaign(id);
+    setFeedback('Itangazo ryasibwe.');
+    await load();
+    refreshBootstrap();
+  };
+
   const handleExportCsv = async () => {
     try {
       const sess = loadAuthSession();
@@ -208,6 +284,12 @@ export const AdminPage: React.FC = () => {
     { id: 'sellers', path: '/admin/abacuruzi', label: 'Abacuruzi (KYC)', count: data.kpis.pendingSellers },
     { id: 'products', path: '/admin/ibicuruzwa', label: 'Ibicuruzwa', count: data.products.length },
     { id: 'reports', path: '/admin/ibirego', label: 'Ibirego', count: data.kpis.newReports },
+    {
+      id: 'campaigns',
+      path: '/admin/kwamamaza',
+      label: 'Kwamamaza',
+      count: data.campaigns.filter((c) => c.active).length,
+    },
     { id: 'settings', path: '/admin/imiterere', label: 'Imiterere & Audit' },
   ];
 
@@ -566,7 +648,228 @@ export const AdminPage: React.FC = () => {
         </section>
       )}
 
-      {/* TAB 5: Settings, Synonyms (K-06), Phase Flags & Audit Log */}
+      {/* TAB 5: Kwamamaza / Carousel Campaigns */}
+      {activeTab === 'campaigns' && (
+        <div className="mt-6 grid gap-6 lg:grid-cols-12">
+          <section className="lg:col-span-5 rounded-2xl border border-slate-200 bg-white p-5 space-y-4">
+            <div className="flex items-center gap-2">
+              <Megaphone className="h-5 w-5 text-[#0B6E4F]" aria-hidden="true" />
+              <h2 className="font-display text-base font-bold text-[#1B1F23]">
+                Ongeraho itangazo kuri Carousel
+              </h2>
+            </div>
+
+            <form onSubmit={handleCreateCampaign} className="space-y-3">
+              <div>
+                <label htmlFor="camp-kicker" className="block text-xs font-semibold text-[#1B1F23]">
+                  Akanyamakuru (Kicker)
+                </label>
+                <input
+                  id="camp-kicker"
+                  type="text"
+                  value={campKicker}
+                  onChange={(e) => setCampKicker(e.target.value)}
+                  className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3 text-sm"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="camp-title" className="block text-xs font-semibold text-[#1B1F23]">
+                  Umutwe w’itangazo *
+                </label>
+                <input
+                  id="camp-title"
+                  type="text"
+                  required
+                  minLength={4}
+                  value={campTitle}
+                  onChange={(e) => setCampTitle(e.target.value)}
+                  placeholder="Urugero: Inkweto za siporo zageze i Kigali"
+                  className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3 text-sm"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="camp-subtitle" className="block text-xs font-semibold text-[#1B1F23]">
+                  Ibisobanuro bigufi
+                </label>
+                <textarea
+                  id="camp-subtitle"
+                  rows={2}
+                  value={campSubtitle}
+                  onChange={(e) => setCampSubtitle(e.target.value)}
+                  placeholder="Sobanura igiciro cyangwa agashya..."
+                  className="mt-1 w-full rounded-xl border border-slate-300 p-3 text-sm"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="camp-cta" className="block text-xs font-semibold text-[#1B1F23]">
+                    Buto (CTA)
+                  </label>
+                  <input
+                    id="camp-cta"
+                    type="text"
+                    value={campCta}
+                    onChange={(e) => setCampCta(e.target.value)}
+                    className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3 text-sm"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="camp-target" className="block text-xs font-semibold text-[#1B1F23]">
+                    Aho bigana (URL)
+                  </label>
+                  <input
+                    id="camp-target"
+                    type="text"
+                    value={campTarget}
+                    onChange={(e) => setCampTarget(e.target.value)}
+                    className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3 text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="camp-shop" className="block text-xs font-semibold text-[#1B1F23]">
+                    Iduka ryamamaza
+                  </label>
+                  <select
+                    id="camp-shop"
+                    value={campShopId}
+                    onChange={(e) => setCampShopId(e.target.value)}
+                    className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-sm"
+                  >
+                    <option value="">Isoko Rusange</option>
+                    {data.sellers
+                      .filter((s) => s.status === 'approved' && s.shop)
+                      .map((s) => (
+                        <option key={s.shop!.id} value={s.shop!.id}>
+                          {s.shop!.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="camp-image" className="block text-xs font-semibold text-[#1B1F23]">
+                    Ifoto y’itangazo
+                  </label>
+                  <select
+                    id="camp-image"
+                    value={campImage}
+                    onChange={(e) => setCampImage(e.target.value)}
+                    className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-sm"
+                  >
+                    {CAMPAIGN_BANNER_PRESETS.map((preset) => (
+                      <option key={preset.url} value={preset.url}>
+                        {preset.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="min-h-[44px] w-full rounded-xl bg-[#0B6E4F] px-4 text-sm font-semibold text-white hover:bg-[#08553D]"
+              >
+                Shyira kuri Carousel
+              </button>
+            </form>
+          </section>
+
+          <section className="lg:col-span-7 space-y-3">
+            <h2 className="font-display text-base font-bold text-[#1B1F23]">
+              Amatangazo ari kuri Carousel ({data.campaigns.length})
+            </h2>
+            {[...data.campaigns]
+              .sort((a, b) => a.sortOrder - b.sortOrder)
+              .map((camp) => {
+                const ctr =
+                  camp.impressions > 0 ? ((camp.clicks / camp.impressions) * 100).toFixed(1) : '0.0';
+                return (
+                  <article
+                    key={camp.id}
+                    className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="flex items-start gap-3.5 min-w-0">
+                      <img
+                        src={camp.imageUrl}
+                        alt={camp.title}
+                        className="h-18 w-28 shrink-0 rounded-xl object-cover bg-[#F1F6F3]"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-[#0B6E4F]">
+                          #{camp.sortOrder} · {camp.active ? 'Kirakora' : 'Gihagaze'}
+                          {camp.shopName ? ` · ${camp.shopName}` : ''}
+                        </p>
+                        <h3 className="mt-0.5 text-sm font-bold text-[#1B1F23] line-clamp-1">
+                          {camp.title}
+                        </h3>
+                        <p className="mt-0.5 text-xs text-slate-600 line-clamp-1">{camp.targetPath}</p>
+                        <p className="mt-1 text-xs text-slate-500 tabular-nums">
+                          {camp.impressions} barebye · {camp.clicks} bakanze · CTR {ctr}%
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => handleShiftCampaignOrder(camp, -1)}
+                        aria-label={`Zamura ${camp.title}`}
+                        className="flex min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-slate-200 text-slate-700 hover:bg-[#F1F6F3]"
+                      >
+                        <ArrowUp className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleShiftCampaignOrder(camp, 1)}
+                        aria-label={`Manura ${camp.title}`}
+                        className="flex min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-slate-200 text-slate-700 hover:bg-[#F1F6F3]"
+                      >
+                        <ArrowDown className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleToggleCampaign(camp)}
+                        className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border px-3 text-xs font-semibold ${
+                          camp.active
+                            ? 'border-[#E8A33D] bg-[#E8A33D]/10 text-[#9A5B00]'
+                            : 'border-[#0B6E4F] bg-[#0B6E4F] text-white'
+                        }`}
+                      >
+                        {camp.active ? (
+                          <>
+                            <PauseCircle className="h-3.5 w-3.5" aria-hidden="true" />
+                            <span>Hagarika</span>
+                          </>
+                        ) : (
+                          <>
+                            <PlayCircle className="h-3.5 w-3.5" aria-hidden="true" />
+                            <span>Tangiza</span>
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteCampaign(camp.id)}
+                        aria-label={`Siba ${camp.title}`}
+                        className="flex min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-slate-200 text-[#C0392B] hover:bg-[#C0392B]/10"
+                      >
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
+          </section>
+        </div>
+      )}
+
+      {/* TAB 6: Settings, Synonyms (K-06), Phase Flags & Audit Log */}
       {activeTab === 'settings' && (
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
           <section className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4">

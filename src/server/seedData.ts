@@ -7,6 +7,7 @@ import type {
   PriceHistoryEntry,
   Product,
   Profile,
+  PromoCampaign,
   Report,
   SellerKyc,
   Shop,
@@ -26,6 +27,7 @@ export interface DatabaseState {
   product_daily_stats: DailyStat[];
   shop_daily_stats: DailyStat[];
   synonyms: Synonym[];
+  campaigns: PromoCampaign[];
   settings: MarketplaceSettings;
   audit_log: AuditLogEntry[];
   event_dedup: Record<string, boolean>;
@@ -41,6 +43,11 @@ const IMG = {
   HOODIE_DENIM: '/src/assets/images/apparel_hoodie_denim_1794551815431.jpg',
   SOCKS_PACK: '/src/assets/images/socks_athletic_pack_1794551816475.jpg',
   LEATHER_BAG: '/src/assets/images/accessory_leather_bag_1794551816434.jpg',
+  JEANS_DENIM: '/src/assets/images/product_jeans_denim_1794567240548.jpg',
+  SUNGLASSES_BELT: '/src/assets/images/product_sunglasses_belt_1794567240410.jpg',
+  WOMEN_SNEAKERS: '/src/assets/images/product_women_sneakers_1794567241190.jpg',
+  PROMO_KIGALI_MARKET: '/src/assets/images/promo_kigali_market_1794567241262.jpg',
+  PROMO_ANKARA_CRAFT: '/src/assets/images/promo_ankara_craft_1794567240592.jpg',
 };
 
 function daysAgoIso(days: number): string {
@@ -212,7 +219,7 @@ export function createInitialSeedData(): DatabaseState {
       slug: 'iduka-rya-mugisha',
       name: 'Iduka rya Mugisha',
       logo_path: IMG.SNEAKER_WHITE,
-      cover_path: IMG.HERO,
+      cover_path: IMG.PROMO_KIGALI_MARKET,
       about: 'Inkweto za siporo, inkweto zo gusohokana n’amasogisi meza i Kimironko.',
       whatsapp: '250788100001',
       phone: '250788100001',
@@ -236,7 +243,7 @@ export function createInitialSeedData(): DatabaseState {
       slug: 'iduka-rya-aline',
       name: 'Iduka rya Aline',
       logo_path: IMG.ANKARA_JACKET,
-      cover_path: IMG.HERO,
+      cover_path: IMG.PROMO_ANKARA_CRAFT,
       about: 'Imyenda ya Ankara, amajire, amapantalo ya jean n’amasakoshi meza.',
       whatsapp: '250788100002',
       phone: '250788100002',
@@ -284,7 +291,7 @@ export function createInitialSeedData(): DatabaseState {
       slug: 'nyarugenge-style',
       name: 'Nyarugenge Style',
       logo_path: IMG.LOAFER_BROWN,
-      cover_path: IMG.HERO,
+      cover_path: IMG.PROMO_KIGALI_MARKET,
       about: 'Inkweto n’imyenda y’abagabo i Muhima.',
       whatsapp: '250788100004',
       phone: '250788100004',
@@ -548,7 +555,7 @@ export function createInitialSeedData(): DatabaseState {
       updated_at: daysAgoIso(6),
       last_confirmed_at: daysAgoIso(6),
       sold_out_at: null,
-      images: makeImages('prod-9', [IMG.HOODIE_DENIM]),
+      images: makeImages('prod-9', [IMG.JEANS_DENIM, IMG.HOODIE_DENIM]),
       variants: makeVars('prod-9', [
         { s: '30', in_stock: true, qty: 4 },
         { s: '32', in_stock: true, qty: 3 },
@@ -645,7 +652,7 @@ export function createInitialSeedData(): DatabaseState {
       updated_at: daysAgoIso(9),
       last_confirmed_at: daysAgoIso(9),
       sold_out_at: null,
-      images: makeImages('prod-13', [IMG.LEATHER_BAG]),
+      images: makeImages('prod-13', [IMG.SUNGLASSES_BELT, IMG.LEATHER_BAG]),
       variants: makeVars('prod-13', [
         { s: 'M', in_stock: true, qty: 5 },
         { s: 'L', in_stock: true, qty: 3 },
@@ -669,7 +676,7 @@ export function createInitialSeedData(): DatabaseState {
       updated_at: daysAgoIso(11),
       last_confirmed_at: daysAgoIso(11),
       sold_out_at: null,
-      images: makeImages('prod-14', [IMG.SNEAKER_WHITE]),
+      images: makeImages('prod-14', [IMG.WOMEN_SNEAKERS, IMG.SNEAKER_WHITE]),
       variants: makeVars('prod-14', [
         { s: '37', in_stock: true, qty: 2 },
         { s: '38', in_stock: true, qty: 3 },
@@ -695,7 +702,7 @@ export function createInitialSeedData(): DatabaseState {
       updated_at: daysAgoIso(12),
       last_confirmed_at: daysAgoIso(12),
       sold_out_at: null,
-      images: makeImages('prod-15', [IMG.LEATHER_BAG]),
+      images: makeImages('prod-15', [IMG.SUNGLASSES_BELT]),
       variants: makeVars('prod-15', [
         { s: 'Ubunini bumwe', in_stock: true, qty: 6 },
       ]),
@@ -837,6 +844,57 @@ export function createInitialSeedData(): DatabaseState {
     },
   ];
 
+  const campaigns: PromoCampaign[] = [
+    {
+      id: 'camp-1',
+      kicker: 'Icyumweru cy’inkweto · Kigali',
+      title: 'Inkweto nshya n’iza mitumba zatoranyijwe i Kimironko',
+      subtitle: 'Reba amasoko yizewe ya Nike, Adidas na New Balance hamwe n’ibiciro byagabanyijwe.',
+      ctaLabel: 'Reba inkweto',
+      targetPath: '/c/inkweto',
+      imageUrl: IMG.PROMO_KIGALI_MARKET,
+      shopId: 'shop-1',
+      shopName: 'Iduka rya Mugisha',
+      active: true,
+      sortOrder: 1,
+      impressions: 245,
+      clicks: 38,
+      created_at: daysAgoIso(6),
+    },
+    {
+      id: 'camp-2',
+      kicker: 'Ubugeni bwa Ankara · Nyamirambo',
+      title: 'Imyenda ya Kitenge & Ankara idoze neza i Kigali',
+      subtitle: 'Amajire, amashati n’amapantalo ya jean mu mabara mashya — uvugane n’iduka kuri WhatsApp.',
+      ctaLabel: 'Reba imyenda',
+      targetPath: '/c/imyenda',
+      imageUrl: IMG.PROMO_ANKARA_CRAFT,
+      shopId: 'shop-2',
+      shopName: 'Iduka rya Aline',
+      active: true,
+      sortOrder: 2,
+      impressions: 198,
+      clicks: 31,
+      created_at: daysAgoIso(4),
+    },
+    {
+      id: 'camp-3',
+      kicker: 'Ibiciro byagabanyijwe · Kicukiro',
+      title: 'Amasakoshi y’uruhu, imikandara & hoodies zishyushya',
+      subtitle: 'Kicukiro Threads n’andi maduka ageza i Kigali mu masaha make ku giciro cy’iduka.',
+      ctaLabel: 'Reba ibyagabanyijwe',
+      targetPath: '/shakisha?discounted=1',
+      imageUrl: IMG.HERO,
+      shopId: 'shop-3',
+      shopName: 'Kicukiro Threads',
+      active: true,
+      sortOrder: 3,
+      impressions: 164,
+      clicks: 24,
+      created_at: daysAgoIso(2),
+    },
+  ];
+
   const settings: MarketplaceSettings = {
     ADS_ENABLED: false,
     PHONE_ACCESSORIES_ENABLED: false,
@@ -859,6 +917,7 @@ export function createInitialSeedData(): DatabaseState {
     product_daily_stats,
     shop_daily_stats,
     synonyms: DEFAULT_SYNONYMS,
+    campaigns,
     settings,
     audit_log,
     event_dedup: {},

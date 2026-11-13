@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { MapPin, Search, ShoppingBag, Menu, X } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { RW } from '../i18n/rw';
+import { IsokoWordmark } from './IsokoLogo';
 
 export const Header: React.FC = () => {
   const {
@@ -92,9 +93,10 @@ export const Header: React.FC = () => {
                 e.preventDefault();
                 navigate('/');
               }}
-              className="text-xl font-bold tracking-tight text-[#0B6E4F] whitespace-nowrap shrink-0"
+              aria-label="Isoko Ahabanza"
+              className="inline-flex min-h-[44px] items-center whitespace-nowrap shrink-0"
             >
-              {RW.app_name}
+              <IsokoWordmark />
             </a>
           </div>
 

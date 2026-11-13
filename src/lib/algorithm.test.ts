@@ -5,13 +5,16 @@ import {
   calculateDiscountPercent,
   computePopularity7d,
   DEFAULT_SYNONYMS,
+  detectCategoryIntent,
   expandSynonyms,
   getLowStockCount,
   getSimilarProducts,
+  interleaveBySeller,
+  rotateActiveCampaigns,
   searchAndRankProducts,
 } from './algorithm';
 import { INITIAL_CATEGORIES } from '../data/categories';
-import type { Product, Shop } from '../types/marketplace';
+import type { Product, PromoCampaign, Shop } from '../types/marketplace';
 
 const shop1: Shop = {
   id: 's1',
@@ -38,6 +41,7 @@ const shop1: Shop = {
 };
 
 const shop2: Shop = { ...shop1, id: 's2', slug: 'aline', name: 'Iduka rya Aline', district_id: 2, district_name: 'Kicukiro' };
+const shop3: Shop = { ...shop1, id: 's3', slug: 'kicukiro', name: 'Kicukiro Threads', district_id: 2, district_name: 'Kicukiro' };
 
 function makeProduct(overrides: Partial<Product>): Product {
   return {
@@ -71,6 +75,30 @@ test('synonym expansion maps nayiki -> nike and isogisi -> amasogisi', () => {
   assert.ok(expandSynonyms('isogisi', DEFAULT_SYNONYMS).includes('amasogisi'));
 });
 
+test('category isolation prevents unrelated categories from leaking into search results', () => {
+  assert.equal(detectCategoryIntent('inkweto', INITIAL_CATEGORIES, DEFAULT_SYNONYMS), 'inkweto');
+  assert.equal(detectCategoryIntent('isogisi', INITIAL_CATEGORIES, DEFAULT_SYNONYMS), 'amasogisi');
+
+  const products = [
+    makeProduct({ id: 'shoe-1', category_id: 104, name: 'Nike Air Force 1', description: 'Inkweto za siporo' }),
+    // Sock description explicitly mentions "inkweto za siporo" — must NOT appear when searching "inkweto"
+    makeProduct({
+      id: 'sock-1',
+      shop_id: 's2',
+      shop: shop2,
+      category_id: 301,
+      brand: null,
+      authentic: false,
+      name: 'Amasogisi 3 ya Cotton',
+      description: 'Amasogisi meza aberana n’inkweto za siporo',
+      variants: [{ id: 'vs1', product_id: 'sock-1', size_label: '41-45', color: null, in_stock: true, qty: 5 }],
+    }),
+  ];
+
+  const shoeResults = searchAndRankProducts(products, INITIAL_CATEGORIES, DEFAULT_SYNONYMS, { q: 'inkweto' });
+  assert.deepEqual(shoeResults.map((p) => p.id), ['shoe-1']);
+});
+
 test('search finds Nike when user types nayiki and respects size/price filters', () => {
   const products = [
     makeProduct({ id: 'p1', name: 'Nike Air Force 1', brand: 'Nike', price: 45000 }),
@@ -84,6 +112,22 @@ test('search finds Nike when user types nayiki and respects size/price filters',
   const sizeFiltered = searchAndRankProducts(products, INITIAL_CATEGORIES, DEFAULT_SYNONYMS, { size: '42', minPrice: 20000, maxPrice: 50000 });
   assert.equal(sizeFiltered.length, 1);
   assert.equal(sizeFiltered[0].id, 'p1');
+});
+
+test('interleaveBySeller prevents one seller from occupying consecutive slots or dominating', () => {
+  const list = [
+    makeProduct({ id: 'a1', shop_id: 's1', shop: shop1 }),
+    makeProduct({ id: 'a2', shop_id: 's1', shop: shop1 }),
+    makeProduct({ id: 'a3', shop_id: 's1', shop: shop1 }),
+    makeProduct({ id: 'b1', shop_id: 's2', shop: shop2 }),
+    makeProduct({ id: 'c1', shop_id: 's3', shop: shop3 }),
+  ];
+
+  const rotated = interleaveBySeller(list, { maxPerShop: 2, maxConsecutiveSameShop: 1 });
+  assert.deepEqual(rotated.map((p) => p.shop_id), ['s1', 's2', 's1', 's3']);
+  for (let i = 1; i < rotated.length; i++) {
+    assert.notEqual(rotated[i].shop_id, rotated[i - 1].shop_id);
+  }
 });
 
 test('discount percentage only displays at >= 5% and popularity follows formula', () => {
@@ -125,4 +169,62 @@ test('buildHomeShelves limits shops to 2 per shelf and enforces >= 10% discount'
   assert.equal(shelves.newest.filter((p) => p.shop_id === 's1').length, 2);
   assert.deepEqual(shelves.discounted.map((p) => p.id), ['b1', 'a1']);
   assert.equal(shelves.nearby[0].id, 'b1');
+});
+
+test('rotateActiveCampaigns filters inactive campaigns and cycles order cleanly', () => {
+  const base: PromoCampaign[] = [
+    {
+      id: 'c1',
+      title: 'Camp 1',
+      subtitle: 'Sub 1',
+      kicker: 'K1',
+      ctaLabel: 'Reba',
+      targetPath: '/c/inkweto',
+      imageUrl: '/1.jpg',
+      shopId: null,
+      shopName: null,
+      active: true,
+      sortOrder: 1,
+      impressions: 0,
+      clicks: 0,
+      created_at: '2026-01-01',
+    },
+    {
+      id: 'c2',
+      title: 'Camp 2 (Paused)',
+      subtitle: 'Sub 2',
+      kicker: 'K2',
+      ctaLabel: 'Reba',
+      targetPath: '/c/imyenda',
+      imageUrl: '/2.jpg',
+      shopId: null,
+      shopName: null,
+      active: false,
+      sortOrder: 2,
+      impressions: 0,
+      clicks: 0,
+      created_at: '2026-01-01',
+    },
+    {
+      id: 'c3',
+      title: 'Camp 3',
+      subtitle: 'Sub 3',
+      kicker: 'K3',
+      ctaLabel: 'Reba',
+      targetPath: '/i/aline',
+      imageUrl: '/3.jpg',
+      shopId: 's2',
+      shopName: 'Aline',
+      active: true,
+      sortOrder: 3,
+      impressions: 0,
+      clicks: 0,
+      created_at: '2026-01-01',
+    },
+  ];
+
+  const rotated0 = rotateActiveCampaigns(base, 0);
+  assert.deepEqual(rotated0.map((c) => c.id), ['c1', 'c3']);
+  const rotated1 = rotateActiveCampaigns(base, 1);
+  assert.deepEqual(rotated1.map((c) => c.id), ['c3', 'c1']);
 });

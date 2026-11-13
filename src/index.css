@@ -10,14 +10,25 @@
   --color-error: #C0392B;
   --color-whatsapp: #25D366;
   --color-whatsapp-hover: #1FB858;
+  --font-display: 'Plus Jakarta Sans', 'DM Sans', system-ui, sans-serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
 @layer base {
   html {
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+    font-family: var(--font-body);
     color: var(--color-ink);
     background-color: var(--color-canvas);
     scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
   }
 
   button,

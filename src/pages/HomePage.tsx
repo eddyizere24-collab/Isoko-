@@ -1,19 +1,36 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowRight, Footprints, Shirt, Sparkles, Tag, Smartphone } from 'lucide-react';
+import { ArrowRight, MapPin, Store } from 'lucide-react';
+import { IsokoVerifiedSeal, RwandanGeometricPattern } from '../components/IsokoLogo';
 import { ProductCard } from '../components/ProductCard';
+import { PromoCarousel } from '../components/PromoCarousel';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { RW } from '../i18n/rw';
-import { buildHomeShelves } from '../lib/algorithm';
+import { buildHomeShelves, interleaveBySeller } from '../lib/algorithm';
 import { loadInterest } from '../lib/storage';
 
 const HERO_IMG = '/src/assets/images/hero_kigali_fashion_1794551814589.jpg';
 
-const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-  inkweto: <Footprints className="h-6 w-6 text-[#0B6E4F]" aria-hidden="true" />,
-  imyenda: <Shirt className="h-6 w-6 text-[#0B6E4F]" aria-hidden="true" />,
-  amasogisi: <Tag className="h-6 w-6 text-[#0B6E4F]" aria-hidden="true" />,
-  ibindi: <Sparkles className="h-6 w-6 text-[#0B6E4F]" aria-hidden="true" />,
-  amatelefoni: <Smartphone className="h-6 w-6 text-[#0B6E4F]" aria-hidden="true" />,
+const CATEGORY_ARTWORK: Record<string, { img: string; caption: string }> = {
+  inkweto: {
+    img: '/src/assets/images/shoe_sneaker_white_1794551815135.jpg',
+    caption: 'Siporo, gusohokana & mitumba',
+  },
+  imyenda: {
+    img: '/src/assets/images/apparel_ankara_jacket_1794551815266.jpg',
+    caption: 'Ankara, hoodies, amashati & jeans',
+  },
+  amasogisi: {
+    img: '/src/assets/images/socks_athletic_pack_1794551816475.jpg',
+    caption: 'Cotton nziza & iby’imbere',
+  },
+  ibindi: {
+    img: '/src/assets/images/accessory_leather_bag_1794551816434.jpg',
+    caption: 'Amasakoshi, imikandara & indorerwamo',
+  },
+  amatelefoni: {
+    img: '/src/assets/images/promo_kigali_market_1794567241262.jpg',
+    caption: 'Ibikoresho by’amatelefoni',
+  },
 };
 
 export const HomePage: React.FC = () => {
@@ -22,7 +39,19 @@ export const HomePage: React.FC = () => {
 
   const products = bootstrap?.products ?? [];
   const categories = bootstrap?.categories ?? [];
+  const shops = bootstrap?.shops ?? [];
+  const campaigns = bootstrap?.campaigns ?? [];
   const topCategories = categories.filter((c) => c.parent_id === null);
+
+  const categoryCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const p of products) {
+      if (p.status !== 'active') continue;
+      const slug = p.parent_category?.slug ?? p.category?.slug;
+      if (slug) counts.set(slug, (counts.get(slug) ?? 0) + 1);
+    }
+    return counts;
+  }, [products]);
 
   const shelves = useMemo(
     () => buildHomeShelves(products, { buyerDistrictId: location?.districtId }),
@@ -42,15 +71,16 @@ export const HomePage: React.FC = () => {
     const entries = Object.entries(scores).sort((a, b) => b[1] - a[1]);
     if (entries.length === 0) return [];
     const topCatId = Number(entries[0][0]);
-    return products
-      .filter((p) => p.status === 'active' && (p.category_id === topCatId || p.parent_category?.id === topCatId))
-      .slice(0, 8);
+    const matched = products.filter(
+      (p) => p.status === 'active' && (p.category_id === topCatId || p.parent_category?.id === topCatId)
+    );
+    return interleaveBySeller(matched, { maxConsecutiveSameShop: 1, limit: 8 });
   }, [products]);
 
-  const activeCatalog = useMemo(
-    () => products.filter((p) => p.status === 'active' || p.status === 'sold_out'),
-    [products]
-  );
+  const activeCatalog = useMemo(() => {
+    const visible = products.filter((p) => p.status === 'active' || p.status === 'sold_out');
+    return interleaveBySeller(visible, { maxConsecutiveSameShop: 1 });
+  }, [products]);
 
   if (loading) {
     return (
@@ -58,7 +88,7 @@ export const HomePage: React.FC = () => {
         <div className="h-56 w-full animate-pulse rounded-2xl bg-[#F1F6F3]" />
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-24 animate-pulse rounded-xl bg-[#F1F6F3]" />
+            <div key={i} className="h-36 animate-pulse rounded-xl bg-[#F1F6F3]" />
           ))}
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -85,16 +115,18 @@ export const HomePage: React.FC = () => {
     );
   }
 
+  const activeCampaigns = campaigns.filter((c) => c.active);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 space-y-12">
-      {/* Storefront Hero */}
+      {/* Photo-led Editorial Storefront Hero */}
       <section className="overflow-hidden rounded-2xl border border-slate-200 bg-[#F1F6F3]">
         <div className="grid items-stretch lg:grid-cols-12">
           <div className="flex flex-col justify-center p-6 sm:p-10 lg:col-span-6">
             <p className="text-xs font-semibold text-[#0B6E4F]">
               Kigali · Abacuruzi bagenzuwe · Nta komisiyo
             </p>
-            <h1 className="mt-2 text-2xl font-bold tracking-tight text-[#1B1F23] sm:text-4xl text-balance">
+            <h1 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-[#1B1F23] sm:text-4xl text-balance">
               Imyambaro, inkweto n'ibyo kwambara byizewe i Kigali.
             </h1>
             <p className="mt-3 text-sm sm:text-base leading-relaxed text-slate-600 max-w-lg">
@@ -122,7 +154,7 @@ export const HomePage: React.FC = () => {
               </a>
             </div>
           </div>
-          <div className="relative min-h-[220px] lg:col-span-6">
+          <div className="relative min-h-[240px] lg:col-span-6">
             <img
               src={HERO_IMG}
               alt="Idaraza ry'iduka ry'imyambaro n'inkweto i Kigali"
@@ -131,29 +163,68 @@ export const HomePage: React.FC = () => {
             />
           </div>
         </div>
+        <RwandanGeometricPattern className="h-2.5 w-full text-[#0B6E4F]/20 bg-white" />
       </section>
 
-      {/* A-02: Big Category Buttons */}
+      {/* Photo-led Category Artwork Cards */}
       <section aria-labelledby="cat-heading">
-        <h2 id="cat-heading" className="text-lg font-bold text-[#1B1F23]">
-          Hitamo icyiciro
-        </h2>
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 id="cat-heading" className="font-display text-lg font-bold text-[#1B1F23]">
+            Hitamo icyiciro
+          </h2>
+          <button
+            type="button"
+            onClick={() => navigate('/shakisha')}
+            className="text-xs font-semibold text-[#0B6E4F] hover:underline"
+          >
+            Byose hamwe
+          </button>
+        </div>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
-          {topCategories.map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => navigate(`/c/${cat.slug}`)}
-              className="flex min-h-[84px] items-center gap-3.5 rounded-xl border border-slate-200 bg-white p-4 text-left hover:border-[#0B6E4F] hover:bg-[#F1F6F3]/60 transition-colors"
-            >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#F1F6F3]">
-                {CATEGORY_ICONS[cat.slug] ?? <Tag className="h-6 w-6 text-[#0B6E4F]" />}
-              </span>
-              <span className="text-sm font-bold text-[#1B1F23] leading-snug">{cat.name_rw}</span>
-            </button>
-          ))}
+          {topCategories.map((cat) => {
+            const art = CATEGORY_ARTWORK[cat.slug] ?? {
+              img: HERO_IMG,
+              caption: 'Ibicuruzwa byatoranyijwe',
+            };
+            const itemCount = categoryCounts.get(cat.slug) ?? 0;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => navigate(`/c/${cat.slug}`)}
+                className="group overflow-hidden rounded-2xl border border-slate-200 bg-white text-left transition-all hover:-translate-y-0.5 hover:border-[#0B6E4F] hover:shadow-md"
+              >
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#F1F6F3]">
+                  <img
+                    src={art.img}
+                    alt={cat.name_rw}
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <div className="p-3.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-display text-sm font-bold text-[#1B1F23] leading-snug">
+                      {cat.name_rw}
+                    </span>
+                    <ArrowRight
+                      className="h-4 w-4 shrink-0 text-[#0B6E4F] opacity-70 transition-transform group-hover:translate-x-0.5 group-hover:opacity-100"
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <p className="mt-1 text-xs text-slate-600 tabular-nums">
+                    {itemCount} bibonetse · {art.caption}
+                  </p>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </section>
+
+      {/* Rotating Promotional Carousel */}
+      {activeCampaigns.length > 0 && <PromoCarousel campaigns={activeCampaigns} />}
 
       {/* A-03: Wari warabirebye (if non-empty) */}
       {recentProducts.length > 0 && (
@@ -164,23 +235,13 @@ export const HomePage: React.FC = () => {
         />
       )}
 
-      {/* A-03: Bishya */}
+      {/* A-03: Bishya (fairly rotated across sellers) */}
       {shelves.newest.length > 0 && (
         <ShelfSection
           title={RW.new_arrivals}
           products={shelves.newest}
           onSeeAll={() => navigate('/shakisha?sort=newest')}
         />
-      )}
-
-      {/* N-01: Reserved Ad Slot (visible only when ADS_ENABLED=true) */}
-      {bootstrap?.settings.ADS_ENABLED && (
-        <aside
-          aria-label="Itangazo"
-          className="rounded-xl border border-dashed border-slate-300 bg-[#F1F6F3] p-4 text-center text-xs text-slate-600"
-        >
-          Umwanya w'itangazo (N-01 · ADS_ENABLED=true)
-        </aside>
       )}
 
       {/* A-03: Bikunzwe cyane */}
@@ -201,13 +262,91 @@ export const HomePage: React.FC = () => {
         />
       )}
 
-      {/* G-04: Ushobora gukunda (based on phone interest) */}
+      {/* G-04: Ushobora gukunda */}
       {youMightLike.length > 0 && (
         <ShelfSection
           title="Ushobora gukunda"
           products={youMightLike}
           onSeeAll={() => navigate('/shakisha')}
         />
+      )}
+
+      {/* Verified Seller Storefronts Showcase */}
+      {shops.length > 0 && (
+        <section aria-labelledby="shops-heading">
+          <div className="flex items-baseline justify-between gap-4">
+            <div>
+              <h2 id="shops-heading" className="font-display text-lg font-bold text-[#1B1F23]">
+                Amaduka yagenzuwe ku Isoko
+              </h2>
+              <p className="mt-0.5 text-xs text-slate-600">
+                Sura iduka ry’umucuruzi urebe ibicuruzwa bye byose n’aho akorera
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 grid gap-4 sm:grid-cols-3">
+            {shops.slice(0, 3).map((shop) => (
+              <a
+                key={shop.id}
+                href={`/i/${shop.slug}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate(`/i/${shop.slug}`);
+                }}
+                className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:-translate-y-0.5 hover:border-[#0B6E4F] hover:shadow-md"
+              >
+                <div className="relative h-24 w-full overflow-hidden bg-[#F1F6F3]">
+                  <img
+                    src={shop.cover_path || HERO_IMG}
+                    alt={shop.name}
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent"
+                  />
+                </div>
+                <div className="relative px-4 pb-4 pt-0">
+                  <div className="-mt-6 flex items-end justify-between gap-3">
+                    {shop.logo_path ? (
+                      <img
+                        src={shop.logo_path}
+                        alt={shop.name}
+                        className="h-12 w-12 rounded-xl border-2 border-white bg-white object-cover shadow-sm"
+                      />
+                    ) : (
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-white bg-[#0B6E4F] text-white shadow-sm">
+                        <Store className="h-5 w-5" aria-hidden="true" />
+                      </div>
+                    )}
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#0B6E4F] bg-white/95 rounded-md px-2 py-0.5">
+                      <IsokoVerifiedSeal className="h-3.5 w-3.5" />
+                      <span>{RW.verified}</span>
+                    </span>
+                  </div>
+
+                  <h3 className="mt-2 font-display text-base font-bold text-[#1B1F23] group-hover:text-[#0B6E4F]">
+                    {shop.name}
+                  </h3>
+                  <p className="mt-0.5 flex items-center gap-1 text-xs text-slate-600 tabular-nums">
+                    <MapPin className="h-3.5 w-3.5 text-[#0B6E4F] shrink-0" aria-hidden="true" />
+                    <span>
+                      {shop.district_name}
+                      {shop.sector_name ? `, ${shop.sector_name}` : ''}
+                    </span>
+                    <span aria-hidden="true">·</span>
+                    <span>{shop.active_product_count ?? 0} ibicuruzwa</span>
+                  </p>
+                  {shop.about && (
+                    <p className="mt-1.5 text-xs text-slate-600 line-clamp-2">{shop.about}</p>
+                  )}
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* A-03: Amaduka hafi yawe */}
@@ -229,10 +368,10 @@ export const HomePage: React.FC = () => {
         />
       )}
 
-      {/* A-04: Progressive 20-item catalog grid with 'Reba byinshi' */}
+      {/* A-04: Progressive 20-item catalog grid with seller interleaving & 'Reba byinshi' */}
       <section aria-labelledby="all-products-heading">
         <div className="flex items-baseline justify-between gap-4">
-          <h2 id="all-products-heading" className="text-lg font-bold text-[#1B1F23]">
+          <h2 id="all-products-heading" className="font-display text-lg font-bold text-[#1B1F23]">
             Ibicuruzwa byose biriho
           </h2>
           <span className="text-xs text-slate-600 tabular-nums">
@@ -271,7 +410,7 @@ interface ShelfSectionProps {
 const ShelfSection: React.FC<ShelfSectionProps> = ({ title, products, onSeeAll }) => (
   <section>
     <div className="flex items-center justify-between gap-4">
-      <h2 className="text-lg font-bold text-[#1B1F23]">{title}</h2>
+      <h2 className="font-display text-lg font-bold text-[#1B1F23]">{title}</h2>
       <button
         type="button"
         onClick={onSeeAll}
