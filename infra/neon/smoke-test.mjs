@@ -36,8 +36,8 @@ if (error) {
 
 const payload = data?.payload;
 if (!payload) throw new Error("Bootstrap view returned no payload");
-if (payload.categories?.length !== 35) {
-  throw new Error(`Expected 35 categories, got ${payload.categories?.length ?? 0}`);
+if (payload.categories?.length !== 34) {
+  throw new Error(`Expected 34 visible categories, got ${payload.categories?.length ?? 0}`);
 }
 if (payload.areas?.length !== 65) {
   throw new Error(`Expected 65 areas, got ${payload.areas?.length ?? 0}`);
