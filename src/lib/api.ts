@@ -7,6 +7,43 @@ import {
   objectKeyFromPublicUrl,
 } from './neon';
 
+export async function claimFirstAdminAccount(payload:{
+  fullName:string;phone:string;password:string;bootstrapCode:string;
+}):Promise<{token:string;userId:string;role:'admin';expiresAt:number;profile:Profile;shop:null}> {
+  const phone=normalizePhone(payload.phone);
+  const email=phone+'@login.isoko.invalid';
+  let user=await getNeonUser();
+  if(user?.email&&user.email!==email) {
+    throw new Error('Sohoka muri konti urimo mbere yo gutangiza Admin wa mbere.');
+  }
+  if(!user) {
+    const signup=await neon.auth.signUp.email({
+      email,password:payload.password,name:payload.fullName.trim(),
+    }) as any;
+    if(signup?.error) {
+      const retry=await neon.auth.signIn.email({email,password:payload.password}) as any;
+      if(retry?.error) fail(signup.error,'Konti ya Admin ntiyafunguwe.');
+    }
+    user=await getNeonUser();
+  }
+  if(!user?.id) throw new Error('Konti ntiyafunguwe neza. Ongera ugerageze.');
+
+  const result=dataOf<any>(await neon.rpc('claim_first_admin_v1',{
+    p_full_name:payload.fullName.trim(),
+    p_phone:phone,
+    p_code:payload.bootstrapCode.trim(),
+  }),'Gushyiraho Admin wa mbere byanze.');
+  const profile=result as Profile;
+  return {
+    token:'managed-neon-auth',
+    userId:profile.id,
+    role:'admin',
+    expiresAt:Date.now()+12*60*60*1000,
+    profile,
+    shop:null,
+  };
+}
+
 export interface BootstrapResponse {
   categories: any[];
   areas: any[];
