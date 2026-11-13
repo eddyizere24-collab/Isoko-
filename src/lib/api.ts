@@ -484,6 +484,7 @@ export interface AdminControlCenterSnapshot {
   shops: { total: number; pending: number; approved: number; needs_changes: number; rejected: number; suspended: number };
   products: { total: number; active: number; draft: number; sold_out: number; hidden: number; expired: number };
   reports: { total: number; new: number; in_progress: number; resolved: number };
+  reportsByType: Array<{ type: string; count: number }>;
   traffic: { views: number; waClicks: number; callClicks: number; cartAdds: number; shares: number };
   daily: Array<{ day: string; views: number; waClicks: number; cartAdds: number }>;
   topShops: Array<{ shopId: string; shopName: string; sellerName: string; district: string; status: string; views: number; waClicks: number; callClicks: number; cartAdds: number; shares: number; openReports: number; totalReports: number }>;
