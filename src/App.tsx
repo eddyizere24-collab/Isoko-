@@ -5,6 +5,7 @@ import { LocationSheet } from './components/LocationSheet';
 import { OfflineAndPwaBar } from './components/OfflineAndPwaBar';
 import { MarketplaceProvider, useMarketplace } from './context/MarketplaceContext';
 import { AdminPage } from './pages/AdminPage';
+import { AdminSetupPage } from './pages/AdminSetupPage';
 import { CartPage } from './pages/CartPage';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
@@ -73,6 +74,9 @@ const AppRouter: React.FC = () => {
     }
     if (pathname === '/umucuruzi/imibare') {
       return <SellerAnalyticsPage />;
+    }
+    if (pathname === '/admin/setup') {
+      return <AdminSetupPage />;
     }
     if (pathname === '/admin' || pathname.startsWith('/admin/')) {
       return <AdminPage />;
