@@ -3,6 +3,7 @@ import { createClient } from "@neondatabase/neon-js";
 const authUrl = process.env.ISOKO_TEST_AUTH_URL;
 const dataApiUrl = process.env.ISOKO_TEST_DATA_API_URL;
 const functionUrl = process.env.ISOKO_TEST_FUNCTION_URL;
+const expectedBranch = process.env.ISOKO_EXPECTED_NEON_BRANCH || "isoko-setup";
 
 for (const [name, value] of Object.entries({ authUrl, dataApiUrl, functionUrl })) {
   if (!value) throw new Error(`Missing ${name}`);
@@ -20,7 +21,7 @@ if (!healthResponse.ok) {
   throw new Error(`Neon Function health returned HTTP ${healthResponse.status}`);
 }
 const health = await healthResponse.json();
-if (health.status !== "healthy" || health.branch !== "isoko-setup") {
+if (health.status !== "healthy" || health.branch !== expectedBranch) {
   throw new Error(`Unexpected Neon Function health payload: ${JSON.stringify(health)}`);
 }
 
@@ -43,7 +44,7 @@ if (payload.areas?.length !== 65) {
   throw new Error(`Expected 65 areas, got ${payload.areas?.length ?? 0}`);
 }
 if (payload.shops?.length !== 0 || payload.products?.length !== 0) {
-  throw new Error("Test database unexpectedly contains seller or product records");
+  throw new Error("Database unexpectedly contains seller or product records before launch");
 }
 if (payload.settings?.ADS_ENABLED !== false) {
   throw new Error("Ads must remain disabled until explicitly configured");
