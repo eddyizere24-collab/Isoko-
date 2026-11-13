@@ -215,22 +215,26 @@ async function getOwnRegistrationDraft(token) {
 
 async function getKycForSeller(sellerId, token) {
   const dataApiUrl = process.env.NEON_DATA_API_URL;
-  const query = new URLSearchParams({
-    select: "seller_id,full_name_on_id,business_type,id_front_key,id_back_key,selfie_key,shop_photo_key,submitted_at",
-    seller_id: "eq." + sellerId,
-    limit: "1",
-  });
+  if (!dataApiUrl) throw new Error("DATA_API_NOT_CONFIGURED");
   const response = await fetch(dataApiUrl.replace(/\/$/, "") +
-    "/seller_kyc?" + query.toString(), {
+    "/rpc/admin_get_kyc_private_v1", {
+    method: "POST",
     headers: {
       authorization: "Bearer " + token,
+      "content-type": "application/json",
       accept: "application/json",
     },
+    body: JSON.stringify({ p_seller_id: sellerId }),
   });
-  if (!response.ok) throw new Error("KYC_ACCESS_DENIED");
-  const rows = await response.json();
-  if (!Array.isArray(rows) || rows.length !== 1) throw new Error("KYC_RECORD_NOT_FOUND");
-  return rows[0];
+  if (!response.ok) {
+    if (response.status === 401 || response.status === 403) throw new Error("KYC_ACCESS_DENIED");
+    throw new Error("KYC_RECORD_NOT_FOUND");
+  }
+  const kyc = await response.json();
+  if (!kyc?.seller_id || kyc.seller_id !== sellerId) {
+    throw new Error("KYC_RECORD_NOT_FOUND");
+  }
+  return kyc;
 }
 
 export default {
