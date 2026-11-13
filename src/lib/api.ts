@@ -379,11 +379,36 @@ export async function deleteSellerProduct(id:string):Promise<{ok:boolean}> {
 
 export async function updateSellerShop(payload:Record<string,unknown>):Promise<{shop:Shop}> {
   const current=await currentAccount();
+  const districtId=Number(payload.district_id);
+  const district=first<any>(dataOf<any>(
+    await neon.from('areas').select('id,district,province,sector,parent_id')
+      .eq('id',districtId).is('sector',null).maybeSingle(),
+    'Akarere wahisemo ntikabonetse.'
+  ));
+  if(!district) throw new Error('Hitamo akarere kari ku rutonde.');
+  const sectorId=payload.sector_id==null?null:Number(payload.sector_id);
+  let sector:any=null;
+  if(sectorId!==null) {
+    sector=first<any>(dataOf<any>(
+      await neon.from('areas').select('id,sector,parent_id')
+        .eq('id',sectorId).eq('parent_id',districtId).maybeSingle(),
+      'Umurenge ntubonetse.'
+    ));
+    if(!sector) throw new Error('Umurenge wahisemo nturi muri aka karere.');
+  }
   const row=first<any>(dataOf<any>(
     await neon.from('shops').update({
-      name:payload.name,about:payload.about,whatsapp:normalizePhone(String(payload.whatsapp??'')),
-      phone:normalizePhone(String(payload.phone??'')),district_id:payload.district_id,
-      sector_id:payload.sector_id,landmark:payload.landmark,hours_text:payload.hours_text,delivery_text:payload.delivery_text,
+      name:String(payload.name??'').trim(),
+      about:String(payload.about??''),
+      whatsapp:normalizePhone(String(payload.whatsapp??'')),
+      phone:normalizePhone(String(payload.phone??'')),
+      district_id:districtId,
+      sector_id:sectorId,
+      district_name:district.district,
+      sector_name:sector?.sector??null,
+      landmark:String(payload.landmark??''),
+      hours_text:String(payload.hours_text??''),
+      delivery_text:String(payload.delivery_text??''),
     }).eq('owner_id',current.profile.id).select('*').maybeSingle(),
     'Ntibishobotse kuvugurura amakuru y’iduka.'
   ));
