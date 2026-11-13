@@ -28,12 +28,21 @@ jobs:
       - name: TypeScript check
         run: bun run lint
 
-      - name: Verify isolated Neon public API
+      - name: Verify isolated Neon setup branch
         run: bun infra/neon/smoke-test.mjs
         env:
           ISOKO_TEST_AUTH_URL: https://ep-divine-salad-ba2n73kh.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth
           ISOKO_TEST_DATA_API_URL: https://ep-divine-salad-ba2n73kh.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
           ISOKO_TEST_FUNCTION_URL: https://br-raspy-resonance-baqfwhuh-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
+          ISOKO_EXPECTED_NEON_BRANCH: isoko-setup
+
+      - name: Verify live Neon production branch
+        run: bun infra/neon/smoke-test.mjs
+        env:
+          ISOKO_TEST_AUTH_URL: https://ep-damp-poetry-ba0bdwcn.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth
+          ISOKO_TEST_DATA_API_URL: https://ep-damp-poetry-ba0bdwcn.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
+          ISOKO_TEST_FUNCTION_URL: https://br-blue-bread-ba2wywua-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
+          ISOKO_EXPECTED_NEON_BRANCH: isoko-production
 
       - name: Production build
         run: bun run build
@@ -48,7 +57,7 @@ jobs:
           cd "$RUNNER_TEMP/isoko-neon-function"
           zip -q -9 "$RUNNER_TEMP/isoko-neon-function.zip" index.mjs
 
-      - name: Publish setup-only Function bundle artifact
+      - name: Publish Production Function bundle artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: isoko-neon-function-bundle
