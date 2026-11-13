@@ -44,6 +44,13 @@ This one-time GitHub App authorization must be completed by the account owner. C
 - App secrets (session-signing key, KYC encryption key, etc.) must be generated and stored directly in the Neon Function environment through an approved secure setup flow.
 - No production secrets belong in repository files, logs, or client-side `VITE_*` variables.
 - The frontend may contain only public API base URLs and other explicitly public values.
+- Every Pages build must set all four public environment values for the matching Neon branch:
+  - `VITE_NEON_AUTH_URL`
+  - `VITE_NEON_DATA_API_URL`
+  - `VITE_NEON_FUNCTION_URL`
+  - `VITE_NEON_PUBLIC_STORAGE_URL` (include the branch endpoint and `/isoko-public-assets/` bucket path).
+- Feature/preview builds may use only the isolated `isoko-setup` branch values. Production builds must use a separately reviewed, protected production Neon branch after its schema, Auth, Function, Object Storage, backup, and security gates are ready.
+- `src/lib/neon.ts` intentionally falls back to setup URLs only in Vite development. A production bundle with missing environment values fails closed instead of silently connecting to test data. Never copy setup-branch endpoints into production Pages settings.
 
 ## Backups
 
