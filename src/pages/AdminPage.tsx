@@ -33,8 +33,8 @@ import {
   type AdminOverviewResponse,
 } from '../lib/api';
 import { formatRwfCurrency } from '../lib/whatsapp';
-import { loadAuthSession } from '../lib/storage';
 import type { PromoCampaign } from '../types/marketplace';
+import { processProductImage } from '../lib/image';
 import { processProductImage } from '../lib/image';
 
 interface AdminKycReview {
