@@ -33,7 +33,7 @@ These resources are separate from the existing AHABONA Neon project:
 | Public assets bucket | `isoko-public-assets` (`public_read`) |
 | Private KYC bucket | `isoko-private-kyc` (`private`) |
 
-Both buckets have been created on the ISOKO default branch and its setup branch. The setup branch is ready. Both databases are still empty: no schema, seller records, product data, or images have been migrated.
+Both buckets have been created on the ISOKO default branch and its setup branch. On the isolated `isoko-setup` branch, the first PostgreSQL migration is applied and read back: 22 tables are present. Static reference data is also seeded and verified: 35 categories (34 active) plus 30 districts and 35 Kigali sectors, matching the current source file exactly. No seller profiles, passwords, real user records, product listings, or KYC objects have been imported. The default `main` branch remains empty and is reserved for a reviewed release.
 
 **AHABONA is not part of this project.** Its existing Neon project `ahabona-platform` was only identified while checking the account and was not modified, queried for application data, or used by ISOKO. The AWS Lightsail AHABONA service is also out of scope and must never be changed by this project.
 
@@ -84,13 +84,16 @@ Completed:
 - Neon Free ISOKO project created and read back successfully.
 - Separate `main` and `isoko-setup` branches created and read back.
 - Public product/shop image bucket and private KYC bucket created on both branches.
+- Initial schema applied and verified on `isoko-setup` (22 tables); no schema has been applied to default `main`.
+- 35 catalog categories, 30 districts and 35 current Kigali sectors seeded and verified on `isoko-setup`.
+- One Node.js 24 Neon Function smoke-test version deployed to `isoko-setup`; it deliberately returns health metadata only and does not query the database or read/write storage. Function invocation from an external client has not yet been independently verified.
 - This hosting decision recorded in GitHub on a feature branch.
 
 Not yet completed:
 - Cloudflare account/GitHub Pages integration is not connected.
 - No Cloudflare Pages site or public URL exists yet.
-- Neon schema is not deployed.
-- No Neon Function has been deployed.
+- The complete marketplace API is not yet migrated to Neon Functions; only the isolated health smoke-test function is deployed.
+- The smoke-test endpoint response has not yet been independently checked by an HTTP client.
 - App code still uses Express + local JSON/files and must be migrated.
 - Authentication, demo seed removal, KYC protections, rate limiting, and backups must pass the production security gate.
 - No real seller data or existing database data has been moved.
