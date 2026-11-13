@@ -101,7 +101,8 @@ export const AdminPage: React.FC = () => {
   const [campSubtitle, setCampSubtitle] = useState('');
   const [campCta, setCampCta] = useState('Reba ibicuruzwa');
   const [campTarget, setCampTarget] = useState('/c/inkweto');
-  const [campImage, setCampImage] = useState('');\n  const [campImageBusy, setCampImageBusy] = useState(false);
+  const [campImage, setCampImage] = useState('');
+  const [campImageBusy, setCampImageBusy] = useState(false);
   const [campShopId, setCampShopId] = useState('');
 
   const activeTab: AdminTab = pathname.startsWith('/admin/abacuruzi')
