@@ -1,65 +1,79 @@
-# ISOKO Production Security Gate
+# ISOKO Production Security & Operations Gate
 
-ISOKO must not accept real seller registrations, national identity details, or product uploads on the public site until every required control below has been implemented and verified.
+Last checked: 2026-11-13
 
-## Findings in the current GitHub `main`
+## Public Production service
 
-- `src/server/store.ts` persists the entire database in `data/db.json` using local filesystem writes.
-- `server.ts` stores uploaded files in the local `uploads/` directory.
-- `src/server/seedData.ts` defines a custom 32-bit FNV-style password digest. This is not a password-storage algorithm suitable for production.
-- The seed file contains deterministic demo admin/seller identities and passwords. These must never be activated in production.
-- Seller registration collects a national ID number plus front/back ID images and a selfie. These are highly sensitive and must not be exposed in API responses, public image paths, logs, analytics, or frontend bundles.
-- The old Supabase RLS migration refers to `auth.uid()`. It must not be copied blindly to Neon because the app's identity/session model is not Supabase Auth.
-- The current browser stores an application bearer token. This session design needs an expiry, revocation, secure random token material, and safe handling; it must not rely on deterministic tokens generated from a weak password digest.
+- Public website: https://isoko-marketplace-9i69.onrender.com
+- Hosting: Render Static Site, global CDN, public HTTPS URL.
+- Git repository: https://github.com/eddyizere24-collab/Isoko-
+- Production branch: `main`.
+- Production deployment config: `render.production.yaml`.
+- Database: dedicated Neon PostgreSQL project `isoko-marketplace`, production branch `isoko-production`.
+- Public Auth, Data API, Function and public Object Storage URLs are set in Render as build-time variables. The Production build has no fallback to the setup branch.
+- Render static hosting does not spin down due to inactivity. Neon Free compute may suspend after inactivity, but the database branch/data remain stored and the compute wakes when queried. Free-tier quotas and provider terms still apply.
+- No paid hosting plan, card, domain purchase, prepaid AI credits or billing changes were made.
 
-## Mandatory implementation gates
+## Verified on 2026-11-13
 
-### 1. Durable application data
-- Replace JSON-file persistence with PostgreSQL transactions.
-- Use migrations checked into GitHub and apply them to the isolated Neon `isoko-setup` branch first.
-- Keep foreign keys, uniqueness, constraints, indexes, and transaction boundaries.
-- Seed only public catalog reference data. Never seed a working admin or seller password.
-- Do not import demo people as real users.
+- PR #2 merged into `main`: `d67942c56be7fd487a9f4638e4529e0799ddbaa3`.
+- Production hosting config commit: `85684c83273009f0f857dce96578ce22f2da678f`.
+- Live production database/API smoke-test commit: `a4dffb4d83aaf0f961c59d8aca1c196328af8966`.
+- GitHub Actions run 43502552038 succeeded, including TypeScript, the setup and Production Neon API smoke tests, Vite production build and Node.js 24 Function bundle: https://github.com/eddyizere24-collab/Isoko-/actions/runs/43502552038
+- Render deployment `dep-dbrn7slgvrgc73bfmeb0` reported `live` after the Production CI commit.
+- Production Neon Function `isokoapi` returned `healthy` for branch `isoko-production`, with Data API and Object Storage reported available.
+- Production Neon Auth trusted origin is restricted to the public Production hostname. The setup/preview hostname was removed from Production Auth.
+- Production Data API CORS is restricted to the Production hostname.
+- Production Function CORS has the exact Production hostname in `ALLOWED_ORIGINS`.
+- Production Object Storage has an empty private KYC bucket and an empty public assets bucket at launch.
+- The Production database has zero admin, seller, shop, product, report and KYC records. No test identities or KYC documents were copied as real users.
+- The Production database contains marketplace tables, functions, policies, public categories and Rwanda area reference data copied from the reviewed setup branch.
 
-### 2. Secure login and authorization
-- Replace the 32-bit digest with Argon2id or scrypt using per-password salts and safe parameters.
-- Keep Rwanda phone-number login/registration behavior unless a deliberate UX change is approved.
-- Use cryptographically random, revocable server-side sessions or secure signed sessions with explicit expiry.
-- Enforce seller ownership and admin/moderator roles on every private route.
-- Add rate limiting and safe login error behavior. Do not trust client-supplied role/user IDs.
+## Marketplace features present in the Production build
 
-### 3. KYC and personal information
-- Keep KYC object files only in `isoko-private-kyc`.
-- Use short-lived signed upload/download URLs or server-proxied uploads.
-- Encrypt national ID values before database storage or minimize retention so full ID values are not stored once verification no longer needs them.
-- Never expose KYC image URLs publicly.
-- Do not put national IDs, identity images, passwords, bearer tokens, or connection strings in GitHub, analytics, logs, or error messages.
-- Enforce admin-only access and audit access to KYC records.
+- Public buyer storefront, search/category routes, product/shop route handlers, cart and WhatsApp/phone contact flows.
+- Seller pages for store management, product management, image upload, shop settings and analytics.
+- Admin moderation, seller/KYC review, reports, campaigns and the Admin Intelligence workspace at `/admin/ubwenge`.
+- The Admin Intelligence workspace currently uses privacy-limited SQL analytics and deterministic answers. It is not presented as a generative AI model; AI Gateway requires prepaid credits and none were purchased.
+- Admin report replies can be saved and a prefilled WhatsApp message can be opened. Messages are not auto-sent.
 
-### 4. Product and shop media
-- Store product/shop images in `isoko-public-assets` with immutable, versioned object keys.
-- Validate content type, file signature, dimensions, and size server-side; recompress/rescale uploads for low-end Android users.
-- Store object keys in PostgreSQL, not file bytes or temporary filesystem paths.
-- Confirm delete/update flows do not remove an image still referenced by a product or shop.
+## Production launch safety gates
 
-### 5. Public API protection
-- Authenticate every Neon Function route according to its caller type.
-- Verify seller/admin ownership on writes.
-- Restrict CORS to the Cloudflare Pages production and approved preview origins.
-- Add input validation, upload quotas, rate limits, request-size limits, and safe error responses.
-- Keep secrets in platform Function environment variables, never in the client build or GitHub source.
+### Public buyer storefront
+- Public storefront is live and may be visited.
+- The production catalogue begins empty. It must not show invented products, shops or sellers.
 
-### 6. Backup and restore
-- Automated, encrypted backups must go to an independent provider/destination.
-- Backups must cover PostgreSQL plus private and public Object Storage metadata/objects.
-- Provide documented recovery instructions and complete a restore test before seller onboarding.
-- Test the restore without writing into the live production branch.
+### Seller registration / KYC
+- `VITE_ISOKO_SELLER_REGISTRATION_ENABLED=false` is deliberately set in `render.production.yaml`.
+- The seller registration page is held closed on Production while independent encrypted backups and phone-number ownership verification are incomplete.
+- The normal seller application collects national ID details, ID front/back images, a selfie, and store photo. These documents must not be accepted before the backup and recovery controls below are tested.
+- Neon Auth currently uses phone-derived `@login.isoko.invalid` email identifiers and password sign-in. Actual SMS OTP / phone ownership verification is not configured.
+- Reopen seller registration only after both controls below are live and tested, and after production file upload + private signed retrieval are end-to-end tested.
 
-### 7. Release acceptance
-- CI passes TypeScript, production build, migration checks, and automated security tests.
-- Public buyer flows, seller registration/login, product upload, shop changes, reports, admin review, KYC access controls, and analytics are tested against the isolated setup branch.
-- No demo credentials or personal identity data are present in the public build.
-- A tested rollback plan exists.
-- The owner is given the exact commit SHA, PR, CI run, and preview URL before production release.
+### Independent backup and restore
+- Neon provider restore capability is not an independent offsite backup.
+- An automated encrypted backup destination outside Neon has not been configured.
+- A restore drill has not been completed for PostgreSQL plus public/private Object Storage objects.
+- Do not claim this gate complete. Keep KYC registration disabled until an independent backup and restore process is operational.
 
-A checklist item is complete only when a test or read-back proves it.
+### Admin bootstrap
+- Production has no Admin account yet.
+- A one-time bootstrap code must be issued privately to the owner and redeemed at `/admin/setup`.
+- The owner must enter their own legal name, phone and private password. Never store or request that password in chat.
+- The one-time code must be invalidated after the first successful claim.
+
+### Remaining end-to-end checks
+- Browser-based seller registration after backup/OTP gates.
+- Image upload, asset reads and signed KYC retrieval.
+- Full login/session persistence, seller writes, stock changes and moderation using real owner-created test accounts.
+- Admin report resolution and analytics with actual records.
+- Restore recovery from the independent backup.
+
+## Operational rules
+
+- Keep Production configured to `main` and the dedicated `isoko-production` Neon branch.
+- Keep Preview and Setup separate; never switch Production environment variables to their URLs.
+- Do not place secrets, access tokens, raw bootstrap codes, passwords, national IDs or private images in GitHub source, public bundles or logs.
+- Do not add billing, paid plans or prepaid AI credits without the owner's separate budget decision.
+- Do not modify AHABONA or its infrastructure as part of ISOKO work.
+- A release gate is complete only when an actual test/read-back proves it.
