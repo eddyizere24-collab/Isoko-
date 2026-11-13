@@ -38,6 +38,18 @@ function fmt(value: number): string {
   return new Intl.NumberFormat('rw-RW').format(Number.isFinite(value) ? value : 0);
 }
 
+function reportTypeLabel(type: string): string {
+  const labels: Record<string, string> = {
+    counterfeit: 'Ibicuruzwa byiganano',
+    fake_price: 'Igiciro kitari cyo',
+    fake_photo: 'Ifoto itandukanye n’igicuruzwa',
+    scam: 'Uburiganya',
+    prohibited: 'Ibicuruzwa bibujijwe',
+    other: 'Ikindi kibazo',
+  };
+  return labels[type] ?? 'Ikindi: ' + type;
+}
+
 function answerQuestion(question: string, data: AdminControlCenterSnapshot): Answer {
   const q = normalizeQuestion(question);
   const noRecords = data.coverage.sellers === 0 && data.coverage.shops === 0 && data.coverage.products === 0;
@@ -70,7 +82,7 @@ function answerQuestion(question: string, data: AdminControlCenterSnapshot): Ans
         'Biri gukorwaho: ' + fmt(data.reports.in_progress),
         'Byakemuwe: ' + fmt(data.reports.resolved),
         'Ibibazo bikunze gutangwa: ' + (data.reportsByType.length
-          ? data.reportsByType.slice(0, 3).map((item) => item.type + ' (' + fmt(item.count) + ')').join(', ')
+          ? data.reportsByType.slice(0, 3).map((item) => reportTypeLabel(item.type) + ' (' + fmt(item.count) + ')').join(', ')
           : 'Nta cyiciro cy’ikirego kirabikwa.'),
         data.riskShops.length ? 'Iduka rifite ibirego byinshi: ' + data.riskShops[0].shopName + ' (' + fmt(data.riskShops[0].totalReports) + ' byose, ' + fmt(data.riskShops[0].openReports) + ' biracyafunguye)' : 'Nta duka rifite ibirego byanditswe.',
       ],
@@ -450,7 +462,7 @@ export const AdminAssistantPanel: React.FC<Props> = ({ onNavigate }) => {
           <div className="mt-3 flex flex-wrap gap-2">
             {snapshot.reportsByType.map((item) => (
               <div key={item.type} className="rounded-xl border border-slate-100 bg-[#F8FAF9] px-3 py-2">
-                <p className="text-xs text-slate-600">{item.type}</p>
+                <p className="text-xs text-slate-600">{reportTypeLabel(item.type)}</p>
                 <p className="text-lg font-bold tabular-nums text-[#1B1F23]">{fmt(item.count)}</p>
               </div>
             ))}
