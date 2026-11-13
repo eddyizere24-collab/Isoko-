@@ -170,23 +170,28 @@ BEGIN
     SELECT COALESCE(
       jsonb_agg(
         jsonb_build_object(
-          'shopId', s.id,
-          'shopName', s.name,
-          'sellerName', owner.full_name,
-          'district', s.district_name,
-          'shopStatus', s.status,
-          'openReports', sr.open_reports,
-          'totalReports', sr.total_reports
+          'shopId', q.id,
+          'shopName', q.name,
+          'sellerName', q.full_name,
+          'district', q.district_name,
+          'shopStatus', q.status,
+          'openReports', q.open_reports,
+          'totalReports', q.total_reports
         )
-        ORDER BY sr.open_reports DESC, sr.total_reports DESC, s.name
+        ORDER BY q.open_reports DESC, q.total_reports DESC, q.name
       ),
       '[]'::JSONB
     ) AS rows
-    FROM shop_reports sr
-    JOIN public.shops s ON s.id = sr.shop_id
-    JOIN public.profiles owner ON owner.id = s.owner_id
-    WHERE sr.total_reports > 0
-    LIMIT 10
+    FROM (
+      SELECT s.id, s.name, owner.full_name, s.district_name, s.status,
+             sr.open_reports, sr.total_reports
+      FROM shop_reports sr
+      JOIN public.shops s ON s.id = sr.shop_id
+      JOIN public.profiles owner ON owner.id = s.owner_id
+      WHERE sr.total_reports > 0
+      ORDER BY sr.open_reports DESC, sr.total_reports DESC, s.name
+      LIMIT 10
+    ) q
   ),
   top_products AS (
     SELECT COALESCE(
