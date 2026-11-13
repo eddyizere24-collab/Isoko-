@@ -102,3 +102,18 @@ Not yet completed:
 ## Release policy
 
 All code work remains on feature branches and reviewed pull requests. Do not merge to `main`, connect a custom domain, import production data, or make a public production release without a release review. No tool may select a paid plan or enable billing without the owner's explicit approval.
+
+## Read-only API code progress (not yet deployed)
+
+The GitHub branch now contains a read-only Neon Function implementation at
+`infra/neon/functions/isokoapi/index.mjs`. It includes a database-backed
+health probe, `GET /api/bootstrap`, `GET /api/products/:id`, and
+`GET /api/shops/:slug`. The function bundle is built successfully by GitHub
+Actions and retained as a short-lived CI artifact.
+
+The currently active Neon Function deployment is still version 1, the original
+health-only smoke test. Version 2 (the read-only database API) has **not** been
+deployed. No external HTTP response from the new API has been verified. The
+Neon schema and reference-data reads have been verified through the Neon
+connector directly on `isoko-setup`. Do not tell users that product/catalog
+API endpoints are live until deployment and HTTP smoke tests pass.
