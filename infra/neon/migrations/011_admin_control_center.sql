@@ -56,6 +56,22 @@ BEGIN
       COUNT(*) FILTER (WHERE status = 'resolved')::INTEGER AS resolved
     FROM public.reports
   ),
+  report_types AS (
+    SELECT COALESCE(
+      jsonb_agg(
+        jsonb_build_object('type', report_type, 'count', report_count)
+        ORDER BY report_count DESC, report_type
+      ),
+      '[]'::JSONB
+    ) AS rows
+    FROM (
+      SELECT type AS report_type, COUNT(*)::INTEGER AS report_count
+      FROM public.reports
+      GROUP BY type
+      ORDER BY COUNT(*) DESC, type
+      LIMIT 10
+    ) q
+  ),
   shop_stats AS (
     SELECT
       shop_id,
@@ -205,30 +221,34 @@ BEGIN
     SELECT COALESCE(
       jsonb_agg(
         jsonb_build_object(
-          'productId', p.id,
-          'productName', p.name,
-          'shopName', s.name,
-          'district', s.district_name,
-          'status', p.status,
-          'views', COALESCE(ps.views, 0),
-          'waClicks', COALESCE(ps.wa_clicks, 0),
-          'cartAdds', COALESCE(ps.cart_adds, 0)
+          'productId', q.id,
+          'productName', q.name,
+          'shopName', q.shop_name,
+          'district', q.district_name,
+          'status', q.status,
+          'views', q.views,
+          'waClicks', q.wa_clicks,
+          'cartAdds', q.cart_adds
         )
-        ORDER BY COALESCE(ps.wa_clicks, 0) DESC,
-                 COALESCE(ps.views, 0) DESC,
-                 p.created_at DESC
+        ORDER BY q.wa_clicks DESC, q.views DESC, q.name
       ),
       '[]'::JSONB
     ) AS rows
     FROM (
-      SELECT p0.*
-      FROM public.products p0
-      WHERE p0.status = 'active'
-      ORDER BY p0.created_at DESC
-      LIMIT 1000
-    ) p
-    JOIN public.shops s ON s.id = p.shop_id
-    LEFT JOIN product_stats ps ON ps.product_id = p.id
+      SELECT
+        p.id, p.name, s.name AS shop_name, s.district_name, p.status,
+        COALESCE(ps.views, 0) AS views,
+        COALESCE(ps.wa_clicks, 0) AS wa_clicks,
+        COALESCE(ps.cart_adds, 0) AS cart_adds
+      FROM public.products p
+      JOIN public.shops s ON s.id = p.shop_id
+      LEFT JOIN product_stats ps ON ps.product_id = p.id
+      WHERE p.status = 'active' AND s.status = 'approved'
+      ORDER BY COALESCE(ps.wa_clicks, 0) DESC,
+               COALESCE(ps.views, 0) DESC,
+               p.name
+      LIMIT 10
+    ) q
   ),
   campaign_summary AS (
     SELECT
@@ -254,6 +274,7 @@ BEGIN
     'shops', (SELECT to_jsonb(shop_summary) FROM shop_summary),
     'products', (SELECT to_jsonb(product_summary) FROM product_summary),
     'reports', (SELECT to_jsonb(report_summary) FROM report_summary),
+    'reportsByType', (SELECT rows FROM report_types),
     'traffic', jsonb_build_object(
       'views', COALESCE((SELECT SUM(views) FROM daily_stats), 0),
       'waClicks', COALESCE((SELECT SUM(wa_clicks) FROM daily_stats), 0),
