@@ -124,27 +124,17 @@ export const SellerAddProductPage: React.FC = () => {
       for (const file of Array.from(files)) {
         if (nextPhotos.length >= 5) break;
         const compressed = await processProductImage(file);
-        try {
-          const [fullUp, thumbUp] = await Promise.all([
-            uploadImagePair(compressed.fullDataUrl, 'full'),
-            uploadImagePair(compressed.thumbDataUrl, 'thumb'),
-          ]);
-          nextPhotos.push({
-            path_full: fullUp.url,
-            path_thumb: thumbUp.url,
-            width: compressed.width,
-            height: compressed.height,
-            bytes: fullUp.bytes,
-          });
-        } catch {
-          nextPhotos.push({
-            path_full: compressed.fullDataUrl,
-            path_thumb: compressed.thumbDataUrl,
-            width: compressed.width,
-            height: compressed.height,
-            bytes: compressed.bytes,
-          });
-        }
+        const [fullUp, thumbUp] = await Promise.all([
+          uploadImagePair(compressed.fullDataUrl, 'full'),
+          uploadImagePair(compressed.thumbDataUrl, 'thumb'),
+        ]);
+        nextPhotos.push({
+          path_full: fullUp.url,
+          path_thumb: thumbUp.url,
+          width: compressed.width,
+          height: compressed.height,
+          bytes: fullUp.bytes,
+        });
       }
       setDraft((d) => ({ ...d, photos: nextPhotos }));
     } catch (err) {

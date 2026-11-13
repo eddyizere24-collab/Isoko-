@@ -1,4 +1,5 @@
 import { getSessionId } from './storage';
+import { trackMarketplaceEvent } from './api';
 
 export type TrackEventType = 'view' | 'wa_click' | 'call_click' | 'cart_add' | 'share';
 
@@ -8,19 +9,8 @@ export function trackEvent(
   shopId?: string | null
 ): void {
   try {
-    const sessionId = getSessionId();
-    fetch('/api/events', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type,
-        productId: productId ?? null,
-        shopId: shopId ?? null,
-        sessionId,
-      }),
-      keepalive: true,
-    }).catch(() => undefined);
+    void trackMarketplaceEvent(type, productId ?? null, shopId ?? null, getSessionId());
   } catch {
-    // Ignore tracking network errors
+    // Analytics never interrupts shopping.
   }
 }

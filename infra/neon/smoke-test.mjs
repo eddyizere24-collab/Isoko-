@@ -1,0 +1,60 @@
+import { createClient } from "@neondatabase/neon-js";
+
+const authUrl = process.env.ISOKO_TEST_AUTH_URL;
+const dataApiUrl = process.env.ISOKO_TEST_DATA_API_URL;
+const functionUrl = process.env.ISOKO_TEST_FUNCTION_URL;
+
+for (const [name, value] of Object.entries({ authUrl, dataApiUrl, functionUrl })) {
+  if (!value) throw new Error(`Missing ${name}`);
+}
+
+const neon = createClient({
+  auth: { url: authUrl, allowAnonymous: true },
+  dataApi: { url: dataApiUrl },
+});
+
+const healthResponse = await fetch(new URL("health", functionUrl), {
+  signal: AbortSignal.timeout(20_000),
+});
+if (!healthResponse.ok) {
+  throw new Error(`Neon Function health returned HTTP ${healthResponse.status}`);
+}
+const health = await healthResponse.json();
+if (health.status !== "healthy" || health.branch !== "isoko-setup") {
+  throw new Error(`Unexpected Neon Function health payload: ${JSON.stringify(health)}`);
+}
+
+const { data, error } = await neon
+  .from("v_public_bootstrap")
+  .select("payload")
+  .limit(1)
+  .single();
+
+if (error) {
+  throw new Error(`Anonymous Data API bootstrap failed: ${error.message}`);
+}
+
+const payload = data?.payload;
+if (!payload) throw new Error("Bootstrap view returned no payload");
+if (payload.categories?.length !== 34) {
+  throw new Error(`Expected 34 visible categories, got ${payload.categories?.length ?? 0}`);
+}
+if (payload.areas?.length !== 65) {
+  throw new Error(`Expected 65 areas, got ${payload.areas?.length ?? 0}`);
+}
+if (payload.shops?.length !== 0 || payload.products?.length !== 0) {
+  throw new Error("Test database unexpectedly contains seller or product records");
+}
+if (payload.settings?.ADS_ENABLED !== false) {
+  throw new Error("Ads must remain disabled until explicitly configured");
+}
+
+console.log(JSON.stringify({
+  status: "success",
+  branch: health.branch,
+  categories: payload.categories.length,
+  areas: payload.areas.length,
+  shops: payload.shops.length,
+  products: payload.products.length,
+  adsEnabled: payload.settings.ADS_ENABLED,
+}));

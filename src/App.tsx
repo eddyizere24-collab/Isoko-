@@ -5,6 +5,7 @@ import { LocationSheet } from './components/LocationSheet';
 import { OfflineAndPwaBar } from './components/OfflineAndPwaBar';
 import { MarketplaceProvider, useMarketplace } from './context/MarketplaceContext';
 import { AdminPage } from './pages/AdminPage';
+import { AdminSetupPage } from './pages/AdminSetupPage';
 import { CartPage } from './pages/CartPage';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
@@ -74,6 +75,9 @@ const AppRouter: React.FC = () => {
     if (pathname === '/umucuruzi/imibare') {
       return <SellerAnalyticsPage />;
     }
+    if (pathname === '/admin/setup') {
+      return <AdminSetupPage />;
+    }
     if (pathname === '/admin' || pathname.startsWith('/admin/')) {
       return <AdminPage />;
     }
@@ -83,6 +87,11 @@ const AppRouter: React.FC = () => {
   return (
     <div className="flex min-h-screen flex-col bg-white text-[#1B1F23]">
       <OfflineAndPwaBar />
+      {import.meta.env.VITE_ISOKO_PREVIEW === 'true' && (
+        <div role="status" className="border-b border-amber-300 bg-amber-50 px-4 py-2 text-center text-xs leading-5 text-amber-950">
+          <strong>ISOKO PREVIEW:</strong> uru ni urubuga rw’igerageza. Ntushyiremo National ID, amafoto ya KYC, cyangwa andi makuru yawe bwite. Amaduka azafungurwa ku rubuga rwa Production nyuma y’isuzuma rya nyuma.
+        </div>
+      )}
       <Header />
       <div className="flex-1">{renderRoute()}</div>
       <Footer />

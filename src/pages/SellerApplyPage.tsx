@@ -36,6 +36,20 @@ export const SellerApplyPage: React.FC = () => {
 
   const sectors = useMemo(() => getSectorsForDistrict(districtId), [districtId]);
 
+  if (import.meta.env.VITE_ISOKO_PREVIEW === 'true') {
+    return (
+      <main className="mx-auto max-w-2xl px-4 py-12">
+        <section className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
+          <h1 className="text-xl font-bold text-[#1B1F23]">Gufungura iduka kuri ISOKO</h1>
+          <p className="mt-2 text-sm leading-6 text-slate-700">
+            Urimo kureba urubuga rw’igerageza. Kwiyandikisha kw’abacuruzi n’amafoto y’ibyangombwa bizafungurwa kuri Production imaze guhabwa umutekano wa nyuma. Ntushyire hano nimero y’indangamuntu cyangwa amafoto yawe bwite.
+          </p>
+          <button type="button" onClick={() => navigate('/')} className="mt-4 min-h-11 rounded-xl bg-[#0B6E4F] px-4 text-sm font-semibold text-white">Subira ku isoko</button>
+        </section>
+      </main>
+    );
+  }
+
   const handleFileChange = async (field: DocField, file: File | undefined) => {
     if (!file) return;
     setError(null);
@@ -60,12 +74,16 @@ export const SellerApplyPage: React.FC = () => {
       setError('Nimero ya WhatsApp igomba kuba iya MTN cyangwa Airtel mu Rwanda (07XXXXXXXX).');
       return;
     }
-    if (password.length < 6) {
-      setError('Ijambo ry’ibanga rigomba kugira nibura inyuguti/imibare 6.');
+    if (password.length < 8) {
+      setError('Ijambo ry’ibanga rigomba kugira nibura inyuguti/imibare 8.');
       return;
     }
     if (nationalIdNumber.replace(/\D/g, '').length < 16) {
       setError('Nimero y’indangamuntu yuzuye igomba kugira imibare 16.');
+      return;
+    }
+    if (!docs.idFront || !docs.idBack || !docs.selfie || !docs.shopPhoto) {
+      setError('Shyiraho amafoto ane asabwa: imbere y’indangamuntu, inyuma yayo, selfie uyifashe, n’ifoto y’iduka.');
       return;
     }
     if (!termsAccepted) {
@@ -244,13 +262,13 @@ export const SellerApplyPage: React.FC = () => {
 
           <div>
             <label htmlFor="reg-pass" className="block text-sm font-semibold text-[#1B1F23]">
-              Ijambo ry’ibanga (nibura 6) *
+              Ijambo ry’ibanga (nibura 8) *
             </label>
             <input
               id="reg-pass"
               type="password"
               required
-              minLength={6}
+              minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
@@ -404,7 +422,7 @@ export const SellerApplyPage: React.FC = () => {
                 { key: 'idFront', label: 'Indangamuntu (imbere)' },
                 { key: 'idBack', label: 'Indangamuntu (inyuma)' },
                 { key: 'selfie', label: 'Selfie ufite indangamuntu' },
-                { key: 'shopPhoto', label: 'Ifoto y’iduka / ibicuruzwa' },
+                { key: 'shopPhoto', label: 'Ifoto y’iduka / ibicuruzwa (ibikwa mu ibanga)' },
               ] as Array<{ key: DocField; label: string }>
             ).map((item) => (
               <label

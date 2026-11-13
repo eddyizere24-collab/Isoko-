@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { fetchBootstrap, fetchMe, type BootstrapResponse } from '../lib/api';
+import { neon } from '../lib/neon';
 import {
   addItemToCart,
   incrementVisitCount,
@@ -217,6 +218,7 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
   );
 
   const logout = useCallback(() => {
+    void neon.auth.signOut();
     saveAuthSession(null);
     setAuthSession(null);
     setAuthProfile(null);

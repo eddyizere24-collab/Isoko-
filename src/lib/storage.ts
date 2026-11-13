@@ -206,7 +206,10 @@ export interface StoredAuthSession {
 
 export function loadAuthSession(): StoredAuthSession | null {
   const sess = safeRead<StoredAuthSession | null>(KEYS.AUTH, null);
-  if (!sess) return null;
+  if (!sess || sess.token !== 'managed-neon-auth') {
+    saveAuthSession(null);
+    return null;
+  }
   if (Date.now() > sess.expiresAt) {
     saveAuthSession(null);
     return null;
