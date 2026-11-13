@@ -195,7 +195,7 @@ async function getOwnProfile(token) {
 async function getKycForSeller(sellerId, token) {
   const dataApiUrl = process.env.NEON_DATA_API_URL;
   const query = new URLSearchParams({
-    select: "seller_id,id_front_key,id_back_key,selfie_key,shop_photo_key,submitted_at",
+    select: "seller_id,full_name_on_id,business_type,id_front_key,id_back_key,selfie_key,shop_photo_key,submitted_at",
     seller_id: "eq." + sellerId,
     limit: "1",
   });
@@ -294,6 +294,8 @@ export default {
         return json({
           kyc: {
             seller_id: kyc.seller_id,
+            full_name_on_id: kyc.full_name_on_id,
+            business_type: kyc.business_type,
             idFrontUrl: urls.idFrontUrl ?? null,
             idBackUrl: urls.idBackUrl ?? null,
             selfieUrl: urls.selfieUrl ?? null,
