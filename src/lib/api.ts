@@ -477,6 +477,32 @@ export async function updateSellerShop(payload:Record<string,unknown>):Promise<{
   return {shop:mapShop(row)};
 }
 
+export interface AdminControlCenterSnapshot {
+  generatedAt: string;
+  periodDays: number;
+  sellers: { total: number; pending: number; approved: number; needs_changes: number; rejected: number; suspended: number };
+  shops: { total: number; pending: number; approved: number; needs_changes: number; rejected: number; suspended: number };
+  products: { total: number; active: number; draft: number; sold_out: number; hidden: number; expired: number };
+  reports: { total: number; new: number; in_progress: number; resolved: number };
+  traffic: { views: number; waClicks: number; callClicks: number; cartAdds: number; shares: number };
+  daily: Array<{ day: string; views: number; waClicks: number; cartAdds: number }>;
+  topShops: Array<{ shopId: string; shopName: string; sellerName: string; district: string; status: string; views: number; waClicks: number; callClicks: number; cartAdds: number; shares: number; openReports: number; totalReports: number }>;
+  riskShops: Array<{ shopId: string; shopName: string; sellerName: string; district: string; shopStatus: string; openReports: number; totalReports: number }>;
+  topProducts: Array<{ productId: string; productName: string; shopName: string; district: string; status: string; views: number; waClicks: number; cartAdds: number }>;
+  activityByAction: Array<{ action: string; count: number }>;
+  campaigns: { total: number; active: number; impressions: number; clicks: number };
+  coverage: { sellers: number; shops: number; products: number; reports: number; shop_stat_days: number; audit_entries: number };
+}
+
+export async function fetchAdminControlCenter(): Promise<AdminControlCenterSnapshot> {
+  const current = await currentAccount();
+  if (current.profile.role !== 'admin' || current.profile.status !== 'approved') {
+    throw new Error('Admin mukuru gusa ni we ukoresha Ishakiro ry’Ubuyobozi.');
+  }
+  const result = await neon.rpc('admin_control_center_snapshot_v1', {});
+  return dataOf<AdminControlCenterSnapshot>(result, 'Ntibishobotse gusoma imibare y’ubuyobozi.');
+}
+
 export interface AdminOverviewResponse {
   kpis:{pendingSellers:number;newReports:number;newProducts24h:number;totalActiveProducts:number;totalShops:number;views:number;wa_clicks:number;call_clicks:number;cart_adds:number;};
   sellers:Array<Profile&{shop:Shop|null;hasKyc:boolean;kycSubmittedAt:string|null}>;
