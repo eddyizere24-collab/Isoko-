@@ -198,6 +198,54 @@ export const AdminAssistantPanel: React.FC<Props> = ({ onNavigate }) => {
     [snapshot]
   );
 
+  const recommendations = useMemo(() => {
+    if (!snapshot) return [];
+    const items: Array<{ title: string; detail: string; path: string }> = [];
+    if (snapshot.reports.new > 0) {
+      items.push({
+        title: 'Suzuma ibirego bishya',
+        detail: snapshot.reports.new + ' biracyategereje ko Admin abisuzuma.',
+        path: '/admin/ibirego',
+      });
+    }
+    if (snapshot.riskShops.some((shop) => shop.openReports > 0)) {
+      items.push({
+        title: 'Genzura amaduka afite ibirego bifunguye',
+        detail: 'Reba ibimenyetso n’ibisubizo mbere yo gufata icyemezo ku mucuruzi.',
+        path: '/admin/ibirego',
+      });
+    }
+    if (snapshot.sellers.pending > 0) {
+      items.push({
+        title: 'Suzuma abacuruzi bategereje',
+        detail: snapshot.sellers.pending + ' bakeneye ko KYC isuzumwa.',
+        path: '/admin/abacuruzi',
+      });
+    }
+    if (snapshot.products.active === 0 && snapshot.shops.approved > 0) {
+      items.push({
+        title: 'Reba ibicuruzwa by’amaduka',
+        detail: 'Hari amaduka yemejwe ariko nta bicuruzwa biri ku isoko.',
+        path: '/admin/ibicuruzwa',
+      });
+    }
+    if (snapshot.coverage.shops === 0 || snapshot.coverage.sellers === 0) {
+      items.push({
+        title: 'Tegura kwakira abacuruzi ba mbere',
+        detail: 'Database y’igerageza ntirimo amaduka cyangwa abacuruzi nyakuri.',
+        path: '/admin/abacuruzi',
+      });
+    }
+    if (noLiveActivity) {
+      items.push({
+        title: 'Tegura gukurikirana traffic',
+        detail: 'Nta mibare y’abasura amaduka yanditswe mu minsi 30 ishize.',
+        path: '/admin',
+      });
+    }
+    return items;
+  }, [snapshot, noLiveActivity]);
+
   const ask = (value: string) => {
     setQuestion(value);
     if (snapshot) setAnswer(answerQuestion(value, snapshot));
@@ -295,6 +343,22 @@ export const AdminAssistantPanel: React.FC<Props> = ({ onNavigate }) => {
           </div>
         )}
       </div>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+        <h3 className="text-base font-bold text-[#1B1F23]">Ibyihutirwa n’inama zishingiye ku mibare</h3>
+        {recommendations.length === 0 ? (
+          <p className="mt-3 rounded-xl bg-[#F8FAF9] p-3 text-sm text-slate-600">Nta kibazo cyihariye cyagaragaye mu mibare iriho. Komeza gukurikirana ibishya uko urubuga ruzatangira gukoreshwa.</p>
+        ) : (
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            {recommendations.map((item) => (
+              <button key={item.title} type="button" onClick={() => onNavigate(item.path)} className="rounded-xl border border-slate-200 p-3 text-left hover:border-[#0B6E4F]">
+                <p className="text-sm font-semibold text-[#1B1F23]">{item.title}</p>
+                <p className="mt-1 text-xs leading-5 text-slate-600">{item.detail}</p>
+              </button>
+            ))}
+          </div>
+        )}
+      </section>
 
       <div className="grid gap-5 xl:grid-cols-2">
         <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
