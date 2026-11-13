@@ -21,6 +21,7 @@ const QUICK_QUESTIONS = [
   'Ni ayahe maduka akurura abantu cyane?',
   'Ibicuruzwa bihagaze bite?',
   'Ni ibihe byiciro by’ibibazo bikunze gutangwa?',
+  'Ni abahe bantu batanga ibirego kenshi?',
   'Ni ibihe bicuruzwa bikurura abantu cyane?',
 ];
 
@@ -55,6 +56,23 @@ function answerQuestion(question: string, data: AdminControlCenterSnapshot): Ans
   const noRecords = data.coverage.sellers === 0 && data.coverage.shops === 0 && data.coverage.products === 0;
   const trafficReady = data.coverage.shop_stat_days > 0;
 
+  if (/nabi|mubi|kwitwara|uriganya|uburiganya|bad seller|bad shop|untrusted|shidikanya|risk/.test(q)) {
+    const firstRisk = data.riskShops[0];
+    return {
+      title: 'Amaduka akeneye kwitabwaho',
+      body: firstRisk
+        ? 'Iri rutonde rushingiye ku mubare w’ibirego byafunguwe n’ibyabanje. Fungura ibirego usome ibimenyetso mbere yo gufata icyemezo.'
+        : 'Nta raporo ihari yerekana iduka risaba kugenzurwa. Ntibihagije kuvuga ko amaduka yose yitwara neza; nta makuru ahagije aracyaboneka.',
+      facts: firstRisk
+        ? data.riskShops.slice(0, 5).map((shop, index) =>
+            (index + 1) + '. ' + shop.shopName + ' · ' + shop.district + ' · ibirego ' + fmt(shop.totalReports) + ' · bifunguye ' + fmt(shop.openReports))
+        : ['Nta raporo z’amaduka ziri muri database.'],
+      path: '/admin/ibirego',
+      caution: 'Ishakiro ntirita umuntu umunyamakosa rishingiye ku birego gusa. Admin ni we ugenzura ibimenyetso kandi agafata icyemezo.',
+    };
+  }
+
+
   if (/umucuruzi|abacuruzi|seller|sellers/.test(q)) {
     return {
       title: 'Abacuruzi n’amaduka',
@@ -69,6 +87,20 @@ function answerQuestion(question: string, data: AdminControlCenterSnapshot): Ans
       ],
       path: '/admin/abacuruzi',
       caution: noRecords ? 'Nta mucuruzi nyakuri urandikwa muri iyi database. Iyi mibare ni 0, si uko hari abacuruzi twabuze.' : undefined,
+    };
+  }
+
+  if (/abantu|uwatanze|reporter|complainant|kenshi|byinshi/.test(q) &&
+      /ikibazo|ibibazo|ikirego|ibirego|report|complaint|abantu|uwatanze|reporter|complainant/.test(q)) {
+    return {
+      title: 'Abatanga ibirego kenshi',
+      body: 'Ishakiro rigereranya nimero zatanzwe ku bushake mu birego byagiye bitangwa. Ryerekana imibare ine ya nyuma gusa, kugira ngo ridashyira nimero zuzuye mu bisubizo.',
+      facts: data.frequentReporters.length
+        ? data.frequentReporters.slice(0, 8).map((person, index) =>
+            (index + 1) + '. ' + person.maskedPhone + ' · ibirego ' + fmt(person.totalReports) + ' · biracyafunguye ' + fmt(person.openReports))
+        : ['Nta muntu uratanga ibirego birenze kimwe akoresheje nimero imwe.'],
+      path: '/admin/ibirego',
+      caution: 'Kuba umuntu yaratanze ibirego byinshi ntibivuga ko ibirego bye ari ibinyoma. Reba buri kibazo n’ibimenyetso byacyo.',
     };
   }
 
@@ -91,21 +123,6 @@ function answerQuestion(question: string, data: AdminControlCenterSnapshot): Ans
     };
   }
 
-  if (/nabi|kwitwara|uriganya|uburiganya|bad seller|untrusted|shidikanya|risk/.test(q)) {
-    const firstRisk = data.riskShops[0];
-    return {
-      title: 'Amaduka akeneye kwitabwaho',
-      body: firstRisk
-        ? 'Iri rutonde rushingiye ku mubare w’ibirego byafunguwe n’ibyabanje. Fungura ibirego usome ibimenyetso mbere yo gufata icyemezo.'
-        : 'Nta raporo ihari yerekana iduka risaba kugenzurwa. Ntibihagije kuvuga ko amaduka yose yitwara neza; nta makuru ahagije aracyaboneka.',
-      facts: firstRisk
-        ? data.riskShops.slice(0, 5).map((shop, index) =>
-            (index + 1) + '. ' + shop.shopName + ' · ' + shop.district + ' · ibirego ' + fmt(shop.totalReports) + ' · bifunguye ' + fmt(shop.openReports))
-        : ['Nta raporo z’amaduka ziri muri database.'],
-      path: '/admin/ibirego',
-      caution: 'Ishakiro ntirita umuntu umunyamakosa rishingiye ku birego gusa. Admin ni we ugenzura ibimenyetso kandi agafata icyemezo.',
-    };
-  }
 
   if (/amashusho|traffic|visits|views|imikorere|urubuga|ruri gukora|performance|imibare/.test(q)) {
     return {
@@ -465,6 +482,23 @@ export const AdminAssistantPanel: React.FC<Props> = ({ onNavigate }) => {
                 <p className="text-xs text-slate-600">{reportTypeLabel(item.type)}</p>
                 <p className="text-lg font-bold tabular-nums text-[#1B1F23]">{fmt(item.count)}</p>
               </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+        <h3 className="text-base font-bold text-[#1B1F23]">Abatanga ibirego kenshi</h3>
+        <p className="mt-1 text-xs text-slate-500">Hagaragazwa imibare ine ya nyuma gusa ya nimero zatanzwe ku bushake, si nimero zuzuye.</p>
+        {snapshot.frequentReporters.length === 0 ? (
+          <p className="mt-3 rounded-xl bg-[#F8FAF9] p-3 text-sm text-slate-600">Nta nimero yagaragayeho ibirego birenze kimwe.</p>
+        ) : (
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            {snapshot.frequentReporters.map((person) => (
+              <article key={person.maskedPhone} className="rounded-xl border border-slate-100 p-3">
+                <p className="text-sm font-semibold text-[#1B1F23]">{person.maskedPhone}</p>
+                <p className="mt-1 text-xs text-slate-600">{fmt(person.totalReports)} ibirego · {fmt(person.openReports)} biracyafunguye</p>
+              </article>
             ))}
           </div>
         )}
