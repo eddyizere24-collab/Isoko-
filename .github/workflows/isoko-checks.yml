@@ -28,6 +28,13 @@ jobs:
       - name: TypeScript check
         run: bun run lint
 
+      - name: Verify isolated Neon public API
+        run: bun infra/neon/smoke-test.mjs
+        env:
+          ISOKO_TEST_AUTH_URL: https://ep-divine-salad-ba2n73kh.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth
+          ISOKO_TEST_DATA_API_URL: https://ep-divine-salad-ba2n73kh.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
+          ISOKO_TEST_FUNCTION_URL: https://br-raspy-resonance-baqfwhuh-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
+
       - name: Production build
         run: bun run build
 
