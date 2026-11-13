@@ -495,7 +495,7 @@ export const AdminAssistantPanel: React.FC<Props> = ({ onNavigate }) => {
         ) : (
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {snapshot.frequentReporters.map((person) => (
-              <article key={person.maskedPhone} className="rounded-xl border border-slate-100 p-3">
+              <article key={person.maskedPhone + '-' + person.totalReports + '-' + person.openReports} className="rounded-xl border border-slate-100 p-3">
                 <p className="text-sm font-semibold text-[#1B1F23]">{person.maskedPhone}</p>
                 <p className="mt-1 text-xs text-slate-600">{fmt(person.totalReports)} ibirego · {fmt(person.openReports)} biracyafunguye</p>
               </article>
