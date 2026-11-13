@@ -242,10 +242,15 @@ export async function registerSellerAccount(payload:Record<string,any>):Promise<
   const whatsapp=normalizePhone(String(payload.whatsapp??payload.phone??''));
   const email=phone+'@login.isoko.invalid';
   let user=await getNeonUser();
-  if(user?.email&&user.email!==email) throw new Error('Sohoka muri konti urimo mbere yo kwandikisha irindi duka.');
+
+  if(user?.email&&user.email!==email) {
+    throw new Error('Sohoka muri konti urimo mbere yo kwandikisha irindi duka.');
+  }
   if(!user) {
     const signup=await neon.auth.signUp.email({
-      email,password:String(payload.password??''),name:String(payload.fullName??payload.shopName??''),
+      email,
+      password:String(payload.password??''),
+      name:String(payload.fullName??payload.shopName??''),
     }) as any;
     if(signup?.error) {
       const retry=await neon.auth.signIn.email({email,password:String(payload.password??'')}) as any;
@@ -254,26 +259,45 @@ export async function registerSellerAccount(payload:Record<string,any>):Promise<
     user=await getNeonUser();
   }
   if(!user?.id) throw new Error('Konti ntiyafunguwe neza. Ongera winjire.');
+
+  // Create a short-lived authenticated draft before any private KYC upload.
+  // The profile trigger consumes this draft in the same transaction as seller registration.
+  dataOf<any>(
+    await neon.rpc('start_seller_registration_v1',{p_phone:phone}),
+    'Ntibishobotse gutangiza kwiyandikisha. Reba nimero ya telefoni wongere ugerageze.'
+  );
+
   const [front,back,selfie,shopPhoto]=await Promise.all([
     uploadThroughFunction(String(payload.idFrontDataUrl??''),'kyc'),
     uploadThroughFunction(String(payload.idBackDataUrl??''),'kyc'),
     uploadThroughFunction(String(payload.selfieDataUrl??''),'kyc'),
     uploadThroughFunction(String(payload.shopPhotoDataUrl??''),'kyc'),
   ]);
+
   const result=dataOf<any>(await neon.rpc('register_seller_v1',{
-    p_full_name:String(payload.fullName??'').trim(),p_phone:phone,p_whatsapp:whatsapp,
-    p_shop_name:String(payload.shopName??'').trim(),p_district_id:Number(payload.districtId),
-    p_sector_id:payload.sectorId?Number(payload.sectorId):null,p_landmark:String(payload.landmark??''),
-    p_delivery_text:String(payload.deliveryText??''),p_about:String(payload.about??''),
-    p_business_type:String(payload.businessType??'Iduka'),p_national_id_number:String(payload.nationalIdNumber??'').replace(/\D/g,''),
-    p_id_front_key:front.key,p_id_back_key:back.key,p_selfie_key:selfie.key,
-    p_shop_photo_key:shopPhoto.key,p_tin:String(payload.tin??''),
-    p_terms_accepted:Boolean(payload.termsAccepted),p_terms_version:'1.0',
+    p_full_name:String(payload.fullName??'').trim(),
+    p_phone:phone,
+    p_whatsapp:whatsapp,
+    p_shop_name:String(payload.shopName??'').trim(),
+    p_district_id:Number(payload.districtId),
+    p_sector_id:payload.sectorId?Number(payload.sectorId):null,
+    p_landmark:String(payload.landmark??''),
+    p_delivery_text:String(payload.deliveryText??''),
+    p_about:String(payload.about??''),
+    p_business_type:String(payload.businessType??'Iduka'),
+    p_national_id_number:String(payload.nationalIdNumber??'').replace(/\D/g,''),
+    p_id_front_key:front.key,
+    p_id_back_key:back.key,
+    p_selfie_key:selfie.key,
+    p_shop_photo_key:shopPhoto.key,
+    p_tin:String(payload.tin??''),
+    p_terms_accepted:Boolean(payload.termsAccepted),
+    p_terms_version:'1.0',
   }),'Kwiyandikisha nk’umucuruzi byanze.');
+
   const profile=result.profile as Profile;
   return {...storedSession(profile),profile,shop:mapShop(result.shop)};
 }
-
 export async function fetchMe():Promise<{profile:Profile;shop:Shop|null}> {
   const current=await currentAccount();
   return {profile:current.profile,shop:current.shop};
