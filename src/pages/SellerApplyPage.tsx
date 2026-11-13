@@ -36,6 +36,21 @@ export const SellerApplyPage: React.FC = () => {
 
   const sectors = useMemo(() => getSectorsForDistrict(districtId), [districtId]);
 
+  if (import.meta.env.VITE_ISOKO_SELLER_REGISTRATION_ENABLED !== 'true') {
+    return (
+      <main className="mx-auto max-w-2xl px-4 py-12">
+        <section className="rounded-2xl border border-slate-200 bg-[#F1F6F3] p-6">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#0B6E4F]">ISOKO · Production</p>
+          <h1 className="mt-2 text-xl font-bold text-[#1B1F23]">Kwiyandikisha kw’abacuruzi biracyategurwa</h1>
+          <p className="mt-2 text-sm leading-6 text-slate-700">
+            Urubuga rwa ISOKO ruri online. Turimo kurangiza independent encrypted backups no kwemeza nimero za telefoni mbere yo kwakira National ID n’amafoto y’ibyangombwa byawe. Ibi birinda amakuru yawe bwite gutakara cyangwa gukoreshwa nabi.
+          </p>
+          <button type="button" onClick={() => navigate('/')} className="mt-4 min-h-11 rounded-xl bg-[#0B6E4F] px-4 text-sm font-semibold text-white">Subira ku isoko</button>
+        </section>
+      </main>
+    );
+  }
+
   if (import.meta.env.VITE_ISOKO_PREVIEW === 'true') {
     return (
       <main className="mx-auto max-w-2xl px-4 py-12">
