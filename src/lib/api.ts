@@ -451,7 +451,10 @@ export async function fetchAdminOverview():Promise<AdminOverviewResponse> {
   };
 }
 
-export async function fetchAdminKyc(sellerId:string):Promise<{kyc:SellerKyc;signedUrlExpiresIn:number}> {
+export async function fetchAdminKyc(sellerId:string):Promise<{kyc:{
+  seller_id:string;full_name_on_id:string;business_type:string;idFrontUrl:string|null;
+  idBackUrl:string|null;selfieUrl:string|null;shopPhotoUrl:string|null;submitted_at:string;
+};signedUrlExpiresIn:number}> {
   const token=await getNeonJwt();
   const response=await fetch(new URL('api/admin/kyc/'+encodeURIComponent(sellerId),neonFunctionUrl),{
     headers:{authorization:'Bearer '+token},
