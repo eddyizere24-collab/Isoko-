@@ -35,7 +35,6 @@ import {
 import { formatRwfCurrency } from '../lib/whatsapp';
 import type { PromoCampaign } from '../types/marketplace';
 import { processProductImage } from '../lib/image';
-import { processProductImage } from '../lib/image';
 
 interface AdminKycReview {
   seller_id: string;
