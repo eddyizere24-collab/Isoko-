@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { AdminAssistantPanel } from '../components/admin/AdminAssistantPanel';
 import {
   AlertTriangle,
   ArrowDown,
@@ -47,7 +48,7 @@ interface AdminKycReview {
   submitted_at: string;
 }
 
-type AdminTab = 'overview' | 'sellers' | 'products' | 'reports' | 'campaigns' | 'settings';
+type AdminTab = 'overview' | 'assistant' | 'sellers' | 'products' | 'reports' | 'campaigns' | 'settings';
 
 const CAMPAIGN_BANNER_PRESETS = [
   {
@@ -104,7 +105,9 @@ export const AdminPage: React.FC = () => {
   const [campImageBusy, setCampImageBusy] = useState(false);
   const [campShopId, setCampShopId] = useState('');
 
-  const activeTab: AdminTab = pathname.startsWith('/admin/abacuruzi')
+  const activeTab: AdminTab = pathname.startsWith('/admin/ubwenge')
+    ? 'assistant'
+    : pathname.startsWith('/admin/abacuruzi')
     ? 'sellers'
     : pathname.startsWith('/admin/ibicuruzwa')
       ? 'products'
@@ -324,6 +327,7 @@ export const AdminPage: React.FC = () => {
 
   const tabs: Array<{ id: AdminTab; path: string; label: string; count?: number }> = [
     { id: 'overview', path: '/admin', label: 'Incamake' },
+    { id: 'assistant', path: '/admin/ubwenge', label: 'Ishakiro ry’Ubuyobozi' },
     { id: 'sellers', path: '/admin/abacuruzi', label: 'Abacuruzi (KYC)', count: data.kpis.pendingSellers },
     { id: 'products', path: '/admin/ibicuruzwa', label: 'Ibicuruzwa', count: data.products.length },
     { id: 'reports', path: '/admin/ibirego', label: 'Ibirego', count: data.kpis.newReports },
@@ -507,6 +511,8 @@ export const AdminPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {activeTab === 'assistant' && <AdminAssistantPanel onNavigate={navigate} />}
 
       {/* TAB 2: Sellers KYC Queue */}
       {activeTab === 'sellers' && (
