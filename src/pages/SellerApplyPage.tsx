@@ -36,6 +36,20 @@ export const SellerApplyPage: React.FC = () => {
 
   const sectors = useMemo(() => getSectorsForDistrict(districtId), [districtId]);
 
+  if (import.meta.env.VITE_ISOKO_PREVIEW === 'true') {
+    return (
+      <main className="mx-auto max-w-2xl px-4 py-12">
+        <section className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
+          <h1 className="text-xl font-bold text-[#1B1F23]">Gufungura iduka kuri ISOKO</h1>
+          <p className="mt-2 text-sm leading-6 text-slate-700">
+            Urimo kureba urubuga rw’igerageza. Kwiyandikisha kw’abacuruzi n’amafoto y’ibyangombwa bizafungurwa kuri Production imaze guhabwa umutekano wa nyuma. Ntushyire hano nimero y’indangamuntu cyangwa amafoto yawe bwite.
+          </p>
+          <button type="button" onClick={() => navigate('/')} className="mt-4 min-h-11 rounded-xl bg-[#0B6E4F] px-4 text-sm font-semibold text-white">Subira ku isoko</button>
+        </section>
+      </main>
+    );
+  }
+
   const handleFileChange = async (field: DocField, file: File | undefined) => {
     if (!file) return;
     setError(null);
