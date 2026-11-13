@@ -60,12 +60,16 @@ export const SellerApplyPage: React.FC = () => {
       setError('Nimero ya WhatsApp igomba kuba iya MTN cyangwa Airtel mu Rwanda (07XXXXXXXX).');
       return;
     }
-    if (password.length < 6) {
-      setError('Ijambo ry’ibanga rigomba kugira nibura inyuguti/imibare 6.');
+    if (password.length < 8) {
+      setError('Ijambo ry’ibanga rigomba kugira nibura inyuguti/imibare 8.');
       return;
     }
     if (nationalIdNumber.replace(/\D/g, '').length < 16) {
       setError('Nimero y’indangamuntu yuzuye igomba kugira imibare 16.');
+      return;
+    }
+    if (!docs.idFront || !docs.idBack || !docs.selfie || !docs.shopPhoto) {
+      setError('Shyiraho amafoto ane asabwa: imbere y’indangamuntu, inyuma yayo, selfie uyifashe, n’ifoto y’iduka.');
       return;
     }
     if (!termsAccepted) {
@@ -244,13 +248,13 @@ export const SellerApplyPage: React.FC = () => {
 
           <div>
             <label htmlFor="reg-pass" className="block text-sm font-semibold text-[#1B1F23]">
-              Ijambo ry’ibanga (nibura 6) *
+              Ijambo ry’ibanga (nibura 8) *
             </label>
             <input
               id="reg-pass"
               type="password"
               required
-              minLength={6}
+              minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
@@ -404,7 +408,7 @@ export const SellerApplyPage: React.FC = () => {
                 { key: 'idFront', label: 'Indangamuntu (imbere)' },
                 { key: 'idBack', label: 'Indangamuntu (inyuma)' },
                 { key: 'selfie', label: 'Selfie ufite indangamuntu' },
-                { key: 'shopPhoto', label: 'Ifoto y’iduka / ibicuruzwa' },
+                { key: 'shopPhoto', label: 'Ifoto y’iduka / ibicuruzwa (ibikwa mu ibanga)' },
               ] as Array<{ key: DocField; label: string }>
             ).map((item) => (
               <label
