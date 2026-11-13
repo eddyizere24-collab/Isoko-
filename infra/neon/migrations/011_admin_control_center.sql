@@ -136,35 +136,43 @@ BEGIN
     SELECT COALESCE(
       jsonb_agg(
         jsonb_build_object(
-          'shopId', s.id,
-          'shopName', s.name,
-          'sellerName', owner.full_name,
-          'district', s.district_name,
-          'status', s.status,
-          'views', COALESCE(st.views, 0),
-          'waClicks', COALESCE(st.wa_clicks, 0),
-          'callClicks', COALESCE(st.call_clicks, 0),
-          'cartAdds', COALESCE(st.cart_adds, 0),
-          'shares', COALESCE(st.shares, 0),
-          'openReports', COALESCE(sr.open_reports, 0),
-          'totalReports', COALESCE(sr.total_reports, 0)
+          'shopId', q.id,
+          'shopName', q.name,
+          'sellerName', q.full_name,
+          'district', q.district_name,
+          'status', q.status,
+          'views', q.views,
+          'waClicks', q.wa_clicks,
+          'callClicks', q.call_clicks,
+          'cartAdds', q.cart_adds,
+          'shares', q.shares,
+          'openReports', q.open_reports,
+          'totalReports', q.total_reports
         )
-        ORDER BY COALESCE(st.wa_clicks, 0) DESC,
-                 COALESCE(st.views, 0) DESC,
-                 s.created_at ASC
+        ORDER BY q.wa_clicks DESC, q.views DESC, q.name
       ),
       '[]'::JSONB
     ) AS rows
     FROM (
-      SELECT s0.*
-      FROM public.shops s0
-      WHERE s0.status = 'approved'
-      ORDER BY s0.created_at DESC
-      LIMIT 1000
-    ) s
-    JOIN public.profiles owner ON owner.id = s.owner_id
-    LEFT JOIN shop_stats st ON st.shop_id = s.id
-    LEFT JOIN shop_reports sr ON sr.shop_id = s.id
+      SELECT
+        s.id, s.name, owner.full_name, s.district_name, s.status,
+        COALESCE(st.views, 0) AS views,
+        COALESCE(st.wa_clicks, 0) AS wa_clicks,
+        COALESCE(st.call_clicks, 0) AS call_clicks,
+        COALESCE(st.cart_adds, 0) AS cart_adds,
+        COALESCE(st.shares, 0) AS shares,
+        COALESCE(sr.open_reports, 0) AS open_reports,
+        COALESCE(sr.total_reports, 0) AS total_reports
+      FROM public.shops s
+      JOIN public.profiles owner ON owner.id = s.owner_id
+      LEFT JOIN shop_stats st ON st.shop_id = s.id
+      LEFT JOIN shop_reports sr ON sr.shop_id = s.id
+      WHERE s.status = 'approved'
+      ORDER BY COALESCE(st.wa_clicks, 0) DESC,
+               COALESCE(st.views, 0) DESC,
+               s.name
+      LIMIT 10
+    ) q
   ),
   risk_shops AS (
     SELECT COALESCE(
