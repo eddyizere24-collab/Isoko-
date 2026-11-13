@@ -1,3 +1,4 @@
+# ISOKO OCI infrastructure. Free-tier guardrails are defined in this module.
 locals {
   common_tags = {
     Project     = "ISOKO"
