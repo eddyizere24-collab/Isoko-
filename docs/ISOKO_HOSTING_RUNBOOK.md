@@ -38,6 +38,21 @@ When the frontend is ready for hosting:
 
 This one-time GitHub App authorization must be completed by the account owner. ChatGPT can then continue managing code and reviewing GitHub build status through the connected GitHub tools.
 
+## Public preview deployment (Render)
+
+A separate, explicitly labelled preview is prepared in `render.yaml` on the implementation branch. It serves the Vite frontend over Render's static-site CDN and connects only to the isolated Neon `isoko-setup` branch. It does not point to Neon `main` and does not receive production data.
+
+- Build: `bun install --frozen-lockfile && bun run build`
+- Publish directory: `dist`
+- SPA route fallback: rewrite `/*` to `/index.html`
+- Preview banner is visible to visitors.
+- Seller registration and KYC submission are disabled on this preview, so visitors cannot send real National ID or identity files to the test branch.
+- Product browsing, layout, routing, and the Admin interface can be checked against the isolated test backend.
+
+The Render account currently exposes one workspace, `izere's workspace`. **Do not create a Render service until the owner confirms that this is the workspace to use.** After confirmation, create the Render Blueprint using this repository and branch, review the proposed static-site resource, and apply it. Then add the generated Render origin to the setup branch's Neon Auth trusted origins and smoke-test HTTPS routes, Auth, Data API, and image access.
+
+This is only a public preview. It is not the final production storefront, and it must not collect real seller KYC or customer data.
+
 ## Environment and secrets
 
 - Neon automatically injects branch-specific `DATABASE_URL` and Object Storage S3 credentials into Functions when configured.
