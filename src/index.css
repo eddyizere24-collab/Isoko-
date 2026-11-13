@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #0B6E4F;
+  --color-primary-hover: #08553D;
+  --color-accent: #E8A33D;
+  --color-ink: #1B1F23;
+  --color-surface: #F1F6F3;
+  --color-canvas: #FFFFFF;
+  --color-error: #C0392B;
+  --color-whatsapp: #25D366;
+  --color-whatsapp-hover: #1FB858;
+}
+
+@layer base {
+  html {
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', sans-serif;
+    color: var(--color-ink);
+    background-color: var(--color-canvas);
+    scroll-behavior: smooth;
+  }
+
+  button,
+  a,
+  select,
+  input,
+  textarea {
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Isoko — Imyambaro, Inkweto n'Ibyo Kwambara",
+  "description": "Isoko ry'abacuruzi benshi ryo kuri interineti ry'u Rwanda: imyambaro, inkweto, amasogisi n'ibyo kwambara i Kigali n'ahandi mu Rwanda.",
+  "requestFramePermissions": ["geolocation", "camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
