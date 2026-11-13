@@ -1,16 +1,35 @@
 import { createClient } from '@neondatabase/neon-js';
 
-// These URLs point to the isolated ISOKO setup branch. Production must use
-// the separate protected Neon main branch through deploy-time VITE_* settings.
-const authUrl =
-  import.meta.env.VITE_NEON_AUTH_URL ||
+// Setup-branch URLs are development-only. Public builds must receive their
+// own reviewed branch URLs from the hosting provider; never silently fall back
+// to a test database from a production bundle.
+const setupAuthUrl =
   'https://ep-divine-salad-ba2n73kh.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth';
-const dataApiUrl =
-  import.meta.env.VITE_NEON_DATA_API_URL ||
+const setupDataApiUrl =
   'https://ep-divine-salad-ba2n73kh.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1';
-export const neonFunctionUrl =
-  import.meta.env.VITE_NEON_FUNCTION_URL ||
+const setupFunctionUrl =
   'https://br-raspy-resonance-baqfwhuh-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/';
+const setupPublicStorageUrl =
+  'https://br-raspy-resonance-baqfwhuh.storage.c-8.eu-central-1.aws.neon.tech/isoko-public-assets/';
+
+const authUrl = import.meta.env.VITE_NEON_AUTH_URL || (import.meta.env.DEV ? setupAuthUrl : '');
+const dataApiUrl = import.meta.env.VITE_NEON_DATA_API_URL || (import.meta.env.DEV ? setupDataApiUrl : '');
+export const neonFunctionUrl =
+  import.meta.env.VITE_NEON_FUNCTION_URL || (import.meta.env.DEV ? setupFunctionUrl : '');
+const publicStorageUrl =
+  import.meta.env.VITE_NEON_PUBLIC_STORAGE_URL || (import.meta.env.DEV ? setupPublicStorageUrl : '');
+
+if (import.meta.env.PROD) {
+  const missing = [
+    ['VITE_NEON_AUTH_URL', authUrl],
+    ['VITE_NEON_DATA_API_URL', dataApiUrl],
+    ['VITE_NEON_FUNCTION_URL', neonFunctionUrl],
+    ['VITE_NEON_PUBLIC_STORAGE_URL', publicStorageUrl],
+  ].filter(([, value]) => !value).map(([name]) => name);
+  if (missing.length) {
+    throw new Error('ISOKO production configuration is incomplete: ' + missing.join(', '));
+  }
+}
 
 export const neon = createClient({
   auth: {
@@ -65,8 +84,8 @@ export function publicAssetUrl(key: string | null | undefined): string | null {
   if (!key) return null;
   if (/^https?:\/\//i.test(key)) return key;
   const cleanKey = key.replace(/^\/+/, '');
-  const storageBase =
-    'https://br-raspy-resonance-baqfwhuh.storage.c-8.eu-central-1.aws.neon.tech/isoko-public-assets/';
+  if (!publicStorageUrl) return null;
+  const storageBase = publicStorageUrl.endsWith('/') ? publicStorageUrl : publicStorageUrl + '/';
   return storageBase + cleanKey.split('/').map(encodeURIComponent).join('/');
 }
 
