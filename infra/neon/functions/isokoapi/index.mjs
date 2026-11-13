@@ -313,7 +313,7 @@ export default {
         }, 201, cors);
       }
 
-      const profile = await getOwnProfile(token);
+      if (!profile) profile = await getOwnProfile(token);
       const kycMatch = path.match(/^\/api\/admin\/kyc\/([^/]+)$/);
       if (request.method === "GET" && kycMatch) {
         if (profile.role !== "admin" || profile.status !== "approved") {
