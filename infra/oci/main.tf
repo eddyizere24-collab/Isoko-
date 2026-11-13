@@ -18,10 +18,10 @@ data "oci_objectstorage_namespace" "ns" {
 
 resource "oci_core_vcn" "isoko" {
   compartment_id = var.compartment_ocid
-  cidr_block      = "10.42.0.0/16"
-  display_name    = "isoko-vcn"
-  dns_label       = "isoko"
-  freeform_tags   = local.common_tags
+  cidr_block     = "10.42.0.0/16"
+  display_name   = "isoko-vcn"
+  dns_label      = "isoko"
+  freeform_tags  = local.common_tags
 }
 
 resource "oci_core_internet_gateway" "isoko" {

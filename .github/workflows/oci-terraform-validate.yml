@@ -34,9 +34,6 @@ jobs:
           terraform_version: 1.17.2
           terraform_wrapper: false
 
-      - name: Show formatting diff for diagnostics
-        run: terraform fmt -diff -recursive infra/oci || true
-
       - name: Check formatting
         run: terraform fmt -check -recursive infra/oci
 
