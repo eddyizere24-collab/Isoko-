@@ -30,3 +30,21 @@ jobs:
 
       - name: Production build
         run: bun run build
+
+      - name: Install pinned Neon Function dependency
+        run: npm install --prefix infra/neon/functions/isokoapi --no-save --no-package-lock --ignore-scripts --no-audit --no-fund
+
+      - name: Bundle Node.js 24 Neon Function
+        run: |
+          mkdir -p "$RUNNER_TEMP/isoko-neon-function"
+          bun build infra/neon/functions/isokoapi/index.mjs --target=node --minify --outfile "$RUNNER_TEMP/isoko-neon-function/index.mjs"
+          cd "$RUNNER_TEMP/isoko-neon-function"
+          zip -q -9 "$RUNNER_TEMP/isoko-neon-function.zip" index.mjs
+
+      - name: Publish setup-only Function bundle artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: isoko-neon-function-bundle
+          path: ${{ runner.temp }}/isoko-neon-function.zip
+          if-no-files-found: error
+          retention-days: 7
