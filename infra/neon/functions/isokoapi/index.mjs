@@ -192,6 +192,27 @@ async function getOwnProfile(token) {
   return rows[0];
 }
 
+async function getOwnRegistrationDraft(token) {
+  const dataApiUrl = process.env.NEON_DATA_API_URL;
+  if (!dataApiUrl) throw new Error("DATA_API_NOT_CONFIGURED");
+  const response = await fetch(dataApiUrl.replace(/\/$/, "") +
+    "/rpc/get_own_seller_registration_draft_v1", {
+    method: "POST",
+    headers: {
+      authorization: "Bearer " + token,
+      "content-type": "application/json",
+      accept: "application/json",
+    },
+    body: "{}",
+  });
+  if (!response.ok) throw new Error("REGISTRATION_DRAFT_NOT_FOUND");
+  const draft = await response.json();
+  if (!draft?.draft_id || !draft?.expires_at) {
+    throw new Error("REGISTRATION_DRAFT_NOT_FOUND");
+  }
+  return draft;
+}
+
 async function getKycForSeller(sellerId, token) {
   const dataApiUrl = process.env.NEON_DATA_API_URL;
   const query = new URLSearchParams({
@@ -242,27 +263,45 @@ export default {
     if (!token) return json({ error: "Ugomba kwinjira mbere yo gukomeza." }, 401, cors);
 
     try {
-      const profile = await getOwnProfile(token);
-
+      let profile = null;
+      let registrationDraft = null;
       if (request.method === "POST" && path === "/api/upload") {
-        if (!["seller", "admin"].includes(profile.role) ||
-            ["rejected", "suspended"].includes(profile.status)) {
-          return json({ error: "Konti yawe ntiyemerewe kohereza amafoto." }, 403, cors);
-        }
         const body = await request.json();
         const kind = String(body.kind ?? "full");
+
+        try {
+          profile = await getOwnProfile(token);
+        } catch (error) {
+          if (kind !== "kyc" || !(error instanceof Error) || error.message !== "PROFILE_NOT_FOUND") {
+            throw error;
+          }
+          registrationDraft = await getOwnRegistrationDraft(token);
+        }
+
+        if (profile && (!["seller", "admin"].includes(profile.role) ||
+            ["rejected", "suspended"].includes(profile.status))) {
+          return json({ error: "Konti yawe ntiyemerewe kohereza amafoto." }, 403, cors);
+        }
+        if (!profile && kind !== "kyc") {
+          return json({ error: "Banza wuzuze kwiyandikisha mbere yo kohereza iri foto." }, 403, cors);
+        }
+
         const { mime, bytes } = bytesFromDataUrl(body.dataUrl);
         const extension = ALLOWED_MIME.get(mime);
         const bucket = kind === "kyc" ? PRIVATE_BUCKET : PUBLIC_BUCKET;
+        const ownerKey = profile?.id ?? ("draft-" + registrationDraft.draft_id);
         const prefix = kind === "kyc"
-          ? "kyc/" + profile.id
+          ? "kyc/" + ownerKey
           : kind === "campaign"
-            ? "campaigns/" + profile.id
+            ? "campaigns/" + ownerKey
             : kind === "shop"
-              ? "shops/" + profile.id
-              : "products/" + profile.id;
-        if (kind === "campaign" && profile.role !== "admin") {
+              ? "shops/" + ownerKey
+              : "products/" + ownerKey;
+        if (kind === "campaign" && profile?.role !== "admin") {
           return json({ error: "Admin gusa ni we wohereza amafoto ya campaigns." }, 403, cors);
+        }
+        if (!["kyc", "campaign", "shop", "full", "thumb"].includes(kind)) {
+          return json({ error: "Ubwoko bw’ifoto ntibwemewe." }, 400, cors);
         }
         const key = prefix + "/" + new Date().toISOString().slice(0, 10) +
           "/" + randomUUID() + "." + extension;
@@ -274,6 +313,7 @@ export default {
         }, 201, cors);
       }
 
+      const profile = await getOwnProfile(token);
       const kycMatch = path.match(/^\/api\/admin\/kyc\/([^/]+)$/);
       if (request.method === "GET" && kycMatch) {
         if (profile.role !== "admin" || profile.status !== "approved") {
@@ -309,7 +349,8 @@ export default {
       return json({ error: "Not found" }, 404, cors);
     } catch (error) {
       const message = error instanceof Error ? error.message : "unknown";
-      if (message === "AUTHENTICATION_FAILED" || message === "PROFILE_NOT_FOUND") {
+      if (message === "AUTHENTICATION_FAILED" || message === "PROFILE_NOT_FOUND" ||
+          message === "REGISTRATION_DRAFT_NOT_FOUND") {
         return json({ error: "Konti ntiyemejwe cyangwa ntabwo winjiye." }, 401, cors);
       }
       if (message.startsWith("IMAGE_")) {
