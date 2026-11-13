@@ -7,6 +7,8 @@ services:
     staticPublishPath: dist
     autoDeploy: true
     envVars:
+      - key: VITE_ISOKO_PREVIEW
+        value: "true"
       - key: VITE_NEON_AUTH_URL
         value: https://ep-divine-salad-ba2n73kh.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth
       - key: VITE_NEON_DATA_API_URL
