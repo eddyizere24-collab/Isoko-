@@ -315,7 +315,7 @@ export async function fetchSellerOverview():Promise<{
     shares:a.shares+Number(r.shares??0),
   }),{views:0,wa_clicks:0,call_clicks:0,cart_adds:0,shares:0});
   const stale=Date.now()-30*86400000;
-  const staleProducts=products.filter((p)=>p.status==='active'&&new Date(p.last_confirmed_at).getTime()<=stale);
+  const staleProducts=products.filter((p: Product)=>p.status==='active'&&new Date(p.last_confirmed_at).getTime()<=stale);
   return {
     profile:{id:current.profile.id,full_name:current.profile.full_name,status:current.profile.status,status_reason:current.profile.status_reason},
     shop:current.shop,products,staleProducts,stats7d:sum(stats.filter((r)=>r.day>=cutoff7)),stats30d:sum(stats),
@@ -426,7 +426,7 @@ export async function fetchAdminOverview():Promise<AdminOverviewResponse> {
   const auditRows=dataOf<any>(auditLog,'Admin ntiyashoboye gusoma audit log.')??[];
   const statRows=dataOf<any>(stats,'Admin ntiyashoboye gusoma imibare.')??[];
   const shopByOwner=new Map(shopRows.map((row:any)=>[row.owner_id,mapShop(row)]));
-  const kycBySeller=new Map(kycRows.map((row:any)=>[row.seller_id,row]));
+  const kycBySeller=new Map<string, any>(kycRows.map((row:any)=>[String(row.seller_id),row]));
   const sellers=(profileRows as Profile[]).filter((p)=>p.role==='seller').map((p:any)=>({
     ...p,shop:shopByOwner.get(p.id)??null,hasKyc:kycBySeller.has(p.id),kycSubmittedAt:kycBySeller.get(p.id)?.submitted_at??null,
   }));
