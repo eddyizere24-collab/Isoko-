@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: isoko-marketplace-preview
+    runtime: static
+    branch: infra/cloudflare-neon-free-foundation-20261113
+    buildCommand: bun install --frozen-lockfile && bun run build
+    staticPublishPath: dist
+    autoDeploy: true
+    envVars:
+      - key: VITE_NEON_AUTH_URL
+        value: https://ep-divine-salad-ba2n73kh.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth
+      - key: VITE_NEON_DATA_API_URL
+        value: https://ep-divine-salad-ba2n73kh.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
+      - key: VITE_NEON_FUNCTION_URL
+        value: https://br-raspy-resonance-baqfwhuh-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
+      - key: VITE_NEON_PUBLIC_STORAGE_URL
+        value: https://br-raspy-resonance-baqfwhuh.storage.c-8.eu-central-1.aws.neon.tech/isoko-public-assets/
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
