@@ -89,7 +89,9 @@ export const AdminPage: React.FC = () => {
 
   // Products & Reports filters
   const [productQuery, setProductQuery] = useState('');
-  const [reportFilter, setReportFilter] = useState<'all' | 'new' | 'resolved'>('all');
+  const [reportFilter, setReportFilter] = useState<'all' | 'new' | 'in_progress' | 'resolved'>('all');
+  const [reportReplyDrafts, setReportReplyDrafts] = useState<Record<string, string>>({});
+  const [savedReportReplies, setSavedReportReplies] = useState<Record<string, string>>({});
 
   // Synonym form
   const [synTerm, setSynTerm] = useState('');
@@ -180,10 +182,26 @@ export const AdminPage: React.FC = () => {
     refreshBootstrap();
   };
 
-  const handleResolveReport = async (reportId: string, hideTarget: boolean) => {
+  const handleSaveReportReply = async (reportId: string, reply: string) => {
+    const message = reply.trim();
+    if (message.length < 3) {
+      setFeedback('Andika igisubizo kigufi mbere yo kukibika.');
+      return;
+    }
+    try {
+      await resolveAdminReport(reportId, { status: 'in_progress', resolution: message });
+      setSavedReportReplies((current) => ({ ...current, [reportId]: message }));
+      setFeedback('Igisubizo cyabitswe. Ushobora no kugishyikiriza uwatanze ikibazo kuri WhatsApp.');
+      await load();
+    } catch (err) {
+      setFeedback(err instanceof Error ? err.message : 'Igisubizo nticyabitswe.');
+    }
+  };
+
+  const handleResolveReport = async (reportId: string, hideTarget: boolean, resolution?: string) => {
     await resolveAdminReport(reportId, {
       status: 'resolved',
-      resolution: hideTarget ? 'Igicuruzwa cyahishwe nyuma y’ikibazo' : 'Ikibazo cyasuzumwe kiranogerezwa',
+      resolution: resolution?.trim() || (hideTarget ? 'Igicuruzwa cyahishwe nyuma y’ikibazo' : 'Ikibazo cyasuzumwe kiranogerezwa'),
       hideTarget,
     });
     setFeedback('Ikibazo cyarakemutse.');
@@ -619,6 +637,7 @@ export const AdminPage: React.FC = () => {
             {[
               { id: 'all' as const, label: 'Byose' },
               { id: 'new' as const, label: 'Ibishya' },
+              { id: 'in_progress' as const, label: 'Biri gukorwaho' },
               { id: 'resolved' as const, label: 'Ibyakemutse' },
             ].map((f) => (
               <button
@@ -660,36 +679,79 @@ export const AdminPage: React.FC = () => {
                       </div>
                     </div>
                     <span className="text-xs font-semibold text-slate-500">
-                      {rep.status === 'resolved' ? 'Cyakemutse' : 'Gishya'}
+                      {rep.status === 'resolved' ? 'Cyakemutse' : rep.status === 'in_progress' ? 'Birimo gukorwaho' : 'Gishya'}
                     </span>
                   </div>
 
                   <p className="text-sm text-slate-700">{rep.details}</p>
 
-                  {rep.status !== 'resolved' ? (
-                    <div className="flex flex-wrap gap-2 pt-1">
+                  <div className="rounded-xl border border-slate-200 bg-[#F8FAF9] p-3 space-y-2">
+                    <p className="text-xs text-slate-600">
+                      Nimero yo gusubizwa: <strong className="tabular-nums text-[#1B1F23]">{rep.reporter_phone || 'Nta nimero yatanze'}</strong>
+                    </p>
+                    <label htmlFor={'report-reply-' + rep.id} className="block text-xs font-semibold text-[#1B1F23]">
+                      Igisubizo cya Admin
+                    </label>
+                    <textarea
+                      id={'report-reply-' + rep.id}
+                      rows={2}
+                      maxLength={1000}
+                      value={reportReplyDrafts[rep.id] ?? rep.resolution ?? ''}
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setReportReplyDrafts((current) => ({ ...current, [rep.id]: value }));
+                        setSavedReportReplies((current) => {
+                          const next = { ...current };
+                          delete next[rep.id];
+                          return next;
+                        });
+                      }}
+                      placeholder="Andika igisubizo uzaha uwatanze ikibazo..."
+                      className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm"
+                    />
+                    <div className="flex flex-wrap gap-2">
                       <button
                         type="button"
-                        onClick={() => handleResolveReport(rep.id, false)}
-                        className="min-h-[44px] rounded-xl border border-[#0B6E4F] px-3.5 text-xs font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3]"
+                        onClick={() => void handleSaveReportReply(rep.id, reportReplyDrafts[rep.id] ?? rep.resolution ?? '')}
+                        className="min-h-[40px] rounded-xl bg-[#0B6E4F] px-3.5 text-xs font-semibold text-white"
                       >
-                        Kemura (rekera aho)
+                        Bika igisubizo
                       </button>
-                      {rep.target_type === 'product' && (
-                        <button
-                          type="button"
-                          onClick={() => handleResolveReport(rep.id, true)}
-                          className="min-h-[44px] rounded-xl bg-[#C0392B] px-3.5 text-xs font-semibold text-white hover:bg-[#A93226]"
+                      {rep.reporter_phone && savedReportReplies[rep.id] && (
+                        <a
+                          href={'https://wa.me/' + rep.reporter_phone.replace(/\D/g, '').replace(/^0/, '250') + '?text=' + encodeURIComponent('Muraho. Turagusubiza ku kibazo watanze kuri ISOKO: ' + savedReportReplies[rep.id])}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex min-h-[40px] items-center rounded-xl border border-[#0B6E4F] bg-white px-3.5 text-xs font-semibold text-[#0B6E4F]"
                         >
-                          Hisha igicuruzwa & Kemura
-                        </button>
+                          Ohereza kuri WhatsApp
+                        </a>
+                      )}
+                      {rep.status !== 'resolved' && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleResolveReport(rep.id, false, reportReplyDrafts[rep.id] ?? rep.resolution ?? undefined)}
+                            className="min-h-[40px] rounded-xl border border-slate-300 bg-white px-3.5 text-xs font-semibold text-slate-700"
+                          >
+                            Funga ikibazo
+                          </button>
+                          {rep.target_type === 'product' && (
+                            <button
+                              type="button"
+                              onClick={() => handleResolveReport(rep.id, true, reportReplyDrafts[rep.id] ?? rep.resolution ?? undefined)}
+                              className="min-h-[40px] rounded-xl bg-[#C0392B] px-3.5 text-xs font-semibold text-white"
+                            >
+                              Hisha igicuruzwa & Kemura
+                            </button>
+                          )}
+                        </>
                       )}
                     </div>
-                  ) : (
-                    rep.resolution && (
-                      <p className="text-xs text-[#0B6E4F]">Umwanzuro: {rep.resolution}</p>
-                    )
-                  )}
+                    {rep.resolution && rep.status === 'resolved' && (
+                      <p className="text-xs text-[#0B6E4F]">Umwanzuro wabitswe: {rep.resolution}</p>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
