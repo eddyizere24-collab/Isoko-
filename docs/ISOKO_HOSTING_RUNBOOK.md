@@ -67,6 +67,25 @@ This is only a public preview. It is not the final production storefront, and it
 - Feature/preview builds may use only the isolated `isoko-setup` branch values. Production builds must use a separately reviewed, protected production Neon branch after its schema, Auth, Function, Object Storage, backup, and security gates are ready.
 - `src/lib/neon.ts` intentionally falls back to setup URLs only in Vite development. A production bundle with missing environment values fails closed instead of silently connecting to test data. Never copy setup-branch endpoints into production Pages settings.
 
+## Current Production hosting (2026-11-14)
+
+- Public Production URL: https://isoko-marketplace-9i69.onrender.com
+- Hosting: Render Static Site on the Free static-site tier, served from the global CDN; it is not a free web-service process that spins down after inactivity.
+- Production source: GitHub `main`; deployment config: `render.production.yaml`.
+- Production data: Neon branch `isoko-production`; Preview and Setup remain separate.
+- Production Static Site is live and the Production Neon Function health endpoint reports `healthy`.
+- Basic seller registration is being enabled with email/password, WhatsApp/contact phone, and store name. No National ID or KYC files are collected in this first step.
+- Newly opened stores use an explicit `identity_status='unverified'`; public verified seals are shown only after real identity review.
+- Do not change Production environment variables to Preview/Setup endpoints.
+
+## Phase 1: minimal seller onboarding
+
+Required inputs: email, password, Rwanda WhatsApp/contact number, store name, and acceptance of the platform rules. Full name is optional. Location, business description, delivery details, TIN, National ID and KYC images are not required to open the store; they are later profile-completion items.
+
+The seller registration RPC reads the email from the authenticated Neon Auth user rather than trusting a client-supplied email. It creates an active seller profile and an active store, records that identity is unverified, and creates no KYC record. The existing 24-hour registration draft still gates first-time seller profile creation. Anonymous users cannot invoke the registration RPC.
+
+Email verification, phone ownership verification, Google/Facebook social login and email password recovery are not yet live. Google requires an actual OAuth client ID/secret; Facebook isn't exposed by the currently connected Neon OAuth configuration tools. No fake or nonfunctional social buttons should be displayed.
+
 ## Backups
 
 Before launch, implement encrypted backups to an independent destination. Neon Free's single manual snapshot and six-hour restore history are not a complete disaster-recovery plan. Record a scheduled cadence, retention period, backup integrity check, restore procedure, and last successful restore test.
