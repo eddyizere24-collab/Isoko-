@@ -116,7 +116,7 @@ export const SellerApplyPage: React.FC = () => {
             <div className="rounded-xl border border-slate-200 bg-white p-3">
               <Mail className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
               <p className="mt-2 text-xs font-semibold text-[#1B1F23]">Email yawe</p>
-              <p className="mt-0.5 text-xs text-slate-500">Yo kwinjira no gucunga konti</p>
+              <p className="mt-0.5 text-xs text-slate-500">Yo kwinjira muri ISOKO</p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-3">
               <MessageCircle className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
@@ -148,7 +148,7 @@ export const SellerApplyPage: React.FC = () => {
                 className="min-h-12 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/15"
               />
             </div>
-            <p className="mt-1.5 text-xs leading-5 text-slate-500">Koresha email ushobora kugeraho. Izakoreshwa mu kwinjira no kugarura konti yawe.</p>
+            <p className="mt-1.5 text-xs leading-5 text-slate-500">Koresha email ushobora kugeraho. Izaba ari yo izina rya konti yawe kuri ISOKO.</p>
           </div>
 
           <div>
