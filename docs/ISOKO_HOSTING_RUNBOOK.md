@@ -1,57 +1,47 @@
-# ISOKO Free Hosting Runbook
+# ISOKO Hosting and Operations Runbook
 
-## Architecture
+## Live Production architecture
 
 ```
 Browser / Android
     |
     v
-Cloudflare Pages Free (React + Vite static build)
+Render Static Site (global CDN, HTTPS, public storefront)
     |
     | HTTPS API requests
     v
-Neon Function (Node.js 24, branch-scoped)
+Neon Function (Node.js 24, production-branch scoped)
     |
-    +---- Neon PostgreSQL (catalog, sellers, shops, stock, analytics)
+    +---- Neon PostgreSQL (catalogue, sellers, shops, products, stock, analytics)
     |
     +---- Neon Object Storage
              +---- isoko-public-assets (public product/shop images)
              +---- isoko-private-kyc (private identity files)
 ```
 
-The Cloudflare Pages Git integration will be authorized for this repository only. Production uses `main`; feature branches receive preview deployments. Neon `isoko-setup` is the isolated branch for schema/API implementation and tests. The Neon default `main` branch remains empty until a reviewed release.
+- Public Production site: https://isoko-marketplace-9i69.onrender.com
+- Frontend is built from GitHub `main` and published as a Render Static Site.
+- Static Site is served by Render's static CDN and does not spin down after inactivity like a Free Web Service.
+- Neon Free compute may pause when idle. That does not delete the database branch or its stored data; it wakes when a database request arrives.
+- Production database: Neon project `isoko-marketplace`, branch `isoko-production`.
+- Development/testing branch: `isoko-setup`. Preview may only use Setup. Never point Production environment values to Setup.
 
-## Local storage migration
+## Static-site deployment
 
-The current Express backend must not be deployed with its JSON-file store or local `uploads/` filesystem. These will be replaced with Postgres repositories and Neon Object Storage helpers. Vite builds the browser app into `dist/`; Cloudflare Pages publishes that directory.
-
-## One-time Cloudflare connection step
-
-When the frontend is ready for hosting:
-1. Sign in to Cloudflare using the owner's existing account or create one on the Free plan.
-2. Verify the email address.
-3. Authorize the Cloudflare Pages GitHub app for this repository only.
-4. Create a Pages project with repository `eddyizere24-collab/Isoko-`, production branch `main`, build command `bun run build`, and output directory `dist`.
-5. Set the production and preview API base URL to the reviewed Neon Function URL.
-6. Confirm the first Pages build is successful and read the generated `*.pages.dev` URL.
-7. Do not add a custom domain until the production checklist is passed.
-
-This one-time GitHub App authorization must be completed by the account owner. ChatGPT can then continue managing code and reviewing GitHub build status through the connected GitHub tools.
-
-## Public preview deployment (Render)
-
-A separate, explicitly labelled preview is prepared in `render.yaml` on the implementation branch. It serves the Vite frontend over Render's static-site CDN and connects only to the isolated Neon `isoko-setup` branch. It does not point to Neon `main` and does not receive production data.
-
+- Blueprint: `render.production.yaml`
+- Source branch: `main`
 - Build: `bun install --frozen-lockfile && bun run build`
 - Publish directory: `dist`
 - SPA route fallback: rewrite `/*` to `/index.html`
-- Preview banner is visible to visitors.
-- Seller registration and KYC submission are disabled on this preview, so visitors cannot send real National ID or identity files to the test branch.
-- Product browsing, layout, routing, and the Admin interface can be checked against the isolated test backend.
+- Render auto-deploys a new Static Site build after changes reach `main`.
+- The existing separate Preview service uses `render.yaml` and the Setup branch. It is not Production and must not accept real identity documents.
 
-The Render account currently exposes one workspace, `izere's workspace`. **Do not create a Render service until the owner confirms that this is the workspace to use.** After confirmation, create the Render Blueprint using this repository and branch, review the proposed static-site resource, and apply it. Then add the generated Render origin to the setup branch's Neon Auth trusted origins and smoke-test HTTPS routes, Auth, Data API, and image access.
+## Change management
 
-This is only a public preview. It is not the final production storefront, and it must not collect real seller KYC or customer data.
+- Code changes: feature branch -> CI -> PR -> reviewed merge to `main` -> verify Render deployment status `live`.
+- Schema changes: create additive migration -> apply to Setup -> verify constraints and grants -> apply separately to Production -> read back migration marker and security privileges.
+- Production release proof requires exact commit SHA, successful CI link, Render deployment status and public URL check.
+- Never make a billing/plan upgrade automatically. No paid service, domain, email/SMS provider, storage credits or AI credits should be added without budget approval.
 
 ## Environment and secrets
 
