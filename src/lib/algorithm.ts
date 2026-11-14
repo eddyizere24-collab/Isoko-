@@ -223,6 +223,9 @@ export function interleaveBySeller(
   return result;
 }
 
+/** Popularity uses client-reported signals and remains disabled until protected server-side analytics are available. */
+export const ENABLE_POPULARITY_RANKING = false;
+
 export interface SearchFilterOptions {
   q?: string;
   categorySlug?: string;
@@ -358,7 +361,7 @@ export function searchAndRankProducts(
   filtered.sort((a, b) => {
     if (sortMode === 'price_asc') return a.price - b.price;
     if (sortMode === 'price_desc') return b.price - a.price;
-    if (sortMode === 'popular') return (b.popularity_7d ?? 0) - (a.popularity_7d ?? 0);
+    if (sortMode === 'popular' && ENABLE_POPULARITY_RANKING) return (b.popularity_7d ?? 0) - (a.popularity_7d ?? 0);
     if (sortMode === 'nearby' && filters.buyerDistrictId) {
       const aMatch = a.shop?.district_id === filters.buyerDistrictId ? 1 : 0;
       const bMatch = b.shop?.district_id === filters.buyerDistrictId ? 1 : 0;
@@ -428,7 +431,7 @@ export function getSimilarProducts(
       score += 5;
     }
 
-    score += Math.min(10, (p.popularity_7d ?? 0) / 10);
+    if (ENABLE_POPULARITY_RANKING) score += Math.min(10, (p.popularity_7d ?? 0) / 10);
 
     return { product: p, score };
   });
@@ -470,7 +473,9 @@ export function buildHomeShelves(
   });
 
   // Bikunzwe cyane: popularity_7d desc + 1 of every 4 slots goes to <=72h fresh item, interleaved fairly
-  const sortedPop = [...active].sort((a, b) => (b.popularity_7d ?? 0) - (a.popularity_7d ?? 0));
+  const sortedPop = ENABLE_POPULARITY_RANKING
+    ? [...active].sort((a, b) => (b.popularity_7d ?? 0) - (a.popularity_7d ?? 0))
+    : sortedNewest;
   const fresh72h = sortedNewest.filter(
     (p) => now - new Date(p.created_at).getTime() <= 72 * 60 * 60 * 1000
   );
