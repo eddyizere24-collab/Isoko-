@@ -5,7 +5,9 @@
   --color-primary-hover: #08553D;
   --color-accent: #E8A33D;
   --color-ink: #1B1F23;
-  --color-surface: #F1F6F3;
+  --color-surface: #F8FAF8;
+  --color-pattern-green: rgba(11, 110, 79, 0.055);
+  --color-pattern-red: rgba(192, 57, 43, 0.04);
   --color-canvas: #FFFFFF;
   --color-error: #C0392B;
   --color-whatsapp: #25D366;
@@ -57,6 +59,16 @@
 
 .text-balance {
   text-wrap: balance;
+}
+
+/* Quiet Imigongo-inspired diamond geometry on selected white surfaces. */
+.imigongo-surface {
+  background-color: #FFFFFF;
+  background-image:
+    linear-gradient(45deg, transparent 47.5%, var(--color-pattern-green) 48.5%, var(--color-pattern-green) 51.5%, transparent 52.5%),
+    linear-gradient(-45deg, transparent 47.5%, var(--color-pattern-red) 48.5%, var(--color-pattern-red) 51.5%, transparent 52.5%);
+  background-size: 42px 42px;
+  background-position: 0 0, 21px 21px;
 }
 
 @media (prefers-reduced-motion: reduce) {

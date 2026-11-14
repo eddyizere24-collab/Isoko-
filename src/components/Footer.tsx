@@ -4,7 +4,7 @@ import { useMarketplace } from '../context/MarketplaceContext';
 import { RW } from '../i18n/rw';
 import { subscribeUpdates } from '../lib/api';
 import { buildWhatsAppLink } from '../lib/whatsapp';
-import { IsokoWordmark } from './IsokoLogo';
+import { IsokoWordmark, RwandanGeometricPattern } from './IsokoLogo';
 
 export const Footer: React.FC = () => {
   const { navigate, bootstrap, location } = useMarketplace();
@@ -42,7 +42,8 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="mt-16 border-t border-slate-200 bg-[#F1F6F3] text-[#1B1F23]">
+    <footer className="mt-16 border-t border-slate-200 bg-white text-[#1B1F23]">
+      <RwandanGeometricPattern className="pointer-events-none h-2 w-full opacity-70" />
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 md:grid-cols-3">
           <div>
