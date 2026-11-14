@@ -4,7 +4,7 @@ test.beforeEach(async ({ page }) => {
   // E2E is UI-only. Isolate all external Neon traffic so CI never reads or
   // writes data to Setup or Production and never needs a test account.
   await page.route(
-    /\\.(?:neonauth|apirest|compute|storage)\\.c-8\\.eu-central-1\\.aws\\.neon\\.tech\\//,
+    /\.(?:neonauth|apirest|compute|storage)\.c-8\.eu-central-1\.aws\.neon\.tech\//,
     (route) => route.abort()
   );
   page.on('pageerror', (error) => console.log('Browser page error:', error.message));
