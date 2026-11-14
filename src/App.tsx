@@ -9,6 +9,8 @@ import { AdminSetupPage } from './pages/AdminSetupPage';
 import { CartPage } from './pages/CartPage';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
+import { RequestPasswordResetPage } from './pages/RequestPasswordResetPage';
+import { ResetPasswordPage } from './pages/ResetPasswordPage';
 import { ProductPage } from './pages/ProductPage';
 import { SearchPage } from './pages/SearchPage';
 import { SellerAddProductPage } from './pages/SellerAddProductPage';
@@ -57,6 +59,12 @@ const AppRouter: React.FC = () => {
     }
     if (pathname === '/injira') {
       return <LoginPage />;
+    }
+    if (pathname === '/ibagiwe-ijambo') {
+      return <RequestPasswordResetPage />;
+    }
+    if (pathname === '/ongera-ijambo') {
+      return <ResetPasswordPage />;
     }
     if (pathname === '/abacuruzi') {
       return <SellerApplyPage />;
