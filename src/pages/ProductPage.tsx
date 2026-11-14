@@ -519,10 +519,14 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-base font-bold text-[#1B1F23]">{shop.name}</span>
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#0B6E4F]">
-                      <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-                      <span>{RW.verified}</span>
-                    </span>
+                    {shop.identity_status === 'verified' ? (
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#0B6E4F]">
+                        <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                        <span>{RW.verified}</span>
+                      </span>
+                    ) : (
+                      <span className="text-xs font-medium text-slate-500">Konti ntiragenzurwa mu byangombwa</span>
+                    )}
                   </div>
                   <p className="mt-1 text-xs text-slate-600">
                     {shop.district_name}
