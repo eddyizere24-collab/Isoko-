@@ -760,13 +760,13 @@ export const SellerAddProductPage: React.FC = () => {
                   Ibisobanuro by’inyongera
                 </label>
                 <span className="text-xs text-slate-500 tabular-nums">
-                  {draft.description.length}/300
+                  {draft.description.length}/2000
                 </span>
               </div>
               <textarea
                 id="wiz-desc"
                 rows={3}
-                maxLength={300}
+                maxLength={2000}
                 value={draft.description}
                 onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
                 placeholder="Vuga ubwiza bw’igicuruzwa, uko kimeze cyangwa uko gitangwa (ntushyiremo nimero ya telefoni)..."
