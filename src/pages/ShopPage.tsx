@@ -214,7 +214,14 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                   <span className="tabular-nums font-medium">{products.length} ibicuruzwa</span>
                 </div>
 
-                {shop.about && <p className="mt-2.5 text-sm text-slate-700 max-w-xl">{shop.about}</p>}
+                {shop.about && <p className="mt-2.5 whitespace-pre-line text-sm text-slate-700 max-w-xl">{shop.about}</p>}
+                {shop.social_links && Object.entries(shop.social_links).filter(([key,value]) => ['instagram','facebook','tiktok','youtube','website'].includes(key) && /^https?:\/\//i.test(String(value))).length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {Object.entries(shop.social_links).filter(([key,value]) => ['instagram','facebook','tiktok','youtube','website'].includes(key) && /^https?:\/\//i.test(String(value))).map(([key,value]) => (
+                      <a key={key} href={value} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-9 items-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3]">{key === 'website' ? 'Website' : key[0].toUpperCase()+key.slice(1)}</a>
+                    ))}
+                  </div>
+                )}
 
                 <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-slate-600">
                   {shop.delivery_text && (
