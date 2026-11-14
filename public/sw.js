@@ -1,4 +1,4 @@
-const CACHE_NAME = 'isoko-v1';
+const CACHE_NAME = 'isoko-v2';
 const APP_SHELL = ['/', '/manifest.webmanifest', '/icon.svg'];
 
 self.addEventListener('install', (event) => {
@@ -11,7 +11,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
     )
   );
   self.clients.claim();
@@ -24,44 +24,24 @@ self.addEventListener('message', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  const req = event.request;
-  if (req.method !== 'GET') return;
+  const request = event.request;
+  if (request.method !== 'GET') return;
 
-  const url = new URL(req.url);
-  if (url.pathname.startsWith('/api/')) {
-    // Network first, fallback to cache for public bootstrap
-    if (url.pathname === '/api/bootstrap') {
-      event.respondWith(
-        fetch(req)
-          .then((res) => {
-            const copy = res.clone();
-            caches.open(CACHE_NAME).then((c) => c.put(req, copy));
-            return res;
-          })
-          .catch(() => caches.match(req))
-      );
-    }
-    return;
-  }
+  const url = new URL(request.url);
+  // The ISOKO frontend is a Vite static site. Its API and seller images live on
+  // Neon domains, not on old Express /api or local /uploads routes.
+  if (url.origin !== self.location.origin) return;
 
-  // Images and static assets: stale-while-revalidate
-  if (
-    url.pathname.startsWith('/src/assets/') ||
-    url.pathname.startsWith('/uploads/') ||
-    url.pathname.endsWith('.png') ||
-    url.pathname.endsWith('.jpg') ||
-    url.pathname.endsWith('.webp') ||
-    url.pathname.endsWith('.svg')
-  ) {
+  if (url.pathname.startsWith('/assets/') || ['/icon.svg', '/manifest.webmanifest'].includes(url.pathname)) {
     event.respondWith(
-      caches.match(req).then((cached) => {
-        const fetched = fetch(req)
-          .then((res) => {
-            if (res && res.ok) {
-              const copy = res.clone();
-              caches.open(CACHE_NAME).then((c) => c.put(req, copy));
+      caches.match(request).then((cached) => {
+        const fetched = fetch(request)
+          .then((response) => {
+            if (response && response.ok) {
+              const copy = response.clone();
+              void caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
             }
-            return res;
+            return response;
           })
           .catch(() => cached);
         return cached || fetched;
@@ -70,10 +50,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Navigation fallback
-  if (req.mode === 'navigate') {
+  if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(req).catch(() => caches.match('/') || new Response('Nta internet', { status: 503 }))
+      fetch(request).catch(async () => {
+        const shell = await caches.match('/');
+        return shell || new Response('Nta internet', { status: 503 });
+      })
     );
   }
 });
