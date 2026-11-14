@@ -10,6 +10,7 @@ import {
   Search,
   Share2,
   Truck,
+  Store,
 } from 'lucide-react';
 import { IsokoVerifiedSeal, RwandanGeometricPattern } from '../components/IsokoLogo';
 import { ProductCard } from '../components/ProductCard';
@@ -25,8 +26,6 @@ import type { Product, Shop } from '../types/marketplace';
 interface ShopPageProps {
   slug: string;
 }
-
-const DEFAULT_COVER = '/src/assets/images/promo_kigali_market_1794567241262.jpg';
 
 export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
   const { navigate, followedShops, toggleFollowShop } = useMarketplace();
@@ -149,21 +148,30 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 space-y-8">
       {/* Storefront Hero Banner + Verified Merchant Profile */}
       <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
-        <div className="relative h-40 sm:h-52 w-full bg-[#0F1E18]">
-          <img
-            src={shop.cover_path || DEFAULT_COVER}
-            alt={`Ifoto y'iduka ${shop.name}`}
-            referrerPolicy="no-referrer"
-            className="h-full w-full object-cover"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent"
-          />
-          <div className="absolute bottom-3 sm:left-[120px] hidden sm:block text-xs font-medium text-white/95">
-            Iduka riri kuri ISOKO · {shop.district_name}
+        {shop.cover_path ? (
+          <div className="relative h-40 w-full bg-[#0F1E18] sm:h-52">
+            <img
+              src={shop.cover_path}
+              alt={`Ifoto y'iduka ${shop.name}`}
+              referrerPolicy="no-referrer"
+              className="h-full w-full object-cover"
+            />
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent"
+            />
+            <div className="absolute bottom-3 hidden text-xs font-medium text-white/95 sm:left-[120px] sm:block">
+              Iduka riri kuri ISOKO · {shop.district_name}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="imigongo-surface relative flex h-40 w-full items-center justify-center sm:h-52">
+            <div className="flex items-center gap-3 rounded-2xl border border-white/80 bg-white/85 px-5 py-3 shadow-sm">
+              <Store className="h-8 w-8 text-[#0B6E4F]" aria-hidden="true" />
+              <span className="font-display text-sm font-bold text-[#0B6E4F]">Iduka riri kuri ISOKO</span>
+            </div>
+          </div>
+        )}
         <RwandanGeometricPattern className="h-2 w-full text-[#0B6E4F]/20 bg-[#F1F6F3]" />
 
         <div className="p-5 sm:p-6">
