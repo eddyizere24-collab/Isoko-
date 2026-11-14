@@ -69,6 +69,7 @@ export interface Shop {
   logo_path: string | null;
   cover_path: string | null;
   about: string;
+  social_links?: Record<string, string>;
   whatsapp: string;
   phone: string;
   district_id: number;
