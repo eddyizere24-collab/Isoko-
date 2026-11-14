@@ -6,7 +6,7 @@ import { loginAccount } from '../lib/api';
 import { signInWithGoogle } from '../lib/neon';
 
 export const LoginPage: React.FC = () => {
-  const { navigate, setAuthData, authProfile } = useMarketplace();
+  const { navigate, setAuthData, authProfile, searchParams } = useMarketplace();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -78,7 +78,13 @@ export const LoginPage: React.FC = () => {
             </div>
           )}
 
-          <button type="button" onClick={() => void handleGoogle()} disabled={googleLoading || submitting} className="mb-5 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50 disabled:opacity-60"><span className="grid h-6 w-6 place-items-center rounded-full border border-slate-200 font-bold text-[#4285F4]">G</span>{googleLoading ? 'Turahuza na Google...' : 'Komeza ukoresheje Google'}</button>
+          {searchParams.get('reason') === 'session' && (
+            <div role="alert" className="mb-5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
+              Igihe winjiraga cyarangiye cyangwa konti ntiyemejwe. Ongera winjire kugira ngo ukomeze gucunga iduka ryawe.
+            </div>
+          )}
+
+          <button type="button" onClick={() => void handleGoogle() disabled={googleLoading || submitting} className="mb-5 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50 disabled:opacity-60"><span className="grid h-6 w-6 place-items-center rounded-full border border-slate-200 font-bold text-[#4285F4]">G</span>{googleLoading ? 'Turahuza na Google...' : 'Komeza ukoresheje Google'}</button>
           <div className="mb-5 flex items-center gap-3 text-xs text-slate-400"><span className="h-px flex-1 bg-slate-200" />CYANGWA<span className="h-px flex-1 bg-slate-200" /></div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
