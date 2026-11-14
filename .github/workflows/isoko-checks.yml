@@ -54,13 +54,34 @@ jobs:
           ISOKO_TEST_FUNCTION_URL: https://br-blue-bread-ba2wywua-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
           ISOKO_EXPECTED_WEB_ORIGIN: https://isoko-marketplace-9i69.onrender.com
 
-      - name: Production build for E2E (isolated Neon Setup endpoints)
+      - name: Verify Neon Data API CORS on live Production branch
+        run: bun infra/neon/data-api-cors-smoke-test.mjs
+        env:
+          ISOKO_TEST_DATA_API_URL: https://ep-damp-poetry-ba0bdwcn.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
+          ISOKO_EXPECTED_WEB_ORIGIN: https://isoko-marketplace-9i69.onrender.com
+
+      # This child branch is a disposable clone of Production. Browser tests can
+      # create seller accounts, write images and publish products without touching Production.
+      - name: Verify seller-upload CORS on isolated Production clone
+        run: bun infra/neon/cors-smoke-test.mjs
+        env:
+          ISOKO_TEST_FUNCTION_URL: https://br-cold-forest-badn9wlr-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
+          ISOKO_EXPECTED_WEB_ORIGIN: https://isoko-marketplace-9i69.onrender.com
+
+      - name: Verify Neon Data API CORS on isolated Production clone
+        run: bun infra/neon/data-api-cors-smoke-test.mjs
+        env:
+          ISOKO_TEST_DATA_API_URL: https://ep-jolly-poetry-ba3o1jwc.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
+          ISOKO_EXPECTED_WEB_ORIGIN: https://isoko-marketplace-9i69.onrender.com
+
+      - name: Build UI for full seller-journey E2E (isolated Production clone)
         run: bun run build
         env:
-          VITE_NEON_AUTH_URL: https://ep-divine-salad-ba2n73kh.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth
-          VITE_NEON_DATA_API_URL: https://ep-divine-salad-ba2n73kh.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
-          VITE_NEON_FUNCTION_URL: https://br-raspy-resonance-baqfwhuh-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
-          VITE_NEON_PUBLIC_STORAGE_URL: https://br-raspy-resonance-baqfwhuh.storage.c-8.eu-central-1.aws.neon.tech/isoko-public-assets/
+          VITE_NEON_AUTH_URL: https://ep-jolly-poetry-ba3o1jwc.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth
+          VITE_NEON_DATA_API_URL: https://ep-jolly-poetry-ba3o1jwc.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
+          VITE_NEON_FUNCTION_URL: https://br-cold-forest-badn9wlr-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
+          VITE_NEON_PUBLIC_STORAGE_URL: https://br-cold-forest-badn9wlr.storage.c-8.eu-central-1.aws.neon.tech/isoko-public-assets/
+          VITE_ISOKO_SELLER_REGISTRATION_ENABLED: 'true'
 
       - name: Install Playwright for browser smoke tests
         run: |
