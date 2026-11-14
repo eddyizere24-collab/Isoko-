@@ -189,12 +189,12 @@ test('seller can register, sign in, update store, publish a photo product and re
   await expect(page.getByRole('heading', { name: 'Suzuma uko igicuruzwa kizagaragara' })).toBeVisible();
   await page.getByRole('button', { name: 'Bika kandi utangaze' }).click();
   await expect(page.getByRole('heading', { name: 'Igicuruzwa cyashyizwe ahagaragara!' })).toBeVisible();
-  await expect(page.getByText(productName)).toBeVisible();
+  await expect(page.getByText(productName).first()).toBeVisible();
 
   // Open the exact public product page and verify buyer actions.
   await page.getByRole('button', { name: 'Reba uko abaguzi bakibona' }).click();
   await expect(page).toHaveURL(/\/p\/prod-/);
-  await expect(page.getByText(productName)).toBeVisible();
+  await expect(page.getByText(productName).first()).toBeVisible();
   const publicProductUrl = page.url();
   const whatsappLink = page.getByRole('link', { name: 'Vugana kuri WhatsApp' }).first();
   await expect(whatsappLink).toBeVisible();
@@ -209,12 +209,12 @@ test('seller can register, sign in, update store, publish a photo product and re
   await page.getByRole('button', { name: 'Reba iduka' }).click();
   await expect(page).toHaveURL(/\/i\//);
   await expect(page.getByRole('heading', { name: shopName })).toBeVisible();
-  await expect(page.getByText(productName)).toBeVisible();
+  await expect(page.getByText(productName).first()).toBeVisible();
 
   // The seller can return later and update the product price.
   await page.goto('/umucuruzi/ibicuruzwa');
   await expect(page.getByRole('heading', { name: 'Ibicuruzwa byanjye' })).toBeVisible();
-  await expect(page.getByText(productName)).toBeVisible();
+  await expect(page.getByText(productName).first()).toBeVisible();
   await page.getByRole('button', { name: 'Hindura igiciro' }).click();
   await page.locator('#modal-new-price').fill('23000');
   await page.getByRole('dialog').getByRole('button', { name: 'Bika', exact: true }).click();
@@ -226,7 +226,7 @@ test('seller can register, sign in, update store, publish a photo product and re
   const buyerPage = await buyerContext.newPage();
   buyerPage.setDefaultTimeout(20_000);
   await buyerPage.goto(publicProductUrl);
-  await expect(buyerPage.getByText(productName)).toBeVisible();
+  await expect(buyerPage.getByText(productName).first()).toBeVisible();
   await expect(buyerPage.getByRole('button', { name: 'Shyira mu gare' }).first()).toBeVisible();
   await expect(buyerPage.getByRole('link', { name: 'Vugana kuri WhatsApp' }).first()).toBeVisible();
   await expect.poll(async () => buyerPage.locator('#product-jsonld').evaluate((el) => JSON.parse(el.textContent).offers.price)).toBe(23000);
@@ -236,7 +236,7 @@ test('seller can register, sign in, update store, publish a photo product and re
   await expect(buyerPage.getByRole('status')).toContainText('Byashyizwe mu gare!');
   await buyerPage.goto('/igare');
   await expect(buyerPage.getByRole('heading', { name: /Igare/ })).toBeVisible();
-  await expect(buyerPage.getByText(productName)).toBeVisible();
+  await expect(buyerPage.getByText(productName).first()).toBeVisible();
   const orderLink = buyerPage.getByRole('link', { name: `Ohereza kuri WhatsApp ya ${shopName}` });
   await expect(orderLink).toBeVisible();
   const orderHref = await orderLink.getAttribute('href');
