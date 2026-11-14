@@ -21,7 +21,7 @@ import type { Product, Profile, Shop } from '../types/marketplace';
 export const SellerDashboardPage: React.FC = () => {
   const { navigate, authSession, refreshBootstrap } = useMarketplace();
   const [data, setData] = useState<{
-    profile: Pick<Profile, 'id' | 'full_name' | 'status' | 'status_reason'>;
+    profile: Pick<Profile, 'id' | 'full_name' | 'status' | 'status_reason' | 'email' | 'email_verified' | 'identity_status'>;
     shop: Shop;
     products: Product[];
     staleProducts: Product[];
@@ -104,7 +104,7 @@ export const SellerDashboardPage: React.FC = () => {
               <p className="font-bold">
                 {data.profile.status === 'pending'
                   ? RW.pending_review
-                  : `Imiterere ya konti: ${RW.seller_statuses[data.profile.status]}`}
+                  : `Imiterere ya konti: ${data.profile.status === 'approved' ? 'Konti irakora' : RW.seller_statuses[data.profile.status]}`}
               </p>
               {data.profile.status_reason && (
                 <p className="mt-1 text-slate-700">Impamvu: {data.profile.status_reason}</p>
@@ -115,6 +115,12 @@ export const SellerDashboardPage: React.FC = () => {
               </p>
             </div>
           </div>
+        </div>
+      )}
+
+      {data.profile.identity_status !== 'verified' && data.profile.status === 'approved' && (
+        <div role="status" className="mb-5 rounded-xl border border-slate-200 bg-[#F7FAF8] px-4 py-3 text-xs leading-5 text-slate-700">
+          Konti yawe irakora. Indangamuntu n’andi makuru y’inyongera ntibiragenzurwa; ushobora kuzuza ayo makuru nyuma muri Profile.
         </div>
       )}
 
