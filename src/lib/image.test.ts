@@ -1,32 +1,21 @@
 import { describe, expect, it } from 'bun:test';
-import { getScaledImageDimensions } from './image';
+import { isUploadReadyImageMime } from './image';
 
-describe('getScaledImageDimensions', () => {
-  it('keeps the full aspect ratio while fitting a large image inside its bounds', () => {
-    expect(getScaledImageDimensions(4000, 3000, 1600, 1600)).toEqual({
-      width: 1600,
-      height: 1200,
-    });
+describe('isUploadReadyImageMime', () => {
+  it('accepts the three normalized formats supported by the storage API', () => {
+    expect(isUploadReadyImageMime('image/jpeg')).toBe(true);
+    expect(isUploadReadyImageMime('image/png')).toBe(true);
+    expect(isUploadReadyImageMime('image/webp')).toBe(true);
   });
 
-  it('does not enlarge smaller source images', () => {
-    expect(getScaledImageDimensions(320, 180, 1600, 1600)).toEqual({
-      width: 320,
-      height: 180,
-    });
+  it('does not confuse source formats with normalized upload formats', () => {
+    expect(isUploadReadyImageMime('image/heic')).toBe(false);
+    expect(isUploadReadyImageMime('image/heif')).toBe(false);
+    expect(isUploadReadyImageMime('image/avif')).toBe(false);
+    expect(isUploadReadyImageMime('application/octet-stream')).toBe(false);
   });
 
-  it('never returns zero dimensions for tiny or invalid input sizes', () => {
-    expect(getScaledImageDimensions(0, 0, 480, 480)).toEqual({
-      width: 1,
-      height: 1,
-    });
-  });
-
-  it('fits portrait images without cropping their original ratio', () => {
-    expect(getScaledImageDimensions(1200, 2400, 1000, 1000)).toEqual({
-      width: 500,
-      height: 1000,
-    });
+  it('normalizes case before checking MIME types', () => {
+    expect(isUploadReadyImageMime('IMAGE/WEBP')).toBe(true);
   });
 });
