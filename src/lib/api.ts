@@ -362,6 +362,20 @@ export async function registerSellerAccount(payload:Record<string,any>):Promise<
   }
   if(!user?.id) throw new Error('Konti ntiyafunguwe neza. Ongera winjire ukoresheje email yawe.');
 
+  // Some auth deployments create the account before the browser has persisted
+  // its session cookie. Confirm that a real Data API JWT exists before calling
+  // protected seller-registration RPCs, and complete the sign-in when needed.
+  try {
+    await getNeonJwt();
+  } catch (sessionError) {
+    if (!password) throw sessionError;
+    const sessionLogin=await neon.auth.signIn.email({email,password}) as any;
+    if(sessionLogin?.error) fail(sessionLogin.error,'Konti yafunguwe ariko kwinjira byanze. Ongera winjire ukoresheje email n’ijambo ry’ibanga.');
+    user=await getNeonUser();
+    if(!user?.id) throw new Error('Konti yafunguwe ariko session ntiyabonetse. Ongera winjire.');
+    await getNeonJwt();
+  }
+
   // The short-lived registration draft protects first-time seller profile creation.
   // No national ID, TIN, selfie or identity-document images are requested here.
   dataOf<any>(
