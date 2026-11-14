@@ -28,6 +28,9 @@ jobs:
       - name: TypeScript check
         run: bun run lint
 
+      - name: Unit tests
+        run: bun test src/lib/*.test.ts
+
       - name: Verify isolated Neon setup branch
         run: bun infra/neon/smoke-test.mjs
         env:
