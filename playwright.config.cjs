@@ -7,15 +7,15 @@ module.exports = defineConfig({
   timeout: 30_000,
   reporter: 'line',
   use: {
-    baseURL: 'http://127.0.0.1:4173',
+    baseURL: 'http://localhost:4173',
     browserName: 'chromium',
     headless: true,
     serviceWorkers: 'block',
     trace: 'retain-on-failure',
   },
   webServer: {
-    command: 'bunx vite preview --host 127.0.0.1 --port 4173 --strictPort',
-    url: 'http://127.0.0.1:4173',
+    command: 'bunx vite preview --host 0.0.0.0 --port 4173 --strictPort',
+    url: 'http://localhost:4173',
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,
   },
