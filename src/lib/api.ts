@@ -285,6 +285,16 @@ export async function subscribeUpdates(payload:{kind:'push'|'email'|'shop_follow
   }),'Ntibishobotse kubika amahitamo yawe.');
 }
 
+export async function startGoogleSignIn(callbackPath: string): Promise<void> {
+  const result = await neon.auth.signIn.social({ provider: 'google', callbackURL: new URL(callbackPath, window.location.origin).toString() }) as any;
+  if (result?.error) fail(result.error, 'Kwinjira ukoresheje Google byanze. Ongera ugerageze.');
+}
+
+export async function loginWithCurrentSession(): Promise<{token:string;expiresAt:number;profile:Profile;shop:Shop|null}> {
+  const current = await currentAccount();
+  return {...storedSession(current.profile),profile:current.profile,shop:current.shop};
+}
+
 export async function loginAccount(identifier:string,password:string):Promise<{token:string;expiresAt:number;profile:Profile;shop:Shop|null}> {
   const rawIdentifier=String(identifier??'').trim();
   const email=rawIdentifier.includes('@')
@@ -328,10 +338,10 @@ export async function registerSellerAccount(payload:Record<string,any>):Promise<
   if(!/^2507[0-9]{8}$/.test(phone)) {
     throw new Error('Nimero ya WhatsApp igomba kuba iya MTN cyangwa Airtel mu Rwanda (07XXXXXXXX).');
   }
-  if(password.length<8) throw new Error('Ijambo ry’ibanga rigomba kugira nibura inyuguti 8.');
   if(shopName.length<2) throw new Error('Andika izina ry’iduka ryawe.');
 
   let user=await getNeonUser();
+  if (!user && password.length<8) throw new Error('Ijambo ry’ibanga rigomba kugira nibura inyuguti 8.');
   if(user?.email&&String(user.email).toLowerCase()!==email) {
     throw new Error('Hari indi konti ifunguye. Sohoka mbere yo gufungura iduka rishya.');
   }
