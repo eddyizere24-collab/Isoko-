@@ -439,6 +439,7 @@ export const SellerAddProductPage: React.FC = () => {
                   type="file"
                   accept="image/jpeg,image/png,image/webp"
                   multiple
+                  disabled={uploadingPhoto}
                   className="sr-only"
                   onChange={(e) => handlePhotoFiles(e.target.files)}
                 />
