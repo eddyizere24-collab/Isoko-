@@ -12,7 +12,7 @@ services:
       - key: VITE_ISOKO_PREVIEW
         value: "false"
       - key: VITE_ISOKO_SELLER_REGISTRATION_ENABLED
-        value: "false"
+        value: "true"
       - key: VITE_NEON_AUTH_URL
         value: https://ep-damp-poetry-ba0bdwcn.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth
       - key: VITE_NEON_DATA_API_URL
