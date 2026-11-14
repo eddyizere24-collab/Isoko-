@@ -13,4 +13,6 @@ END;
 $constraint$;
 GRANT SELECT (bio,avatar_key) ON public.profiles TO authenticated;
 GRANT UPDATE (bio,avatar_key) ON public.profiles TO authenticated;
+GRANT SELECT (social_links) ON public.shops TO authenticated;
+GRANT UPDATE (social_links) ON public.shops TO authenticated;
 INSERT INTO public.schema_migrations(version) VALUES ('017_seller_profile_storefront_socials') ON CONFLICT (version) DO NOTHING;
