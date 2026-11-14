@@ -91,7 +91,7 @@ test('seller can register, sign in, update store, publish a photo product and re
   await expect(page.getByRole('heading', { name: shopName })).toBeVisible();
 
   // Sign in again in a clean browser context to verify login, not just signup.
-  const loginContext = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const loginContext = await browser.newContext({ baseURL: 'http://127.0.0.1:4173', viewport: { width: 1280, height: 900 } });
   const loginPage = await loginContext.newPage();
   loginPage.setDefaultTimeout(20_000);
   await loginPage.goto('/injira');
@@ -162,7 +162,7 @@ test('seller can register, sign in, update store, publish a photo product and re
   await page.getByRole('button', { name: 'Reba uko abaguzi bakibona' }).click();
   await expect(page).toHaveURL(/\/p\/prod-/);
   await expect(page.getByText(productName)).toBeVisible();
-  await expect(page.locator('img').filter({ has: page.locator('source') }).first()).toHaveCount(0);
+  const publicProductUrl = page.url();
   const whatsappLink = page.getByRole('link', { name: 'Vugana kuri WhatsApp' }).first();
   await expect(whatsappLink).toBeVisible();
   const whatsappHref = await whatsappLink.getAttribute('href');
@@ -191,10 +191,11 @@ test('seller can register, sign in, update store, publish a photo product and re
   const buyerContext = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const buyerPage = await buyerContext.newPage();
   buyerPage.setDefaultTimeout(20_000);
-  await buyerPage.goto(page.url());
+  await buyerPage.goto(publicProductUrl);
   await expect(buyerPage.getByText(productName)).toBeVisible();
   await expect(buyerPage.getByRole('button', { name: 'Shyira mu gare' }).first()).toBeVisible();
   await expect(buyerPage.getByRole('link', { name: 'Vugana kuri WhatsApp' }).first()).toBeVisible();
+  await expect.poll(async () => buyerPage.locator('#product-jsonld').evaluate((el) => JSON.parse(el.textContent).offers.price)).toBe(23000);
   await buyerContext.close();
 
   expect(browserErrors, 'No uncaught browser errors should occur during the seller journey').toEqual([]);
