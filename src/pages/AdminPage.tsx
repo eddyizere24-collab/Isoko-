@@ -50,21 +50,6 @@ interface AdminKycReview {
 
 type AdminTab = 'overview' | 'assistant' | 'sellers' | 'products' | 'reports' | 'campaigns' | 'settings';
 
-const CAMPAIGN_BANNER_PRESETS = [
-  {
-    label: 'Isoko ry’Inkweto (Kimironko)',
-    url: '/src/assets/images/promo_kigali_market_1794567241262.jpg',
-  },
-  {
-    label: 'Imyenda ya Ankara (Nyamirambo)',
-    url: '/src/assets/images/promo_ankara_craft_1794567240592.jpg',
-  },
-  {
-    label: 'Isoko rya Kigali (Hero)',
-    url: '/src/assets/images/hero_kigali_fashion_1794551814589.jpg',
-  },
-];
-
 const REJECTION_TEMPLATES = [
   'Ifoto y’indangamuntu ntisobanutse. Nyamuneka ongera uyifate neza ahantu habona.',
   'Nimero ya telefoni cyangwa WhatsApp ntabwo yabashije kuboneka.',
