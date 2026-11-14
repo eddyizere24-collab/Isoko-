@@ -48,12 +48,6 @@ jobs:
           ISOKO_EXPECTED_NEON_BRANCH: isoko-production
 
 
-      - name: Verify seller-upload CORS on isolated setup branch
-        run: bun infra/neon/cors-smoke-test.mjs
-        env:
-          ISOKO_TEST_FUNCTION_URL: https://br-raspy-resonance-baqfwhuh-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
-          ISOKO_EXPECTED_WEB_ORIGIN: https://isoko-marketplace-preview-n4d8.onrender.com
-
       - name: Verify seller-upload CORS on live Production branch
         run: bun infra/neon/cors-smoke-test.mjs
         env:
