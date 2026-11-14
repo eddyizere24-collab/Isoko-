@@ -79,8 +79,8 @@ export const StaticPage: React.FC = () => {
               a: 'Yego, turabigira inama cyane cyane i Kigali. Banza urebe igicuruzwa cyangwa uhure n’umucuruzi ahantu hazwi mbere yo kohereza amafaranga.',
             },
             {
-              q: 'Nabona nte iduka ryemewe?',
-              a: 'Amaduka yose agaragara ku rubuga yabanje kugenzurwa na Admin (indangamuntu, aho akorera na telefoni) agahabwa ikimenyetso cy’uko yagenzuwe.',
+              q: 'Nabona nte iduka ryagenzuwe?',
+              a: 'Ikimenyetso cya Verified kigaragaza ko ISOKO yagenzuye imyirondoro y’umucuruzi. Amaduka mashya ashobora kugaragara ataragenzurwa; banza urebe ikimenyetso kiri ku iduka mbere yo gufata icyemezo cyo kugura.',
             },
           ].map((faq) => (
             <div key={faq.q} className="rounded-2xl border border-slate-200 bg-white p-4">
