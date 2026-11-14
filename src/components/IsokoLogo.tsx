@@ -5,38 +5,69 @@ interface LogoProps {
 }
 
 /**
- * Isoko Primary Emblem: architectural Kigali market arch framing a Rwandan diamond weave.
+ * ISOKO sun mark: a ring of many coloured beads around a deliberately open centre.
+ * The open centre represents the meeting point of buyers and sellers.
  */
-export const IsokoMark: React.FC<LogoProps> = ({ className = 'h-7 w-7' }) => (
+export const IsokoMark: React.FC<LogoProps> = ({ className = 'h-8 w-8' }) => (
   <svg
-    viewBox="0 0 36 36"
+    viewBox="0 0 40 40"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     aria-hidden="true"
     className={className}
   >
-    <rect width="36" height="36" rx="10" fill="#0B6E4F" />
-    <path
-      d="M11 13.5C11 9.91015 13.9101 7 17.5 7H18.5C22.0899 7 25 9.91015 25 13.5V15H22.2V13.5C22.2 11.4565 20.5435 9.8 18.5 9.8H17.5C15.4565 9.8 13.8 11.4565 13.8 13.5V15H11V13.5Z"
-      fill="#F1F6F3"
-    />
-    <rect x="8.5" y="14.5" width="19" height="14.5" rx="3.5" fill="#FFFFFF" />
-    <path
-      d="M18 17.5L22.5 21.75L18 26L13.5 21.75L18 17.5Z"
-      fill="#E8A33D"
-    />
-    <path
-      d="M18 19.6L20.3 21.75L18 23.9L15.7 21.75L18 19.6Z"
-      fill="#0B6E4F"
-    />
+    <g>
+      <circle cx="20" cy="3.8" r="1.45" fill="#E8A33D" />
+      <circle cx="24.15" cy="4.55" r="1.05" fill="#0B6E4F" />
+      <circle cx="28" cy="6.15" r="1.55" fill="#C0392B" />
+      <circle cx="31.3" cy="8.7" r="1.05" fill="#2F80ED" />
+      <circle cx="33.85" cy="12" r="1.5" fill="#8B5CF6" />
+      <circle cx="35.45" cy="15.85" r="1.05" fill="#E8A33D" />
+      <circle cx="36.2" cy="20" r="1.5" fill="#0B6E4F" />
+      <circle cx="35.45" cy="24.15" r="1.05" fill="#EC4899" />
+      <circle cx="33.85" cy="28" r="1.5" fill="#F97316" />
+      <circle cx="31.3" cy="31.3" r="1.05" fill="#C0392B" />
+      <circle cx="28" cy="33.85" r="1.5" fill="#14B8A6" />
+      <circle cx="24.15" cy="35.45" r="1.05" fill="#8B5CF6" />
+      <circle cx="20" cy="36.2" r="1.5" fill="#E8A33D" />
+      <circle cx="15.85" cy="35.45" r="1.05" fill="#0B6E4F" />
+      <circle cx="12" cy="33.85" r="1.5" fill="#EC4899" />
+      <circle cx="8.7" cy="31.3" r="1.05" fill="#2F80ED" />
+      <circle cx="6.15" cy="28" r="1.5" fill="#C0392B" />
+      <circle cx="4.55" cy="24.15" r="1.05" fill="#E8A33D" />
+      <circle cx="3.8" cy="20" r="1.5" fill="#8B5CF6" />
+      <circle cx="4.55" cy="15.85" r="1.05" fill="#0B6E4F" />
+      <circle cx="6.15" cy="12" r="1.5" fill="#14B8A6" />
+      <circle cx="8.7" cy="8.7" r="1.05" fill="#F97316" />
+      <circle cx="12" cy="6.15" r="1.5" fill="#2F80ED" />
+      <circle cx="15.85" cy="4.55" r="1.05" fill="#C0392B" />
+    </g>
+
+    <g opacity="0.95">
+      <circle cx="31" cy="20" r="0.85" fill="#C0392B" />
+      <circle cx="29.53" cy="25.5" r="0.8" fill="#E8A33D" />
+      <circle cx="25.5" cy="29.53" r="0.85" fill="#0B6E4F" />
+      <circle cx="20" cy="31" r="0.8" fill="#2F80ED" />
+      <circle cx="14.5" cy="29.53" r="0.85" fill="#8B5CF6" />
+      <circle cx="10.47" cy="25.5" r="0.8" fill="#F97316" />
+      <circle cx="9" cy="20" r="0.85" fill="#14B8A6" />
+      <circle cx="10.47" cy="14.5" r="0.8" fill="#C0392B" />
+      <circle cx="14.5" cy="10.47" r="0.85" fill="#E8A33D" />
+      <circle cx="20" cy="9" r="0.8" fill="#0B6E4F" />
+      <circle cx="25.5" cy="10.47" r="0.85" fill="#EC4899" />
+      <circle cx="29.53" cy="14.5" r="0.8" fill="#2F80ED" />
+    </g>
+
+    <path d="M20 13.7A6.3 6.3 0 0 1 26.3 20" stroke="#0B6E4F" strokeWidth="0.8" strokeLinecap="round" opacity="0.55" />
+    <path d="M20 26.3A6.3 6.3 0 0 1 13.7 20" stroke="#C0392B" strokeWidth="0.8" strokeLinecap="round" opacity="0.45" />
   </svg>
 );
 
 /**
- * Isoko Horizontal Wordmark: single-line mark + display brand title for headers & footers.
+ * ISOKO wordmark: the multicolour sun stays small enough for narrow mobile headers.
  */
 export const IsokoWordmark: React.FC<{ markClassName?: string; textClassName?: string }> = ({
-  markClassName = 'h-7 w-7',
+  markClassName = 'h-8 w-8',
   textClassName = 'text-xl font-extrabold tracking-tight text-[#0B6E4F]',
 }) => (
   <span className="inline-flex items-center gap-2 whitespace-nowrap shrink-0">
@@ -46,7 +77,7 @@ export const IsokoWordmark: React.FC<{ markClassName?: string; textClassName?: s
 );
 
 /**
- * Verified Merchant Seal: trust badge paired explicitly with text on shop cards and storefronts.
+ * Verified merchant seal is shown only when identity_status is actually verified.
  */
 export const IsokoVerifiedSeal: React.FC<{ className?: string }> = ({ className = 'h-4 w-4' }) => (
   <svg
@@ -56,10 +87,6 @@ export const IsokoVerifiedSeal: React.FC<{ className?: string }> = ({ className 
     aria-hidden="true"
     className={className}
   >
-    <path
-      d="M10 1.5L12.3 3.2L15.1 2.9L16 5.6L18.4 7.1L17.8 9.9L19.1 12.4L17 14.3L16.7 17.1L13.9 17.5L11.9 19.4L9.2 18.2L6.5 19.4L4.5 17.5L1.7 17.1L1.4 14.3L-0.7 12.4"
-      opacity="0"
-    />
     <circle cx="10" cy="10" r="8.5" fill="#0B6E4F" />
     <path
       d="M6.5 10.2L8.9 12.6L13.7 7.6"
@@ -72,33 +99,47 @@ export const IsokoVerifiedSeal: React.FC<{ className?: string }> = ({ className 
 );
 
 /**
- * Subtle Imigongo-inspired geometric SVG accent stripe for storefront dividers & section framing.
+ * A restrained Imigongo-inspired band in Isoko green and red.
+ * Each rendered SVG receives its own pattern ID, so repeated bands never clash.
  */
 export const RwandanGeometricPattern: React.FC<{ className?: string }> = ({
-  className = 'h-3 w-full text-[#0B6E4F]/15',
-}) => (
-  <svg
-    aria-hidden="true"
-    className={className}
-    preserveAspectRatio="none"
-    viewBox="0 0 120 12"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <pattern id="imigongo-stripe" width="24" height="12" patternUnits="userSpaceOnUse">
-      <path
-        d="M0 6L6 1L12 6L18 11L24 6"
-        stroke="currentColor"
-        strokeWidth="1.25"
-        strokeLinecap="square"
-      />
-      <path
-        d="M0 11L6 6L12 11M12 1L18 6L24 1"
-        stroke="currentColor"
-        strokeWidth="0.75"
-        opacity="0.55"
-      />
-    </pattern>
-    <rect width="120" height="12" fill="url(#imigongo-stripe)" />
-  </svg>
-);
+  className = 'h-2.5 w-full opacity-75',
+}) => {
+  const patternId = `isoko-imigongo-${React.useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
+
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      preserveAspectRatio="none"
+      viewBox="0 0 160 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <pattern id={patternId} width="32" height="16" patternUnits="userSpaceOnUse">
+          <path
+            d="M0 8L8 0L16 8L24 16L32 8"
+            stroke="#0B6E4F"
+            strokeWidth="1.1"
+            strokeLinecap="square"
+          />
+          <path
+            d="M0 8L8 16L16 8L24 0L32 8"
+            stroke="#C0392B"
+            strokeWidth="0.9"
+            strokeLinecap="square"
+            opacity="0.7"
+          />
+          <path
+            d="M8 8L16 2.5L24 8L16 13.5L8 8Z"
+            stroke="#0B6E4F"
+            strokeWidth="0.7"
+            opacity="0.42"
+          />
+        </pattern>
+      </defs>
+      <rect width="160" height="16" fill={`url(#${patternId})`} />
+    </svg>
+  );
+};
