@@ -22,7 +22,7 @@ test.beforeEach(async ({ page }) => {
 
   // Keep smoke tests read-only and independent from Neon services.
   await page.route(
-    /.(?:neonauth|apirest|compute|storage).c-8.eu-central-1.aws.neon.tech//,
+    String.raw`/\\.(?:neonauth|apirest|compute|storage)\\.c-8\\.eu-central-1\\.aws\\.neon\\.tech\\//`,
     (route) => route.abort()
   );
   page.on('pageerror', (error) => console.log('Browser page error:', error.message));
