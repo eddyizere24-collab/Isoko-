@@ -108,6 +108,7 @@ function mapShop(row: any): Shop {
     ...row,
     logo_path: row.logo_path ?? null,
     cover_path: row.cover_path ?? null,
+    social_links: row.social_links ?? {},
     active_product_count: Number(row.active_product_count ?? 0),
   } as Shop;
 }
@@ -371,7 +372,7 @@ export async function fetchMe():Promise<{profile:Profile;shop:Shop|null}> {
   return {profile:current.profile,shop:current.shop};
 }
 
-export async function uploadImagePair(dataUrl:string,kind:'full'|'thumb'):Promise<{url:string;bytes:number}> {
+export async function uploadImagePair(dataUrl:string,kind:'full'|'thumb'|'shop'):Promise<{url:string;bytes:number}> {
   const result=await uploadThroughFunction(dataUrl,kind);
   if(!result.url) throw new Error('Ifoto rusange ntiyabonetse.');
   return {url:result.url,bytes:result.bytes};
@@ -510,6 +511,9 @@ export async function updateSellerShop(payload:Record<string,unknown>):Promise<{
     await neon.from('shops').update({
       name:String(payload.name??'').trim(),
       about:String(payload.about??''),
+      logo_key:payload.logo_path ? storageKey(String(payload.logo_path)) : null,
+      cover_key:payload.cover_path ? storageKey(String(payload.cover_path)) : null,
+      social_links:payload.social_links && typeof payload.social_links === 'object' ? payload.social_links : {},
       whatsapp:normalizePhone(String(payload.whatsapp??'')),
       phone:normalizePhone(String(payload.phone??'')),
       district_id:districtId,
