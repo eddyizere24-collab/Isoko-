@@ -28,7 +28,7 @@ interface BulkProductDraft {
   error?: string;
 }
 
-const MAX_PRODUCTS_PER_BATCH = 10;
+const MAX_PRODUCTS_PER_BATCH = 25;
 const MAX_PHOTOS_PER_PRODUCT = 5;
 
 function makeKey(): string {
@@ -72,7 +72,7 @@ export const SellerBulkAddProductsPage: React.FC = () => {
 
   const addBlankRow = () => {
     if (rows.length >= MAX_PRODUCTS_PER_BATCH) {
-      setFeedback('Batch imwe ntirenze ibicuruzwa 10. Bika ibi, utangire indi batch.');
+      setFeedback('Batch imwe ntirenze ibicuruzwa 25. Bika ibi, utangire indi batch.');
       return;
     }
     setRows((previous) => [...previous, {
@@ -128,12 +128,12 @@ export const SellerBulkAddProductsPage: React.FC = () => {
     if (!files?.length) return;
     const slots = MAX_PRODUCTS_PER_BATCH - rows.length;
     if (slots <= 0) {
-      setFeedback('Batch yuzuye ibicuruzwa 10. Bika ibi, utangire indi batch.');
+      setFeedback('Batch yuzuye ibicuruzwa 25. Bika ibi, utangire indi batch.');
       return;
     }
     const chosen = Array.from(files).slice(0, slots);
     if (files.length > slots) {
-      setFeedback('Hitamo amafoto 10 cyangwa munsi yayo kuri batch imwe. Amafoto arenzeho yasimbutswe.');
+      setFeedback('Hitamo amafoto 25 cyangwa munsi yayo kuri batch imwe. Amafoto arenzeho yasimbutswe.');
     } else {
       setFeedback(null);
     }
@@ -351,7 +351,7 @@ export const SellerBulkAddProductsPage: React.FC = () => {
           Hitamo amafoto menshi
           <input type="file" accept="image/*" multiple disabled={saving || rows.length >= MAX_PRODUCTS_PER_BATCH} className="sr-only" onChange={(event) => { void addManyProductsFromPhotos(event.target.files); event.currentTarget.value=''; }} />
         </label>
-        <p className="mt-2 text-xs text-slate-500">Amafoto ntarenza 10 mu gutangiza batch imwe. Uyashyira kuri server amaze kugabanywa uburemere.</p>
+        <p className="mt-2 text-xs text-slate-500">Amafoto ntarenza 25 mu gutangiza batch imwe. Uyashyira kuri server amaze kugabanywa uburemere.</p>
       </section>
 
       <section className="mt-5 space-y-3">
