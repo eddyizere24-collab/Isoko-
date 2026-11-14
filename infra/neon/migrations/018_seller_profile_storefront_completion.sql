@@ -23,6 +23,8 @@ $constraint$;
 GRANT SELECT (email,email_verified,identity_status,bio,avatar_key)
   ON public.profiles TO authenticated;
 GRANT UPDATE (bio,avatar_key) ON public.profiles TO authenticated;
+GRANT SELECT (social_links) ON public.shops TO authenticated;
+GRANT UPDATE (social_links) ON public.shops TO authenticated;
 
 ALTER TABLE public.shops ALTER COLUMN product_limit SET DEFAULT 500;
 UPDATE public.shops SET product_limit=500 WHERE product_limit<500;
