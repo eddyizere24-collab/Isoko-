@@ -1,5 +1,6 @@
 import { createClient } from '@neondatabase/neon-js';
 import { resolveAuthenticatedCredentials } from './neonSession';
+import { objectKeyFromPublicUrl as readPublicAssetKey, publicAssetUrl as buildPublicAssetUrl } from './storageUrls';
 
 // Setup-branch URLs are development-only. Public builds must receive their
 // own reviewed branch URLs from the hosting provider; never silently fall back
@@ -106,19 +107,9 @@ export function unwrapNeon<T>(result: any, fallbackMessage = 'Habaye ikibazo mu 
 }
 
 export function publicAssetUrl(key: string | null | undefined): string | null {
-  if (!key) return null;
-  if (/^https?:\/\//i.test(key)) return key;
-  const cleanKey = key.replace(/^\/+/, '');
-  if (!publicStorageUrl) return null;
-  const storageBase = publicStorageUrl.endsWith('/') ? publicStorageUrl : publicStorageUrl + '/';
-  return storageBase + cleanKey.split('/').map(encodeURIComponent).join('/');
+  return buildPublicAssetUrl(key, publicStorageUrl);
 }
 
 export function objectKeyFromPublicUrl(value: string): string {
-  if (!/^https?:\/\//i.test(value)) return value.replace(/^\/+/, '');
-  const url = new URL(value);
-  const marker = '/isoko-public-assets/';
-  const index = url.pathname.indexOf(marker);
-  if (index < 0) throw new Error('Ifoto si iya ISOKO Object Storage.');
-  return decodeURIComponent(url.pathname.slice(index + marker.length));
+  return readPublicAssetKey(value, publicStorageUrl);
 }

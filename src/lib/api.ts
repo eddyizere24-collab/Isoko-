@@ -88,6 +88,10 @@ function fail(error: any, fallback: string): never {
     KYC_ACCESS_DENIED: 'Ntabwo wemerewe kubona inyandiko za KYC.',
     EMAIL_ALREADY_REGISTERED: 'Iyi email isanzwe ifite konti kuri ISOKO. Injira aho kongera kwiyandikisha.',
     ACCOUNT_EMAIL_REQUIRED: 'Email ya konti ntiyabonetse. Ongera winjire.',
+    PRODUCT_NAME_LENGTH_INVALID: 'Izina ry’igicuruzwa rigomba kuba hagati y’inyuguti 5 na 60.',
+    PRODUCT_NAME_PHONE_OR_LINK: 'Izina ntirigomba kubamo nimero ya telefoni cyangwa link.',
+    PRODUCT_DESCRIPTION_INVALID: 'Ibisobanuro ntibigomba kurenza inyuguti 2 000 cyangwa kubamo nimero ya telefoni na link.',
+    PRODUCT_IMAGE_OWNERSHIP_INVALID: 'Amafoto agomba kuba ari ayo iduka ryawe. Ongera uyashyireho.',
     SHOP_NAME_REQUIRED: 'Andika izina ry’iduka ryawe.'
   };
   throw new Error(translations[message] ?? String(message));
