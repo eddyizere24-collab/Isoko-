@@ -31,6 +31,9 @@ export interface Profile {
   full_name: string;
   phone: string;
   whatsapp: string;
+  email?: string | null;
+  email_verified?: boolean;
+  identity_status?: 'unverified' | 'pending' | 'verified' | 'rejected';
   status: SellerStatus;
   status_reason: string | null;
   approved_by: string | null;
@@ -82,6 +85,7 @@ export interface Shop {
   approved_at?: string | null;
   status?: SellerStatus;
   active_product_count?: number;
+  identity_status?: 'unverified' | 'pending' | 'verified' | 'rejected';
 }
 
 export interface Category {
