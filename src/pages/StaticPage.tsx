@@ -6,8 +6,8 @@ import { buildWhatsAppLink } from '../lib/whatsapp';
 
 export const StaticPage: React.FC = () => {
   const { pathname, navigate, bootstrap } = useMarketplace();
-  const supportWa = bootstrap?.settings.SUPPORT_WHATSAPP ?? '250788000000';
-  const supportHours = bootstrap?.settings.SUPPORT_HOURS ?? '08:00 – 20:00';
+  const supportWa = bootstrap?.settings.SUPPORT_WHATSAPP?.trim() ?? '';
+  const supportHours = bootstrap?.settings.SUPPORT_HOURS?.trim() ?? '';
 
   if (pathname === '/ibyerekeye') {
     return (
@@ -40,27 +40,32 @@ export const StaticPage: React.FC = () => {
   }
 
   if (pathname === '/ubufasha') {
-    const waHref = buildWhatsAppLink(
-      supportWa,
-      'Muraho Ubufasha bwa Isoko, mfite ikibazo nashakaga kubaza.'
-    );
+    const waHref = supportWa
+      ? buildWhatsAppLink(supportWa, 'Muraho Ubufasha bwa Isoko, mfite ikibazo nashakaga kubaza.')
+      : null;
     return (
-      <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 space-y-6">
+      <main className="mx-auto max-w-3xl space-y-6 px-4 py-10 sm:px-6">
         <h1 className="text-2xl font-bold text-[#1B1F23]">Ubufasha & Ibibazo bikunze kubazwa</h1>
         <div className="rounded-2xl border border-[#25D366]/40 bg-[#F1F6F3] p-6">
-          <p className="text-sm font-bold text-[#1B1F23]">Vugana natwe kuri WhatsApp</p>
-          <p className="mt-1 text-xs text-slate-600">
-            Amasaha y’ubufasha buri munsi: {supportHours}
-          </p>
-          <a
-            href={waHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#25D366] px-5 text-sm font-semibold text-white hover:bg-[#1FB857]"
-          >
-            <MessageCircle className="h-4 w-4" aria-hidden="true" />
-            <span>{RW.help_whatsapp}</span>
-          </a>
+          {waHref ? (
+            <>
+              <p className="text-sm font-bold text-[#1B1F23]">Vugana natwe kuri WhatsApp</p>
+              {supportHours && <p className="mt-1 text-xs text-slate-600">Amasaha y’ubufasha: {supportHours}</p>}
+              <a
+                href={waHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#25D366] px-5 text-sm font-semibold text-white hover:bg-[#1FB857]"
+              >
+                <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                <span>{RW.help_whatsapp}</span>
+              </a>
+            </>
+          ) : (
+            <p className="text-sm leading-6 text-slate-700">
+              Nimero y’ubufasha ya ISOKO ntirashyirwa ahagaragara. Izongerwaho imaze kwemezwa kugira ngo utavugana na nimero itari yo.
+            </p>
+          )}
         </div>
 
         <div className="space-y-3">
