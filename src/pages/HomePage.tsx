@@ -6,6 +6,7 @@ import { ProductCard } from '../components/ProductCard';
 import { PromoCarousel } from '../components/PromoCarousel';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { RW } from '../i18n/rw';
+import { INITIAL_CATEGORIES } from '../data/categories';
 import { buildHomeShelves, interleaveBySeller } from '../lib/algorithm';
 import { loadInterest } from '../lib/storage';
 
@@ -22,10 +23,10 @@ export const HomePage: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState(20);
 
   const products = bootstrap?.products ?? [];
-  const categories = bootstrap?.categories ?? [];
+  const categories = bootstrap?.categories ?? INITIAL_CATEGORIES;
   const shops = bootstrap?.shops ?? [];
   const campaigns = bootstrap?.campaigns ?? [];
-  const topCategories = categories.filter((c) => c.parent_id === null);
+  const topCategories = categories.filter((c) => c.parent_id === null && c.active);
 
   const categoryCounts = useMemo(() => {
     const counts = new Map<string, number>();
@@ -65,39 +66,6 @@ export const HomePage: React.FC = () => {
     const visible = products.filter((p) => p.status === 'active' || p.status === 'sold_out');
     return interleaveBySeller(visible, { maxConsecutiveSameShop: 1 });
   }, [products]);
-
-  if (loading) {
-    return (
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 space-y-8">
-        <div className="h-56 w-full animate-pulse rounded-2xl bg-[#F1F6F3]" />
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-36 animate-pulse rounded-xl bg-[#F1F6F3]" />
-          ))}
-        </div>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="aspect-[3/4] animate-pulse rounded-xl bg-[#F1F6F3]" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="mx-auto max-w-xl px-4 py-16 text-center">
-        <p className="text-base font-semibold text-[#C0392B]">{error}</p>
-        <button
-          type="button"
-          onClick={refreshBootstrap}
-          className="mt-4 min-h-[44px] rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white"
-        >
-          Ongera ugerageze
-        </button>
-      </div>
-    );
-  }
 
   const activeCampaigns = campaigns.filter((c) => c.active);
 
@@ -200,8 +168,8 @@ export const HomePage: React.FC = () => {
                       aria-hidden="true"
                     />
                   </div>
-                  <p className="mt-1 text-xs text-slate-600 tabular-nums">
-                    {itemCount} bibonetse · {art.caption}
+                  <p className="mt-1 text-xs text-slate-600">
+                    {loading ? 'Amakuru arimo kuzanwa' : `${itemCount} bibonetse`} · {art.caption}
                   </p>
                 </div>
               </button>
@@ -370,11 +338,27 @@ export const HomePage: React.FC = () => {
             Ibicuruzwa byose biriho
           </h2>
           <span className="text-xs text-slate-600 tabular-nums">
-            {activeCatalog.length} bibonetse
+            {loading ? 'Birimo kuzanwa' : `${activeCatalog.length} bibonetse`}
           </span>
         </div>
 
-        {activeCatalog.length > 0 ? (
+        {error ? (
+          <div role="alert" className="imigongo-surface mt-4 rounded-2xl border border-[#C0392B]/25 p-6 text-center">
+            <p className="text-sm font-semibold text-[#C0392B]">{error}</p>
+            <button
+              type="button"
+              onClick={refreshBootstrap}
+              className="mt-4 inline-flex min-h-[44px] items-center rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white hover:bg-[#08553D]"
+            >
+              Ongera ugerageze
+            </button>
+          </div>
+        ) : loading ? (
+          <div role="status" aria-live="polite" className="imigongo-surface mt-4 rounded-2xl border border-slate-200 p-6 text-center">
+            <Package className="mx-auto h-8 w-8 text-[#0B6E4F]" aria-hidden="true" />
+            <p className="mt-3 text-sm font-semibold text-[#1B1F23]">Turimo kuzana ibicuruzwa byashyizweho n’abacuruzi.</p>
+          </div>
+        ) : activeCatalog.length > 0 ? (
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:gap-5">
             {activeCatalog.slice(0, visibleCount).map((product) => (
               <ProductCard key={product.id} product={product} />
