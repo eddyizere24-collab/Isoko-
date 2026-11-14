@@ -4,8 +4,26 @@ interface LogoProps {
   className?: string;
 }
 
+const SUN_BEADS = [
+  [20,3.8,1.45,'#E8A33D'], [24.15,4.55,1.05,'#0B6E4F'], [28,6.15,1.55,'#C0392B'],
+  [31.3,8.7,1.05,'#2F80ED'], [33.85,12,1.5,'#8B5CF6'], [35.45,15.85,1.05,'#E8A33D'],
+  [36.2,20,1.5,'#0B6E4F'], [35.45,24.15,1.05,'#EC4899'], [33.85,28,1.5,'#F97316'],
+  [31.3,31.3,1.05,'#C0392B'], [28,33.85,1.5,'#14B8A6'], [24.15,35.45,1.05,'#8B5CF6'],
+  [20,36.2,1.5,'#E8A33D'], [15.85,35.45,1.05,'#0B6E4F'], [12,33.85,1.5,'#EC4899'],
+  [8.7,31.3,1.05,'#2F80ED'], [6.15,28,1.5,'#C0392B'], [4.55,24.15,1.05,'#E8A33D'],
+  [3.8,20,1.5,'#8B5CF6'], [4.55,15.85,1.05,'#0B6E4F'], [6.15,12,1.5,'#14B8A6'],
+  [8.7,8.7,1.05,'#F97316'], [12,6.15,1.5,'#2F80ED'], [15.85,4.55,1.05,'#C0392B'],
+] as const;
+
+const INNER_BEADS = [
+  [31,20,0.85,'#C0392B'], [29.53,25.5,0.8,'#E8A33D'], [25.5,29.53,0.85,'#0B6E4F'],
+  [20,31,0.8,'#2F80ED'], [14.5,29.53,0.85,'#8B5CF6'], [10.47,25.5,0.8,'#F97316'],
+  [9,20,0.85,'#14B8A6'], [10.47,14.5,0.8,'#C0392B'], [14.5,10.47,0.85,'#E8A33D'],
+  [20,9,0.8,'#0B6E4F'], [25.5,10.47,0.85,'#EC4899'], [29.53,14.5,0.8,'#2F80ED'],
+] as const;
+
 /**
- * ISOKO sun mark: a ring of many coloured beads around a deliberately open centre.
+ * ISOKO sun mark: coloured beads around a deliberately open centre.
  * The open centre represents the meeting point of buyers and sellers.
  */
 export const IsokoMark: React.FC<LogoProps> = ({ className = 'h-8 w-8' }) => (
@@ -17,47 +35,15 @@ export const IsokoMark: React.FC<LogoProps> = ({ className = 'h-8 w-8' }) => (
     className={className}
   >
     <g>
-      <circle cx="20" cy="3.8" r="1.45" fill="#E8A33D" />
-      <circle cx="24.15" cy="4.55" r="1.05" fill="#0B6E4F" />
-      <circle cx="28" cy="6.15" r="1.55" fill="#C0392B" />
-      <circle cx="31.3" cy="8.7" r="1.05" fill="#2F80ED" />
-      <circle cx="33.85" cy="12" r="1.5" fill="#8B5CF6" />
-      <circle cx="35.45" cy="15.85" r="1.05" fill="#E8A33D" />
-      <circle cx="36.2" cy="20" r="1.5" fill="#0B6E4F" />
-      <circle cx="35.45" cy="24.15" r="1.05" fill="#EC4899" />
-      <circle cx="33.85" cy="28" r="1.5" fill="#F97316" />
-      <circle cx="31.3" cy="31.3" r="1.05" fill="#C0392B" />
-      <circle cx="28" cy="33.85" r="1.5" fill="#14B8A6" />
-      <circle cx="24.15" cy="35.45" r="1.05" fill="#8B5CF6" />
-      <circle cx="20" cy="36.2" r="1.5" fill="#E8A33D" />
-      <circle cx="15.85" cy="35.45" r="1.05" fill="#0B6E4F" />
-      <circle cx="12" cy="33.85" r="1.5" fill="#EC4899" />
-      <circle cx="8.7" cy="31.3" r="1.05" fill="#2F80ED" />
-      <circle cx="6.15" cy="28" r="1.5" fill="#C0392B" />
-      <circle cx="4.55" cy="24.15" r="1.05" fill="#E8A33D" />
-      <circle cx="3.8" cy="20" r="1.5" fill="#8B5CF6" />
-      <circle cx="4.55" cy="15.85" r="1.05" fill="#0B6E4F" />
-      <circle cx="6.15" cy="12" r="1.5" fill="#14B8A6" />
-      <circle cx="8.7" cy="8.7" r="1.05" fill="#F97316" />
-      <circle cx="12" cy="6.15" r="1.5" fill="#2F80ED" />
-      <circle cx="15.85" cy="4.55" r="1.05" fill="#C0392B" />
+      {SUN_BEADS.map(([cx, cy, radius, color], index) => (
+        <circle key={index} cx={cx} cy={cy} r={radius} fill={color} />
+      ))}
     </g>
-
     <g opacity="0.95">
-      <circle cx="31" cy="20" r="0.85" fill="#C0392B" />
-      <circle cx="29.53" cy="25.5" r="0.8" fill="#E8A33D" />
-      <circle cx="25.5" cy="29.53" r="0.85" fill="#0B6E4F" />
-      <circle cx="20" cy="31" r="0.8" fill="#2F80ED" />
-      <circle cx="14.5" cy="29.53" r="0.85" fill="#8B5CF6" />
-      <circle cx="10.47" cy="25.5" r="0.8" fill="#F97316" />
-      <circle cx="9" cy="20" r="0.85" fill="#14B8A6" />
-      <circle cx="10.47" cy="14.5" r="0.8" fill="#C0392B" />
-      <circle cx="14.5" cy="10.47" r="0.85" fill="#E8A33D" />
-      <circle cx="20" cy="9" r="0.8" fill="#0B6E4F" />
-      <circle cx="25.5" cy="10.47" r="0.85" fill="#EC4899" />
-      <circle cx="29.53" cy="14.5" r="0.8" fill="#2F80ED" />
+      {INNER_BEADS.map(([cx, cy, radius, color], index) => (
+        <circle key={index} cx={cx} cy={cy} r={radius} fill={color} />
+      ))}
     </g>
-
     <path d="M20 13.7A6.3 6.3 0 0 1 26.3 20" stroke="#0B6E4F" strokeWidth="0.8" strokeLinecap="round" opacity="0.55" />
     <path d="M20 26.3A6.3 6.3 0 0 1 13.7 20" stroke="#C0392B" strokeWidth="0.8" strokeLinecap="round" opacity="0.45" />
   </svg>
@@ -118,25 +104,9 @@ export const RwandanGeometricPattern: React.FC<{ className?: string }> = ({
     >
       <defs>
         <pattern id={patternId} width="32" height="16" patternUnits="userSpaceOnUse">
-          <path
-            d="M0 8L8 0L16 8L24 16L32 8"
-            stroke="#0B6E4F"
-            strokeWidth="1.1"
-            strokeLinecap="square"
-          />
-          <path
-            d="M0 8L8 16L16 8L24 0L32 8"
-            stroke="#C0392B"
-            strokeWidth="0.9"
-            strokeLinecap="square"
-            opacity="0.7"
-          />
-          <path
-            d="M8 8L16 2.5L24 8L16 13.5L8 8Z"
-            stroke="#0B6E4F"
-            strokeWidth="0.7"
-            opacity="0.42"
-          />
+          <path d="M0 8L8 0L16 8L24 16L32 8" stroke="#0B6E4F" strokeWidth="1.1" strokeLinecap="square" />
+          <path d="M0 8L8 16L16 8L24 0L32 8" stroke="#C0392B" strokeWidth="0.9" strokeLinecap="square" opacity="0.7" />
+          <path d="M8 8L16 2.5L24 8L16 13.5L8 8Z" stroke="#0B6E4F" strokeWidth="0.7" opacity="0.42" />
         </pattern>
       </defs>
       <rect width="160" height="16" fill={`url(#${patternId})`} />
