@@ -1,5 +1,6 @@
 const dataApiUrl = process.env.ISOKO_TEST_DATA_API_URL;
 const expectedOrigin = process.env.ISOKO_EXPECTED_WEB_ORIGIN;
+const allowWildcardOrigin = process.env.ISOKO_ALLOW_WILDCARD_CORS === "true";
 
 if (!dataApiUrl || !expectedOrigin) {
   throw new Error("Missing ISOKO_TEST_DATA_API_URL or ISOKO_EXPECTED_WEB_ORIGIN");
@@ -32,7 +33,7 @@ const allowHeaders = new Set(
 
 const problems = [];
 if (![200, 204].includes(response.status)) problems.push(`expected HTTP 200 or 204, received ${response.status}`);
-if (allowOrigin !== expectedOrigin) problems.push("Access-Control-Allow-Origin does not match the browser origin");
+if (allowOrigin !== expectedOrigin && !(allowWildcardOrigin && allowOrigin === "*")) problems.push("Access-Control-Allow-Origin does not match the browser origin");
 if (!allowMethods.has("POST")) problems.push("POST is not allowed by CORS");
 if (!allowHeaders.has("authorization")) problems.push("Authorization header is not allowed by CORS");
 if (!allowHeaders.has("content-type")) problems.push("Content-Type header is not allowed by CORS");
