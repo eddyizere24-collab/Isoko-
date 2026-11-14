@@ -94,7 +94,27 @@ Last checked: 2026-11-14 · seller onboarding, product workflows and brand revie
 - CI passed: https://github.com/eddyizere24-collab/Isoko-/actions/runs/43568012678.
 - The homepage no longer blocks its hero, brand mark and active category cards behind the initial database read. Product cards remain gated until real catalogue data arrives; an empty-catalogue message appears only after the read confirms zero products.
 - This is a UI change only; it changes no Production database records or settings.
-- A fresh public read-back of the homepage after PR #9 is still outstanding. Do not claim that deployment is confirmed until the published page is inspected.
+- Public read-back on 2026-11-14 confirmed that Render serves the new hollow-centre multicolour logo, the white/Imigongo homepage hero and active category cards, and a product-loading status instead of a page-wide skeleton.
+
+### Truthful identity verification — PR #10
+- PR #10 merged: https://github.com/eddyizere24-collab/Isoko-/pull/10
+- CI passed: https://github.com/eddyizere24-collab/Isoko-/actions/runs/43568423435
+- Homepage store shelf now says "Amaduka ari kuri ISOKO", rather than claiming every store is verified.
+- The green Verified seal is shown only for `identity_status='verified'`; pending, rejected and unverified shops have distinct non-verified labels.
+- The Help FAQ now explains honestly that a new store may appear before its identity has been reviewed.
+- Public read-back after merge confirmed the updated Help page.
+
+### Email password recovery — PR #11
+- PR #11 merged: https://github.com/eddyizere24-collab/Isoko-/pull/11
+- Merge commit: `950aea0be43fafd09b76cf39f936338057f0308e`.
+- CI passed: https://github.com/eddyizere24-collab/Isoko-/actions/runs/43568720754
+- Public request page: https://isoko-marketplace-9i69.onrender.com/ibagiwe-ijambo
+- Public reset-token page: https://isoko-marketplace-9i69.onrender.com/ongera-ijambo
+- The Production read-back on 2026-11-14 confirmed both pages are served by Render. The reset page without a token shows the expected invalid/missing-link state.
+- The login page source includes a forgotten-password link. The public login HTML text extraction does not expose all controls, so the link itself has not been independently verified through an interactive browser test.
+- Production and Setup Neon Auth have `revoke_sessions_on_password_reset=true`.
+- Email/password signup and sign-in remain enabled; email verification at signup remains disabled. No claim is made that signup email addresses are verified.
+- Neon Auth still uses its shared sender `auth@mail.myneon.app`. The password-reset request was not submitted to a real mailbox, custom Production SMTP is not configured, and receipt/deliverability of the reset email is not verified. Configure and test an owner-approved Production SMTP sender before claiming email delivery complete.
 
 ## Production launch safety gates
 
@@ -111,7 +131,7 @@ Last checked: 2026-11-14 · seller onboarding, product workflows and brand revie
 - Email is the account sign-in identifier. Neon Auth currently does not require email verification and SMS/WhatsApp OTP is not configured; `email_verified` remains false unless Auth confirms it. Do not claim the email or phone is verified.
 - The advanced KYC collection/review remains separate and must not be re-enabled until independent encrypted backups and a restore drill cover PostgreSQL plus private/public Object Storage.
 - Google social sign-in is not enabled yet: the Neon OAuth provider record has no client ID/secret. Facebook OAuth is also not configured. Do not display active social-login buttons until real provider credentials are installed and tested.
-- Password recovery through email is a remaining account-security task; until verified and tested, do not claim email recovery is live.
+- Email password-recovery pages and the reset flow are live in code and public routes. The actual reset email's delivery to a real mailbox is not yet verified because Production still uses Neon's shared SMTP sender; do not claim email deliverability until Production SMTP is configured and an approved inbox test passes.
 
 ### Independent backup and restore
 - Neon provider restore capability is not an independent offsite backup.
