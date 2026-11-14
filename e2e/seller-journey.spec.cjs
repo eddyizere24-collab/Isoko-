@@ -104,7 +104,7 @@ test('seller can register, sign in, update store, publish a photo product and re
   await expect(page.getByRole('heading', { name: shopName })).toBeVisible();
 
   // Sign in again in a clean browser context to verify login, not just signup.
-  const loginContext = await browser.newContext({ baseURL: 'http://localhost:4173', viewport: { width: 1280, height: 900 } });
+  const loginContext = await browser.newContext({ baseURL: 'http://127.0.0.1:4173', viewport: { width: 1280, height: 900 } });
   const loginPage = await loginContext.newPage();
   loginPage.setDefaultTimeout(20_000);
   await loginPage.goto('/injira');
