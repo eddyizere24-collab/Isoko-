@@ -69,6 +69,7 @@ jobs:
           VITE_NEON_DATA_API_URL: https://ep-jolly-poetry-ba3o1jwc.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
           VITE_NEON_FUNCTION_URL: https://br-cold-forest-badn9wlr-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
           VITE_NEON_PUBLIC_STORAGE_URL: https://br-cold-forest-badn9wlr.storage.c-8.eu-central-1.aws.neon.tech/isoko-public-assets/
+          VITE_ISOKO_SELLER_REGISTRATION_ENABLED: 'true'
 
       - name: Install Playwright for browser smoke tests
         run: |
