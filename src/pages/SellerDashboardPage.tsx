@@ -21,7 +21,7 @@ import type { Product, Profile, Shop } from '../types/marketplace';
 export const SellerDashboardPage: React.FC = () => {
   const { navigate, authSession, refreshBootstrap } = useMarketplace();
   const [data, setData] = useState<{
-    profile: Pick<Profile, 'id' | 'full_name' | 'status' | 'status_reason'>;
+    profile: Pick<Profile, 'id' | 'full_name' | 'status' | 'status_reason' | 'email' | 'email_verified' | 'identity_status'>;
     shop: Shop;
     products: Product[];
     staleProducts: Product[];
@@ -118,6 +118,12 @@ export const SellerDashboardPage: React.FC = () => {
         </div>
       )}
 
+      {data.profile.identity_status !== 'verified' && data.profile.status === 'approved' && (
+        <div role="status" className="mb-5 rounded-xl border border-slate-200 bg-[#F7FAF8] px-4 py-3 text-xs leading-5 text-slate-700">
+          Konti yawe irakora. Indangamuntu n’andi makuru y’inyongera ntibiragenzurwa. Kuzuza Profile birambuye bizongerwaho mu kindi cyiciro; ushobora gutangira gushyiraho ibicuruzwa ubu.
+        </div>
+      )}
+
       {/* Header + Primary Action */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-200">
         <div>
@@ -127,7 +133,7 @@ export const SellerDashboardPage: React.FC = () => {
             {data.shop.district_name}
             {data.shop.sector_name ? ` · ${data.shop.sector_name}` : ''} ·{' '}
             <span className="font-semibold text-[#0B6E4F]">
-              {RW.seller_statuses[data.profile.status]}
+              {data.profile.status === 'approved' ? 'Konti irakora' : RW.seller_statuses[data.profile.status]}
             </span>
           </p>
         </div>

@@ -1,6 +1,6 @@
 # ISOKO Production Security & Operations Gate
 
-Last checked: 2026-11-13
+Last checked: 2026-11-14
 
 ## Public Production service
 
@@ -43,12 +43,16 @@ Last checked: 2026-11-13
 - Public storefront is live and may be visited.
 - The production catalogue begins empty. It must not show invented products, shops or sellers.
 
-### Seller registration / KYC
-- `VITE_ISOKO_SELLER_REGISTRATION_ENABLED=false` is deliberately set in `render.production.yaml`.
-- The seller registration page is held closed on Production while independent encrypted backups and phone-number ownership verification are incomplete.
-- The normal seller application collects national ID details, ID front/back images, a selfie, and store photo. These documents must not be accepted before the backup and recovery controls below are tested.
-- Neon Auth currently uses phone-derived `@login.isoko.invalid` email identifiers and password sign-in. Actual SMS OTP / phone ownership verification is not configured.
-- Reopen seller registration only after both controls below are live and tested, and after production file upload + private signed retrieval are end-to-end tested.
+### Basic seller registration / KYC
+- The minimal Production seller signup is being enabled with a real email/password account, one Rwanda WhatsApp/contact number, and a store name.
+- The same WhatsApp number is stored as the seller's contact phone; no duplicate phone-number field is required.
+- The basic signup does not ask for a national ID, TIN, ID images, selfie, store photo, district, sector or delivery details.
+- Full name is optional at signup. Remaining business and personal profile details can be completed later.
+- New stores are publicly active with `identity_status='unverified'`. They must never receive the green identity-verified seal until actual identity review is completed.
+- Email is the account sign-in identifier. Neon Auth currently does not require email verification and SMS/WhatsApp OTP is not configured; `email_verified` remains false unless Auth confirms it. Do not claim the email or phone is verified.
+- The advanced KYC collection/review remains separate and must not be re-enabled until independent encrypted backups and a restore drill cover PostgreSQL plus private/public Object Storage.
+- Google social sign-in is not enabled yet: the Neon OAuth provider record has no client ID/secret. Facebook OAuth is also not configured. Do not display active social-login buttons until real provider credentials are installed and tested.
+- Password recovery through email is a remaining account-security task; until verified and tested, do not claim email recovery is live.
 
 ### Independent backup and restore
 - Neon provider restore capability is not an independent offsite backup.

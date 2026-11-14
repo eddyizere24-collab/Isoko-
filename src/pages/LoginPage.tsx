@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { ArrowRight, KeyRound, Lock, Phone, Store } from 'lucide-react';
+import { ArrowRight, KeyRound, Lock, Mail, Store } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { RW } from '../i18n/rw';
 import { loginAccount } from '../lib/api';
 
 export const LoginPage: React.FC = () => {
   const { navigate, setAuthData, authProfile } = useMarketplace();
-  const [phone, setPhone] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +15,7 @@ export const LoginPage: React.FC = () => {
     setError(null);
     setSubmitting(true);
     try {
-      const result = await loginAccount(phone, password);
+      const result = await loginAccount(identifier, password);
       setAuthData(
         {
           token: result.token,
@@ -40,15 +40,14 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+    <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
       <div className="grid gap-6 lg:grid-cols-12">
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs sm:p-8 lg:col-span-7">
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 lg:col-span-7">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold tracking-tight text-[#1B1F23]">
-              Injira muri konti yawe
-            </h1>
-            <p className="mt-1.5 text-sm text-slate-600">
-              Injira ukoresheje nimero ya telefoni n’ijambo ry’ibanga wakoresheje wiyandikisha.
+            <p className="text-xs font-bold uppercase tracking-wider text-[#0B6E4F]">ISOKO · Konti yawe</p>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#1B1F23]">Injira muri konti yawe</h1>
+            <p className="mt-1.5 text-sm leading-6 text-slate-600">
+              Koresha email wandikishije n’ijambo ry’ibanga. Abafite konti za Admin za mbere bashobora gukomeza gukoresha nimero ya telefoni.
             </p>
           </div>
 
@@ -68,29 +67,25 @@ export const LoginPage: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="login-phone" className="block text-sm font-semibold text-[#1B1F23]">
-                {RW.phone}
-              </label>
+              <label htmlFor="login-identifier" className="block text-sm font-semibold text-[#1B1F23]">Email</label>
               <div className="relative mt-1.5">
-                <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+                <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
                 <input
-                  id="login-phone"
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
+                  id="login-identifier"
+                  type="text"
+                  inputMode="email"
+                  autoComplete="username"
                   required
-                  value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
-                  placeholder="0788 123 456 cyangwa 250788123456"
-                  className="min-h-[46px] w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20"
+                  value={identifier}
+                  onChange={(event) => setIdentifier(event.target.value)}
+                  placeholder="izina@gmail.com"
+                  className="min-h-12 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/15"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="login-pass" className="block text-sm font-semibold text-[#1B1F23]">
-                {RW.password}
-              </label>
+              <label htmlFor="login-pass" className="block text-sm font-semibold text-[#1B1F23]">{RW.password}</label>
               <div className="relative mt-1.5">
                 <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
                 <input
@@ -102,13 +97,13 @@ export const LoginPage: React.FC = () => {
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder="Nibura inyuguti 8"
-                  className="min-h-[46px] w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20"
+                  className="min-h-12 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/15"
                 />
               </div>
             </div>
 
             {error && (
-              <div role="alert" className="rounded-xl border border-[#C0392B]/30 bg-[#C0392B]/10 px-4 py-3 text-sm font-medium text-[#C0392B]">
+              <div role="alert" className="rounded-xl border border-[#C0392B]/30 bg-[#C0392B]/5 px-4 py-3 text-sm font-medium text-[#C0392B]">
                 {error}
               </div>
             )}
@@ -116,7 +111,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white transition hover:bg-[#08553D] disabled:opacity-60"
+              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white transition hover:bg-[#08553D] disabled:opacity-60"
             >
               <KeyRound className="h-4 w-4" aria-hidden="true" />
               <span>{submitting ? 'Tegereza...' : RW.login}</span>
@@ -124,25 +119,25 @@ export const LoginPage: React.FC = () => {
           </form>
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-5">
-            <span className="text-sm text-slate-600">Ntabwo urandikisha iduka ryawe?</span>
+            <span className="text-sm text-slate-600">Ntabwo urafungura iduka ryawe?</span>
             <button
               type="button"
               onClick={() => navigate('/abacuruzi')}
               className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-[#0B6E4F] px-4 text-sm font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3]"
             >
               <Store className="h-4 w-4" aria-hidden="true" />
-              <span>Iyandikishe nk’umucuruzi</span>
+              <span>Fungura iduka</span>
             </button>
           </div>
         </section>
 
-        <aside className="rounded-2xl border border-slate-200 bg-[#F1F6F3] p-6 lg:col-span-5">
-          <h2 className="text-base font-bold text-[#1B1F23]">Konti yawe irinzwe</h2>
+        <aside className="rounded-2xl border border-slate-200 bg-[#F7FAF8] p-6 lg:col-span-5">
+          <h2 className="text-base font-bold text-[#1B1F23]">Abaguzi ntibakenera konti</h2>
           <p className="mt-2 text-sm leading-6 text-slate-700">
-            Isoko ikoresha uburyo bwihariye bwo gucunga konti. Nimero yawe ya telefoni ni yo ikoreshwa mu kwinjira; abaguzi bashobora kureba ibicuruzwa n’amaduka batabanje kwiyandikisha.
+            Ushobora kureba amaduka n’ibicuruzwa no kuvugana n’umucuruzi kuri WhatsApp utinjiye. Konti ikenewe gusa ku muntu ushaka gucuruza no gucunga iduka rye.
           </p>
-          <p className="mt-4 rounded-xl border border-[#0B6E4F]/20 bg-white/80 p-3 text-xs leading-5 text-slate-600">
-            Niba ari ubwa mbere ucuruza kuri Isoko, banza wandikishe iduka ryawe. Rizatangira kugaragara ku baguzi nyuma yo kugenzurwa no kwemezwa.
+          <p className="mt-4 rounded-xl border border-slate-200 bg-white p-3 text-xs leading-5 text-slate-600">
+            Wibagirwe ijambo ry’ibanga? Email ni yo izakoreshwa mu buryo bwo kugarura no kurinda konti yawe. Uburyo bwo kugarura password burimo gutegurwa.
           </p>
         </aside>
       </div>

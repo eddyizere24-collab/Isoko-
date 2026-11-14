@@ -37,6 +37,21 @@ if (error) {
 
 const payload = data?.payload;
 if (!payload) throw new Error("Bootstrap view returned no payload");
+
+// Public shop cards must expose the separate identity-verification state.
+// This catches accidental "verified" labels being inferred from an active account.
+const { data: publicShops, error: publicShopError } = await neon
+  .from("v_public_shops")
+  .select("id,identity_status")
+  .limit(10);
+if (publicShopError) {
+  throw new Error(`Public identity-status read failed: ${publicShopError.message}`);
+}
+for (const shop of publicShops ?? []) {
+  if (!["unverified", "pending", "verified", "rejected"].includes(shop.identity_status)) {
+    throw new Error(`Unexpected public identity status: ${shop.identity_status}`);
+  }
+}
 if (payload.categories?.length !== 34) {
   throw new Error(`Expected 34 visible categories, got ${payload.categories?.length ?? 0}`);
 }
@@ -58,4 +73,5 @@ console.log(JSON.stringify({
   shops: payload.shops.length,
   products: payload.products.length,
   adsEnabled: payload.settings.ADS_ENABLED,
+  identityStatusField: true,
 }));

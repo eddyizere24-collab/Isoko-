@@ -80,6 +80,9 @@ function fail(error: any, fallback: string): never {
     ADMIN_REQUIRED: 'Uburenganzira bwa Admin burakenewe.',
     REPORT_RATE_LIMIT: 'Warengeje umubare wa raporo muri iki gihe.',
     KYC_ACCESS_DENIED: 'Ntabwo wemerewe kubona inyandiko za KYC.',
+    EMAIL_ALREADY_REGISTERED: 'Iyi email isanzwe ifite konti kuri ISOKO. Injira aho kongera kwiyandikisha.',
+    ACCOUNT_EMAIL_REQUIRED: 'Email ya konti ntiyabonetse. Ongera winjire.',
+    SHOP_NAME_REQUIRED: 'Andika izina ry’iduka ryawe.'
   };
   throw new Error(translations[message] ?? String(message));
 }
@@ -136,7 +139,7 @@ async function currentAccount(): Promise<{ user: any; profile: Profile; shop: Sh
   if (!user?.id) throw new Error('Injira mbere yo gukomeza.');
   const profileResult = dataOf<any>(
     await neon.from('profiles')
-      .select('id,auth_user_id,role,full_name,phone,whatsapp,status,status_reason,approved_by,approved_at,terms_version,terms_accepted_at,created_at')
+      .select('id,auth_user_id,role,full_name,phone,whatsapp,email,email_verified,identity_status,status,status_reason,approved_by,approved_at,terms_version,terms_accepted_at,created_at')
       .eq('auth_user_id', user.id).maybeSingle(),
     'Konti yawe ntiyuzuye.'
   );
@@ -211,8 +214,16 @@ export async function fetchProductDetail(id: string): Promise<{
     err.alternatives = [];
     throw err;
   }
+  const product = mapProduct(row.detail.product);
+  if (product.shop?.id) {
+    const shopIdentity = first<any>(dataOf<any>(
+      await neon.from('v_public_shops').select('identity_status').eq('id', product.shop.id).maybeSingle(),
+      'Ntibishobotse gusoma imiterere y’igenzura ry’iduka.'
+    ));
+    product.shop.identity_status = shopIdentity?.identity_status ?? 'unverified';
+  }
   return {
-    product: mapProduct(row.detail.product),
+    product,
     priceHistory: row.detail.priceHistory ?? [],
     similar: (row.detail.similar ?? []).map(mapProduct),
     buyTogether: (row.detail.buyTogether ?? []).map(mapProduct),
@@ -267,70 +278,65 @@ export async function subscribeUpdates(payload:{kind:'push'|'email'|'shop_follow
   }),'Ntibishobotse kubika amahitamo yawe.');
 }
 
-export async function loginAccount(phone:string,password:string):Promise<{token:string;expiresAt:number;profile:Profile;shop:Shop|null}> {
-  const result=await neon.auth.signIn.email({email:normalizePhone(phone)+'@login.isoko.invalid',password}) as any;
-  if(result?.error) fail(result.error,'Nimero cyangwa ijambo ry’ibanga si byo.');
+export async function loginAccount(identifier:string,password:string):Promise<{token:string;expiresAt:number;profile:Profile;shop:Shop|null}> {
+  const rawIdentifier=String(identifier??'').trim();
+  const email=rawIdentifier.includes('@')
+    ? rawIdentifier.toLowerCase()
+    : normalizePhone(rawIdentifier)+'@login.isoko.invalid';
+  const result=await neon.auth.signIn.email({email,password}) as any;
+  if(result?.error) fail(result.error,'Email cyangwa ijambo ry’ibanga si byo. Konti za Admin za kera ziracyinjira hakoreshejwe nimero.');
   const current=await currentAccount();
   return {...storedSession(current.profile),profile:current.profile,shop:current.shop};
 }
 
 export async function registerSellerAccount(payload:Record<string,any>):Promise<{token:string;expiresAt:number;profile:Profile;shop:Shop}> {
-  const phone=normalizePhone(String(payload.phone??''));
-  const whatsapp=normalizePhone(String(payload.whatsapp??payload.phone??''));
-  const email=phone+'@login.isoko.invalid';
-  let user=await getNeonUser();
+  const phone=normalizePhone(String(payload.phone??payload.whatsapp??''));
+  const email=String(payload.email??'').trim().toLowerCase();
+  const password=String(payload.password??'');
+  const shopName=String(payload.shopName??'').trim();
+  const fullName=String(payload.fullName??'').trim();
 
-  if(user?.email&&user.email!==email) {
-    throw new Error('Sohoka muri konti urimo mbere yo kwandikisha irindi duka.');
+  if(!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+    throw new Error('Andika email nyayo, urugero: izina@gmail.com.');
+  }
+  if(!/^2507[0-9]{8}$/.test(phone)) {
+    throw new Error('Nimero ya WhatsApp igomba kuba iya MTN cyangwa Airtel mu Rwanda (07XXXXXXXX).');
+  }
+  if(password.length<8) throw new Error('Ijambo ry’ibanga rigomba kugira nibura inyuguti 8.');
+  if(shopName.length<2) throw new Error('Andika izina ry’iduka ryawe.');
+
+  let user=await getNeonUser();
+  if(user?.email&&String(user.email).toLowerCase()!==email) {
+    throw new Error('Hari indi konti ifunguye. Sohoka mbere yo gufungura iduka rishya.');
   }
   if(!user) {
     const signup=await neon.auth.signUp.email({
       email,
-      password:String(payload.password??''),
-      name:String(payload.fullName??payload.shopName??''),
+      password,
+      name:fullName||shopName,
     }) as any;
     if(signup?.error) {
-      const retry=await neon.auth.signIn.email({email,password:String(payload.password??'')}) as any;
-      if(retry?.error) fail(signup.error,'Kwiyandikisha byanze.');
+      const retry=await neon.auth.signIn.email({email,password}) as any;
+      if(retry?.error) fail(signup.error,'Kwiyandikisha byanze. Reba email n’ijambo ry’ibanga.');
     }
     user=await getNeonUser();
   }
-  if(!user?.id) throw new Error('Konti ntiyafunguwe neza. Ongera winjire.');
+  if(!user?.id) throw new Error('Konti ntiyafunguwe neza. Ongera winjire ukoresheje email yawe.');
 
-  // Create a short-lived authenticated draft before any private KYC upload.
-  // The profile trigger consumes this draft in the same transaction as seller registration.
+  // The short-lived registration draft protects first-time seller profile creation.
+  // No national ID, TIN, selfie or identity-document images are requested here.
   dataOf<any>(
     await neon.rpc('start_seller_registration_v1',{p_phone:phone}),
-    'Ntibishobotse gutangiza kwiyandikisha. Reba nimero ya telefoni wongere ugerageze.'
+    'Ntibishobotse gutangiza iduka. Reba nimero ya WhatsApp wongere ugerageze.'
   );
 
-  const [front,back,selfie,shopPhoto]=await Promise.all([
-    uploadThroughFunction(String(payload.idFrontDataUrl??''),'kyc'),
-    uploadThroughFunction(String(payload.idBackDataUrl??''),'kyc'),
-    uploadThroughFunction(String(payload.selfieDataUrl??''),'kyc'),
-    uploadThroughFunction(String(payload.shopPhotoDataUrl??''),'kyc'),
-  ]);
-
-  const result=dataOf<any>(await neon.rpc('register_seller_v1',{
-    p_full_name:String(payload.fullName??'').trim(),
+  const result=dataOf<any>(await neon.rpc('register_basic_seller_v1',{
+    p_shop_name:shopName,
     p_phone:phone,
-    p_whatsapp:whatsapp,
-    p_shop_name:String(payload.shopName??'').trim(),
-    p_district_id:Number(payload.districtId),
-    p_sector_id:payload.sectorId?Number(payload.sectorId):null,
-    p_landmark:String(payload.landmark??''),
-    p_delivery_text:String(payload.deliveryText??''),
-    p_about:String(payload.about??''),
-    p_business_type:String(payload.businessType??'Iduka'),
-    p_national_id_number:String(payload.nationalIdNumber??'').replace(/\D/g,''),
-    p_id_front_key:front.key,
-    p_id_back_key:back.key,
-    p_selfie_key:selfie.key,
-    p_shop_photo_key:shopPhoto.key,
-    p_tin:String(payload.tin??''),
+    p_full_name:fullName||null,
     p_terms_accepted:Boolean(payload.termsAccepted),
     p_terms_version:'1.0',
-  }),'Kwiyandikisha nk’umucuruzi byanze.');
+  }),'Gufungura iduka byanze.');
 
   const profile=result.profile as Profile;
   return {...storedSession(profile),profile,shop:mapShop(result.shop)};
@@ -347,7 +353,7 @@ export async function uploadImagePair(dataUrl:string,kind:'full'|'thumb'):Promis
 }
 
 export async function fetchSellerOverview():Promise<{
-  profile:Pick<Profile,'id'|'full_name'|'status'|'status_reason'>;shop:Shop;products:Product[];staleProducts:Product[];
+  profile:Pick<Profile,'id'|'full_name'|'status'|'status_reason'|'identity_status'|'email'|'email_verified'>;shop:Shop;products:Product[];staleProducts:Product[];
   stats7d:{views:number;wa_clicks:number;call_clicks:number;cart_adds:number;shares:number};
   stats30d:{views:number;wa_clicks:number;call_clicks:number;cart_adds:number;shares:number};
   topViewed:Product[];topWa:Product|null;
@@ -378,7 +384,7 @@ export async function fetchSellerOverview():Promise<{
   const stale=Date.now()-30*86400000;
   const staleProducts=products.filter((p: Product)=>p.status==='active'&&new Date(p.last_confirmed_at).getTime()<=stale);
   return {
-    profile:{id:current.profile.id,full_name:current.profile.full_name,status:current.profile.status,status_reason:current.profile.status_reason},
+    profile:{id:current.profile.id,full_name:current.profile.full_name,status:current.profile.status,status_reason:current.profile.status_reason,identity_status:current.profile.identity_status,email:current.profile.email,email_verified:current.profile.email_verified},
     shop:current.shop,products,staleProducts,stats7d:sum(stats.filter((r)=>r.day>=cutoff7)),stats30d:sum(stats),
     topViewed:[...products].sort((a,b)=>(b.views_7d??0)-(a.views_7d??0)).slice(0,5),
     topWa:[...products].sort((a,b)=>(b.wa_clicks_7d??0)-(a.wa_clicks_7d??0))[0]??null,
