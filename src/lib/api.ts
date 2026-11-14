@@ -296,7 +296,7 @@ export async function registerSellerAccount(payload:Record<string,any>):Promise<
   const shopName=String(payload.shopName??'').trim();
   const fullName=String(payload.fullName??'').trim();
 
-  if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+  if(!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
     throw new Error('Andika email nyayo, urugero: izina@gmail.com.');
   }
   if(!/^2507[0-9]{8}$/.test(phone)) {
