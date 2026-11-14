@@ -99,7 +99,7 @@ export const SellerAddProductPage: React.FC = () => {
     return SIZE_SETS[setKey] ?? SIZE_SETS.shoes_adult;
   }, [selectedCategory]);
 
-  const handlePhotoFiles = async (files: FileList | null) => {
+  const handlePhotoFiles = async (files: FileList | File[] | null) => {
     if (!files || files.length === 0) return;
     setError(null);
     setUploadingPhoto(true);
@@ -423,11 +423,15 @@ export const SellerAddProductPage: React.FC = () => {
               <label className="flex min-h-[112px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#0B6E4F] bg-[#F1F6F3] p-4 text-center hover:bg-[#E5EFE9]">
                 <input
                   type="file"
-                  accept="image/jpeg,image/png,image/webp"
+                  accept="image/*"
                   disabled={uploadingPhoto}
                   capture="environment"
                   className="sr-only"
-                  onChange={(e) => handlePhotoFiles(e.target.files)}
+                  onChange={(e) => {
+                    const files = e.currentTarget.files ? Array.from(e.currentTarget.files) : [];
+                    e.currentTarget.value = '';
+                    void handlePhotoFiles(files);
+                  }}
                 />
                 <Camera className="h-7 w-7 text-[#0B6E4F]" aria-hidden="true" />
                 <span className="mt-2 text-sm font-bold text-[#0B6E4F]">{RW.take_photo}</span>
@@ -437,11 +441,15 @@ export const SellerAddProductPage: React.FC = () => {
               <label className="flex min-h-[112px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-4 text-center hover:border-[#0B6E4F]">
                 <input
                   type="file"
-                  accept="image/jpeg,image/png,image/webp"
+                  accept="image/*"
                   multiple
                   disabled={uploadingPhoto}
                   className="sr-only"
-                  onChange={(e) => handlePhotoFiles(e.target.files)}
+                  onChange={(e) => {
+                    const files = e.currentTarget.files ? Array.from(e.currentTarget.files) : [];
+                    e.currentTarget.value = '';
+                    void handlePhotoFiles(files);
+                  }}
                 />
                 <ImagePlus className="h-7 w-7 text-slate-600" aria-hidden="true" />
                 <span className="mt-2 text-sm font-bold text-[#1B1F23]">{RW.pick_gallery}</span>

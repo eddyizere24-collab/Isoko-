@@ -15,6 +15,19 @@ ISOKO is a Vite + React 19 + TypeScript + Tailwind CSS 4 static frontend hosted 
 
 The current application does not use the legacy Express server, local JSON database or local `/uploads` directory. Data and seller media are handled through Neon. The catalogue starts without fabricated sellers or products.
 
+
+## 2026-11-14 — Universal photo intake and seller profile polish
+
+- Removed the client-side hard-coded JPG/PNG/WebP file-type rejection. Photo uploads now accept browser-readable image formats selected through Android Gallery or Camera, then normalize them to a storage-safe WebP/JPEG.
+- Removed the old original-file-size rejection. Large photos are resized and compressed on the device before they reach the upload Function, which continues to validate the normalized bytes, MIME signature and 500 KB storage limit.
+- Widened product, seller profile, shop logo and cover selectors to `image/*`; file pickers can reselect the same photo after an earlier attempt.
+- Reworked the seller settings image area into a cover-photo banner, overlapping round profile photo, separate shop logo control, profile name and Bio editor. The existing shop description, contact and social fields remain editable below.
+- Updated the public shop header to display the seller's round profile photo alongside the shop identity and cover, with the Bio and social links in the seller information section.
+- Added a session/JWT readiness check after seller sign-up, with a same-account email/password sign-in fallback before protected registration RPCs.
+- Full Playwright seller/buyer journey passed 4/4 on isolated QA clone (run 43601457813): account creation/login, profile avatar, cover, shop logo, profile and shop text persistence, product image, public shop/product, price edit, cart and WhatsApp order.
+- QA database read-back confirmed avatar, logo, cover and product images persisted as WebP object keys; profile Bio and shop About text persisted. Product image dimensions and bytes were recorded after browser-side conversion.
+- Production database remained unchanged throughout the QA run. This work is in a review branch and is not yet a Production release.
+
 ## Recent security and reliability changes
 
 - **PR #17 — real seller-session checks:** the app no longer treats a localStorage marker or anonymous Data API token as proof of seller login. Protected seller routes verify a real Neon Auth session and JWT; provisional seller sessions have been removed.

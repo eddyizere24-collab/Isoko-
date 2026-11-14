@@ -178,6 +178,20 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
         <div className="p-5 sm:p-6">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+              <div className="-mt-14 relative z-10 flex shrink-0 flex-col items-center gap-1 sm:-mt-16">
+                {shop.seller_avatar_path ? (
+                  <img
+                    src={shop.seller_avatar_path}
+                    alt={shop.seller_name || 'Ifoto ya profile y’umucuruzi'}
+                    className="h-20 w-20 rounded-full border-4 border-white bg-white object-cover shadow-md sm:h-24 sm:w-24"
+                  />
+                ) : (
+                  <div className="grid h-20 w-20 place-items-center rounded-full border-4 border-white bg-[#0B6E4F] text-2xl font-bold text-white shadow-md sm:h-24 sm:w-24">
+                    {(shop.seller_name || shop.name).slice(0, 1).toUpperCase()}
+                  </div>
+                )}
+                <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Profile</span>
+              </div>
               {shop.logo_path ? (
                 <img
                   src={shop.logo_path}
@@ -216,11 +230,19 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                 </div>
 
                 {shop.about && <p className="mt-2.5 text-sm text-slate-700 max-w-xl">{shop.about}</p>}
-                <div className="mt-4 flex flex-col gap-3 rounded-2xl bg-[#F7FAF8] p-4 sm:flex-row sm:items-start">
-                  {shop.seller_avatar_path?<img src={shop.seller_avatar_path} alt={shop.seller_name||'Umucuruzi'} className="h-16 w-16 shrink-0 rounded-full border-2 border-white object-cover shadow-sm"/>:<div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-white text-xl font-bold text-[#0B6E4F]">{(shop.seller_name||shop.name).slice(0,1).toUpperCase()}</div>}
-                  <div className="min-w-0 flex-1"><p className="text-xs font-semibold uppercase tracking-wide text-[#0B6E4F]">Uwo mu mucuruzi</p><p className="mt-0.5 text-sm font-bold text-[#1B1F23]">{shop.seller_name||shop.name}</p>{shop.seller_bio&&<p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-slate-700">{shop.seller_bio}</p>}
-                  {Object.entries(shop.social_links??{}).filter(([,url])=>/^https:\/\//i.test(url)).length>0&&<div className="mt-2 flex flex-wrap gap-2">{Object.entries(shop.social_links??{}).filter(([,url])=>/^https:\/\//i.test(url)).map(([key,url])=><a key={key} href={url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-9 items-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold capitalize text-[#0B6E4F] hover:bg-[#F1F6F3]">{key}</a>)}</div>}</div>
-                </div>
+                {(shop.seller_bio || Object.values(shop.social_links ?? {}).some((url) => /^https:\/\//i.test(url))) && (
+                  <div className="mt-4 rounded-2xl bg-[#F7FAF8] p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[#0B6E4F]">Ibyerekeye umucuruzi</p>
+                    {shop.seller_bio && <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-slate-700">{shop.seller_bio}</p>}
+                    {Object.entries(shop.social_links ?? {}).filter(([, url]) => /^https:\/\//i.test(url)).length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {Object.entries(shop.social_links ?? {}).filter(([, url]) => /^https:\/\//i.test(url)).map(([key, url]) => (
+                          <a key={key} href={url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-9 items-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold capitalize text-[#0B6E4F] hover:bg-[#F1F6F3]">{key}</a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-slate-600">
                   {shop.delivery_text && (
