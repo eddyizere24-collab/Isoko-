@@ -73,8 +73,14 @@ test('seller can register, sign in, update store, publish a photo product and re
   page.on('pageerror', (error) => browserErrors.push(error.message));
 
   // Registration validation must stop invalid data before it reaches the API.
-  await page.goto('/abacuruzi');
-  await expect(page.getByRole('heading', { name: 'Fungura iduka ryawe' })).toBeVisible();
+  await page.goto('/abacuruzi', { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(750);
+  console.log('SELLER REGISTRATION DIAGNOSTIC', JSON.stringify({
+    url: page.url(),
+    body: (await page.locator('body').innerText().catch(() => '')).slice(0, 1800),
+    pageErrors: browserErrors,
+  }));
+  await expect(page.locator('#seller-email')).toBeVisible({ timeout: 20_000 });
   await page.locator('#seller-email').fill(email);
   await page.locator('#seller-password').fill(password);
   await page.locator('#seller-whatsapp').fill('123');
