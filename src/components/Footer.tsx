@@ -66,7 +66,7 @@ export const Footer: React.FC = () => {
                 Nimero yemewe y’ubufasha izashyirwa hano imaze kwemezwa.
               </p>
             )}
-            {bootstrap?.settings.SUPPORT_HOURS?.trim() && (
+            {supportUrl && bootstrap?.settings.SUPPORT_HOURS?.trim() && (
               <p className="mt-2 text-xs text-slate-600">{bootstrap.settings.SUPPORT_HOURS}</p>
             )}
           </div>
