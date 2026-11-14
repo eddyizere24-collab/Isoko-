@@ -120,11 +120,11 @@ export const HomePage: React.FC = () => {
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 space-y-12">
       {/* Photo-led Editorial Storefront Hero */}
-      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-[#F1F6F3]">
+      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
         <div className="grid items-stretch lg:grid-cols-12">
-          <div className="flex flex-col justify-center p-6 sm:p-10 lg:col-span-6">
+          <div className="imigongo-surface flex flex-col justify-center p-6 sm:p-10 lg:col-span-6">
             <p className="text-xs font-semibold text-[#0B6E4F]">
-              Kigali · Abacuruzi bagenzuwe · Nta komisiyo
+              Abacuruzi bo mu Rwanda · Nta komisiyo
             </p>
             <h1 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-[#1B1F23] sm:text-4xl text-balance">
               Imyambaro, inkweto n'ibyo kwambara byizewe i Kigali.
@@ -163,7 +163,7 @@ export const HomePage: React.FC = () => {
             />
           </div>
         </div>
-        <RwandanGeometricPattern className="h-2.5 w-full text-[#0B6E4F]/20 bg-white" />
+        <RwandanGeometricPattern className="h-2.5 w-full opacity-70 bg-white" />
       </section>
 
       {/* Photo-led Category Artwork Cards */}
