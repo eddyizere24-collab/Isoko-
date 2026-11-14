@@ -127,7 +127,7 @@ test('seller can register, sign in, update store, publish a photo product and re
   await loginPage.goto('/injira');
   await loginPage.locator('#login-identifier').fill(email);
   await loginPage.locator('#login-pass').fill(password);
-  await loginPage.locator('form button[type="submit"]').click();
+  await loginPage.locator('form').filter({ has: loginPage.locator('#login-identifier') }).locator('button[type="submit"]').click();
   await expect(loginPage).toHaveURL(/\/umucuruzi$/);
   await expect(loginPage.getByRole('heading', { name: shopName })).toBeVisible();
   await loginContext.close();
@@ -156,7 +156,7 @@ test('seller can register, sign in, update store, publish a photo product and re
   await page.locator('#shop-delivery').fill('Dutanga mu Rwanda hose');
   await page.locator('#social-website').fill('https://example.com');
   await page.locator('#shop-about').fill('Iduka ry’igerageza rya ISOKO. Amakuru yose agomba kubikwa.');
-  await page.locator('form button[type="submit"]').click();
+  await page.locator('form').filter({ has: page.locator('#shop-about') }).locator('button[type="submit"]').click();
   await expect(page.getByRole('status')).toContainText('Amakuru y’iduka yabitswe neza.');
 
   // Reload to prove that the profile, shop details, and images persisted.
