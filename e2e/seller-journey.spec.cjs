@@ -2,6 +2,21 @@ const { test, expect } = require('@playwright/test');
 const crypto = require('node:crypto');
 const zlib = require('node:zlib');
 
+const APP_ORIGIN = 'https://isoko-marketplace-9i69.onrender.com';
+const LOCAL_PREVIEW = 'http://127.0.0.1:4173';
+
+async function routeAppToLocal(context) {
+  await context.route(`${APP_ORIGIN}/**`, async (route) => {
+    const incoming = new URL(route.request().url());
+    const localUrl = `${LOCAL_PREVIEW}${incoming.pathname}${incoming.search}`;
+    const response = await route.fetch({
+      url: localUrl,
+      headers: { host: '127.0.0.1:4173' },
+    });
+    await route.fulfill({ response });
+  });
+}
+
 function crc32(buffer) {
   let crc = 0xffffffff;
   for (const byte of buffer) {
@@ -70,6 +85,7 @@ test('seller can register, sign in, update store, publish a photo product and re
   const imageFile = { name: 'isoko-test-product.png', mimeType: 'image/png', buffer: png };
   const browserErrors = [];
 
+  await routeAppToLocal(page.context());
   page.on('pageerror', (error) => browserErrors.push(error.message));
 
   // Registration validation must stop invalid data before it reaches the API.
@@ -104,7 +120,8 @@ test('seller can register, sign in, update store, publish a photo product and re
   await expect(page.getByRole('heading', { name: shopName })).toBeVisible();
 
   // Sign in again in a clean browser context to verify login, not just signup.
-  const loginContext = await browser.newContext({ baseURL: 'http://127.0.0.1:4173', viewport: { width: 1280, height: 900 } });
+  const loginContext = await browser.newContext({ baseURL: APP_ORIGIN, viewport: { width: 1280, height: 900 } });
+  await routeAppToLocal(loginContext);
   const loginPage = await loginContext.newPage();
   loginPage.setDefaultTimeout(20_000);
   await loginPage.goto('/injira');
@@ -201,7 +218,8 @@ test('seller can register, sign in, update store, publish a photo product and re
   await expect(page.getByRole('status')).toContainText('Igiciro cyavuguruwe neza.');
 
   // Buyer-side public access must work in a clean, signed-out browser context.
-  const buyerContext = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const buyerContext = await browser.newContext({ baseURL: APP_ORIGIN, viewport: { width: 1280, height: 900 } });
+  await routeAppToLocal(buyerContext);
   const buyerPage = await buyerContext.newPage();
   buyerPage.setDefaultTimeout(20_000);
   await buyerPage.goto(publicProductUrl);
@@ -209,6 +227,21 @@ test('seller can register, sign in, update store, publish a photo product and re
   await expect(buyerPage.getByRole('button', { name: 'Shyira mu gare' }).first()).toBeVisible();
   await expect(buyerPage.getByRole('link', { name: 'Vugana kuri WhatsApp' }).first()).toBeVisible();
   await expect.poll(async () => buyerPage.locator('#product-jsonld').evaluate((el) => JSON.parse(el.textContent).offers.price)).toBe(23000);
+
+  // Complete the buyer's cart journey and verify the WhatsApp order message.
+  await buyerPage.getByRole('button', { name: 'Shyira mu gare' }).first().click();
+  await expect(buyerPage.getByRole('status')).toContainText('Byashyizwe mu gare!');
+  await buyerPage.goto('/igare');
+  await expect(buyerPage.getByRole('heading', { name: /Igare/ })).toBeVisible();
+  await expect(buyerPage.getByText(productName)).toBeVisible();
+  const orderLink = buyerPage.getByRole('link', { name: `Ohereza kuri WhatsApp ya ${shopName}` });
+  await expect(orderLink).toBeVisible();
+  const orderHref = await orderLink.getAttribute('href');
+  expect(orderHref).toContain(`wa.me/${phone.replace(/^0/, '250')}`);
+  const orderMessage = new URL(orderHref).searchParams.get('text') ?? '';
+  expect(orderMessage).toContain(productName);
+  expect(orderMessage).toContain('23 000 RWF');
+
   await buyerContext.close();
 
   expect(browserErrors, 'No uncaught browser errors should occur during the seller journey').toEqual([]);
