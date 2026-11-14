@@ -82,7 +82,19 @@ Last checked: 2026-11-14 · seller onboarding, product workflows and brand revie
 - Product WhatsApp links no longer fall back to a placeholder support number.
 - Footer and help page only show WhatsApp support when a verified number is configured. Production `SUPPORT_WHATSAPP` is currently empty, so no unverified contact is advertised.
 - Local campaign creation requires an actual uploaded image or HTTPS image URL; it no longer silently inserts a sample banner.
-- PR #7 is not yet merged. Do not claim these repository-cleanup changes are live until CI passes, it is merged and the live deployment is verified.
+- PR #7 merged into `main`: https://github.com/eddyizere24-collab/Isoko-/pull/7
+- Merge commit: `1e46644e85ce8cf053c5a079590958a20f07e634`.
+- CI passed: https://github.com/eddyizere24-collab/Isoko-/actions/runs/43567492024.
+- The Production Neon data check still shows zero profiles, shops and products.
+- Public read-back after PR #7 confirmed the help page no longer displays a placeholder WhatsApp number and the shared header/footer reflect the new brand. This verifies that Render served the PR #7 changes.
+
+### Initial homepage rendering — PR #9
+- PR #9 merged into `main`: https://github.com/eddyizere24-collab/Isoko-/pull/9
+- Merge commit: `6bb07ab48c000b1fc8e7e2647d6daae3737fd7e7`.
+- CI passed: https://github.com/eddyizere24-collab/Isoko-/actions/runs/43568012678.
+- The homepage no longer blocks its hero, brand mark and active category cards behind the initial database read. Product cards remain gated until real catalogue data arrives; an empty-catalogue message appears only after the read confirms zero products.
+- This is a UI change only; it changes no Production database records or settings.
+- A fresh public read-back of the homepage after PR #9 is still outstanding. Do not claim that deployment is confirmed until the published page is inspected.
 
 ## Production launch safety gates
 
@@ -91,7 +103,7 @@ Last checked: 2026-11-14 · seller onboarding, product workflows and brand revie
 - The production catalogue begins empty. It must not show invented products, shops or sellers.
 
 ### Basic seller registration / KYC
-- The minimal Production seller signup is being enabled with a real email/password account, one Rwanda WhatsApp/contact number, and a store name.
+- The minimal Production seller signup is live at `/abacuruzi` and was publicly fetched on 2026-11-14. It requests email, password, one WhatsApp/contact number and a store name; full name is optional. No live signup was submitted, so persistence and session creation are still end-to-end checks.
 - The same WhatsApp number is stored as the seller's contact phone; no duplicate phone-number field is required.
 - The basic signup does not ask for a national ID, TIN, ID images, selfie, store photo, district, sector or delivery details.
 - Full name is optional at signup. Remaining business and personal profile details can be completed later.
