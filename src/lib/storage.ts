@@ -7,6 +7,7 @@ const KEYS = {
   LOCATION: 'isoko_location',
   MYSIZE: 'isoko_mysize',
   SID: 'isoko_sid',
+  SUBSCRIBER_ID: 'isoko_subscriber_id',
   DRAFT: 'isoko_product_draft',
   AUTH: 'isoko_auth_session',
   FOLLOWED_SHOPS: 'isoko_followed_shops',
@@ -227,6 +228,21 @@ export function saveAuthSession(session: StoredAuthSession | null): void {
     return;
   }
   safeWrite(KEYS.AUTH, session);
+}
+
+
+/** Stable, non-personal browser identifier used to manage that browser's shop follows. */
+export function getSubscriberId(): string {
+  try {
+    const stored = localStorage.getItem(KEYS.SUBSCRIBER_ID);
+    if (stored && /^subscriber_[a-z0-9_-]{12,80}$/i.test(stored)) return stored;
+    const id = `subscriber_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 14)}`;
+    localStorage.setItem(KEYS.SUBSCRIBER_ID, id);
+    return id;
+  } catch {
+    // Storage may be blocked in private browsing. This fallback is session-scoped.
+    return `subscriber_${getSessionId()}`;
+  }
 }
 
 export function incrementVisitCount(): number {
