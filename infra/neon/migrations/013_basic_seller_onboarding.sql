@@ -199,3 +199,8 @@ SELECT
 FROM public.shops s
 JOIN public.profiles p ON p.id = s.owner_id
 WHERE p.status = 'approved';
+
+
+INSERT INTO public.schema_migrations(version)
+VALUES ('013_basic_seller_onboarding')
+ON CONFLICT (version) DO NOTHING;
