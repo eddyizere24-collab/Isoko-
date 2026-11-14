@@ -12,6 +12,8 @@ export const LoginPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Production OAuth remains hidden until the Google client is configured and tested.
+  const googleAuthEnabled = import.meta.env.VITE_GOOGLE_AUTH_ENABLED === 'true';
 
   const performLogin = async () => {
     setError(null);
@@ -84,8 +86,12 @@ export const LoginPage: React.FC = () => {
             </div>
           )}
 
-          <button type="button" onClick={() => void handleGoogle()} disabled={googleLoading || submitting} className="mb-5 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50 disabled:opacity-60"><span className="grid h-6 w-6 place-items-center rounded-full border border-slate-200 font-bold text-[#4285F4]">G</span>{googleLoading ? 'Turahuza na Google...' : 'Komeza ukoresheje Google'}</button>
-          <div className="mb-5 flex items-center gap-3 text-xs text-slate-400"><span className="h-px flex-1 bg-slate-200" />CYANGWA<span className="h-px flex-1 bg-slate-200" /></div>
+          {googleAuthEnabled && (
+            <>
+              <button type="button" onClick={() => void handleGoogle()} disabled={googleLoading || submitting} className="mb-5 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50 disabled:opacity-60"><span className="grid h-6 w-6 place-items-center rounded-full border border-slate-200 font-bold text-[#4285F4]">G</span>{googleLoading ? 'Turahuza na Google...' : 'Komeza ukoresheje Google'}</button>
+              <div className="mb-5 flex items-center gap-3 text-xs text-slate-400"><span className="h-px flex-1 bg-slate-200" />CYANGWA<span className="h-px flex-1 bg-slate-200" /></div>
+            </>
+          )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="login-identifier" className="block text-sm font-semibold text-[#1B1F23]">Email</label>
