@@ -179,7 +179,8 @@ test('seller can register, sign in, update store, publish a photo product and re
 
   const categoryPicker = page.getByRole('heading', { name: 'Hitamo icyiciro cy’igicuruzwa *' }).locator('xpath=..');
   await categoryPicker.getByRole('button', { name: 'Inkweto', exact: true }).click();
-  await categoryPicker.getByRole('button', { name: 'Siporo (sneakers)', exact: true }).click();
+  const subcategoryPicker = page.getByText('Icyiciro cyihariye *', { exact: true }).locator('xpath=..');
+  await subcategoryPicker.getByRole('button', { name: 'Siporo (sneakers)', exact: true }).click();
   await page.locator('#wiz-name').fill(productName);
   await page.locator('#wiz-price').fill('25000');
   await page.getByRole('button', { name: 'Komeza', exact: true }).click();
