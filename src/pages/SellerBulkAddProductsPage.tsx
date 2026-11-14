@@ -3,7 +3,7 @@ import { ArrowLeft, CheckCircle2, ImagePlus, Loader2, Plus, Trash2 } from 'lucid
 import { useMarketplace } from '../context/MarketplaceContext';
 import { INITIAL_CATEGORIES, SIZE_SETS } from '../data/categories';
 import { RW } from '../i18n/rw';
-import { createSellerProduct, refreshBootstrap, uploadImagePair } from '../lib/api';
+import { createSellerProduct, uploadImagePair } from '../lib/api';
 import { processProductImage } from '../lib/image';
 import { validateProductForm } from '../lib/validation';
 import { formatRwfCurrency } from '../lib/whatsapp';
