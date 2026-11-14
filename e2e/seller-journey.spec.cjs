@@ -85,7 +85,7 @@ test('seller can register, sign in, update store, publish a photo product and re
   await page.locator('#seller-password').fill(password);
   await page.locator('#seller-whatsapp').fill('123');
   await page.locator('#seller-shop-name').fill(shopName);
-  await page.locator('input[type="checkbox"]').check();
+  await page.getByRole('checkbox').first().check();
   await page.getByRole('button', { name: 'Fungura iduka ryanjye' }).click();
   await expect(page.getByRole('alert')).toContainText('Nimero ya WhatsApp');
 
