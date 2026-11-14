@@ -72,7 +72,7 @@ jobs:
         run: bun infra/neon/data-api-cors-smoke-test.mjs
         env:
           ISOKO_TEST_DATA_API_URL: https://ep-jolly-poetry-ba3o1jwc.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
-          ISOKO_EXPECTED_WEB_ORIGIN: http://localhost:4173
+          ISOKO_EXPECTED_WEB_ORIGIN: http://127.0.0.1:4173
 
       - name: Build UI for full seller-journey E2E (isolated Production clone)
         run: bun run build
