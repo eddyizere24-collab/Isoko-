@@ -92,7 +92,14 @@ test('seller can register, sign in, update store, publish a photo product and re
   // A valid Rwandan number must create the seller account and shop.
   await page.locator('#seller-whatsapp').fill(phone);
   await page.getByRole('button', { name: 'Fungura iduka ryanjye' }).click();
-  await expect(page).toHaveURL(/\/umucuruzi$/);
+  await page.waitForTimeout(1500);
+  console.log('SELLER SIGNUP RESULT', JSON.stringify({
+    url: page.url(),
+    alerts: await page.locator('[role="alert"]').allTextContents(),
+    body: (await page.locator('body').innerText().catch(() => '')).slice(0, 2400),
+    pageErrors: browserErrors,
+  }));
+  await expect(page).toHaveURL(/\\/umucuruzi$/, { timeout: 45_000 });
   await expect(page.getByText('Konti yawe irakora.')).toBeVisible();
   await expect(page.getByRole('heading', { name: shopName })).toBeVisible();
 
