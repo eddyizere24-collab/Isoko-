@@ -4,7 +4,7 @@ import type {
 } from '../types/marketplace';
 import {
   getNeonJwt, getNeonUser, neon, neonFunctionUrl, normalizePhone,
-  objectKeyFromPublicUrl,
+  objectKeyFromPublicUrl, publicAssetUrl,
 } from './neon';
 
 export async function claimFirstAdminAccount(payload:{
@@ -106,8 +106,8 @@ function first<T>(data: any): T | null {
 function mapShop(row: any): Shop {
   return {
     ...row,
-    logo_path: row.logo_path ?? null,
-    cover_path: row.cover_path ?? null,
+    logo_path: row.logo_path ?? publicAssetUrl(row.logo_key),
+    cover_path: row.cover_path ?? publicAssetUrl(row.cover_key),
     social_links: row.social_links ?? {},
     active_product_count: Number(row.active_product_count ?? 0),
   } as Shop;
@@ -490,6 +490,14 @@ export async function setSellerProductVisibility(id:string,action:'hide'|'unhide
 
 export async function updateSellerShop(payload:Record<string,unknown>):Promise<{shop:Shop}> {
   const current=await currentAccount();
+  const rawSocials = (payload.social_links && typeof payload.social_links === 'object' ? payload.social_links : {}) as Record<string, unknown>;
+  const socialLinks: Record<string,string> = {};
+  for (const key of ['instagram','facebook','tiktok','youtube','website']) {
+    const value = String(rawSocials[key] ?? '').trim();
+    if (!value) continue;
+    try { const url = new URL(value); if (url.protocol === 'https:' || url.protocol === 'http:') socialLinks[key] = url.toString(); }
+    catch { throw new Error('Link z’imbuga nkoranyambaga igomba kuba URL yuzuye itangizwa na https://.'); }
+  }
   const districtId=Number(payload.district_id);
   const district=first<any>(dataOf<any>(
     await neon.from('areas').select('id,district,province,sector,parent_id')
@@ -511,6 +519,9 @@ export async function updateSellerShop(payload:Record<string,unknown>):Promise<{
     await neon.from('shops').update({
       name:String(payload.name??'').trim(),
       about:String(payload.about??''),
+      logo_key:payload.logo_path ? storageKey(String(payload.logo_path)) : null,
+      cover_key:payload.cover_path ? storageKey(String(payload.cover_path)) : null,
+      social_links:socialLinks,
       logo_key:payload.logo_path ? storageKey(String(payload.logo_path)) : null,
       cover_key:payload.cover_path ? storageKey(String(payload.cover_path)) : null,
       social_links:payload.social_links && typeof payload.social_links === 'object' ? payload.social_links : {},
