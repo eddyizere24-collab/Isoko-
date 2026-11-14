@@ -28,7 +28,7 @@ interface BulkProductDraft {
   error?: string;
 }
 
-const MAX_PRODUCTS_PER_BATCH = 10;
+const MAX_PRODUCTS_PER_BATCH = 50;
 const MAX_PHOTOS_PER_PRODUCT = 5;
 
 function makeKey(): string {
@@ -72,7 +72,7 @@ export const SellerBulkAddProductsPage: React.FC = () => {
 
   const addBlankRow = () => {
     if (rows.length >= MAX_PRODUCTS_PER_BATCH) {
-      setFeedback('Batch imwe ntirenze ibicuruzwa 10. Bika ibi, utangire indi batch.');
+      setFeedback('Batch imwe ntirenze ibicuruzwa 50. Bika ibi, utangire indi batch.');
       return;
     }
     setRows((previous) => [...previous, {
@@ -128,12 +128,12 @@ export const SellerBulkAddProductsPage: React.FC = () => {
     if (!files?.length) return;
     const slots = MAX_PRODUCTS_PER_BATCH - rows.length;
     if (slots <= 0) {
-      setFeedback('Batch yuzuye ibicuruzwa 10. Bika ibi, utangire indi batch.');
+      setFeedback('Batch yuzuye ibicuruzwa 50. Bika ibi, utangire indi batch.');
       return;
     }
     const chosen = Array.from(files).slice(0, slots);
     if (files.length > slots) {
-      setFeedback('Hitamo amafoto 10 cyangwa munsi yayo kuri batch imwe. Amafoto arenzeho yasimbutswe.');
+      setFeedback('Hitamo amafoto 50 cyangwa munsi yayo kuri batch imwe. Amafoto arenzeho yasimbutswe.');
     } else {
       setFeedback(null);
     }
@@ -299,7 +299,7 @@ export const SellerBulkAddProductsPage: React.FC = () => {
           <div>
             <p className="text-xs font-bold uppercase tracking-wider text-[#0B6E4F]">ISOKO · Batch</p>
             <h1 className="text-xl font-bold text-[#1B1F23]">Ongeraho ibicuruzwa byinshi</h1>
-            <p className="text-xs text-slate-500">Batch imwe: ibicuruzwa 1–10, buri kimwe gifite ifoto 1–5</p>
+            <p className="text-xs text-slate-500">Batch imwe: ibicuruzwa 1–50, buri kimwe gifite ifoto 1–5</p>
           </div>
         </div>
         <button type="button" onClick={addBlankRow} disabled={rows.length >= MAX_PRODUCTS_PER_BATCH || saving} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#0B6E4F] px-4 text-sm font-semibold text-[#0B6E4F] disabled:opacity-40">
@@ -351,7 +351,7 @@ export const SellerBulkAddProductsPage: React.FC = () => {
           Hitamo amafoto menshi
           <input type="file" accept="image/*" multiple disabled={saving || rows.length >= MAX_PRODUCTS_PER_BATCH} className="sr-only" onChange={(event) => { void addManyProductsFromPhotos(event.target.files); event.currentTarget.value=''; }} />
         </label>
-        <p className="mt-2 text-xs text-slate-500">Amafoto ntarenza 10 mu gutangiza batch imwe. Uyashyira kuri server amaze kugabanywa uburemere.</p>
+        <p className="mt-2 text-xs text-slate-500">Amafoto ntarenza 50 mu gutangiza batch imwe. Uyashyira kuri server amaze kugabanywa uburemere.</p>
       </section>
 
       <section className="mt-5 space-y-3">
@@ -410,7 +410,7 @@ export const SellerBulkAddProductsPage: React.FC = () => {
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-slate-700">Ibisobanuro (si itegeko)</label>
-                    <textarea rows={2} maxLength={300} value={row.description} disabled={saving || Boolean(row.savedId)} onChange={(event)=>updateRow(row.key,{description:event.target.value})} placeholder="Andika ibisobanuro bigufi..." className="mt-1 w-full rounded-xl border border-slate-300 p-3 text-sm disabled:bg-slate-50" />
+                    <textarea rows={2} maxLength={2000} value={row.description} disabled={saving || Boolean(row.savedId)} onChange={(event)=>updateRow(row.key,{description:event.target.value})} placeholder="Andika ibisobanuro bigufi..." className="mt-1 w-full rounded-xl border border-slate-300 p-3 text-sm disabled:bg-slate-50" />
                   </div>
                 </div>
                 {row.error && <p role="alert" className="mt-3 rounded-lg bg-[#C0392B]/10 p-2.5 text-xs font-medium text-[#C0392B]">{row.error}</p>}
