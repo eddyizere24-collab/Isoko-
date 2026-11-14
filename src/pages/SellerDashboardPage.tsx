@@ -104,7 +104,7 @@ export const SellerDashboardPage: React.FC = () => {
               <p className="font-bold">
                 {data.profile.status === 'pending'
                   ? RW.pending_review
-                  : `Imiterere ya konti: ${data.profile.status === 'approved' ? 'Konti irakora' : RW.seller_statuses[data.profile.status]}`}
+                  : `Imiterere ya konti: ${RW.seller_statuses[data.profile.status]}`}
               </p>
               {data.profile.status_reason && (
                 <p className="mt-1 text-slate-700">Impamvu: {data.profile.status_reason}</p>
@@ -133,7 +133,7 @@ export const SellerDashboardPage: React.FC = () => {
             {data.shop.district_name}
             {data.shop.sector_name ? ` · ${data.shop.sector_name}` : ''} ·{' '}
             <span className="font-semibold text-[#0B6E4F]">
-              {RW.seller_statuses[data.profile.status]}
+              {data.profile.status === 'approved' ? 'Konti irakora' : RW.seller_statuses[data.profile.status]}
             </span>
           </p>
         </div>
