@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowRight, KeyRound, Lock, Mail, Store } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { RW } from '../i18n/rw';
-import { loginAccount } from '../lib/api';
+import { loginAccount, loginWithCurrentSession, startGoogleSignIn } from '../lib/api';
 
 export const LoginPage: React.FC = () => {
   const { navigate, setAuthData, authProfile } = useMarketplace();
@@ -10,6 +10,22 @@ export const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('oauth') !== 'google') return;
+    setSubmitting(true);
+    loginWithCurrentSession().then(result => {
+      setAuthData({ token: result.token, userId: result.profile.id, role: result.profile.role, expiresAt: result.expiresAt }, result.profile, result.shop);
+      navigate(result.profile.role === 'admin' || result.profile.role === 'moderator' ? '/admin' : '/umucuruzi');
+    }).catch(() => navigate('/abacuruzi?oauth=google')).finally(() => setSubmitting(false));
+  }, [navigate, setAuthData]);
+
+  const handleGoogle = async () => {
+    setError(null);
+    setSubmitting(true);
+    try { await startGoogleSignIn('/injira?oauth=google'); }
+    catch (err) { setError(err instanceof Error ? err.message : 'Google sign-in ntiyabashije gutangira.'); setSubmitting(false); }
+  };
 
   const performLogin = async () => {
     setError(null);
@@ -65,6 +81,8 @@ export const LoginPage: React.FC = () => {
             </div>
           )}
 
+          <button type="button" onClick={() => void handleGoogle()} disabled={submitting} className="mb-4 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50 disabled:opacity-60"><span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 font-bold text-[#4285F4]">G</span> Komeza ukoreshe Google</button>
+          <div className="mb-4 flex items-center gap-3 text-xs text-slate-400"><span className="h-px flex-1 bg-slate-200"/>cyangwa ukoreshe email<span className="h-px flex-1 bg-slate-200"/></div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="login-identifier" className="block text-sm font-semibold text-[#1B1F23]">Email</label>
