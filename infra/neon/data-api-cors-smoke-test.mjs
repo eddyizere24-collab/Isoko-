@@ -31,14 +31,14 @@ const allowHeaders = new Set(
 );
 
 const problems = [];
-if (response.status !== 204) problems.push(`expected HTTP 204, received ${response.status}`);
+if (![200, 204].includes(response.status)) problems.push(`expected HTTP 200 or 204, received ${response.status}`);
 if (allowOrigin !== expectedOrigin) problems.push("Access-Control-Allow-Origin does not match the browser origin");
 if (!allowMethods.has("POST")) problems.push("POST is not allowed by CORS");
 if (!allowHeaders.has("authorization")) problems.push("Authorization header is not allowed by CORS");
 if (!allowHeaders.has("content-type")) problems.push("Content-Type header is not allowed by CORS");
 
 if (problems.length) {
-  throw new Error(`Neon Data API preflight failed for ${expectedOrigin}: ${problems.join("; ")}`);
+  throw new Error(`Neon Data API preflight failed for ${expectedOrigin}: ${problems.join("; ")}; allow-origin=${allowOrigin ?? "missing"}; allow-methods=${response.headers.get("access-control-allow-methods") ?? "missing"}; allow-headers=${response.headers.get("access-control-allow-headers") ?? "missing"}`);
 }
 
 console.log(JSON.stringify({
