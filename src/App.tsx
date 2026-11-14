@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Footer } from './components/Footer';
+import { SellerAuthGate } from './components/SellerAuthGate';
 import { Header } from './components/Header';
 import { LocationSheet } from './components/LocationSheet';
 import { OfflineAndPwaBar } from './components/OfflineAndPwaBar';
@@ -70,22 +71,46 @@ const AppRouter: React.FC = () => {
       return <SellerApplyPage />;
     }
     if (pathname === '/umucuruzi') {
-      return <SellerDashboardPage />;
+      return (
+        <SellerAuthGate>
+          <SellerDashboardPage />
+        </SellerAuthGate>
+      );
     }
     if (pathname === '/umucuruzi/ibicuruzwa') {
-      return <SellerProductsPage />;
+      return (
+        <SellerAuthGate>
+          <SellerProductsPage />
+        </SellerAuthGate>
+      );
     }
     if (pathname === '/umucuruzi/ongeraho') {
-      return <SellerAddProductPage />;
+      return (
+        <SellerAuthGate>
+          <SellerAddProductPage />
+        </SellerAuthGate>
+      );
     }
     if (pathname === '/umucuruzi/ongeraho-byinshi') {
-      return <SellerBulkAddProductsPage />;
+      return (
+        <SellerAuthGate>
+          <SellerBulkAddProductsPage />
+        </SellerAuthGate>
+      );
     }
     if (pathname === '/umucuruzi/iduka') {
-      return <SellerShopSettingsPage />;
+      return (
+        <SellerAuthGate>
+          <SellerShopSettingsPage />
+        </SellerAuthGate>
+      );
     }
     if (pathname === '/umucuruzi/imibare') {
-      return <SellerAnalyticsPage />;
+      return (
+        <SellerAuthGate>
+          <SellerAnalyticsPage />
+        </SellerAuthGate>
+      );
     }
     if (pathname === '/admin/setup') {
       return <AdminSetupPage />;
