@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { MapPin, Search, ShoppingBag, Menu, X } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { RW } from '../i18n/rw';
-import { IsokoWordmark } from './IsokoLogo';
+import { IsokoWordmark, RwandanGeometricPattern } from './IsokoLogo';
 
 export const Header: React.FC = () => {
   const {
@@ -217,7 +217,7 @@ export const Header: React.FC = () => {
 
       {/* Non-sticky Search & Location Strip (keeps mobile sticky <= 15% cap) */}
       {!pathname.startsWith('/umucuruzi') && !pathname.startsWith('/admin') && (
-        <div className="border-b border-slate-200/80 bg-[#F1F6F3]">
+        <div className="border-b border-slate-200/80 bg-white">
           <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-2xl">
               <label htmlFor="global-search" className="sr-only">
@@ -285,6 +285,7 @@ export const Header: React.FC = () => {
           </div>
         </div>
       )}
+      <RwandanGeometricPattern className="pointer-events-none h-1.5 w-full opacity-70" />
     </>
   );
 };
