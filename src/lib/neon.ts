@@ -59,13 +59,10 @@ export function normalizePhone(phone: string): string {
 
 export async function getNeonJwt(): Promise<string> {
   try {
-    // With allowAnonymous enabled, token() can also produce an anonymous Data
-    // API token. Require a real Better Auth user session before accepting it.
-    const [sessionResult, tokenResult] = await Promise.all([
-      neon.auth.getSession() as any,
-      neon.auth.token() as any,
-    ]);
-    const credentials = resolveAuthenticatedCredentials(sessionResult, tokenResult);
+    // Managed Neon Auth keeps the Data API JWT on session.access_token.
+    // auth.token() is not part of the documented SDK session flow.
+    const sessionResult = await neon.auth.getSession() as any;
+    const credentials = resolveAuthenticatedCredentials(sessionResult);
     if (credentials) return credentials.token;
   } catch {
     // Treat an unavailable or expired session as signed out for protected writes.
