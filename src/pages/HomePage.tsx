@@ -26,7 +26,7 @@ export const HomePage: React.FC = () => {
   const categories = bootstrap?.categories ?? INITIAL_CATEGORIES;
   const shops = bootstrap?.shops ?? [];
   const campaigns = bootstrap?.campaigns ?? [];
-  const topCategories = categories.filter((c) => c.parent_id === null);
+  const topCategories = categories.filter((c) => c.parent_id === null && c.active);
 
   const categoryCounts = useMemo(() => {
     const counts = new Map<string, number>();
