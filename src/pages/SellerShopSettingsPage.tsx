@@ -350,11 +350,11 @@ export const SellerShopSettingsPage: React.FC = () => {
 
         <button
           type="submit"
-          disabled={saving}
+          disabled={saving || Boolean(uploading)}
           className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-[#0B6E4F] px-6 text-sm font-semibold text-white hover:bg-[#08553D] disabled:opacity-60"
         >
           <Save className="h-4 w-4" aria-hidden="true" />
-          <span>{saving ? 'Bika...' : RW.save}</span>
+          <span>{uploading ? 'Tegereza ifoto irangize koherezwa...' : saving ? 'Bika...' : RW.save}</span>
         </button>
       </form>
 
