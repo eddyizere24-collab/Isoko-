@@ -161,7 +161,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
             className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent"
           />
           <div className="absolute bottom-3 sm:left-[120px] hidden sm:block text-xs font-medium text-white/95">
-            Iduka ryemewe ku Isoko · {shop.district_name}
+            Iduka riri kuri ISOKO · {shop.district_name}
           </div>
         </div>
         <RwandanGeometricPattern className="h-2 w-full text-[#0B6E4F]/20 bg-[#F1F6F3]" />
@@ -184,10 +184,14 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
               <div>
                 <div className="flex flex-wrap items-center gap-2.5">
                   <h1 className="font-display text-2xl font-extrabold text-[#1B1F23]">{shop.name}</h1>
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0B6E4F]">
-                    <IsokoVerifiedSeal className="h-4 w-4" />
-                    <span>{RW.verified}</span>
-                  </span>
+                  {shop.identity_status === 'verified' ? (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0B6E4F]">
+                      <IsokoVerifiedSeal className="h-4 w-4" />
+                      <span>{RW.verified}</span>
+                    </span>
+                  ) : (
+                    <span className="text-xs font-medium text-slate-500">Konti ntiragenzurwa mu byangombwa</span>
+                  )}
                 </div>
 
                 <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-600">
