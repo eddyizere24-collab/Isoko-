@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flag, ShieldCheck, X } from 'lucide-react';
+import { Flag, X } from 'lucide-react';
 import { RW } from '../i18n/rw';
 import { submitReport } from '../lib/api';
 import { getSessionId } from '../lib/storage';
@@ -24,7 +24,6 @@ export const ReportModal: React.FC<ReportModalProps> = ({
   const [type, setType] = useState<ReportType>('fake_price');
   const [details, setDetails] = useState('');
   const [reporterPhone, setReporterPhone] = useState('');
-  const [turnstileOk, setTurnstileOk] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -34,10 +33,6 @@ export const ReportModal: React.FC<ReportModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!turnstileOk) {
-      setError('Banza wemeze ko utari robot.');
-      return;
-    }
     const errs = validateReportForm({ type, details, reporterPhone });
     if (Object.keys(errs).length > 0) {
       setError(Object.values(errs)[0]);
@@ -53,7 +48,6 @@ export const ReportModal: React.FC<ReportModalProps> = ({
         details,
         reporterPhone: reporterPhone.trim() || undefined,
         sessionId: getSessionId(),
-        turnstileOk,
       });
       setDone(true);
     } catch (err) {
@@ -159,17 +153,6 @@ export const ReportModal: React.FC<ReportModalProps> = ({
                 className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 px-3 text-sm"
               />
             </div>
-
-            <label className="flex min-h-[44px] items-center gap-3 rounded-xl border border-slate-200 bg-[#F1F6F3] px-3.5 py-2 text-sm cursor-pointer">
-              <input
-                type="checkbox"
-                checked={turnstileOk}
-                onChange={(e) => setTurnstileOk(e.target.checked)}
-                className="h-4 w-4 accent-[#0B6E4F]"
-              />
-              <ShieldCheck className="h-4 w-4 text-[#0B6E4F] shrink-0" aria-hidden="true" />
-              <span>Ndi umuntu (kurinda ibisubirwamo)</span>
-            </label>
 
             {error && (
               <p role="alert" className="text-sm font-medium text-[#C0392B]">
