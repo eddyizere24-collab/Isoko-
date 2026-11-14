@@ -8,7 +8,6 @@ import {
   Copy,
   ImagePlus,
   MessageCircle,
-  Sparkles,
   Trash2,
 } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
@@ -60,21 +59,6 @@ const EMPTY_DRAFT: WizardDraft = {
   authentic: false,
   description: '',
 };
-
-const QUICK_SAMPLE_PHOTOS = [
-  {
-    label: 'Inkweto (White)',
-    url: '/src/assets/images/shoe_sneaker_white_1794551815135.jpg',
-  },
-  {
-    label: 'Umupira / Jacket',
-    url: '/src/assets/images/apparel_ankara_jacket_1794551815266.jpg',
-  },
-  {
-    label: 'Isakoshi',
-    url: '/src/assets/images/accessory_leather_bag_1794551816434.jpg',
-  },
-];
 
 export const SellerAddProductPage: React.FC = () => {
   const { navigate, authSession, authShop, bootstrap, refreshBootstrap } = useMarketplace();
@@ -513,43 +497,7 @@ export const SellerAddProductPage: React.FC = () => {
               </div>
             )}
 
-            {/* Quick studio asset selector for fast testing/demoing */}
-            <div className="rounded-xl bg-[#F1F6F3] p-3.5">
-              <p className="text-xs font-semibold text-slate-600">
-                Ushaka kugerageza vuba? Kanda hano wongeremo ifoto y’urugero:
-              </p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {QUICK_SAMPLE_PHOTOS.map((sp) => (
-                  <button
-                    key={sp.url}
-                    type="button"
-                    disabled={draft.photos.length >= 5}
-                    onClick={() =>
-                      setDraft((d) => ({
-                        ...d,
-                        photos:
-                          d.photos.length >= 5
-                            ? d.photos
-                            : [
-                                ...d.photos,
-                                {
-                                  path_full: sp.url,
-                                  path_thumb: sp.url,
-                                  width: 1000,
-                                  height: 1000,
-                                  bytes: 75000,
-                                },
-                              ],
-                      }))
-                    }
-                    className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-[#1B1F23] hover:border-[#0B6E4F]"
-                  >
-                    <Sparkles className="h-3.5 w-3.5 text-[#E8A33D]" aria-hidden="true" />
-                    <span>{sp.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+
           </div>
         )}
 

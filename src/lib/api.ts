@@ -66,7 +66,13 @@ function fail(error: any, fallback: string): never {
     PRODUCT_IMAGES_REQUIRED: 'Shyiraho nibura ifoto imwe, nturenze eshanu.',
     PRODUCT_VARIANTS_REQUIRED: 'Hitamo nibura size imwe.',
     PRODUCT_LIMIT_REACHED: 'Wageze ku mubare ntarengwa w’ibicuruzwa kuri konti yawe.',
+    PRODUCT_ALREADY_HIDDEN: 'Iki gicuruzwa gisanzwe gihishe.',
+    PRODUCT_NOT_HIDDEN_BY_OWNER: 'Iki gicuruzwa nticyahishwe nawe, bityo ntushobora kugisubiza ahagaragara.',
+    PRODUCT_STATUS_NOT_HIDABLE: 'Imiterere y’iki gicuruzwa ntishobora guhishwa ubu.',
+    SELLER_SHOP_NOT_ACTIVE: 'Iduka ryawe ntirikora. Vugana na Admin.',
     PRODUCT_NOT_FOUND_OR_FORBIDDEN: 'Igicuruzwa ntikiboneka cyangwa ntabwo ari icyawe.',
+    PRODUCT_NOT_ACTIVE: 'Iki gicuruzwa ntikiri mu bicuruzwa bigaragara.',
+    PRODUCT_STATUS_NOT_RESTORABLE: 'Iki gicuruzwa ntigishobora gusubizwa mu bubiko muri iyi status.',
     TERMS_REQUIRED: 'Emeza amategeko n’amasezerano mbere yo gukomeza.',
     RWANDA_PHONE_INVALID: 'Nimero igomba kuba iyo mu Rwanda (2507XXXXXXXX).',
     NATIONAL_ID_INVALID: 'Nimero y’indangamuntu igomba kugira imibare 16.',
@@ -420,7 +426,17 @@ export async function updateSellerProduct(id:string,payload:Record<string,any>):
       width:Number(image.width??1),height:Number(image.height??1),bytes:Number(image.bytes??0),
     }));
   }
-  dataOf(await neon.rpc('update_seller_product_v1',{p_product_id:id,p_payload:update}),'Ntibishobotse kuvugurura igicuruzwa.');
+  if (payload.action === 'mark_sold' || payload.action === 'restore') {
+    dataOf(
+      await neon.rpc('set_seller_product_status_v1',{p_product_id:id,p_action:payload.action}),
+      'Ntibishobotse guhindura uko igicuruzwa gihagaze.'
+    );
+  } else {
+    dataOf(
+      await neon.rpc('update_seller_product_v1',{p_product_id:id,p_payload:update}),
+      'Ntibishobotse kuvugurura igicuruzwa.'
+    );
+  }
   const fresh=first<any>(dataOf<any>(
     await neon.from('products').select('*,product_images(*),product_variants(*)').eq('id',id).maybeSingle(),
     'Ntibishobotse gusoma igicuruzwa gishya.'
@@ -442,6 +458,14 @@ export async function copySellerProduct(id:string):Promise<{product:Product}> {
 export async function deleteSellerProduct(id:string):Promise<{ok:boolean}> {
   const result=dataOf<any>(await neon.rpc('delete_seller_product_v1',{p_product_id:id}),'Ntibishobotse gusiba igicuruzwa.');
   return {ok:Boolean(result?.ok)};
+}
+
+export async function setSellerProductVisibility(id:string,action:'hide'|'unhide'):Promise<{ok:boolean;status:Product['status']}> {
+  const result=dataOf<any>(
+    await neon.rpc('set_seller_product_visibility_v1',{p_product_id:id,p_action:action}),
+    'Ntibishobotse guhindura uko igicuruzwa kigaragara.'
+  );
+  return {ok:Boolean(result?.ok),status:result.status as Product['status']};
 }
 
 export async function updateSellerShop(payload:Record<string,unknown>):Promise<{shop:Shop}> {

@@ -3,10 +3,14 @@ import {
   ArrowLeft,
   Copy,
   Edit3,
+  Eye,
+  EyeOff,
   FileEdit,
+  ImagePlus,
   Plus,
   RotateCcw,
   Search,
+  Share2,
   Trash2,
   X,
 } from 'lucide-react';
@@ -16,10 +20,14 @@ import {
   copySellerProduct,
   deleteSellerProduct,
   fetchSellerOverview,
+  setSellerProductVisibility,
   updateSellerProduct,
+  uploadImagePair,
+  trackMarketplaceEvent,
 } from '../lib/api';
 import { validateProductForm } from '../lib/validation';
-import { formatRwfCurrency } from '../lib/whatsapp';
+import { processProductImage } from '../lib/image';
+import { buildWhatsAppLink, formatRwfCurrency } from '../lib/whatsapp';
 import type { Product, ProductCondition, ProductStatus, ProductVariant } from '../types/marketplace';
 
 export const SellerProductsPage: React.FC = () => {
@@ -46,7 +54,10 @@ export const SellerProductsPage: React.FC = () => {
   const [editAuthentic, setEditAuthentic] = useState(false);
   const [editDesc, setEditDesc] = useState('');
   const [editVariants, setEditVariants] = useState<ProductVariant[]>([]);
+  const [editPhotos, setEditPhotos] = useState<Product['images']>([]);
+  const [editUploadingPhotos, setEditUploadingPhotos] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
+  const [deleteCandidate, setDeleteCandidate] = useState<Product | null>(null);
 
   const load = async () => {
     try {
@@ -116,7 +127,55 @@ export const SellerProductsPage: React.FC = () => {
     setEditAuthentic(p.authentic);
     setEditDesc(p.description);
     setEditVariants(p.variants.map((v) => ({ ...v })));
+    setEditPhotos(p.images.map((image) => ({ ...image })));
     setEditError(null);
+  };
+
+  const handleEditPhotoFiles = async (files: FileList | null) => {
+    if (!files?.length || !editProduct) return;
+    setEditError(null);
+    setEditUploadingPhotos(true);
+    try {
+      const nextPhotos = [...editPhotos];
+      for (const file of Array.from(files)) {
+        if (nextPhotos.length >= 5) break;
+        const compressed = await processProductImage(file);
+        const full = await uploadImagePair(compressed.fullDataUrl, 'full');
+        const thumb = await uploadImagePair(compressed.thumbDataUrl, 'thumb');
+        nextPhotos.push({
+          id: 'new-' + Date.now() + '-' + nextPhotos.length,
+          product_id: editProduct.id,
+          position: nextPhotos.length,
+          path_full: full.url,
+          path_thumb: thumb.url,
+          width: compressed.width,
+          height: compressed.height,
+          bytes: full.bytes,
+        });
+      }
+      setEditPhotos(nextPhotos);
+    } catch (err) {
+      setEditError(err instanceof Error ? err.message : 'Amafoto ntiyashoboye kubikwa.');
+    } finally {
+      setEditUploadingPhotos(false);
+    }
+  };
+
+  const moveEditPhoto = (index: number, direction: -1 | 1) => {
+    setEditPhotos((previous) => {
+      const next = [...previous];
+      const target = index + direction;
+      if (target < 0 || target >= next.length) return previous;
+      [next[index], next[target]] = [next[target], next[index]];
+      return next.map((photo, position) => ({ ...photo, position }));
+    });
+  };
+
+  const removeEditPhoto = (index: number) => {
+    setEditPhotos((previous) =>
+      previous.filter((_, photoIndex) => photoIndex !== index)
+        .map((photo, position) => ({ ...photo, position }))
+    );
   };
 
   const handleSaveFullEdit = async (e: React.FormEvent) => {
@@ -127,7 +186,7 @@ export const SellerProductsPage: React.FC = () => {
     const oldPriceNum = editOldPrice.trim() ? Number(editOldPrice.replace(/\D/g, '')) : null;
 
     const validationErrors = validateProductForm({
-      photosCount: Math.max(1, editProduct.images.length),
+      photosCount: editPhotos.length,
       categoryId: editProduct.category_id,
       name: editName,
       price: priceNum,
@@ -161,6 +220,7 @@ export const SellerProductsPage: React.FC = () => {
           brand: editBrand.trim() || null,
           authentic: editAuthentic,
           description: editDesc.trim(),
+          images: editPhotos.map((photo) => ({ ...photo })),
           variants: editVariants.map((v) => ({
             size_label: v.size_label,
             in_stock: v.in_stock,
@@ -193,14 +253,24 @@ export const SellerProductsPage: React.FC = () => {
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => navigate('/umucuruzi/ongeraho')}
-          className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-4 text-sm font-semibold text-white hover:bg-[#08553D]"
-        >
-          <Plus className="h-4 w-4" aria-hidden="true" />
-          <span>{RW.add_product}</span>
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => navigate('/umucuruzi/ongeraho-byinshi')}
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-[#0B6E4F] px-4 text-sm font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3]"
+          >
+            <ImagePlus className="h-4 w-4" aria-hidden="true" />
+            <span>Ongeraho byinshi</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/umucuruzi/ongeraho')}
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-4 text-sm font-semibold text-white hover:bg-[#08553D]"
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            <span>Ongeraho kimwe</span>
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -301,7 +371,7 @@ export const SellerProductsPage: React.FC = () => {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                {p.status === 'active' ? (
+{p.status === 'active' && (
                   <button
                     type="button"
                     disabled={busyId === p.id}
@@ -316,15 +386,16 @@ export const SellerProductsPage: React.FC = () => {
                   >
                     {RW.mark_sold}
                   </button>
-                ) : (
+                )}
+                {(p.status === 'sold_out' || p.status === 'draft') && (
                   <button
                     type="button"
-                    disabled={busyId === p.id || p.status === 'hidden'}
+                    disabled={busyId === p.id}
                     onClick={() => {
                       setBusyId(p.id);
                       runAction(
                         () => updateSellerProduct(p.id, { action: 'restore' }).then(() => undefined),
-                        'Igicuruzwa cyasubijwe ahagaragara.'
+                        'Igicuruzwa cyasubijwe mu bubiko.'
                       ).finally(() => setBusyId(null));
                     }}
                     className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-[#0B6E4F] px-3 text-xs font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3] disabled:opacity-40"
@@ -332,6 +403,46 @@ export const SellerProductsPage: React.FC = () => {
                     <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>{RW.restore_stock}</span>
                   </button>
+                )}
+
+                {(p.status === 'active' || p.status === 'draft' || p.status === 'sold_out') && (
+                  <button
+                    type="button"
+                    disabled={busyId === p.id}
+                    onClick={() => {
+                      setBusyId(p.id);
+                      runAction(
+                        () => setSellerProductVisibility(p.id, 'hide').then(() => undefined),
+                        'Igicuruzwa cyahishwe. Abaguzi ntibagikibona.'
+                      ).finally(() => setBusyId(null));
+                    }}
+                    className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-slate-300 px-3 text-xs font-semibold text-[#1B1F23] hover:bg-slate-100 disabled:opacity-50"
+                  >
+                    <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Hisha</span>
+                  </button>
+                )}
+                {p.status === 'hidden' && p.hidden_reason === 'Yahishwe n’umucuruzi' && (
+                  <button
+                    type="button"
+                    disabled={busyId === p.id}
+                    onClick={() => {
+                      setBusyId(p.id);
+                      runAction(
+                        () => setSellerProductVisibility(p.id, 'unhide').then(() => undefined),
+                        'Igicuruzwa cyongeye kugaragara ku isoko.'
+                      ).finally(() => setBusyId(null));
+                    }}
+                    className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-[#0B6E4F] px-3 text-xs font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3] disabled:opacity-50"
+                  >
+                    <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Garagaza</span>
+                  </button>
+                )}
+                {p.status === 'hidden' && p.hidden_reason !== 'Yahishwe n’umucuruzi' && (
+                  <span className="inline-flex min-h-[44px] items-center rounded-xl bg-slate-100 px-3 text-xs text-slate-500">
+                    Yahishwe na Admin
+                  </span>
                 )}
 
                 <button
@@ -356,6 +467,17 @@ export const SellerProductsPage: React.FC = () => {
                   <span>Hindura</span>
                 </button>
 
+                <a
+                  href={buildWhatsAppLink('', `Reba ${p.name} (${formatRwfCurrency(p.price)}) kuri ISOKO: ${window.location.origin}/p/${p.id}`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => { void trackMarketplaceEvent('share', p.id, p.shop_id); }}
+                  className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-[#25D366]/40 bg-[#25D366]/10 px-3 text-xs font-semibold text-[#177A3B] hover:bg-[#25D366]/20"
+                >
+                  <Share2 className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>Sangiza</span>
+                </a>
+
                 <button
                   type="button"
                   disabled={busyId === p.id}
@@ -375,13 +497,7 @@ export const SellerProductsPage: React.FC = () => {
                 <button
                   type="button"
                   disabled={busyId === p.id}
-                  onClick={() => {
-                    setBusyId(p.id);
-                    runAction(
-                      () => deleteSellerProduct(p.id).then(() => undefined),
-                      'Igicuruzwa cyasibwe.'
-                    ).finally(() => setBusyId(null));
-                  }}
+                  onClick={() => setDeleteCandidate(p)}
                   aria-label={`Siba ${p.name}`}
                   className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-slate-200 text-[#C0392B] hover:bg-[#C0392B]/10"
                 >
@@ -390,6 +506,34 @@ export const SellerProductsPage: React.FC = () => {
               </div>
             </article>
           ))}
+        </div>
+      )}
+
+      {deleteCandidate && (
+        <div role="dialog" aria-modal="true" aria-labelledby="delete-product-title" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <h2 id="delete-product-title" className="text-lg font-bold text-[#1B1F23]">Siba igicuruzwa?</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              Ugiye gusiba <strong>{deleteCandidate.name}</strong>. Iki gikorwa ntigishobora gusubizwa inyuma.
+              Niba ushaka ko abaguzi batakibona gusa, koresha Hisha aho kugisiba.
+            </p>
+            <div className="mt-5 flex gap-2">
+              <button type="button" onClick={()=>setDeleteCandidate(null)} className="min-h-[44px] flex-1 rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-700">Reka</button>
+              <button
+                type="button"
+                disabled={busyId===deleteCandidate.id}
+                onClick={()=>{
+                  const id=deleteCandidate.id;
+                  setBusyId(id);
+                  runAction(()=>deleteSellerProduct(id).then(()=>undefined),'Igicuruzwa cyasibwe.').finally(()=>{
+                    setBusyId(null);
+                    setDeleteCandidate(null);
+                  });
+                }}
+                className="min-h-[44px] flex-1 rounded-xl bg-[#C0392B] px-4 text-sm font-semibold text-white disabled:opacity-50"
+              >Siba burundu</button>
+            </div>
+          </section>
         </div>
       )}
 
@@ -609,6 +753,46 @@ export const SellerProductsPage: React.FC = () => {
                 className="mt-1 w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
               />
             </div>
+
+            <section className="space-y-3 rounded-xl border border-slate-200 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-bold text-[#1B1F23]">Amafoto y’igicuruzwa</h3>
+                  <p className="text-xs text-slate-500">Nibura 1, ntarenze 5. Ifoto ya mbere ni yo igaragara ku ikarita.</p>
+                </div>
+                <label className="inline-flex min-h-[40px] cursor-pointer items-center gap-1.5 rounded-xl border border-[#0B6E4F] px-3 text-xs font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3]">
+                  <ImagePlus className="h-4 w-4" aria-hidden="true" />
+                  <span>Ongeraho</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    disabled={editUploadingPhotos || editPhotos.length >= 5}
+                    className="sr-only"
+                    onChange={(event) => {
+                      void handleEditPhotoFiles(event.target.files);
+                      event.currentTarget.value = '';
+                    }}
+                  />
+                </label>
+              </div>
+              {editUploadingPhotos && <p className="text-xs font-medium text-[#0B6E4F]">Turimo gutunganya amafoto...</p>}
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                {editPhotos.map((photo,index) => (
+                  <div key={photo.id} className="overflow-hidden rounded-xl border border-slate-200">
+                    <img src={photo.path_thumb || photo.path_full} alt={`Ifoto ${index+1}`} className="aspect-square w-full object-cover" />
+                    <div className="flex flex-wrap items-center justify-between gap-1 bg-white p-1.5">
+                      <span className="text-[10px] font-semibold text-slate-500">{index === 0 ? 'Ibanza' : `Ifoto ${index+1}`}</span>
+                      <div className="flex gap-1">
+                        <button type="button" disabled={index===0} onClick={()=>moveEditPhoto(index,-1)} aria-label="Shyira ifoto imbere" className="min-h-[30px] min-w-[30px] rounded-md border border-slate-200 text-xs disabled:opacity-30">←</button>
+                        <button type="button" disabled={index===editPhotos.length-1} onClick={()=>moveEditPhoto(index,1)} aria-label="Subiza ifoto inyuma" className="min-h-[30px] min-w-[30px] rounded-md border border-slate-200 text-xs disabled:opacity-30">→</button>
+                        <button type="button" onClick={()=>removeEditPhoto(index)} aria-label="Kuraho ifoto" className="min-h-[30px] min-w-[30px] rounded-md text-[#C0392B] hover:bg-[#C0392B]/10">×</button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
 
             <div>
               <p className="text-xs font-semibold text-[#1B1F23]">Imibare / Sizes mu bubiko</p>
