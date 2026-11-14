@@ -15,6 +15,7 @@ import { SellerAddProductPage } from './pages/SellerAddProductPage';
 import { SellerAnalyticsPage } from './pages/SellerAnalyticsPage';
 import { SellerApplyPage } from './pages/SellerApplyPage';
 import { SellerDashboardPage } from './pages/SellerDashboardPage';
+import { SellerBulkAddProductsPage } from './pages/SellerBulkAddProductsPage';
 import { SellerProductsPage } from './pages/SellerProductsPage';
 import { SellerShopSettingsPage } from './pages/SellerShopSettingsPage';
 import { ShopPage } from './pages/ShopPage';
@@ -68,6 +69,9 @@ const AppRouter: React.FC = () => {
     }
     if (pathname === '/umucuruzi/ongeraho') {
       return <SellerAddProductPage />;
+    }
+    if (pathname === '/umucuruzi/ongeraho-byinshi') {
+      return <SellerBulkAddProductsPage />;
     }
     if (pathname === '/umucuruzi/iduka') {
       return <SellerShopSettingsPage />;
