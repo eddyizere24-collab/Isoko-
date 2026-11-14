@@ -88,6 +88,9 @@ export const Footer: React.FC = () => {
                   </a>
                 </li>
                 <li>
+                  <a href="/uko-ikoreshwa" onClick={(e) => { e.preventDefault(); navigate('/uko-ikoreshwa'); }} className="hover:text-[#0B6E4F] hover:underline">Uko ukoresha ISOKO</a>
+                </li>
+                <li>
                   <a
                     href="/ibyerekeye"
                     onClick={(e) => {
