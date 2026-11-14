@@ -27,8 +27,7 @@ import {
 } from '../lib/api';
 import { validateProductForm } from '../lib/validation';
 import { processProductImage } from '../lib/image';
-import { buildWhatsAppLink } from '../lib/whatsapp';
-import { formatRwfCurrency } from '../lib/whatsapp';
+import { buildWhatsAppLink, formatRwfCurrency } from '../lib/whatsapp';
 import type { Product, ProductCondition, ProductStatus, ProductVariant } from '../types/marketplace';
 
 export const SellerProductsPage: React.FC = () => {
@@ -372,7 +371,7 @@ export const SellerProductsPage: React.FC = () => {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                {p.status === 'active' ? (
+{p.status === 'active' && (
                   <button
                     type="button"
                     disabled={busyId === p.id}
@@ -387,15 +386,16 @@ export const SellerProductsPage: React.FC = () => {
                   >
                     {RW.mark_sold}
                   </button>
-                ) : (
+                )}
+                {(p.status === 'sold_out' || p.status === 'draft') && (
                   <button
                     type="button"
-                    disabled={busyId === p.id || p.status === 'hidden'}
+                    disabled={busyId === p.id}
                     onClick={() => {
                       setBusyId(p.id);
                       runAction(
                         () => updateSellerProduct(p.id, { action: 'restore' }).then(() => undefined),
-                        'Igicuruzwa cyasubijwe ahagaragara.'
+                        'Igicuruzwa cyasubijwe mu bubiko.'
                       ).finally(() => setBusyId(null));
                     }}
                     className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-[#0B6E4F] px-3 text-xs font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3] disabled:opacity-40"
