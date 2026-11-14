@@ -109,6 +109,9 @@ function mapShop(row: any): Shop {
     logo_path: row.logo_path ?? publicAssetUrl(row.logo_key),
     cover_path: row.cover_path ?? publicAssetUrl(row.cover_key),
     social_links: row.social_links ?? {},
+    seller_name: row.seller_name ?? null,
+    seller_bio: row.seller_bio ?? '',
+    seller_avatar_path: row.seller_avatar_path ?? null,
     active_product_count: Number(row.active_product_count ?? 0),
   } as Shop;
 }
@@ -146,12 +149,13 @@ async function currentAccount(): Promise<{ user: any; profile: Profile; shop: Sh
   if (!user?.id) throw new Error('Injira mbere yo gukomeza.');
   const profileResult = dataOf<any>(
     await neon.from('profiles')
-      .select('id,auth_user_id,role,full_name,phone,whatsapp,email,email_verified,identity_status,status,status_reason,approved_by,approved_at,terms_version,terms_accepted_at,created_at')
+      .select('id,auth_user_id,role,full_name,phone,whatsapp,email,email_verified,identity_status,bio,avatar_key,status,status_reason,approved_by,approved_at,terms_version,terms_accepted_at,created_at')
       .eq('auth_user_id', user.id).maybeSingle(),
     'Konti yawe ntiyuzuye.'
   );
   const profile = first<Profile>(profileResult);
   if (!profile) throw new Error('Konti ya Isoko ntiyabonetse kuri iyi nimero.');
+  profile.avatar_path = publicAssetUrl(profile.avatar_key);
   const shopResult = dataOf<any>(
     await neon.from('shops').select('*').eq('owner_id', profile.id).maybeSingle(),
     'Ntibishobotse gufungura iduka ryawe.'
@@ -382,14 +386,14 @@ export async function fetchMe():Promise<{profile:Profile;shop:Shop|null}> {
   return {profile:current.profile,shop:current.shop};
 }
 
-export async function uploadImagePair(dataUrl:string,kind:'full'|'thumb'|'shop'):Promise<{url:string;bytes:number}> {
+export async function uploadImagePair(dataUrl:string,kind:'full'|'thumb'|'shop'|'profile'):Promise<{url:string;bytes:number}> {
   const result=await uploadThroughFunction(dataUrl,kind);
   if(!result.url) throw new Error('Ifoto rusange ntiyabonetse.');
   return {url:result.url,bytes:result.bytes};
 }
 
 export async function fetchSellerOverview():Promise<{
-  profile:Pick<Profile,'id'|'full_name'|'status'|'status_reason'|'identity_status'|'email'|'email_verified'>;shop:Shop;products:Product[];staleProducts:Product[];
+  profile:Pick<Profile,'id'|'full_name'|'status'|'status_reason'|'identity_status'|'email'|'email_verified'|'bio'|'avatar_path'>;shop:Shop;products:Product[];staleProducts:Product[];
   stats7d:{views:number;wa_clicks:number;call_clicks:number;cart_adds:number;shares:number};
   stats30d:{views:number;wa_clicks:number;call_clicks:number;cart_adds:number;shares:number};
   topViewed:Product[];topWa:Product|null;
@@ -420,7 +424,7 @@ export async function fetchSellerOverview():Promise<{
   const stale=Date.now()-30*86400000;
   const staleProducts=products.filter((p: Product)=>p.status==='active'&&new Date(p.last_confirmed_at).getTime()<=stale);
   return {
-    profile:{id:current.profile.id,full_name:current.profile.full_name,status:current.profile.status,status_reason:current.profile.status_reason,identity_status:current.profile.identity_status,email:current.profile.email,email_verified:current.profile.email_verified},
+    profile:{id:current.profile.id,full_name:current.profile.full_name,status:current.profile.status,status_reason:current.profile.status_reason,identity_status:current.profile.identity_status,email:current.profile.email,email_verified:current.profile.email_verified,bio:current.profile.bio,avatar_path:current.profile.avatar_path},
     shop:current.shop,products,staleProducts,stats7d:sum(stats.filter((r)=>r.day>=cutoff7)),stats30d:sum(stats),
     topViewed:[...products].sort((a,b)=>(b.views_7d??0)-(a.views_7d??0)).slice(0,5),
     topWa:[...products].sort((a,b)=>(b.wa_clicks_7d??0)-(a.wa_clicks_7d??0))[0]??null,
@@ -496,6 +500,16 @@ export async function setSellerProductVisibility(id:string,action:'hide'|'unhide
     'Ntibishobotse guhindura uko igicuruzwa kigaragara.'
   );
   return {ok:Boolean(result?.ok),status:result.status as Product['status']};
+}
+
+export async function updateSellerProfile(payload:{bio:string;avatar_path:string}):Promise<void> {
+  const current = await currentAccount();
+  const result = await neon.from('profiles').update({
+    bio: String(payload.bio ?? '').slice(0,2000),
+    avatar_key: payload.avatar_path ? storageKey(payload.avatar_path) : null,
+  }).eq('id', current.profile.id).select('id').maybeSingle();
+  const saved = first<any>(dataOf<any>(result, 'Ntibishobotse kubika profile yawe.'));
+  if (!saved) throw new Error('Profile yawe ntiyabitswe.');
 }
 
 export async function updateSellerShop(payload:Record<string,unknown>):Promise<{shop:Shop}> {
