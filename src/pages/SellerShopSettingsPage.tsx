@@ -4,7 +4,7 @@ import { QrCodeModal } from '../components/QrCodeModal';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { getSectorsForDistrict, RWANDA_DISTRICTS } from '../data/rwandaAreas';
 import { RW } from '../i18n/rw';
-import { fetchSellerOverview, updateSellerShop, uploadImagePair } from '../lib/api';
+import { fetchSellerOverview, updateSellerProfile, updateSellerShop, uploadImagePair } from '../lib/api';
 import { buildWhatsAppLink } from '../lib/whatsapp';
 import { processProductImage } from '../lib/image';
 import type { Shop } from '../types/marketplace';
@@ -14,10 +14,12 @@ export const SellerShopSettingsPage: React.FC = () => {
   const [shop, setShop] = useState<Shop | null>(null);
   const [name, setName] = useState('');
   const [about, setAbout] = useState('');
+  const [sellerBio, setSellerBio] = useState('');
+  const [avatarPath, setAvatarPath] = useState('');
   const [logoPath, setLogoPath] = useState('');
   const [coverPath, setCoverPath] = useState('');
   const [socialLinks, setSocialLinks] = useState<Record<string,string>>({ instagram:'', facebook:'', tiktok:'', youtube:'', website:'' });
-  const [uploadingImage, setUploadingImage] = useState<'logo'|'cover'|null>(null);
+  const [uploadingImage, setUploadingImage] = useState<'logo'|'cover'|'avatar'|null>(null);
   const [whatsapp, setWhatsapp] = useState('');
   const [phone, setPhone] = useState('');
   const [districtId, setDistrictId] = useState<number>(1);
@@ -41,6 +43,8 @@ export const SellerShopSettingsPage: React.FC = () => {
         setShop(res.shop);
         setName(res.shop.name);
         setAbout(res.shop.about);
+        setSellerBio(res.profile.bio ?? '');
+        setAvatarPath(res.profile.avatar_path ?? '');
         setLogoPath(res.shop.logo_path ?? '');
         setCoverPath(res.shop.cover_path ?? '');
         setSocialLinks({ instagram:'', facebook:'', tiktok:'', youtube:'', website:'', ...(res.shop.social_links ?? {}) });
@@ -78,6 +82,7 @@ export const SellerShopSettingsPage: React.FC = () => {
     setSavedMsg(null);
     setSaving(true);
     try {
+      await updateSellerProfile({ bio: sellerBio, avatar_path: avatarPath });
       const res = await updateSellerShop({
         name,
         about,
@@ -161,6 +166,14 @@ export const SellerShopSettingsPage: React.FC = () => {
         onSubmit={handleSave}
         className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 space-y-4"
       >
+        <section className="rounded-xl border border-slate-200 bg-[#F7FAF8] p-4 space-y-4">
+          <div><h2 className="text-sm font-bold text-[#1B1F23]">Umwirondoro wawe</h2><p className="mt-1 text-xs text-slate-600">Abakiriya babone umuntu uri inyuma y’iri duka.</p></div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            {avatarPath ? <img src={avatarPath} alt="Ifoto ya profile" className="h-20 w-20 rounded-full border border-slate-200 object-cover" /> : <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white text-xs text-slate-400">Profile</div>}
+            <label className="inline-flex min-h-10 cursor-pointer items-center rounded-lg border border-slate-300 bg-white px-3 text-xs font-semibold text-slate-700">{uploadingImage==='avatar'?'Kohereza...':'Shyiraho ifoto yawe'}<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={Boolean(uploadingImage)} onChange={async e=>{const file=e.target.files?.[0];e.currentTarget.value='';if(!file)return;setError(null);setUploadingImage('avatar');try{const image=await processProductImage(file);const uploaded=await uploadImagePair(image.fullDataUrl,'profile');setAvatarPath(uploaded.url);}catch(err){setError(err instanceof Error?err.message:'Ifoto ya profile ntiyoherejwe.');}finally{setUploadingImage(null);}}} /></label>
+          </div>
+          <div><label htmlFor="seller-bio" className="block text-xs font-semibold text-slate-700">Ibyerekeye wowe</label><textarea id="seller-bio" rows={3} maxLength={2000} value={sellerBio} onChange={e=>setSellerBio(e.target.value)} placeholder="Andika ibyo ukunda, ubunararibonye bwawe n’uko ukorera abakiriya..." className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-sm"/><p className="mt-1 text-right text-xs text-slate-500">{sellerBio.length}/2000</p></div>
+        </section>
         <section className="rounded-xl border border-slate-200 bg-[#F7FAF8] p-4 space-y-4">
           <div><h2 className="text-sm font-bold text-[#1B1F23]">Isura y’iduka</h2><p className="mt-1 text-xs text-slate-600">Shyiraho logo n’ifoto nini yerekana iduka ryawe.</p></div>
           <div className="grid gap-4 sm:grid-cols-2">
