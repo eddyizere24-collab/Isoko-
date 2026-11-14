@@ -51,7 +51,7 @@ export const SellerApplyPage: React.FC = () => {
     setError(null);
     setGoogleLoading(true);
     try {
-      await signInWithGoogle(`${window.location.origin}/oauth/complete`);
+      await signInWithGoogle(`${window.location.origin}/abacuruzi?google=1`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Guhuza Google byanze.');
       setGoogleLoading(false);
