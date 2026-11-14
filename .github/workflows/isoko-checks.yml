@@ -23,7 +23,7 @@ jobs:
         uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2
 
       - name: Install dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: TypeScript check
         run: bun run lint
@@ -47,8 +47,26 @@ jobs:
           ISOKO_TEST_FUNCTION_URL: https://br-blue-bread-ba2wywua-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
           ISOKO_EXPECTED_NEON_BRANCH: isoko-production
 
-      - name: Production build
+      - name: Production build for E2E (isolated Neon Setup endpoints)
         run: bun run build
+        env:
+          VITE_NEON_AUTH_URL: https://ep-divine-salad-ba2n73kh.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth
+          VITE_NEON_DATA_API_URL: https://ep-divine-salad-ba2n73kh.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
+          VITE_NEON_FUNCTION_URL: https://br-raspy-resonance-baqfwhuh-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
+          VITE_NEON_PUBLIC_STORAGE_URL: https://br-raspy-resonance-baqfwhuh.storage.c-8.eu-central-1.aws.neon.tech/isoko-public-assets/
+
+      - name: Install Playwright for browser smoke tests
+        run: |
+          mkdir -p "$RUNNER_TEMP/isoko-playwright"
+          npm install --prefix "$RUNNER_TEMP/isoko-playwright" --no-save --no-package-lock --ignore-scripts --no-audit --no-fund @playwright/test@1.65.0
+
+      - name: Install Chromium for browser smoke tests
+        run: '"$RUNNER_TEMP/isoko-playwright/node_modules/.bin/playwright" install --with-deps chromium'
+
+      - name: Run Playwright browser smoke tests
+        env:
+          NODE_PATH: ${{ runner.temp }}/isoko-playwright/node_modules
+        run: '"$RUNNER_TEMP/isoko-playwright/node_modules/.bin/playwright" test --config=playwright.config.cjs --workers=1'
 
       - name: Install pinned Neon Function dependency
         run: npm install --prefix infra/neon/functions/isokoapi --no-save --no-package-lock --ignore-scripts --no-audit --no-fund
