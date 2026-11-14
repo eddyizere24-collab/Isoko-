@@ -120,7 +120,7 @@ export const SellerDashboardPage: React.FC = () => {
 
       {data.profile.identity_status !== 'verified' && data.profile.status === 'approved' && (
         <div role="status" className="mb-5 rounded-xl border border-slate-200 bg-[#F7FAF8] px-4 py-3 text-xs leading-5 text-slate-700">
-          Konti yawe irakora. Indangamuntu n’andi makuru y’inyongera ntibiragenzurwa; ushobora kuzuza ayo makuru nyuma muri Profile.
+          Konti yawe irakora. Indangamuntu n’andi makuru y’inyongera ntibiragenzurwa. Kuzuza Profile birambuye bizongerwaho mu kindi cyiciro; ushobora gutangira gushyiraho ibicuruzwa ubu.
         </div>
       )}
 
