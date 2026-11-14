@@ -99,7 +99,7 @@ test('seller can register, sign in, update store, publish a photo product and re
     body: (await page.locator('body').innerText().catch(() => '')).slice(0, 2400),
     pageErrors: browserErrors,
   }));
-  await expect(page).toHaveURL(/\\/umucuruzi$/, { timeout: 45_000 });
+  await expect(page).toHaveURL(/\/umucuruzi$/, { timeout: 45_000 });
   await expect(page.getByText('Konti yawe irakora.')).toBeVisible();
   await expect(page.getByRole('heading', { name: shopName })).toBeVisible();
 
