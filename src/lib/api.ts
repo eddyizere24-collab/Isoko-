@@ -353,7 +353,7 @@ export async function uploadImagePair(dataUrl:string,kind:'full'|'thumb'):Promis
 }
 
 export async function fetchSellerOverview():Promise<{
-  profile:Pick<Profile,'id'|'full_name'|'status'|'status_reason'>;shop:Shop;products:Product[];staleProducts:Product[];
+  profile:Pick<Profile,'id'|'full_name'|'status'|'status_reason'|'identity_status'|'email'|'email_verified'>;shop:Shop;products:Product[];staleProducts:Product[];
   stats7d:{views:number;wa_clicks:number;call_clicks:number;cart_adds:number;shares:number};
   stats30d:{views:number;wa_clicks:number;call_clicks:number;cart_adds:number;shares:number};
   topViewed:Product[];topWa:Product|null;
@@ -384,7 +384,7 @@ export async function fetchSellerOverview():Promise<{
   const stale=Date.now()-30*86400000;
   const staleProducts=products.filter((p: Product)=>p.status==='active'&&new Date(p.last_confirmed_at).getTime()<=stale);
   return {
-    profile:{id:current.profile.id,full_name:current.profile.full_name,status:current.profile.status,status_reason:current.profile.status_reason},
+    profile:{id:current.profile.id,full_name:current.profile.full_name,status:current.profile.status,status_reason:current.profile.status_reason,identity_status:current.profile.identity_status,email:current.profile.email,email_verified:current.profile.email_verified},
     shop:current.shop,products,staleProducts,stats7d:sum(stats.filter((r)=>r.day>=cutoff7)),stats30d:sum(stats),
     topViewed:[...products].sort((a,b)=>(b.views_7d??0)-(a.views_7d??0)).slice(0,5),
     topWa:[...products].sort((a,b)=>(b.wa_clicks_7d??0)-(a.wa_clicks_7d??0))[0]??null,
