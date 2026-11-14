@@ -54,6 +54,12 @@ jobs:
           ISOKO_TEST_FUNCTION_URL: https://br-blue-bread-ba2wywua-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
           ISOKO_EXPECTED_WEB_ORIGIN: https://isoko-marketplace-9i69.onrender.com
 
+      - name: Verify Neon Data API CORS on live Production branch
+        run: bun infra/neon/data-api-cors-smoke-test.mjs
+        env:
+          ISOKO_TEST_DATA_API_URL: https://ep-damp-poetry-ba0bdwcn.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
+          ISOKO_EXPECTED_WEB_ORIGIN: https://isoko-marketplace-9i69.onrender.com
+
       # This child branch is a disposable clone of Production. Browser tests can
       # create seller accounts, write images and publish products without touching Production.
       - name: Verify seller-upload CORS on isolated Production clone
@@ -61,6 +67,12 @@ jobs:
         env:
           ISOKO_TEST_FUNCTION_URL: https://br-cold-forest-badn9wlr-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
           ISOKO_EXPECTED_WEB_ORIGIN: http://127.0.0.1:4173
+
+      - name: Verify Neon Data API CORS on isolated Production clone
+        run: bun infra/neon/data-api-cors-smoke-test.mjs
+        env:
+          ISOKO_TEST_DATA_API_URL: https://ep-jolly-poetry-ba3o1jwc.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
+          ISOKO_EXPECTED_WEB_ORIGIN: http://localhost:4173
 
       - name: Build UI for full seller-journey E2E (isolated Production clone)
         run: bun run build
