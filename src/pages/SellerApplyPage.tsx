@@ -148,7 +148,7 @@ export const SellerApplyPage: React.FC = () => {
                 className="min-h-12 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/15"
               />
             </div>
-            <p className="mt-1.5 text-xs leading-5 text-slate-500">Koresha email ushobora kugeraho. Izaba ari yo izina rya konti yawe kuri ISOKO.</p>
+            <p className="mt-1.5 text-xs leading-5 text-slate-500">Koresha email ushobora kugeraho. Ni yo uzakoresha winjira kandi igufashe kugarura password igihe uyibagiwe.</p>
           </div>
 
           <div>

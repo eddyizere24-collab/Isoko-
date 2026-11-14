@@ -136,9 +136,19 @@ export const LoginPage: React.FC = () => {
           <p className="mt-2 text-sm leading-6 text-slate-700">
             Ushobora kureba amaduka n’ibicuruzwa no kuvugana n’umucuruzi kuri WhatsApp utinjiye. Konti ikenewe gusa ku muntu ushaka gucuruza no gucunga iduka rye.
           </p>
-          <p className="mt-4 rounded-xl border border-slate-200 bg-white p-3 text-xs leading-5 text-slate-600">
-            Wibagirwe ijambo ry’ibanga? Email ni yo izakoreshwa mu buryo bwo kugarura no kurinda konti yawe. Uburyo bwo kugarura password burimo gutegurwa.
-          </p>
+          <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3">
+            <p className="text-xs leading-5 text-slate-600">
+              Email ni yo izakoreshwa mu kurinda no kugarura konti yawe.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate('/ibagiwe-ijambo')}
+              className="mt-2 inline-flex min-h-[40px] items-center gap-2 text-sm font-semibold text-[#0B6E4F] hover:underline"
+            >
+              Wibagiwe ijambo ry’ibanga?
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
         </aside>
       </div>
     </main>
