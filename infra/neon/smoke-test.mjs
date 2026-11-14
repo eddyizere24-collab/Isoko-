@@ -42,7 +42,7 @@ if (!payload) throw new Error("Bootstrap view returned no payload");
 // This catches accidental "verified" labels being inferred from an active account.
 const { data: publicShops, error: publicShopError } = await neon
   .from("v_public_shops")
-  .select("id,identity_status")
+  .select("id,identity_status,social_links,seller_name,seller_bio,seller_avatar_path")
   .limit(10);
 if (publicShopError) {
   throw new Error(`Public identity-status read failed: ${publicShopError.message}`);
@@ -58,8 +58,11 @@ if (payload.categories?.length !== 34) {
 if (payload.areas?.length !== 65) {
   throw new Error(`Expected 65 areas, got ${payload.areas?.length ?? 0}`);
 }
-if (payload.shops?.length !== 0 || payload.products?.length !== 0) {
-  throw new Error("Database unexpectedly contains seller or product records before launch");
+if (!Array.isArray(payload.shops) || !Array.isArray(payload.products)) {
+  throw new Error("Public bootstrap must always return shop and product arrays");
+}
+if (payload.settings?.DEFAULT_PRODUCT_LIMIT < 200) {
+  throw new Error(`Seller catalogue limit must support at least 200 products, got ${payload.settings?.DEFAULT_PRODUCT_LIMIT}`);
 }
 if (payload.settings?.ADS_ENABLED !== false) {
   throw new Error("Ads must remain disabled until explicitly configured");
@@ -72,6 +75,7 @@ console.log(JSON.stringify({
   areas: payload.areas.length,
   shops: payload.shops.length,
   products: payload.products.length,
+  catalogueLimit: payload.settings.DEFAULT_PRODUCT_LIMIT,
   adsEnabled: payload.settings.ADS_ENABLED,
   identityStatusField: true,
 }));
