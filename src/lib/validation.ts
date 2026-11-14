@@ -80,8 +80,8 @@ export function validateProductForm(input: ProductFormInput): Record<string, str
   }
 
   const trimmedDesc = (input.description ?? '').trim();
-  if (trimmedDesc.length > 300) {
-    errors.description = 'Ibisobanuro ntibigomba kurenza inyuguti 300.';
+  if (trimmedDesc.length > 2000) {
+    errors.description = 'Ibisobanuro ntibigomba kurenza inyuguti 2 000.';
   } else if (containsPhoneOrLink(trimmedDesc)) {
     errors.description = 'Ibisobanuro ntibigomba kubamo nimero ya telefoni cyangwa link.';
   }
@@ -100,8 +100,8 @@ export function validateShopProfile(input: {
   if (input.name.trim().length < 2 || input.name.trim().length > 40) {
     errors.name = 'Izina ry’iduka rigomba kuba hagati y’inyuguti 2 na 40.';
   }
-  if (input.about.trim().length > 200) {
-    errors.about = 'Ibisobanuro by’iduka ntibigomba kurenza inyuguti 200.';
+  if (input.about.trim().length > 2000) {
+    errors.about = 'Ibisobanuro by’iduka ntibigomba kurenza inyuguti 2 000.';
   }
   if (!isValidRwandaPhone(input.whatsapp)) {
     errors.whatsapp = 'Nimero ya WhatsApp igomba kuba iya MTN/Airtel mu Rwanda (2507XXXXXXXX).';
