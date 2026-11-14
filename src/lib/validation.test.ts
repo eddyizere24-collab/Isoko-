@@ -65,3 +65,29 @@ test('shop profile and report validation catch bad phone formats and short descr
   assert.ok(badReport.details);
   assert.ok(badReport.reporterPhone);
 });
+
+
+test('seller descriptions accept long useful text within their published limits', () => {
+  const longDescription = 'Ibisobanuro birambuye by’igicuruzwa. '.repeat(40).slice(0, 1200);
+  const product = validateProductForm({
+    photosCount: 1,
+    categoryId: 104,
+    name: 'Inkweto nziza zo kugenda',
+    price: 25000,
+    condition: 'new',
+    authentic: false,
+    variants: [{ size_label: '42', in_stock: true, qty: 3 }],
+    colors: [],
+    description: longDescription,
+  });
+  assert.equal(product.description, undefined);
+
+  const shop = validateShopProfile({
+    name: 'Isoko Fashion',
+    about: 'Dukora ibicuruzwa byiza kandi tugatanga serivisi yizewe. '.repeat(20).slice(0, 1000),
+    whatsapp: '250788123456',
+    phone: '250788123456',
+    delivery_text: 'Dutanga ibicuruzwa mu Rwanda',
+  });
+  assert.equal(shop.about, undefined);
+});
