@@ -13,11 +13,10 @@ export const Footer: React.FC = () => {
   const [subMessage, setSubMessage] = useState<string | null>(null);
   const [subLoading, setSubLoading] = useState(false);
 
-  const supportPhone = bootstrap?.settings.SUPPORT_WHATSAPP || '250788000000';
-  const supportUrl = buildWhatsAppLink(
-    supportPhone,
-    'Muraho ikipe ya Isoko, nkeneye ubufasha ku rubuga.'
-  );
+  const supportPhone = bootstrap?.settings.SUPPORT_WHATSAPP?.trim() ?? '';
+  const supportUrl = supportPhone
+    ? buildWhatsAppLink(supportPhone, 'Muraho ikipe ya Isoko, nkeneye ubufasha ku rubuga.')
+    : null;
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,18 +51,24 @@ export const Footer: React.FC = () => {
               Isoko ry’abacuruzi benshi ryo kuri interineti ry’u Rwanda: imyambaro, inkweto,
               amasogisi n’ibyo kwambara. Nta komisiyo, uvugana n’umucuruzi kuri WhatsApp.
             </p>
-            <a
-              href={supportUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#25D366] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1FB858] transition-colors"
-            >
-              <MessageCircle className="h-4 w-4" aria-hidden="true" />
-              <span>{RW.help_whatsapp}</span>
-            </a>
-            <p className="mt-2 text-xs text-slate-600">
-              {bootstrap?.settings.SUPPORT_HOURS || 'Buri munsi · 08:00 – 20:00 (CAT)'}
-            </p>
+            {supportUrl ? (
+              <a
+                href={supportUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#25D366] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#1FB858]"
+              >
+                <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                <span>{RW.help_whatsapp}</span>
+              </a>
+            ) : (
+              <p className="mt-4 text-xs leading-5 text-slate-600">
+                Nimero yemewe y’ubufasha izashyirwa hano imaze kwemezwa.
+              </p>
+            )}
+            {supportUrl && bootstrap?.settings.SUPPORT_HOURS?.trim() && (
+              <p className="mt-2 text-xs text-slate-600">{bootstrap.settings.SUPPORT_HOURS}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-6 text-sm">

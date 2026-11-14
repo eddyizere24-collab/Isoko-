@@ -496,132 +496,11 @@ async function startServer() {
     });
   });
 
-  app.post('/api/auth/register-seller', (req, res) => {
-    const {
-      fullName,
-      phone,
-      whatsapp,
-      password,
-      shopName,
-      districtId,
-      sectorId,
-      landmark,
-      deliveryText,
-      about,
-      nationalIdNumber,
-      businessType,
-      tin,
-      idFrontDataUrl,
-      idBackDataUrl,
-      selfieDataUrl,
-      shopPhotoDataUrl,
-      termsAccepted,
-    } = req.body ?? {};
-
-    if (!termsAccepted) {
-      return res.status(400).json({ error: 'Ugomba kwemera amategeko n’amasezerano y’umucuruzi.' });
-    }
-
-    const normPhone = normalizeRwandaPhone(String(phone ?? ''));
-    const normWa = normalizeRwandaPhone(String(whatsapp ?? phone ?? ''));
-    if (!isValidRwandaPhone(normPhone) || !isValidRwandaPhone(normWa)) {
-      return res.status(400).json({ error: 'Nimero ya telefoni na WhatsApp bigomba kuba ibyo mu Rwanda (2507XXXXXXXX).' });
-    }
-    if (!password || String(password).length < 6) {
-      return res.status(400).json({ error: 'Ijambo ry’ibanga rigomba kugira nibura inyuguti/imibare 6.' });
-    }
-    if (!shopName || String(shopName).trim().length < 2) {
-      return res.status(400).json({ error: 'Shyiramo izina ry’iduka ryawe.' });
-    }
-
-    const db = getDb();
-    if (db.profiles.some((p) => p.phone === normPhone)) {
-      return res.status(409).json({ error: 'Iyi nimero isanzwe ifite konti. Injira ukoresheje iyo konti.' });
-    }
-
-    const sellerId = `prof-seller-${crypto.randomUUID().slice(0, 8)}`;
-    const slugBase = String(shopName)
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '')
-      .slice(0, 26);
-    const slug = db.shops.some((s) => s.slug === slugBase)
-      ? `${slugBase}-${Math.floor(100 + Math.random() * 900)}`
-      : slugBase || `iduka-${Date.now()}`;
-
-    const areaDist = RWANDA_AREAS.find((a) => a.id === Number(districtId));
-    const areaSec = sectorId ? RWANDA_AREAS.find((a) => a.id === Number(sectorId)) : undefined;
-
-    const newProfile: Profile & { passwordHash: string } = {
-      id: sellerId,
-      role: 'seller',
-      full_name: String(fullName || shopName).trim(),
-      phone: normPhone,
-      whatsapp: normWa,
-      status: 'pending',
-      status_reason: null,
-      approved_by: null,
-      approved_at: null,
-      terms_version: db.settings.TERMS_VERSION,
-      terms_accepted_at: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-      passwordHash: hashPassword(String(password)),
-    };
-
-    const newShop = {
-      id: `shop-${crypto.randomUUID().slice(0, 8)}`,
-      owner_id: sellerId,
-      slug,
-      name: String(shopName).trim().slice(0, 40),
-      logo_path: null,
-      cover_path: null,
-      about: String(about ?? '').trim().slice(0, 200),
-      whatsapp: normWa,
-      phone: normPhone,
-      district_id: areaDist?.id ?? 1,
-      sector_id: areaSec?.id ?? null,
-      district_name: areaDist?.district ?? 'Gasabo',
-      sector_name: areaSec?.sector ?? null,
-      landmark: String(landmark ?? '').trim().slice(0, 80),
-      hours_text: '08:30 – 19:30',
-      delivery_text: String(deliveryText ?? 'Gutanga i Kigali').trim().slice(0, 120),
-      product_limit: db.settings.DEFAULT_PRODUCT_LIMIT,
-      plan: 'free' as const,
-      plan_expires_at: null,
-      created_at: new Date().toISOString(),
-      status: 'pending' as SellerStatus,
-    };
-
-    const kyc = {
-      seller_id: sellerId,
-      full_name_on_id: String(fullName || '').trim(),
-      national_id_number: String(nationalIdNumber || '').trim(),
-      id_front_path: String(idFrontDataUrl || '/src/assets/images/hero_kigali_fashion_1794551814589.jpg'),
-      id_back_path: String(idBackDataUrl || '/src/assets/images/hero_kigali_fashion_1794551814589.jpg'),
-      selfie_path: String(selfieDataUrl || '/src/assets/images/hero_kigali_fashion_1794551814589.jpg'),
-      shop_photo_path: String(shopPhotoDataUrl || '/src/assets/images/hero_kigali_fashion_1794551814589.jpg'),
-      tin: tin ? String(tin).trim() : null,
-      business_type: String(businessType || 'Iduka').trim(),
-      phone_verified_at: null,
-      whatsapp_verified_at: null,
-      submitted_at: new Date().toISOString(),
-      reviewed_at: null,
-      reviewed_by: null,
-      review_notes: null,
-    };
-
-    db.profiles.push(newProfile);
-    db.shops.push(newShop);
-    db.seller_kyc.push(kyc);
-    persistDb();
-
-    const token = makeSessionToken(newProfile);
-    const { passwordHash: _pw, ...safeProfile } = newProfile;
-    res.status(201).json({
-      token,
-      expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
-      profile: safeProfile,
-      shop: newShop,
+  // The former local KYC-heavy signup route is retired.
+  // Public seller onboarding now uses Neon Auth and the minimal account flow.
+  app.post('/api/auth/register-seller', (_req, res) => {
+    res.status(410).json({
+      error: 'Ubu buryo bwa kera bwo kwiyandikisha bwarakuweho. Koresha ifishi nshya iri kuri /abacuruzi; imyirondoro irambuye izuzuzwa nyuma ku bushake.',
     });
   });
 
@@ -1243,6 +1122,10 @@ async function startServer() {
     if (!title || String(title).trim().length < 4) {
       return res.status(400).json({ error: 'Shyiramo umutwe w’ikimenyekanisha (nibura inyuguti 4).' });
     }
+    const verifiedImage = typeof imageUrl === 'string' ? imageUrl.trim() : '';
+    if (!verifiedImage || (!verifiedImage.startsWith('data:image/') && !/^https:\/\//i.test(verifiedImage))) {
+      return res.status(400).json({ error: 'Shyiraho ifoto nyayo y’itangazo mbere yo kurishyira kuri Carousel.' });
+    }
     const db = getDb();
     const shop = shopId ? db.shops.find((s) => s.id === shopId) : undefined;
     const nextOrder = db.campaigns.reduce((max, c) => Math.max(max, c.sortOrder), 0) + 1;
@@ -1253,7 +1136,7 @@ async function startServer() {
       kicker: String(kicker ?? 'Kwamamaza · Isoko').trim().slice(0, 50),
       ctaLabel: String(ctaLabel ?? 'Reba ibicuruzwa').trim().slice(0, 32),
       targetPath: String(targetPath || '/shakisha').trim(),
-      imageUrl: String(imageUrl || '/src/assets/images/promo_kigali_market_1794567241262.jpg').trim(),
+      imageUrl: verifiedImage,
       shopId: shop?.id ?? null,
       shopName: shop?.name ?? null,
       active: true,

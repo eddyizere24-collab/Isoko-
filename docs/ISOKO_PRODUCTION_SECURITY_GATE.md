@@ -66,11 +66,23 @@ Last checked: 2026-11-14 · seller onboarding, product workflows and brand revie
 - The multicolour sun mark uses coloured beads around a deliberately hollow centre, and the Imigongo-inspired green/red pattern is restrained on white surfaces.
 - PWA icons, header, footer and home-page branding were updated. The CSS retains visible keyboard focus and reduced-motion support.
 
-### Storefront authenticity follow-up — PR #6
-- PR #6 is open and not merged: https://github.com/eddyizere24-collab/Isoko-/pull/6
-- It removes the remaining static hero and category artwork photos, removes the use of a hero image as a shop-cover fallback, and gives an empty catalogue a clear seller-registration state.
-- It preserves real shop cover/logo images and real seller-uploaded product photos.
-- Do not call this follow-up live until CI passes, the PR is merged, and the public homepage shows the new empty-catalogue presentation.
+### Storefront authenticity — PR #6
+- PR #6 merged: https://github.com/eddyizere24-collab/Isoko-/pull/6
+- Merge commit: `b09f80c1c7abb8bac7fa518d40107c7595801aef`.
+- CI passed: https://github.com/eddyizere24-collab/Isoko-/actions/runs/43566803360
+- Static fashion hero and category product-art photos were removed from the homepage. Shop cards no longer borrow a sample hero as a cover, and the empty catalogue explains that no demo products are shown.
+- Real seller-uploaded shop covers, logos and product photos remain supported.
+
+### Zero-demo-data cleanup — PR #7
+- PR #7 removes the committed `data/db.json` fixture, which contained invented local accounts, KYC examples, stores, products, campaigns and analytics. It did not represent Production Neon data.
+- The local store factory now starts with empty profiles, KYC, shops, products, reports, analytics and campaigns. Only reference categories and search synonyms remain seeded.
+- All 13 unused sample marketplace JPGs are removed from the repository.
+- The old local registration endpoint that accepted National ID and KYC images is retired; it no longer accepts or stores those details. Public signup remains the minimal Neon Auth flow.
+- Shop detail pages no longer use a sample promotional image when a merchant has not uploaded a cover.
+- Product WhatsApp links no longer fall back to a placeholder support number.
+- Footer and help page only show WhatsApp support when a verified number is configured. Production `SUPPORT_WHATSAPP` is currently empty, so no unverified contact is advertised.
+- Local campaign creation requires an actual uploaded image or HTTPS image URL; it no longer silently inserts a sample banner.
+- PR #7 is not yet merged. Do not claim these repository-cleanup changes are live until CI passes, it is merged and the live deployment is verified.
 
 ## Production launch safety gates
 
