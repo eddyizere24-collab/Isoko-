@@ -82,7 +82,10 @@ Last checked: 2026-11-14 · seller onboarding, product workflows and brand revie
 - Product WhatsApp links no longer fall back to a placeholder support number.
 - Footer and help page only show WhatsApp support when a verified number is configured. Production `SUPPORT_WHATSAPP` is currently empty, so no unverified contact is advertised.
 - Local campaign creation requires an actual uploaded image or HTTPS image URL; it no longer silently inserts a sample banner.
-- PR #7 is not yet merged. Do not claim these repository-cleanup changes are live until CI passes, it is merged and the live deployment is verified.
+- PR #7 merged into `main`: https://github.com/eddyizere24-collab/Isoko-/pull/7
+- Merge commit: `1e46644e85ce8cf053c5a079590958a20f07e634`.
+- CI passed: https://github.com/eddyizere24-collab/Isoko-/actions/runs/43567492024.
+- The Production Neon data check still shows zero profiles, shops and products. Render's automatic deployment is expected to rebuild from `main`; its latest deployment state still requires a verified public read-back.
 
 ## Production launch safety gates
 
