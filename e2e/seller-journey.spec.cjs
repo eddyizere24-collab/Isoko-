@@ -141,10 +141,10 @@ test('seller can register, sign in, update store, publish a photo product and re
   await expect(page.locator('img[alt="Ifoto yo hejuru y’iduka"]')).toBeVisible();
   await settingsFiles.nth(1).setInputFiles(imageFile);
   await expect(page.locator('img[alt="Ifoto ya profile yawe"]')).toBeVisible();
-  await expect(page.locator('img[alt="Ifoto ya profile yawe"]')).toHaveAttribute('src', /profiles\\//);
+  await expect(page.locator('img[alt="Ifoto ya profile yawe"]')).toHaveAttribute('src', /profiles\//);
   await settingsFiles.nth(2).setInputFiles(imageFile);
   await expect(page.locator('img[alt="Logo y’iduka"]')).toBeVisible();
-  await expect(page.locator('img[alt="Logo y’iduka"]')).toHaveAttribute('src', /shops\\//);
+  await expect(page.locator('img[alt="Logo y’iduka"]')).toHaveAttribute('src', /shops\//);
 
   await page.locator('#seller-profile-name').fill(fullName);
   await page.locator('#seller-profile-bio').fill('Umucuruzi wa ISOKO. Iyi ni profile y’igerageza ryuzuye.');
