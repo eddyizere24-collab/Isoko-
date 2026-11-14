@@ -295,6 +295,25 @@ export async function loginAccount(identifier:string,password:string):Promise<{t
   return {...storedSession(current.profile),profile:current.profile,shop:current.shop};
 }
 
+export async function requestAccountPasswordReset(email:string,redirectTo:string):Promise<void> {
+  const normalized=String(email??'').trim().toLowerCase();
+  if(!/^[^@]+@[^@]+\.[^@]+$/.test(normalized)) {
+    throw new Error('Andika email nyayo wakoresheje ufungura konti yawe.');
+  }
+  const result=await (neon.auth as any).requestPasswordReset({
+    email:normalized,
+    redirectTo,
+  });
+  if(result?.error) fail(result.error,'Ntitwashoboye kohereza ubusabe. Ongera ugerageze.');
+}
+
+export async function resetAccountPassword(token:string,newPassword:string):Promise<void> {
+  if(!token) throw new Error('Link yo guhindura ijambo ry’ibanga ntiyuzuye cyangwa yararengeje igihe.');
+  if(newPassword.length<8) throw new Error('Ijambo ry’ibanga rishya rigomba kugira nibura inyuguti 8.');
+  const result=await (neon.auth as any).resetPassword({token,newPassword});
+  if(result?.error) fail(result.error,'Link yo guhindura password ntiyemewe. Saba indi nshya.');
+}
+
 export async function registerSellerAccount(payload:Record<string,any>):Promise<{token:string;expiresAt:number;profile:Profile;shop:Shop}> {
   const phone=normalizePhone(String(payload.phone??payload.whatsapp??''));
   const email=String(payload.email??'').trim().toLowerCase();
