@@ -1,7 +1,8 @@
 -- ISOKO migration 018: abuse controls and bounded cleanup for public RPC tables.
 -- Additive and idempotent. Does not change existing RLS/grants or product writes.
 --
--- Rate limit scope: 30 subscribe/update attempts per hour per SHA-256(kind + external_id).
+-- Rate limit scope: 30 subscribe/update attempts per hour per SHA-256(kind + stable browser/contact identifier).
+-- Shop follows use a persistent, per-browser anonymous identifier, not a shared shop ID.
 -- This does not claim IP-level protection: browser-callable Neon RPCs do not expose
 -- a trustworthy client IP here. A future edge proxy/Turnstile integration can add it.
 --
