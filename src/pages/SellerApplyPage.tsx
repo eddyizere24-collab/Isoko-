@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, Lock, Mail, MessageCircle, ShieldCheck, Store, UserRound } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
-import { registerSellerAccount } from '../lib/api';
+import { fetchMe, registerSellerAccount } from '../lib/api';
 import { getNeonUser, signInWithGoogle } from '../lib/neon';
 import { isValidRwandaPhone } from '../lib/whatsapp';
 
@@ -22,14 +22,30 @@ export const SellerApplyPage: React.FC = () => {
   useEffect(() => {
     if (!googleCallback) return;
     let active = true;
-    void getNeonUser().then((user) => {
+    void getNeonUser().then(async (user) => {
       if (!active || !user?.email) return;
+      try {
+        const account = await fetchMe();
+        if (!active) return;
+        const session = {
+          token: 'managed-neon-auth',
+          userId: account.profile.id,
+          role: account.profile.role,
+          expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        };
+        setAuthData(session, account.profile, account.shop);
+        navigate(account.profile.role === 'admin' || account.profile.role === 'moderator' ? '/admin' : '/umucuruzi');
+        return;
+      } catch {
+        // This Google account is valid but has not opened an ISOKO shop yet.
+      }
+      if (!active) return;
       setEmail(String(user.email).toLowerCase());
       setFullName(String(user.name ?? ''));
       setGoogleAccount(true);
     });
     return () => { active = false; };
-  }, [googleCallback]);
+  }, [googleCallback, navigate, setAuthData]);
 
   const handleGoogle = async () => {
     setError(null);
