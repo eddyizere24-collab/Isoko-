@@ -423,7 +423,8 @@ export const SellerAddProductPage: React.FC = () => {
               <label className="flex min-h-[112px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#0B6E4F] bg-[#F1F6F3] p-4 text-center hover:bg-[#E5EFE9]">
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
+                  disabled={uploadingPhoto}
                   capture="environment"
                   className="sr-only"
                   onChange={(e) => handlePhotoFiles(e.target.files)}
@@ -436,8 +437,9 @@ export const SellerAddProductPage: React.FC = () => {
               <label className="flex min-h-[112px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-4 text-center hover:border-[#0B6E4F]">
                 <input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp"
                   multiple
+                  disabled={uploadingPhoto}
                   className="sr-only"
                   onChange={(e) => handlePhotoFiles(e.target.files)}
                 />

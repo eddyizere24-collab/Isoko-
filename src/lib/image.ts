@@ -1,6 +1,6 @@
 /**
  * Section 8.6: Client-side image processing
- * - Reads image file
+ * - Reads JPEG, PNG or WebP image files
  * - Redraws onto HTML5 Canvas (automatically strips EXIF/GPS metadata)
  * - Produces full (<= 1000px wide, <= 150 KB) and thumb (400px wide, ~30 KB)
  * - Rejects anything > 500 KB after compression
@@ -24,7 +24,7 @@ function loadImageElement(file: File): Promise<HTMLImageElement> {
     };
     img.onerror = () => {
       URL.revokeObjectURL(url);
-      reject(new Error('Ntibishobotse gusoma ifoto. Hitamo JPG cyangwa PNG.'));
+      reject(new Error('Ntibishobotse gusoma ifoto. Koresha JPG, PNG cyangwa WEBP.'));
     };
     img.src = url;
   });
@@ -70,6 +70,13 @@ function renderResized(
 }
 
 export async function processProductImage(file: File): Promise<CompressedImagePair> {
+  if (!file || file.size <= 0) {
+    throw new Error('Nta foto yatoranyijwe cyangwa ifite ubusa.');
+  }
+  if (file.type && !['image/jpeg', 'image/png', 'image/webp'].includes(file.type.toLowerCase())) {
+    throw new Error('Koresha ifoto ya JPG, PNG cyangwa WEBP. HEIC n’izindi formats ntizemewe.');
+  }
+
   const img = await loadImageElement(file);
   const full = renderResized(img, 1000, 150 * 1024);
   const thumb = renderResized(img, 400, 35 * 1024);

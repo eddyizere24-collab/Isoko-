@@ -47,6 +47,13 @@ jobs:
           ISOKO_TEST_FUNCTION_URL: https://br-blue-bread-ba2wywua-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
           ISOKO_EXPECTED_NEON_BRANCH: isoko-production
 
+
+      - name: Verify seller-upload CORS on live Production branch
+        run: bun infra/neon/cors-smoke-test.mjs
+        env:
+          ISOKO_TEST_FUNCTION_URL: https://br-blue-bread-ba2wywua-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
+          ISOKO_EXPECTED_WEB_ORIGIN: https://isoko-marketplace-9i69.onrender.com
+
       - name: Production build for E2E (isolated Neon Setup endpoints)
         run: bun run build
         env:
