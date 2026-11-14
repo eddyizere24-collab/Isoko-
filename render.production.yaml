@@ -32,6 +32,15 @@ services:
       - path: /*
         name: Referrer-Policy
         value: strict-origin-when-cross-origin
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://br-blue-bread-ba2wywua.storage.c-8.eu-central-1.aws.neon.tech; connect-src 'self' https://ep-damp-poetry-ba0bdwcn.neonauth.c-8.eu-central-1.aws.neon.tech https://ep-damp-poetry-ba0bdwcn.apirest.c-8.eu-central-1.aws.neon.tech https://br-blue-bread-ba2wywua-isokoapi.compute.c-8.eu-central-1.aws.neon.tech https://br-blue-bread-ba2wywua.storage.c-8.eu-central-1.aws.neon.tech; worker-src 'self' blob:; manifest-src 'self'; upgrade-insecure-requests"
+      - path: /*
+        name: Strict-Transport-Security
+        value: "max-age=31536000"
+      - path: /*
+        name: Permissions-Policy
+        value: "camera=(), microphone=(), geolocation=(self), payment=(), usb=(), clipboard-read=(), clipboard-write=(self)"
       - path: /assets/*
         name: Cache-Control
         value: public, max-age=31536000, immutable
