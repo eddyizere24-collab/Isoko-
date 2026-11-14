@@ -228,3 +228,58 @@ test('rotateActiveCampaigns filters inactive campaigns and cycles order cleanly'
   const rotated1 = rotateActiveCampaigns(base, 1);
   assert.deepEqual(rotated1.map((c) => c.id), ['c3', 'c1']);
 });
+
+test('untrusted popularity does not reorder the search popular sort while ranking is disabled', () => {
+  const olderPopular = makeProduct({
+    id: 'older-popular',
+    created_at: '2026-10-01T00:00:00.000Z',
+    popularity_7d: 9999,
+  });
+  const newerQuiet = makeProduct({
+    id: 'newer-quiet',
+    created_at: '2026-11-14T00:00:00.000Z',
+    popularity_7d: 0,
+  });
+  const results = searchAndRankProducts(
+    [olderPopular, newerQuiet],
+    INITIAL_CATEGORIES,
+    DEFAULT_SYNONYMS,
+    { sort: 'popular' }
+  );
+  assert.deepEqual(results.map((product) => product.id), ['newer-quiet', 'older-popular']);
+});
+
+test('the home popular shelf falls back to newest until popularity ranking is protected', () => {
+  const olderPopular = makeProduct({
+    id: 'older-popular',
+    created_at: '2026-10-01T00:00:00.000Z',
+    popularity_7d: 9999,
+  });
+  const newerQuiet = makeProduct({
+    id: 'newer-quiet',
+    created_at: '2026-11-14T00:00:00.000Z',
+    popularity_7d: 0,
+  });
+  const shelves = buildHomeShelves([olderPopular, newerQuiet]);
+  assert.equal(shelves.popular[0].id, 'newer-quiet');
+});
+
+test('similar-product scoring ignores untrusted popularity until ranking is enabled', () => {
+  const target = makeProduct({ id: 'target', shop_id: 's1', popularity_7d: 0 });
+  const olderPopular = makeProduct({
+    id: 'older-popular',
+    shop_id: 's2',
+    shop: shop2,
+    created_at: '2026-10-01T00:00:00.000Z',
+    popularity_7d: 9999,
+  });
+  const newerQuiet = makeProduct({
+    id: 'newer-quiet',
+    shop_id: 's3',
+    shop: shop3,
+    created_at: '2026-11-14T00:00:00.000Z',
+    popularity_7d: 0,
+  });
+  const related = getSimilarProducts(target, [target, olderPopular, newerQuiet], INITIAL_CATEGORIES);
+  assert.deepEqual(related.map((product) => product.id), ['older-popular', 'newer-quiet']);
+});

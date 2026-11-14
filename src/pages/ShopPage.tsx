@@ -21,6 +21,7 @@ import { RW } from '../i18n/rw';
 import { fetchShopDetail, subscribeUpdates } from '../lib/api';
 import { trackEvent } from '../lib/track';
 import { buildWhatsAppLink } from '../lib/whatsapp';
+import { getSubscriberId } from '../lib/storage';
 import type { Product, Shop } from '../types/marketplace';
 
 interface ShopPageProps {
@@ -129,7 +130,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
     toggleFollowShop(shop.id);
     subscribeUpdates({
       kind: 'shop_follow',
-      externalId: `shop_follow_${shop.id}`,
+      externalId: getSubscriberId(),
       shopId: shop.id,
       unsubscribe: isFollowing,
     }).catch(() => undefined);

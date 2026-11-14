@@ -85,6 +85,7 @@ function fail(error: any, fallback: string): never {
     PHONE_ALREADY_REGISTERED: 'Iyi nimero isanzwe ifite konti.',
     ADMIN_REQUIRED: 'Uburenganzira bwa Admin burakenewe.',
     REPORT_RATE_LIMIT: 'Warengeje umubare wa raporo muri iki gihe.',
+    SUBSCRIPTION_RATE_LIMIT: 'Warengeje umubare w’igerageza ryo kwiyandikisha. Ongera ugerageze nyuma y’isaha.',
     KYC_ACCESS_DENIED: 'Ntabwo wemerewe kubona inyandiko za KYC.',
     EMAIL_ALREADY_REGISTERED: 'Iyi email isanzwe ifite konti kuri ISOKO. Injira aho kongera kwiyandikisha.',
     ACCOUNT_EMAIL_REQUIRED: 'Email ya konti ntiyabonetse. Ongera winjire.',
@@ -281,7 +282,7 @@ export async function validateCartItems(items:Array<{productId:string;size:strin
   })};
 }
 
-export async function submitReport(payload:{targetType:'product'|'shop';targetId:string;type:string;details:string;reporterPhone?:string;sessionId:string;turnstileOk:boolean}):Promise<{report:Report}> {
+export async function submitReport(payload:{targetType:'product'|'shop';targetId:string;type:string;details:string;reporterPhone?:string;sessionId:string}):Promise<{report:Report}> {
   const data=dataOf<any>(await neon.rpc('create_public_report_v1',{
     p_target_type:payload.targetType,p_target_id:payload.targetId,p_type:payload.type,
     p_details:payload.details,p_reporter_phone:payload.reporterPhone??null,p_session_id:payload.sessionId,
