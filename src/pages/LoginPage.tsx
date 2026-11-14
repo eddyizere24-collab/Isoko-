@@ -6,7 +6,7 @@ import { loginAccount } from '../lib/api';
 import { signInWithGoogle } from '../lib/neon';
 
 export const LoginPage: React.FC = () => {
-  const { navigate, setAuthData, authProfile } = useMarketplace();
+  const { navigate, setAuthData, authProfile, searchParams } = useMarketplace();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -75,6 +75,12 @@ export const LoginPage: React.FC = () => {
                 <span>Jya ku rupapuro rwawe</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </button>
+            </div>
+          )}
+
+          {searchParams.get('reason') === 'session' && (
+            <div role="alert" className="mb-5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
+              Igihe winjiraga cyarangiye cyangwa konti ntiyemejwe. Ongera winjire kugira ngo ukomeze gucunga iduka ryawe.
             </div>
           )}
 

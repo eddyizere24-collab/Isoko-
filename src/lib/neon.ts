@@ -1,4 +1,5 @@
 import { createClient } from '@neondatabase/neon-js';
+import { resolveAuthenticatedCredentials } from './neonSession';
 
 // Setup-branch URLs are development-only. Public builds must receive their
 // own reviewed branch URLs from the hosting provider; never silently fall back
@@ -34,6 +35,8 @@ if (import.meta.env.PROD) {
 export const neon = createClient({
   auth: {
     url: authUrl,
+    // Anonymous access is needed for public catalogue reads. It must never be
+    // confused with a signed-in seller session (see getNeonJwt below).
     allowAnonymous: true,
   },
   dataApi: {
@@ -54,12 +57,19 @@ export function normalizePhone(phone: string): string {
 }
 
 export async function getNeonJwt(): Promise<string> {
-  const result = await neon.auth.token() as any;
-  const token = result?.data?.token ?? result?.token;
-  if (result?.error || !token) {
-    throw new Error('Ongera winjire muri konti yawe.');
+  try {
+    // With allowAnonymous enabled, token() can also produce an anonymous Data
+    // API token. Require a real Better Auth user session before accepting it.
+    const [sessionResult, tokenResult] = await Promise.all([
+      neon.auth.getSession() as any,
+      neon.auth.token() as any,
+    ]);
+    const credentials = resolveAuthenticatedCredentials(sessionResult, tokenResult);
+    if (credentials) return credentials.token;
+  } catch {
+    // Treat an unavailable or expired session as signed out for protected writes.
   }
-  return String(token);
+  throw new Error('Igihe winjiraga cyarangiye cyangwa ntiwemejwe. Ongera winjire muri konti yawe.');
 }
 
 export async function getNeonSessionSnapshot(): Promise<{ status: 'active' | 'signed_out' | 'unavailable'; user: any | null }> {
