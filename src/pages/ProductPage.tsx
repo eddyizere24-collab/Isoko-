@@ -174,7 +174,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
     productUrl,
     location,
   });
-  const waUrl = buildWhatsAppLink(shop?.whatsapp ?? '250788000000', waMsg);
+  const waUrl = shop?.whatsapp ? buildWhatsAppLink(shop.whatsapp, waMsg) : null;
 
   const handleAddToCart = () => {
     if (isSoldOut) return;
@@ -450,19 +450,21 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                 <ShoppingBag className="h-4 w-4" aria-hidden="true" />
                 <span>{isSoldOut ? RW.sold_out : RW.add_to_cart}</span>
               </button>
-              <a
-                href={waUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  recordCategoryInterest(product.category_id, 5);
-                  trackEvent('wa_click', product.id, product.shop_id);
-                }}
-                className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 text-sm font-bold text-white hover:bg-[#1FB858] transition-colors"
-              >
-                <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                <span>{RW.whatsapp_btn}</span>
-              </a>
+              {waUrl && (
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    recordCategoryInterest(product.category_id, 5);
+                    trackEvent('wa_click', product.id, product.shop_id);
+                  }}
+                  className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 text-sm font-bold text-white transition-colors hover:bg-[#1FB858]"
+                >
+                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                  <span>{RW.whatsapp_btn}</span>
+                </a>
+              )}
               {shop?.phone && (
                 <a
                   href={`tel:+${shop.phone}`}
@@ -599,19 +601,21 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
           >
             {isSoldOut ? RW.sold_out : RW.add_to_cart}
           </button>
-          <a
-            href={waUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => {
-              recordCategoryInterest(product.category_id, 5);
-              trackEvent('wa_click', product.id, product.shop_id);
-            }}
-            className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-[#25D366] px-4 text-xs font-bold text-white"
-          >
-            <MessageCircle className="h-4 w-4" aria-hidden="true" />
-            <span>WhatsApp</span>
-          </a>
+          {waUrl && (
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                recordCategoryInterest(product.category_id, 5);
+                trackEvent('wa_click', product.id, product.shop_id);
+              }}
+              className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-[#25D366] px-4 text-xs font-bold text-white"
+            >
+              <MessageCircle className="h-4 w-4" aria-hidden="true" />
+              <span>WhatsApp</span>
+            </a>
+          )}
           {shop?.phone && (
             <a
               href={`tel:+${shop.phone}`}
