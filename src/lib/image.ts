@@ -21,6 +21,10 @@ export interface CompressedImagePair {
 
 const ACCEPTED_UPLOAD_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
+export function isUploadReadyImageMime(mime: string): boolean {
+  return ACCEPTED_UPLOAD_MIME.has(mime.toLowerCase());
+}
+
 async function compressForUpload(
   source: File | Blob,
   maxWidth: number,
@@ -39,14 +43,14 @@ async function compressForUpload(
   // browsers; both are accepted by the secure upload Function.
   try {
     const webp = await compress(source, { ...options, format: 'webp' });
-    if (ACCEPTED_UPLOAD_MIME.has(webp.mimeType)) return webp;
+    if (isUploadReadyImageMime(webp.mimeType)) return webp;
   } catch {
     // Retry with JPEG below. This covers browsers whose canvas cannot encode
     // WebP even when it can decode the selected source image.
   }
 
   const jpeg = await compress(source, { ...options, format: 'jpeg' });
-  if (!ACCEPTED_UPLOAD_MIME.has(jpeg.mimeType)) {
+  if (!isUploadReadyImageMime(jpeg.mimeType)) {
     throw new Error('Ifoto ntiyabashije guhindurwa ngo ibikwe neza kuri ISOKO.');
   }
   return jpeg;
