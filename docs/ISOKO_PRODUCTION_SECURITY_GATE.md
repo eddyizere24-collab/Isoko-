@@ -1,6 +1,6 @@
 # ISOKO Production Security & Operations Gate
 
-Last checked: 2026-11-14 · Phase 2 product workflow review
+Last checked: 2026-11-14 · seller onboarding, product workflows and brand review
 
 ## Public Production service
 
@@ -37,22 +37,40 @@ Last checked: 2026-11-14 · Phase 2 product workflow review
 - The Admin Intelligence workspace currently uses privacy-limited SQL analytics and deterministic answers. It is not presented as a generative AI model; AI Gateway requires prepaid credits and none were purchased.
 - Admin report replies can be saved and a prefilled WhatsApp message can be opened. Messages are not auto-sent.
 
-## Phase 2 product-management implementation (feature branch)
+## Completed feature phases on GitHub main
 
-The following changes are implemented on `feature/isoko-products-phase2-20261114`, pass CI, and are not part of Production `main` until PR merge:
+### Phase 1 — simple seller onboarding
+- PR #3 is merged: https://github.com/eddyizere24-collab/Isoko-/pull/3
+- Main feature commit: `187f02148dfc7ab6ac83e0c9fbfb88daa9c9dc11`.
+- CI passed on PR head: https://github.com/eddyizere24-collab/Isoko-/actions/runs/43562698240
+- Basic seller registration requests email, password, one WhatsApp/contact phone and store name. Full name remains optional.
+- The flow does not request national ID, TIN, ID photos, selfie, shop photo, district, sector, delivery details or other KYC material.
+- Newly created shops start as active stores while the seller's identity remains explicitly unverified. This is not a claim that the seller's identity has been checked.
+- Migration `013_basic_seller_onboarding` and the guarded registration RPC are present on both Setup and Production.
+- The public `/abacuruzi` page was fetched and showed the simplified form. No signup was submitted during this inspection; actual signup, session persistence and seller database writes remain end-to-end tests.
 
-- Single product creation remains available, with 1–5 real seller-uploaded photos. The demo/sample photo selector was removed.
-- Bulk product entry accepts up to 10 products in one batch. Multiple selected photos create separate product rows; each product can receive up to 5 photos. Batch items share category, condition and sizes to reduce repeated phone input.
-- Each product row has its own name, price, optional old price and description. Saves are sequential; successful products remain marked as saved while failed rows retain their errors for retry.
-- Seller full edit now supports add/remove/reorder photos while keeping at least one photo, alongside the existing name, pricing, condition, brand, description and size/stock fields.
-- Sellers can share a product directly from their product list via WhatsApp; share analytics are recorded.
-- Sellers can hide/unhide their own products. Hiding preserves the previous state (draft, active or sold-out) and unhide restores that state. A seller cannot unhide an Admin-moderated item.
-- Mark-sold and restore-stock actions now have a dedicated owner-checked database RPC. Only the authenticated owner can change the product status.
-- Delete now requires an explicit confirmation. Product ownership remains enforced in database RPCs.
-- Neon migrations `014_seller_product_visibility` and `015_seller_product_status_actions` are applied to Setup and Production. Read-back confirms both migrations, authenticated execution, anonymous denial, and zero seller/product/identity rows in both branches.
-- CI passed on branch head `0d333c95aa6cf15a05feb6cf795da46edd2feb9d`: https://github.com/eddyizere24-collab/Isoko-/actions/runs/43563400531
+### Phase 2 — seller product management
+- PR #4 is merged: https://github.com/eddyizere24-collab/Isoko-/pull/4
+- Main feature commit: `1ac77d6f09dcb00843aeb46e2c7188be84f02239`.
+- CI passed on PR head: https://github.com/eddyizere24-collab/Isoko-/actions/runs/43563557170
+- Single-product creation accepts real seller-uploaded photos and requires at least one. The sample/demo product-photo selector was removed.
+- Bulk entry accepts up to 10 products per batch; each product can have up to 5 images. Selecting multiple product photos creates separate product rows.
+- Sellers can edit product details and photos, reorder/remove/add photos, hide/unhide products, mark sold/restore stock, share to WhatsApp, and delete only after confirmation.
+- Migrations `014_seller_product_visibility` and `015_seller_product_status_actions` are applied to Setup and Production. SQL read-back confirms both RPCs are installed and the Production catalogue remains empty.
+- Seller image upload and mutations have not yet been tested end-to-end with a real owner-created account.
 
-Do not describe Phase 2 as live on the public site until its PR is merged and Render reports a new `live` deployment.
+### Phase 3 — ISOKO brand and Imigongo
+- PR #5 is merged: https://github.com/eddyizere24-collab/Isoko-/pull/5
+- Main feature commit: `91996085d0a78e180d456b4a723b82b9af8f70e0`.
+- CI passed on PR head: https://github.com/eddyizere24-collab/Isoko-/actions/runs/43565929352
+- The multicolour sun mark uses coloured beads around a deliberately hollow centre, and the Imigongo-inspired green/red pattern is restrained on white surfaces.
+- PWA icons, header, footer and home-page branding were updated. The CSS retains visible keyboard focus and reduced-motion support.
+
+### Storefront authenticity follow-up — PR #6
+- PR #6 is open and not merged: https://github.com/eddyizere24-collab/Isoko-/pull/6
+- It removes the remaining static hero and category artwork photos, removes the use of a hero image as a shop-cover fallback, and gives an empty catalogue a clear seller-registration state.
+- It preserves real shop cover/logo images and real seller-uploaded product photos.
+- Do not call this follow-up live until CI passes, the PR is merged, and the public homepage shows the new empty-catalogue presentation.
 
 ## Production launch safety gates
 
