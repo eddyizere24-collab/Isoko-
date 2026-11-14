@@ -23,7 +23,10 @@ The current application does not use the legacy Express server, local JSON datab
 - Widened product, seller profile, shop logo and cover selectors to `image/*`; file pickers can reselect the same photo after an earlier attempt.
 - Reworked the seller settings image area into a cover-photo banner, overlapping round profile photo, separate shop logo control, profile name and Bio editor. The existing shop description, contact and social fields remain editable below.
 - Updated the public shop header to display the seller's round profile photo alongside the shop identity and cover, with the Bio and social links in the seller information section.
-- Added focused resize-dimension tests. This work is in a review branch and is not yet a Production release.
+- Added a session/JWT readiness check after seller sign-up, with a same-account email/password sign-in fallback before protected registration RPCs.
+- Full Playwright seller/buyer journey passed 4/4 on isolated QA clone (run 43601457813): account creation/login, profile avatar, cover, shop logo, profile and shop text persistence, product image, public shop/product, price edit, cart and WhatsApp order.
+- QA database read-back confirmed avatar, logo, cover and product images persisted as WebP object keys; profile Bio and shop About text persisted. Product image dimensions and bytes were recorded after browser-side conversion.
+- Production database remained unchanged throughout the QA run. This work is in a review branch and is not yet a Production release.
 
 ## Recent security and reliability changes
 
