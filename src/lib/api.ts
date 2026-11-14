@@ -16,7 +16,6 @@ export async function claimFirstAdminAccount(payload:{
   if(user?.email&&user.email!==email) {
     throw new Error('Sohoka muri konti urimo mbere yo gutangiza Admin wa mbere.');
   }
-  if(!user && password.length<8) throw new Error('Ijambo ry’ibanga rigomba kugira nibura inyuguti 8.');
   if(!user) {
     const signup=await neon.auth.signUp.email({
       email,password:payload.password,name:payload.fullName.trim(),
@@ -343,6 +342,7 @@ export async function registerSellerAccount(payload:Record<string,any>):Promise<
   if(user?.email&&String(user.email).toLowerCase()!==email) {
     throw new Error('Hari indi konti ifunguye. Sohoka mbere yo gufungura iduka rishya.');
   }
+  if(!user && password.length<8) throw new Error('Ijambo ry’ibanga rigomba kugira nibura inyuguti 8.');
   if(!user) {
     const signup=await neon.auth.signUp.email({
       email,
