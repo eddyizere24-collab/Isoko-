@@ -215,6 +215,11 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                 </div>
 
                 {shop.about && <p className="mt-2.5 text-sm text-slate-700 max-w-xl">{shop.about}</p>}
+                <div className="mt-4 flex flex-col gap-3 rounded-2xl bg-[#F7FAF8] p-4 sm:flex-row sm:items-start">
+                  {shop.seller_avatar_path?<img src={shop.seller_avatar_path} alt={shop.seller_name||'Umucuruzi'} className="h-16 w-16 shrink-0 rounded-full border-2 border-white object-cover shadow-sm"/>:<div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-white text-xl font-bold text-[#0B6E4F]">{(shop.seller_name||shop.name).slice(0,1).toUpperCase()}</div>}
+                  <div className="min-w-0 flex-1"><p className="text-xs font-semibold uppercase tracking-wide text-[#0B6E4F]">Uwo mu mucuruzi</p><p className="mt-0.5 text-sm font-bold text-[#1B1F23]">{shop.seller_name||shop.name}</p>{shop.seller_bio&&<p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-slate-700">{shop.seller_bio}</p>}
+                  {Object.entries(shop.social_links??{}).filter(([,url])=>/^https:\/\//i.test(url)).length>0&&<div className="mt-2 flex flex-wrap gap-2">{Object.entries(shop.social_links??{}).filter(([,url])=>/^https:\/\//i.test(url)).map(([key,url])=><a key={key} href={url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-9 items-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold capitalize text-[#0B6E4F] hover:bg-[#F1F6F3]">{key}</a>)}</div>}</div>
+                </div>
 
                 <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-slate-600">
                   {shop.delivery_text && (
