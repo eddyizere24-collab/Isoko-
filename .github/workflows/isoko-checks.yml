@@ -51,8 +51,13 @@ jobs:
           ISOKO_TEST_FUNCTION_URL: https://br-blue-bread-ba2wywua-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
           ISOKO_EXPECTED_NEON_BRANCH: isoko-production
 
-      - name: Production build
+      - name: Production build for E2E (isolated Neon Setup endpoints)
         run: bun run build
+        env:
+          VITE_NEON_AUTH_URL: https://ep-divine-salad-ba2n73kh.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth
+          VITE_NEON_DATA_API_URL: https://ep-divine-salad-ba2n73kh.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
+          VITE_NEON_FUNCTION_URL: https://br-raspy-resonance-baqfwhuh-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
+          VITE_NEON_PUBLIC_STORAGE_URL: https://br-raspy-resonance-baqfwhuh.storage.c-8.eu-central-1.aws.neon.tech/isoko-public-assets/
 
       - name: Install Playwright for browser smoke tests
         run: |
