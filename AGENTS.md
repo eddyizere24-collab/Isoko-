@@ -2,6 +2,9 @@
 
 Soma mbere: [docs/audit/AUDIT.md](docs/audit/AUDIT.md) (ibibazo 25 n'urutonde rw'ibikorwa) na [docs/ISOKO_PRODUCTION_SECURITY_GATE.md](docs/ISOKO_PRODUCTION_SECURITY_GATE.md).
 
+## Design
+Imiterere n'ubwiza (ibara, inyuguti, logo, header, imigongo, amakarita): **[docs/design/DESIGN_BRIEF.md](docs/design/DESIGN_BRIEF.md)** ni yo itegeko. Design ikorwa na AI Studio; ChatGPT akora ku mutekano/database. Ntihindurwe logic mu PR za design.
+
 ## Iki ni iki
 Isoko: catalogue y'amaduka yo mu Rwanda ihuza abaguzi n'abacuruzi kuri WhatsApp. Vite + React 19 + Tailwind 4 + TypeScript; Neon (Postgres, Data API, Auth, Function `isokoapi`, Object Storage); Render static site. Ikinyarwanda ni rwo rurimi rw'ibanze rwa UI.
 
