@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { fetchBootstrap, fetchMe, type BootstrapResponse } from '../lib/api';
-import { neon } from '../lib/neon';
+import { getNeonSessionSnapshot, neon } from '../lib/neon';
 import {
   addItemToCart,
   incrementVisitCount,
@@ -123,20 +123,58 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
     refreshBootstrap();
   }, [refreshBootstrap]);
 
+  // Restore Neon Auth when the browser is reopened. A local marker is only UI state.
   useEffect(() => {
-    if (authSession?.token) {
-      fetchMe()
-        .then((res) => {
-          setAuthProfile(res.profile);
-          setAuthShop(res.shop);
-        })
-        .catch(() => {
-          saveAuthSession(null);
-          setAuthSession(null);
-          setAuthProfile(null);
-          setAuthShop(null);
-        });
-    }
+    if (authSession?.token) return;
+    let active = true;
+    const restore = async () => {
+      const snapshot = await getNeonSessionSnapshot();
+      if (!active || snapshot.status !== 'active' || !snapshot.user?.id) return;
+      try {
+        const res = await fetchMe();
+        if (!active) return;
+        const session: StoredAuthSession = {
+          token: 'managed-neon-auth', userId: res.profile.id, role: res.profile.role,
+          expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        };
+        saveAuthSession(session);
+        setAuthSession(session);
+        setAuthProfile(res.profile);
+        setAuthShop(res.shop);
+      } catch {
+        if (!active) return;
+        // A Google account can exist before a seller profile has been created.
+        const provisional: StoredAuthSession = {
+          token: 'managed-neon-auth', userId: snapshot.user.id, role: 'seller',
+          expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        };
+        saveAuthSession(provisional);
+        setAuthSession(provisional);
+      }
+    };
+    void restore();
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    if (!authSession?.token) return;
+    let active = true;
+    fetchMe()
+      .then((res) => {
+        if (!active) return;
+        setAuthProfile(res.profile);
+        setAuthShop(res.shop);
+      })
+      .catch(async () => {
+        // A temporary Data API failure must never sign out an authenticated user.
+        const snapshot = await getNeonSessionSnapshot();
+        if (!active || snapshot.status !== 'signed_out') return;
+        saveAuthSession(null);
+        setAuthSession(null);
+        setAuthProfile(null);
+        setAuthShop(null);
+      });
+    return () => { active = false; };
   }, [authSession?.token]);
 
   const addToCart = useCallback((item: CartItem, categoryId?: number) => {

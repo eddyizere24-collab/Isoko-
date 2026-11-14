@@ -42,7 +42,7 @@ if (!payload) throw new Error("Bootstrap view returned no payload");
 // This catches accidental "verified" labels being inferred from an active account.
 const { data: publicShops, error: publicShopError } = await neon
   .from("v_public_shops")
-  .select("id,identity_status")
+  .select("id,identity_status,seller_name,seller_avatar_path,social_links")
   .limit(10);
 if (publicShopError) {
   throw new Error(`Public identity-status read failed: ${publicShopError.message}`);
@@ -58,8 +58,11 @@ if (payload.categories?.length !== 34) {
 if (payload.areas?.length !== 65) {
   throw new Error(`Expected 65 areas, got ${payload.areas?.length ?? 0}`);
 }
-if (payload.shops?.length !== 0 || payload.products?.length !== 0) {
-  throw new Error("Database unexpectedly contains seller or product records before launch");
+if (!Array.isArray(payload.shops) || !Array.isArray(payload.products)) {
+  throw new Error("Public shop and product collections must remain readable after launch");
+}
+if (Number(payload.settings?.DEFAULT_PRODUCT_LIMIT) !== 500) {
+  throw new Error("Default seller product capacity must be 500");
 }
 if (payload.settings?.ADS_ENABLED !== false) {
   throw new Error("Ads must remain disabled until explicitly configured");

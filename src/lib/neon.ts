@@ -62,10 +62,25 @@ export async function getNeonJwt(): Promise<string> {
   return String(token);
 }
 
+export async function getNeonSessionSnapshot(): Promise<{ status: 'active' | 'signed_out' | 'unavailable'; user: any | null }> {
+  try {
+    const result = await neon.auth.getSession() as any;
+    if (result?.error) return { status: 'unavailable', user: null };
+    const user = result?.data?.user ?? result?.data?.session?.user ?? result?.user ?? null;
+    return user?.id ? { status: 'active', user } : { status: 'signed_out', user: null };
+  } catch {
+    return { status: 'unavailable', user: null };
+  }
+}
+
 export async function getNeonUser(): Promise<any | null> {
-  const result = await neon.auth.getSession() as any;
-  if (result?.error) return null;
-  return result?.data?.user ?? result?.data?.session?.user ?? result?.user ?? null;
+  const snapshot = await getNeonSessionSnapshot();
+  return snapshot.status === 'active' ? snapshot.user : null;
+}
+
+export async function signInWithGoogle(callbackURL: string): Promise<void> {
+  const result = await neon.auth.signIn.social({ provider: 'google', callbackURL }) as any;
+  if (result?.error) throw new Error(result.error.message ?? 'Kwinjira ukoresheje Google byanze. Ongera ugerageze.');
 }
 
 export function unwrapNeon<T>(result: any, fallbackMessage = 'Habaye ikibazo mu kubika amakuru.'): T {

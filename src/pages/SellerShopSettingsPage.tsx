@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, CheckCircle2, MessageCircle, QrCode, Save } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ImagePlus, MessageCircle, QrCode, Save } from 'lucide-react';
 import { QrCodeModal } from '../components/QrCodeModal';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { getSectorsForDistrict, RWANDA_DISTRICTS } from '../data/rwandaAreas';
 import { RW } from '../i18n/rw';
-import { fetchSellerOverview, updateSellerShop } from '../lib/api';
+import { fetchSellerOverview, updateSellerProfile, updateSellerShop, uploadImagePair } from '../lib/api';
+import { processProductImage } from '../lib/image';
 import { buildWhatsAppLink } from '../lib/whatsapp';
 import type { Shop } from '../types/marketplace';
 
@@ -20,6 +21,13 @@ export const SellerShopSettingsPage: React.FC = () => {
   const [landmark, setLandmark] = useState('');
   const [hoursText, setHoursText] = useState('');
   const [deliveryText, setDeliveryText] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [profileBio, setProfileBio] = useState('');
+  const [avatarPath, setAvatarPath] = useState('');
+  const [logoPath, setLogoPath] = useState('');
+  const [coverPath, setCoverPath] = useState('');
+  const [socialLinks, setSocialLinks] = useState<Record<string,string>>({});
+  const [uploading, setUploading] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,6 +51,12 @@ export const SellerShopSettingsPage: React.FC = () => {
         setLandmark(res.shop.landmark);
         setHoursText(res.shop.hours_text);
         setDeliveryText(res.shop.delivery_text);
+        setFullName(res.profile.full_name ?? '');
+        setProfileBio(res.profile.bio ?? '');
+        setAvatarPath(res.profile.avatar_path ?? '');
+        setLogoPath(res.shop.logo_path ?? '');
+        setCoverPath(res.shop.cover_path ?? '');
+        setSocialLinks(res.shop.social_links ?? {});
       })
       .catch((err) => setError(err instanceof Error ? err.message : 'Ikibazo mu gufungura iduka.'))
       .finally(() => setLoading(false));
@@ -50,14 +64,33 @@ export const SellerShopSettingsPage: React.FC = () => {
 
   const sectors = useMemo(() => getSectorsForDistrict(districtId), [districtId]);
 
+  const uploadBrandImage = async (file: File | undefined, kind: 'shop', setter: (value:string)=>void) => {
+    if (!file) return;
+    setError(null);
+    setUploading(kind);
+    try {
+      const image = await processProductImage(file);
+      const uploaded = await uploadImagePair(image.fullDataUrl, kind);
+      setter(uploaded.url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ifoto ntiyoherejwe. Ongera ugerageze.');
+    } finally {
+      setUploading(null);
+    }
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSavedMsg(null);
     setSaving(true);
     try {
+      await updateSellerProfile({ fullName, bio: profileBio, avatarPath });
       const res = await updateSellerShop({
         name,
+        logoPath,
+        coverPath,
+        socialLinks,
         about,
         whatsapp,
         phone,
@@ -136,6 +169,17 @@ export const SellerShopSettingsPage: React.FC = () => {
         onSubmit={handleSave}
         className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 space-y-4"
       >
+        <section className="rounded-2xl border border-[#0B6E4F]/20 bg-[#F7FAF8] p-4 sm:p-5 space-y-4">
+          <div><h2 className="text-base font-bold text-[#1B1F23]">Umwirondoro wawe n’isura y’iduka</h2><p className="mt-1 text-xs leading-5 text-slate-600">Amafoto n’amakuru ubika ni byo bizagaragara ku rubuga rw’iduka ryawe.</p></div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div><p className="text-xs font-semibold text-slate-700">Ifoto yawe (profile)</p><div className="mt-2 flex items-center gap-3">{avatarPath?<img src={avatarPath} alt="Ifoto yawe" className="h-16 w-16 rounded-full border border-slate-200 object-cover"/>:<div className="grid h-16 w-16 place-items-center rounded-full bg-white text-2xl font-bold text-[#0B6E4F]">{fullName.slice(0,1).toUpperCase()||'U'}</div>}<label className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 text-xs font-semibold text-[#1B1F23]"><ImagePlus className="h-4 w-4"/> Hitamo ifoto<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={Boolean(uploading)} onChange={(e)=>{void uploadBrandImage(e.currentTarget.files?.[0],'shop',setAvatarPath);e.currentTarget.value='';}}/></label></div></div>
+            <div><p className="text-xs font-semibold text-slate-700">Logo y’iduka</p><div className="mt-2 flex items-center gap-3">{logoPath?<img src={logoPath} alt="Logo y’iduka" className="h-16 w-16 rounded-2xl border border-slate-200 bg-white object-cover"/>:<div className="grid h-16 w-16 place-items-center rounded-2xl bg-white text-xs font-bold text-[#0B6E4F]">LOGO</div>}<label className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 text-xs font-semibold text-[#1B1F23]"><ImagePlus className="h-4 w-4"/> Hitamo logo<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={Boolean(uploading)} onChange={(e)=>{void uploadBrandImage(e.currentTarget.files?.[0],'shop',setLogoPath);e.currentTarget.value='';}}/></label></div></div>
+            <div><p className="text-xs font-semibold text-slate-700">Ifoto yo hejuru (cover)</p>{coverPath?<img src={coverPath} alt="Ifoto yo hejuru y’iduka" className="mt-2 h-16 w-full rounded-xl border border-slate-200 object-cover"/>:<div className="imigongo-surface mt-2 h-16 rounded-xl border border-slate-200"/>}<label className="mt-2 inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 text-xs font-semibold text-[#1B1F23]"><ImagePlus className="h-4 w-4"/> Hitamo cover<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={Boolean(uploading)} onChange={(e)=>{void uploadBrandImage(e.currentTarget.files?.[0],'shop',setCoverPath);e.currentTarget.value='';}}/></label></div>
+          </div>
+          {uploading&&<p role="status" className="text-xs font-medium text-[#0B6E4F]">Turimo kohereza ifoto...</p>}
+          <div><label htmlFor="seller-profile-name" className="block text-sm font-semibold text-[#1B1F23]">Amazina agaragara ku iduka</label><input id="seller-profile-name" value={fullName} onChange={(e)=>setFullName(e.target.value)} maxLength={120} className="mt-1.5 min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm"/></div>
+          <div><div className="flex items-center justify-between"><label htmlFor="seller-profile-bio" className="text-sm font-semibold text-[#1B1F23]">Ibyerekeye wowe</label><span className="text-xs tabular-nums text-slate-500">{profileBio.length}/2500</span></div><textarea id="seller-profile-bio" rows={3} maxLength={2500} value={profileBio} onChange={(e)=>setProfileBio(e.target.value)} placeholder="Andika uwo uri we, ibyo ukunda n’impamvu abakiriya bakugirira icyizere..." className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white p-3 text-sm"/></div>
+        </section>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label htmlFor="shop-name" className="block text-sm font-semibold text-[#1B1F23]">
@@ -261,17 +305,24 @@ export const SellerShopSettingsPage: React.FC = () => {
           />
         </div>
 
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
+          <h2 className="text-sm font-bold text-[#1B1F23]">Imbuga nkoranyambaga</h2>
+          {[
+            ['website','Urubuga rwawe'],['facebook','Facebook'],['instagram','Instagram'],['tiktok','TikTok'],['youtube','YouTube'],
+          ].map(([key,label])=><div key={key}><label htmlFor={`social-${key}`} className="block text-xs font-semibold text-slate-700">{label}</label><input id={`social-${key}`} type="url" inputMode="url" placeholder="https://" value={socialLinks[key]??''} onChange={(e)=>setSocialLinks((old)=>({...old,[key]:e.target.value}))} className="mt-1 min-h-10 w-full rounded-xl border border-slate-300 px-3 text-sm"/></div>)}
+        </section>
+
         <div>
           <div className="flex items-center justify-between">
             <label htmlFor="shop-about" className="text-sm font-semibold text-[#1B1F23]">
               Ibyerekeye iduka
             </label>
-            <span className="text-xs text-slate-500 tabular-nums">{about.length}/200</span>
+            <span className="text-xs text-slate-500 tabular-nums">{about.length}/3000</span>
           </div>
           <textarea
             id="shop-about"
             rows={3}
-            maxLength={200}
+            maxLength={3000}
             value={about}
             onChange={(e) => setAbout(e.target.value)}
             className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-[#0B6E4F] focus:outline-none"

@@ -39,6 +39,18 @@ export const StaticPage: React.FC = () => {
     );
   }
 
+  if (pathname === '/uko-ikoreshwa') {
+    return (
+      <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 space-y-6">
+        <div><p className="text-xs font-bold uppercase tracking-wider text-[#0B6E4F]">ISOKO · Ubuyobozi</p><h1 className="mt-1 text-2xl font-extrabold text-[#1B1F23]">Uko ukoresha ISOKO</h1><p className="mt-2 text-sm leading-6 text-slate-600">ISOKO ihuza abacuruzi n’abaguzi. Umuguzi ashobora gushakisha atinjiye muri konti.</p></div>
+        <section className="rounded-2xl border border-slate-200 bg-white p-5"><h2 className="font-bold text-[#0B6E4F]">Ku muguzi</h2><ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-700"><li>Shakisha ibicuruzwa ukoresheje izina, icyiciro cyangwa akarere.</li><li>Kanda ku ifoto cyangwa izina ry’igicuruzwa kugira ngo urebe ibisobanuro, amafoto, igiciro na sizes.</li><li>Fungura iduka ry’umucuruzi urebe ibindi bicuruzwa afite.</li><li>Vugana na we kuri WhatsApp cyangwa kuri telefoni; mwumvikane uko wishyura n’uko ibicuruzwa bitangwa.</li></ol></section>
+        <section className="rounded-2xl border border-slate-200 bg-white p-5"><h2 className="font-bold text-[#0B6E4F]">Ku mucuruzi</h2><ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-700"><li>Kanda “Fungura iduka”, ukoreshe email na password cyangwa Google, ushyiremo WhatsApp n’izina ry’iduka.</li><li>Konti imaze gufunguka uhita ujya ku dashboard. Uzuza ifoto yawe, logo, cover, ibisobanuro n’imbuga nkoranyambaga muri “Amakuru y’iduka”.</li><li>Koresha “Ongeraho igicuruzwa” ku kimwe, cyangwa “Ongeraho byinshi” ku bicuruzwa byinshi mu batches.</li><li>Shyiraho ifoto nyayo, izina, igiciro, ibisobanuro na size, ubike kugira ngo bigaragare ku iduka ryawe.</li><li>Ushobora guhindura, guhisha, kugarura, kugurisha cyangwa gusiba igicuruzwa.</li></ol></section>
+        <section className="rounded-2xl border border-slate-200 bg-white p-5"><h2 className="font-bold text-[#0B6E4F]">Iby’ingenzi</h2><ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-700"><li>Iduka rishobora kugira ibicuruzwa bigera kuri 500 muri gahunda y’ibanze.</li><li>Buri gicuruzwa gishobora kugira amafoto agera kuri 5.</li><li>Shyiraho amakuru y’ukuri n’amafoto ufitiye uburenganzira.</li><li>“Verified” igaragazwa gusa nyuma yo kugenzura umwirondoro.</li></ul></section>
+        <button type="button" onClick={() => navigate('/abacuruzi')} className="inline-flex min-h-11 items-center rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white">Fungura iduka</button>
+      </main>
+    );
+  }
+
   if (pathname === '/ubufasha') {
     const waHref = supportWa
       ? buildWhatsAppLink(supportWa, 'Muraho Ubufasha bwa Isoko, mfite ikibazo nashakaga kubaza.')

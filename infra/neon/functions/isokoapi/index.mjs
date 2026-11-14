@@ -300,11 +300,13 @@ export default {
             ? "campaigns/" + ownerKey
             : kind === "shop"
               ? "shops/" + ownerKey
-              : "products/" + ownerKey;
+              : kind === "profile"
+                ? "profiles/" + ownerKey
+                : "products/" + ownerKey;
         if (kind === "campaign" && profile?.role !== "admin") {
           return json({ error: "Admin gusa ni we wohereza amafoto ya campaigns." }, 403, cors);
         }
-        if (!["kyc", "campaign", "shop", "full", "thumb"].includes(kind)) {
+        if (!["kyc", "campaign", "shop", "profile", "full", "thumb"].includes(kind)) {
           return json({ error: "Ubwoko bw’ifoto ntibwemewe." }, 400, cors);
         }
         const key = prefix + "/" + new Date().toISOString().slice(0, 10) +

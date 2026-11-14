@@ -3,12 +3,14 @@ import { ArrowRight, KeyRound, Lock, Mail, Store } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { RW } from '../i18n/rw';
 import { loginAccount } from '../lib/api';
+import { signInWithGoogle } from '../lib/neon';
 
 export const LoginPage: React.FC = () => {
   const { navigate, setAuthData, authProfile } = useMarketplace();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const performLogin = async () => {
@@ -31,6 +33,17 @@ export const LoginPage: React.FC = () => {
       setError(err instanceof Error ? err.message : 'Kwinjira byanze. Ongera ugerageze.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleGoogle = async () => {
+    setError(null);
+    setGoogleLoading(true);
+    try {
+      await signInWithGoogle(`${window.location.origin}/abacuruzi?google=1`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Kwinjira ukoresheje Google byanze.');
+      setGoogleLoading(false);
     }
   };
 
@@ -65,6 +78,8 @@ export const LoginPage: React.FC = () => {
             </div>
           )}
 
+          <button type="button" onClick={() => void handleGoogle()} disabled={googleLoading || submitting} className="mb-5 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50 disabled:opacity-60"><span className="grid h-6 w-6 place-items-center rounded-full border border-slate-200 font-bold text-[#4285F4]">G</span>{googleLoading ? 'Turahuza na Google...' : 'Komeza ukoresheje Google'}</button>
+          <div className="mb-5 flex items-center gap-3 text-xs text-slate-400"><span className="h-px flex-1 bg-slate-200" />CYANGWA<span className="h-px flex-1 bg-slate-200" /></div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="login-identifier" className="block text-sm font-semibold text-[#1B1F23]">Email</label>

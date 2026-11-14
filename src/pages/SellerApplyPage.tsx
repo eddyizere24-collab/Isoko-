@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowRight, Lock, Mail, MessageCircle, ShieldCheck, Store, UserRound } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
-import { registerSellerAccount } from '../lib/api';
+import { fetchMe, registerSellerAccount } from '../lib/api';
+import { getNeonUser, signInWithGoogle } from '../lib/neon';
 import { isValidRwandaPhone } from '../lib/whatsapp';
 
 export const SellerApplyPage: React.FC = () => {
-  const { navigate, setAuthData } = useMarketplace();
+  const { navigate, setAuthData, searchParams } = useMarketplace();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
@@ -14,6 +15,48 @@ export const SellerApplyPage: React.FC = () => {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [googleAccount, setGoogleAccount] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const googleCallback = searchParams.get('google') === '1';
+  useEffect(() => {
+    if (!googleCallback) return;
+    let active = true;
+    void getNeonUser().then(async (user) => {
+      if (!active || !user?.email) return;
+      try {
+        const account = await fetchMe();
+        if (!active) return;
+        const session = {
+          token: 'managed-neon-auth',
+          userId: account.profile.id,
+          role: account.profile.role,
+          expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        };
+        setAuthData(session, account.profile, account.shop);
+        navigate(account.profile.role === 'admin' || account.profile.role === 'moderator' ? '/admin' : '/umucuruzi');
+        return;
+      } catch {
+        // This Google account is valid but has not opened an ISOKO shop yet.
+      }
+      if (!active) return;
+      setEmail(String(user.email).toLowerCase());
+      setFullName(String(user.name ?? ''));
+      setGoogleAccount(true);
+    });
+    return () => { active = false; };
+  }, [googleCallback, navigate, setAuthData]);
+
+  const handleGoogle = async () => {
+    setError(null);
+    setGoogleLoading(true);
+    try {
+      await signInWithGoogle(`${window.location.origin}/abacuruzi?google=1`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Guhuza Google byanze.');
+      setGoogleLoading(false);
+    }
+  };
 
   if (import.meta.env.VITE_ISOKO_PREVIEW === 'true') {
     return (
@@ -51,7 +94,7 @@ export const SellerApplyPage: React.FC = () => {
       setError('Andika email nyayo, urugero: izina@gmail.com.');
       return;
     }
-    if (password.length < 8) {
+    if (!googleAccount && password.length < 8) {
       setError('Ijambo ry’ibanga rigomba kugira nibura inyuguti 8.');
       return;
     }
@@ -132,6 +175,8 @@ export const SellerApplyPage: React.FC = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5 px-5 py-6 sm:px-8">
+          {!googleAccount && <><button type="button" onClick={() => void handleGoogle()} disabled={googleLoading || submitting} className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50 disabled:opacity-60"><span className="grid h-6 w-6 place-items-center rounded-full border border-slate-200 font-bold text-[#4285F4]">G</span>{googleLoading ? 'Turahuza na Google...' : 'Iyandikishe ukoresheje Google'}</button><div className="flex items-center gap-3 text-xs text-slate-400"><span className="h-px flex-1 bg-slate-200" />CYANGWA<span className="h-px flex-1 bg-slate-200" /></div></>}
+          {googleAccount && <div className="rounded-xl border border-[#0B6E4F]/30 bg-[#F1F6F3] p-3 text-sm text-[#0B6E4F]">Google yawe yamaze guhuzwa. Uzuza nimero ya WhatsApp n’izina ry’iduka kugira ngo turifungure.</div>}
           <div>
             <label htmlFor="seller-email" className="block text-sm font-semibold text-[#1B1F23]">Email *</label>
             <div className="relative mt-1.5">
@@ -151,24 +196,26 @@ export const SellerApplyPage: React.FC = () => {
             <p className="mt-1.5 text-xs leading-5 text-slate-500">Koresha email ushobora kugeraho. Ni yo uzakoresha winjira kandi igufashe kugarura password igihe uyibagiwe.</p>
           </div>
 
-          <div>
-            <label htmlFor="seller-password" className="block text-sm font-semibold text-[#1B1F23]">Ijambo ry’ibanga *</label>
-            <div className="relative mt-1.5">
-              <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
-              <input
-                id="seller-password"
-                type="password"
-                autoComplete="new-password"
-                minLength={8}
-                required
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="Nibura inyuguti 8"
-                className="min-h-12 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/15"
-              />
+          {!googleAccount && (
+            <div>
+              <label htmlFor="seller-password" className="block text-sm font-semibold text-[#1B1F23]">Ijambo ry’ibanga *</label>
+              <div className="relative mt-1.5">
+                <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+                <input
+                  id="seller-password"
+                  type="password"
+                  autoComplete="new-password"
+                  minLength={8}
+                  required
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Nibura inyuguti 8"
+                  className="min-h-12 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/15"
+                />
+              </div>
             </div>
-          </div>
-
+  
+            )}
           <div>
             <label htmlFor="seller-whatsapp" className="block text-sm font-semibold text-[#1B1F23]">Nimero ya WhatsApp *</label>
             <div className="relative mt-1.5">
