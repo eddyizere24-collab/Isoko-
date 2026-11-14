@@ -213,19 +213,40 @@ BEGIN
     RAISE EXCEPTION 'SUBSCRIPTION_RATE_LIMIT' USING ERRCODE='22023';
   END IF;
 
-  INSERT INTO public.subscribers(
-    id,kind,external_id,district_id,top_category_id,shop_id,consent_at,consent_version,unsubscribed_at
-  ) VALUES (
-    'sub-' || replace(gen_random_uuid()::text,'-',''),p_kind,trim(p_external_id),
-    p_district_id,p_top_category_id,p_shop_id,NOW(),COALESCE(p_consent_version,'1.0'),NULL
-  )
-  ON CONFLICT(kind,external_id,shop_id) DO UPDATE SET
-    district_id=EXCLUDED.district_id,
-    top_category_id=EXCLUDED.top_category_id,
-    consent_at=NOW(),
-    consent_version=EXCLUDED.consent_version,
-    unsubscribed_at=NULL
-  RETURNING id INTO v_id;
+  -- The existing subscribers table intentionally has no UNIQUE constraint.
+  -- The rate-key upsert above serializes requests from the same kind/external ID,
+  -- so use an owner-scoped SELECT/UPDATE instead of an invalid ON CONFLICT target.
+  SELECT s.id INTO v_id
+  FROM public.subscribers s
+  WHERE s.kind=p_kind
+    AND s.external_id=trim(p_external_id)
+    AND s.shop_id IS NOT DISTINCT FROM p_shop_id
+  ORDER BY s.consent_at DESC, s.id DESC
+  LIMIT 1
+  FOR UPDATE;
+
+  IF v_id IS NULL THEN
+    INSERT INTO public.subscribers(
+      id,kind,external_id,district_id,top_category_id,shop_id,consent_at,consent_version,unsubscribed_at
+    ) VALUES (
+      'sub-' || replace(gen_random_uuid()::text,'-',''),p_kind,trim(p_external_id),
+      p_district_id,p_top_category_id,p_shop_id,NOW(),COALESCE(p_consent_version,'1.0'),NULL
+    )
+    RETURNING id INTO v_id;
+  ELSE
+    -- Keep one active row for this browser/contact+shop key. Older duplicate rows
+    -- are retained for audit history, but are marked unsubscribed, not deleted.
+    UPDATE public.subscribers
+    SET
+      district_id=p_district_id,
+      top_category_id=p_top_category_id,
+      consent_at=CASE WHEN id=v_id THEN NOW() ELSE consent_at END,
+      consent_version=CASE WHEN id=v_id THEN COALESCE(p_consent_version,'1.0') ELSE consent_version END,
+      unsubscribed_at=CASE WHEN id=v_id THEN NULL ELSE COALESCE(unsubscribed_at,NOW()) END
+    WHERE kind=p_kind
+      AND external_id=trim(p_external_id)
+      AND shop_id IS NOT DISTINCT FROM p_shop_id;
+  END IF;
 
   RETURN jsonb_build_object('ok',true,'id',v_id);
 END;
