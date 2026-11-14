@@ -215,6 +215,10 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                 </div>
 
                 {shop.about && <p className="mt-2.5 whitespace-pre-line text-sm text-slate-700 max-w-xl">{shop.about}</p>}
+                {(shop.seller_name || shop.seller_bio || shop.seller_avatar_path) && <div className="mt-4 flex max-w-xl items-start gap-3 rounded-xl border border-slate-200 bg-[#F7FAF8] p-3">
+                  {shop.seller_avatar_path ? <img src={shop.seller_avatar_path} alt={shop.seller_name || 'Umucuruzi'} className="h-12 w-12 shrink-0 rounded-full object-cover" /> : <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold text-[#0B6E4F]">{(shop.seller_name || shop.name).slice(0,1).toUpperCase()}</div>}
+                  <div className="min-w-0"><p className="text-xs font-bold text-[#1B1F23]">{shop.seller_name || 'Umucuruzi'}</p>{shop.seller_bio && <p className="mt-1 whitespace-pre-line text-xs leading-5 text-slate-600">{shop.seller_bio}</p>}</div>
+                </div>}
                 {shop.social_links && Object.entries(shop.social_links).filter(([key,value]) => ['instagram','facebook','tiktok','youtube','website'].includes(key) && /^https?:\/\//i.test(String(value))).length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {Object.entries(shop.social_links).filter(([key,value]) => ['instagram','facebook','tiktok','youtube','website'].includes(key) && /^https?:\/\//i.test(String(value))).map(([key,value]) => (
