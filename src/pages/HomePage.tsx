@@ -232,7 +232,7 @@ export const HomePage: React.FC = () => {
           <div className="flex items-baseline justify-between gap-4">
             <div>
               <h2 id="shops-heading" className="font-display text-lg font-bold text-[#1B1F23]">
-                Amaduka yagenzuwe ku Isoko
+                Amaduka ari kuri ISOKO
               </h2>
               <p className="mt-0.5 text-xs text-slate-600">
                 Sura iduka ry’umucuruzi urebe ibicuruzwa bye byose n’aho akorera
@@ -284,10 +284,24 @@ export const HomePage: React.FC = () => {
                         <Store className="h-5 w-5" aria-hidden="true" />
                       </div>
                     )}
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#0B6E4F] bg-white/95 rounded-md px-2 py-0.5">
-                      <IsokoVerifiedSeal className="h-3.5 w-3.5" />
-                      <span>{RW.verified}</span>
-                    </span>
+                    {shop.identity_status === 'verified' ? (
+                      <span className="inline-flex items-center gap-1 rounded-md bg-white/95 px-2 py-0.5 text-xs font-semibold text-[#0B6E4F]">
+                        <IsokoVerifiedSeal className="h-3.5 w-3.5" />
+                        <span>{RW.verified}</span>
+                      </span>
+                    ) : shop.identity_status === 'pending' ? (
+                      <span className="rounded-md bg-white/95 px-2 py-0.5 text-xs font-medium text-amber-800">
+                        Irimo kugenzurwa
+                      </span>
+                    ) : shop.identity_status === 'rejected' ? (
+                      <span className="rounded-md bg-white/95 px-2 py-0.5 text-xs font-medium text-[#C0392B]">
+                        Imyirondoro ntiyemejwe
+                      </span>
+                    ) : (
+                      <span className="rounded-md bg-white/95 px-2 py-0.5 text-xs font-medium text-slate-600">
+                        Ntiragenzurwa
+                      </span>
+                    )}
                   </div>
 
                   <h3 className="mt-2 font-display text-base font-bold text-[#1B1F23] group-hover:text-[#0B6E4F]">
