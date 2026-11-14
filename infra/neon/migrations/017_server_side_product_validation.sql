@@ -269,3 +269,7 @@ BEGIN
   RETURN jsonb_build_object('id',p_product_id,'status',v_product.status);
 END;
 $function$;
+
+INSERT INTO public.schema_migrations(version)
+VALUES ('017_server_side_product_validation')
+ON CONFLICT (version) DO NOTHING;
