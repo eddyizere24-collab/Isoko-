@@ -96,7 +96,7 @@ export const RW = {
   },
   seller_statuses: {
     pending: 'Itegereje kwemezwa',
-    approved: 'Yemejwe',
+    approved: 'Konti irakora',
     needs_changes: 'Bisaba gukosorwa',
     rejected: 'Yanzwe',
     suspended: 'Yahagaritswe',
