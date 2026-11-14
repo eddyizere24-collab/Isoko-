@@ -4,7 +4,7 @@ import type {
 } from '../types/marketplace';
 import {
   getNeonJwt, getNeonUser, neon, neonFunctionUrl, normalizePhone,
-  objectKeyFromPublicUrl,
+  objectKeyFromPublicUrl, publicAssetUrl,
 } from './neon';
 
 export async function claimFirstAdminAccount(payload:{
@@ -16,6 +16,7 @@ export async function claimFirstAdminAccount(payload:{
   if(user?.email&&user.email!==email) {
     throw new Error('Sohoka muri konti urimo mbere yo gutangiza Admin wa mbere.');
   }
+  if(!user && password.length<8) throw new Error('Ijambo ry’ibanga rigomba kugira nibura inyuguti 8.');
   if(!user) {
     const signup=await neon.auth.signUp.email({
       email,password:payload.password,name:payload.fullName.trim(),
@@ -106,8 +107,12 @@ function first<T>(data: any): T | null {
 function mapShop(row: any): Shop {
   return {
     ...row,
-    logo_path: row.logo_path ?? null,
-    cover_path: row.cover_path ?? null,
+    logo_path: publicAssetUrl(row.logo_path ?? row.logo_key),
+    cover_path: publicAssetUrl(row.cover_path ?? row.cover_key),
+    seller_avatar_path: publicAssetUrl(row.seller_avatar_path ?? row.avatar_key),
+    seller_name: row.seller_name ?? row.full_name ?? null,
+    seller_bio: row.seller_bio ?? row.bio ?? null,
+    social_links: row.social_links && typeof row.social_links === 'object' ? row.social_links : {},
     active_product_count: Number(row.active_product_count ?? 0),
   } as Shop;
 }
@@ -117,7 +122,11 @@ function mapProduct(row: any): Product {
     ...row,
     price: Number(row.price),
     old_price: row.old_price == null ? null : Number(row.old_price),
-    images: row.images ?? row.product_images ?? [],
+    images: (row.images ?? row.product_images ?? []).map((image: any) => ({
+      ...image,
+      path_full: publicAssetUrl(image.path_full) ?? '',
+      path_thumb: publicAssetUrl(image.path_thumb ?? image.path_full) ?? '',
+    })),
     variants: row.variants ?? row.product_variants ?? [],
     shop: row.shop ? mapShop(row.shop) : undefined,
     popularity_7d: Number(row.popularity_7d ?? 0),
@@ -145,12 +154,13 @@ async function currentAccount(): Promise<{ user: any; profile: Profile; shop: Sh
   if (!user?.id) throw new Error('Injira mbere yo gukomeza.');
   const profileResult = dataOf<any>(
     await neon.from('profiles')
-      .select('id,auth_user_id,role,full_name,phone,whatsapp,email,email_verified,identity_status,status,status_reason,approved_by,approved_at,terms_version,terms_accepted_at,created_at')
+      .select('id,auth_user_id,role,full_name,phone,whatsapp,email,email_verified,identity_status,avatar_key,bio,status,status_reason,approved_by,approved_at,terms_version,terms_accepted_at,created_at')
       .eq('auth_user_id', user.id).maybeSingle(),
     'Konti yawe ntiyuzuye.'
   );
-  const profile = first<Profile>(profileResult);
-  if (!profile) throw new Error('Konti ya Isoko ntiyabonetse kuri iyi nimero.');
+  const rawProfile = first<any>(profileResult);
+  if (!rawProfile) throw new Error('Konti ya Isoko ntiyabonetse kuri iyi nimero.');
+  const profile = { ...rawProfile, avatar_path: publicAssetUrl(rawProfile.avatar_key) } as Profile;
   const shopResult = dataOf<any>(
     await neon.from('shops').select('*').eq('owner_id', profile.id).maybeSingle(),
     'Ntibishobotse gufungura iduka ryawe.'
@@ -164,7 +174,7 @@ function storedSession(profile: Profile) {
     token: 'managed-neon-auth',
     userId: profile.id,
     role: profile.role,
-    expiresAt: Date.now() + 12 * 60 * 60 * 1000,
+    expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
   };
 }
 
@@ -327,7 +337,6 @@ export async function registerSellerAccount(payload:Record<string,any>):Promise<
   if(!/^2507[0-9]{8}$/.test(phone)) {
     throw new Error('Nimero ya WhatsApp igomba kuba iya MTN cyangwa Airtel mu Rwanda (07XXXXXXXX).');
   }
-  if(password.length<8) throw new Error('Ijambo ry’ibanga rigomba kugira nibura inyuguti 8.');
   if(shopName.length<2) throw new Error('Andika izina ry’iduka ryawe.');
 
   let user=await getNeonUser();
@@ -371,14 +380,14 @@ export async function fetchMe():Promise<{profile:Profile;shop:Shop|null}> {
   return {profile:current.profile,shop:current.shop};
 }
 
-export async function uploadImagePair(dataUrl:string,kind:'full'|'thumb'):Promise<{url:string;bytes:number}> {
+export async function uploadImagePair(dataUrl:string,kind:'full'|'thumb'|'shop'|'profile'):Promise<{url:string;bytes:number}> {
   const result=await uploadThroughFunction(dataUrl,kind);
   if(!result.url) throw new Error('Ifoto rusange ntiyabonetse.');
   return {url:result.url,bytes:result.bytes};
 }
 
 export async function fetchSellerOverview():Promise<{
-  profile:Pick<Profile,'id'|'full_name'|'status'|'status_reason'|'identity_status'|'email'|'email_verified'>;shop:Shop;products:Product[];staleProducts:Product[];
+  profile:Pick<Profile,'id'|'full_name'|'status'|'status_reason'|'identity_status'|'email'|'email_verified'|'avatar_path'|'bio'>;shop:Shop;products:Product[];staleProducts:Product[];
   stats7d:{views:number;wa_clicks:number;call_clicks:number;cart_adds:number;shares:number};
   stats30d:{views:number;wa_clicks:number;call_clicks:number;cart_adds:number;shares:number};
   topViewed:Product[];topWa:Product|null;
@@ -409,7 +418,7 @@ export async function fetchSellerOverview():Promise<{
   const stale=Date.now()-30*86400000;
   const staleProducts=products.filter((p: Product)=>p.status==='active'&&new Date(p.last_confirmed_at).getTime()<=stale);
   return {
-    profile:{id:current.profile.id,full_name:current.profile.full_name,status:current.profile.status,status_reason:current.profile.status_reason,identity_status:current.profile.identity_status,email:current.profile.email,email_verified:current.profile.email_verified},
+    profile:{id:current.profile.id,full_name:current.profile.full_name,status:current.profile.status,status_reason:current.profile.status_reason,identity_status:current.profile.identity_status,email:current.profile.email,email_verified:current.profile.email_verified,avatar_path:current.profile.avatar_path,bio:current.profile.bio},
     shop:current.shop,products,staleProducts,stats7d:sum(stats.filter((r)=>r.day>=cutoff7)),stats30d:sum(stats),
     topViewed:[...products].sort((a,b)=>(b.views_7d??0)-(a.views_7d??0)).slice(0,5),
     topWa:[...products].sort((a,b)=>(b.wa_clicks_7d??0)-(a.wa_clicks_7d??0))[0]??null,
@@ -487,6 +496,21 @@ export async function setSellerProductVisibility(id:string,action:'hide'|'unhide
   return {ok:Boolean(result?.ok),status:result.status as Product['status']};
 }
 
+export async function updateSellerProfile(payload:Record<string,unknown>):Promise<{profile:Profile}> {
+  const current=await currentAccount();
+  const fullName=String(payload.fullName??current.profile.full_name??'').trim();
+  const bio=String(payload.bio??'').slice(0,2500);
+  if(fullName.length<2) throw new Error('Andika amazina yawe nibura inyuguti 2.');
+  const avatarKey=payload.avatarPath ? storageKey(String(payload.avatarPath)) : null;
+  const row=first<any>(dataOf<any>(
+    await neon.from('profiles').update({full_name:fullName,bio,avatar_key:avatarKey})
+      .eq('id',current.profile.id).select('id,full_name,bio,avatar_key').maybeSingle(),
+    'Ntibishobotse kubika umwirondoro wawe.'
+  ));
+  if(!row) throw new Error('Umwirondoro wawe ntiwabitswe.');
+  return {profile:{...current.profile,...row,avatar_path:publicAssetUrl(row.avatar_key)} as Profile};
+}
+
 export async function updateSellerShop(payload:Record<string,unknown>):Promise<{shop:Shop}> {
   const current=await currentAccount();
   const districtId=Number(payload.district_id);
@@ -509,7 +533,12 @@ export async function updateSellerShop(payload:Record<string,unknown>):Promise<{
   const row=first<any>(dataOf<any>(
     await neon.from('shops').update({
       name:String(payload.name??'').trim(),
-      about:String(payload.about??''),
+      about:String(payload.about??'').slice(0,3000),
+      logo_key:payload.logoPath ? storageKey(String(payload.logoPath)) : null,
+      cover_key:payload.coverPath ? storageKey(String(payload.coverPath)) : null,
+      social_links:Object.fromEntries(Object.entries((payload.socialLinks && typeof payload.socialLinks === 'object' ? payload.socialLinks : {}) as Record<string,unknown>)
+        .map(([key,value])=>[key,String(value??'').trim()])
+        .filter(([,value])=>/^https:\/\//i.test(value))),
       whatsapp:normalizePhone(String(payload.whatsapp??'')),
       phone:normalizePhone(String(payload.phone??'')),
       district_id:districtId,
