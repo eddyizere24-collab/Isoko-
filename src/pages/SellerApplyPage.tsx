@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowRight, Lock, Mail, MessageCircle, ShieldCheck, Store, UserRound } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
-import { registerSellerAccount } from '../lib/api';
+import { registerSellerAccount, startGoogleSignIn } from '../lib/api';
+import { getNeonUser } from '../lib/neon';
 import { isValidRwandaPhone } from '../lib/whatsapp';
 
 export const SellerApplyPage: React.FC = () => {
@@ -14,6 +15,20 @@ export const SellerApplyPage: React.FC = () => {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [googleSession, setGoogleSession] = useState(false);
+
+  useEffect(() => {
+    getNeonUser().then(user => {
+      if (user?.email) { setEmail(String(user.email)); setGoogleSession(true); }
+    }).catch(() => undefined);
+  }, []);
+
+  const handleGoogle = async () => {
+    setError(null);
+    setSubmitting(true);
+    try { await startGoogleSignIn('/abacuruzi?oauth=google'); }
+    catch (err) { setError(err instanceof Error ? err.message : 'Google sign-in ntiyabashije gutangira.'); setSubmitting(false); }
+  };
 
   if (import.meta.env.VITE_ISOKO_PREVIEW === 'true') {
     return (
@@ -51,7 +66,7 @@ export const SellerApplyPage: React.FC = () => {
       setError('Andika email nyayo, urugero: izina@gmail.com.');
       return;
     }
-    if (password.length < 8) {
+    if (!googleSession && password.length < 8) {
       setError('Ijambo ry’ibanga rigomba kugira nibura inyuguti 8.');
       return;
     }
@@ -132,6 +147,8 @@ export const SellerApplyPage: React.FC = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5 px-5 py-6 sm:px-8">
+          {!googleSession && <><button type="button" onClick={() => void handleGoogle()} disabled={submitting} className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50 disabled:opacity-60"><span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 font-bold text-[#4285F4]">G</span> Komeza ukoreshe Google</button><div className="flex items-center gap-3 text-xs text-slate-400"><span className="h-px flex-1 bg-slate-200"/>cyangwa ukoreshe email<span className="h-px flex-1 bg-slate-200"/></div></>}
+          {googleSession && <div className="rounded-xl border border-[#0B6E4F]/30 bg-[#F1F6F3] p-3 text-sm text-[#0B6E4F]">Google yemeje konti yawe. Uzuza WhatsApp n’izina ry’iduka kugira ngo urifungure.</div>}
           <div>
             <label htmlFor="seller-email" className="block text-sm font-semibold text-[#1B1F23]">Email *</label>
             <div className="relative mt-1.5">
@@ -151,7 +168,7 @@ export const SellerApplyPage: React.FC = () => {
             <p className="mt-1.5 text-xs leading-5 text-slate-500">Koresha email ushobora kugeraho. Ni yo uzakoresha winjira kandi igufashe kugarura password igihe uyibagiwe.</p>
           </div>
 
-          <div>
+          {!googleSession && <div>
             <label htmlFor="seller-password" className="block text-sm font-semibold text-[#1B1F23]">Ijambo ry’ibanga *</label>
             <div className="relative mt-1.5">
               <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
@@ -167,7 +184,7 @@ export const SellerApplyPage: React.FC = () => {
                 className="min-h-12 w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/15"
               />
             </div>
-          </div>
+          </div>}
 
           <div>
             <label htmlFor="seller-whatsapp" className="block text-sm font-semibold text-[#1B1F23]">Nimero ya WhatsApp *</label>
