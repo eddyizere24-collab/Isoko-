@@ -1,6 +1,6 @@
 # ISOKO Production Security & Operations Gate
 
-Last checked: 2026-11-14
+Last checked: 2026-11-14 · Phase 2 product workflow review
 
 ## Public Production service
 
@@ -36,6 +36,23 @@ Last checked: 2026-11-14
 - Admin moderation, seller/KYC review, reports, campaigns and the Admin Intelligence workspace at `/admin/ubwenge`.
 - The Admin Intelligence workspace currently uses privacy-limited SQL analytics and deterministic answers. It is not presented as a generative AI model; AI Gateway requires prepaid credits and none were purchased.
 - Admin report replies can be saved and a prefilled WhatsApp message can be opened. Messages are not auto-sent.
+
+## Phase 2 product-management implementation (feature branch)
+
+The following changes are implemented on `feature/isoko-products-phase2-20261114`, pass CI, and are not part of Production `main` until PR merge:
+
+- Single product creation remains available, with 1–5 real seller-uploaded photos. The demo/sample photo selector was removed.
+- Bulk product entry accepts up to 10 products in one batch. Multiple selected photos create separate product rows; each product can receive up to 5 photos. Batch items share category, condition and sizes to reduce repeated phone input.
+- Each product row has its own name, price, optional old price and description. Saves are sequential; successful products remain marked as saved while failed rows retain their errors for retry.
+- Seller full edit now supports add/remove/reorder photos while keeping at least one photo, alongside the existing name, pricing, condition, brand, description and size/stock fields.
+- Sellers can share a product directly from their product list via WhatsApp; share analytics are recorded.
+- Sellers can hide/unhide their own products. Hiding preserves the previous state (draft, active or sold-out) and unhide restores that state. A seller cannot unhide an Admin-moderated item.
+- Mark-sold and restore-stock actions now have a dedicated owner-checked database RPC. Only the authenticated owner can change the product status.
+- Delete now requires an explicit confirmation. Product ownership remains enforced in database RPCs.
+- Neon migrations `014_seller_product_visibility` and `015_seller_product_status_actions` are applied to Setup and Production. Read-back confirms both migrations, authenticated execution, anonymous denial, and zero seller/product/identity rows in both branches.
+- CI passed on branch head `0d333c95aa6cf15a05feb6cf795da46edd2feb9d`: https://github.com/eddyizere24-collab/Isoko-/actions/runs/43563400531
+
+Do not describe Phase 2 as live on the public site until its PR is merged and Render reports a new `live` deployment.
 
 ## Production launch safety gates
 
