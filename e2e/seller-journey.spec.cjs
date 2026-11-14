@@ -167,7 +167,7 @@ test('seller can register, sign in, update store, publish a photo product and re
   await expect(page.locator('#shop-name')).toHaveValue(shopName);
   await expect(page.locator('#shop-phone')).toHaveValue(phone.replace(/^0/, '250'));
   await expect(page.locator('#shop-wa')).toHaveValue(phone.replace(/^0/, '250'));
-  await expect(page.locator('img[alt="Ifoto yawe"]')).toBeVisible();
+  await expect(page.locator('img[alt="Ifoto ya profile yawe"]')).toBeVisible();
   await expect(page.locator('img[alt="Logo y’iduka"]')).toBeVisible();
   await expect(page.locator('img[alt="Ifoto yo hejuru y’iduka"]')).toBeVisible();
 
