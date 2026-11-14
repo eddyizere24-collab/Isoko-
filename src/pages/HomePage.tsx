@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowRight, MapPin, Store } from 'lucide-react';
-import { IsokoVerifiedSeal, RwandanGeometricPattern } from '../components/IsokoLogo';
+import { ArrowRight, Footprints, MapPin, Package, Shirt, ShoppingBag, Smartphone, Store } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { IsokoMark, IsokoVerifiedSeal, RwandanGeometricPattern } from '../components/IsokoLogo';
 import { ProductCard } from '../components/ProductCard';
 import { PromoCarousel } from '../components/PromoCarousel';
 import { useMarketplace } from '../context/MarketplaceContext';
@@ -8,29 +9,12 @@ import { RW } from '../i18n/rw';
 import { buildHomeShelves, interleaveBySeller } from '../lib/algorithm';
 import { loadInterest } from '../lib/storage';
 
-const HERO_IMG = '/src/assets/images/hero_kigali_fashion_1794551814589.jpg';
-
-const CATEGORY_ARTWORK: Record<string, { img: string; caption: string }> = {
-  inkweto: {
-    img: '/src/assets/images/shoe_sneaker_white_1794551815135.jpg',
-    caption: 'Siporo, gusohokana & mitumba',
-  },
-  imyenda: {
-    img: '/src/assets/images/apparel_ankara_jacket_1794551815266.jpg',
-    caption: 'Ankara, hoodies, amashati & jeans',
-  },
-  amasogisi: {
-    img: '/src/assets/images/socks_athletic_pack_1794551816475.jpg',
-    caption: 'Cotton nziza & iby’imbere',
-  },
-  ibindi: {
-    img: '/src/assets/images/accessory_leather_bag_1794551816434.jpg',
-    caption: 'Amasakoshi, imikandara & indorerwamo',
-  },
-  amatelefoni: {
-    img: '/src/assets/images/promo_kigali_market_1794567241262.jpg',
-    caption: 'Ibikoresho by’amatelefoni',
-  },
+const CATEGORY_ARTWORK: Record<string, { icon: LucideIcon; caption: string }> = {
+  inkweto: { icon: Footprints, caption: 'Siporo, gusohokana & inkweto za buri munsi' },
+  imyenda: { icon: Shirt, caption: 'Imyenda y’abagabo, abagore n’abana' },
+  amasogisi: { icon: Package, caption: 'Amasogisi n’ibyo kwambarwa imbere' },
+  ibindi: { icon: ShoppingBag, caption: 'Amasakoshi n’ibindi bikoresho' },
+  amatelefoni: { icon: Smartphone, caption: 'Ibikoresho by’amatelefoni' },
 };
 
 export const HomePage: React.FC = () => {
@@ -119,7 +103,7 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 space-y-12">
-      {/* Photo-led Editorial Storefront Hero */}
+      {/* Truthful marketplace hero: no sample shop or product photography */}
       <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
         <div className="grid items-stretch lg:grid-cols-12">
           <div className="imigongo-surface flex flex-col justify-center p-6 sm:p-10 lg:col-span-6">
@@ -127,17 +111,17 @@ export const HomePage: React.FC = () => {
               Abacuruzi bo mu Rwanda · Nta komisiyo
             </p>
             <h1 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-[#1B1F23] sm:text-4xl text-balance">
-              Imyambaro, inkweto n'ibyo kwambara byizewe i Kigali.
+              Imyambaro, inkweto n'ibyo kwambara byo mu Rwanda.
             </h1>
-            <p className="mt-3 text-sm sm:text-base leading-relaxed text-slate-600 max-w-lg">
-              Reba ibiri mu bubiko ubu, ibiciro by'ukuri n'imibare (sizes), ushyire mu gare hanyuma
-              uvugane n'umucuruzi kuri WhatsApp.
+            <p className="mt-3 max-w-lg text-sm leading-relaxed text-slate-600 sm:text-base">
+              Shakisha ibicuruzwa byashyizweho n’abacuruzi nyirizina, urebe ibiciro n’amafoto
+              yabo, hanyuma muvugane kuri WhatsApp.
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={() => navigate('/shakisha')}
-                className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#08553D] transition-colors"
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#08553D]"
               >
                 <span>Reba ibicuruzwa byose</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -148,25 +132,29 @@ export const HomePage: React.FC = () => {
                   e.preventDefault();
                   navigate('/abacuruzi');
                 }}
-                className="inline-flex min-h-[44px] items-center rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-[#1B1F23] hover:border-[#0B6E4F] transition-colors"
+                className="inline-flex min-h-[44px] items-center rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-[#1B1F23] transition-colors hover:border-[#0B6E4F]"
               >
                 {RW.sell_on_platform}
               </a>
             </div>
           </div>
-          <div className="relative min-h-[240px] lg:col-span-6">
-            <img
-              src={HERO_IMG}
-              alt="Idaraza ry'iduka ry'imyambaro n'inkweto i Kigali"
-              referrerPolicy="no-referrer"
-              className="h-full w-full object-cover"
-            />
+          <div className="imigongo-surface relative flex min-h-[240px] items-center justify-center p-8 lg:col-span-6">
+            <div className="flex max-w-sm flex-col items-center text-center">
+              <IsokoMark className="h-24 w-24" />
+              <h2 className="mt-4 font-display text-lg font-bold text-[#0B6E4F]">
+                Ibicuruzwa by’ukuri. Amaduka nyakuri.
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                Nta bicuruzwa bya demo. Amafoto y’ibicuruzwa ni ayashyizweho n’abacuruzi.
+              </p>
+              <RwandanGeometricPattern className="mt-5 h-3 w-full opacity-75" />
+            </div>
           </div>
         </div>
-        <RwandanGeometricPattern className="h-2.5 w-full opacity-70 bg-white" />
+        <RwandanGeometricPattern className="h-2.5 w-full bg-white opacity-70" />
       </section>
 
-      {/* Photo-led Category Artwork Cards */}
+      {/* Category cards use icons and Imigongo, not illustrative product photos */}
       <section aria-labelledby="cat-heading">
         <div className="flex items-baseline justify-between gap-4">
           <h2 id="cat-heading" className="font-display text-lg font-bold text-[#1B1F23]">
@@ -183,9 +171,10 @@ export const HomePage: React.FC = () => {
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
           {topCategories.map((cat) => {
             const art = CATEGORY_ARTWORK[cat.slug] ?? {
-              img: HERO_IMG,
-              caption: 'Ibicuruzwa byatoranyijwe',
+              icon: Package,
+              caption: 'Ibicuruzwa byo muri iki cyiciro',
             };
+            const CategoryIcon = art.icon;
             const itemCount = categoryCounts.get(cat.slug) ?? 0;
             return (
               <button
@@ -194,18 +183,16 @@ export const HomePage: React.FC = () => {
                 onClick={() => navigate(`/c/${cat.slug}`)}
                 className="group overflow-hidden rounded-2xl border border-slate-200 bg-white text-left transition-all hover:-translate-y-0.5 hover:border-[#0B6E4F] hover:shadow-md"
               >
-                <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#F1F6F3]">
-                  <img
-                    src={art.img}
-                    alt={cat.name_rw}
-                    loading="lazy"
-                    referrerPolicy="no-referrer"
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                <div className="imigongo-surface relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden">
+                  <CategoryIcon
+                    className="h-12 w-12 text-[#0B6E4F] transition-transform duration-300 group-hover:scale-110"
+                    aria-hidden="true"
                   />
+                  <RwandanGeometricPattern className="absolute bottom-0 left-0 h-2 w-full opacity-60" />
                 </div>
                 <div className="p-3.5">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-display text-sm font-bold text-[#1B1F23] leading-snug">
+                    <span className="font-display text-sm font-bold leading-snug text-[#1B1F23]">
                       {cat.name_rw}
                     </span>
                     <ArrowRight
@@ -296,17 +283,25 @@ export const HomePage: React.FC = () => {
                 className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:-translate-y-0.5 hover:border-[#0B6E4F] hover:shadow-md"
               >
                 <div className="relative h-24 w-full overflow-hidden bg-[#F1F6F3]">
-                  <img
-                    src={shop.cover_path || HERO_IMG}
-                    alt={shop.name}
-                    loading="lazy"
-                    referrerPolicy="no-referrer"
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                  <div
-                    aria-hidden="true"
-                    className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent"
-                  />
+                  {shop.cover_path ? (
+                    <>
+                      <img
+                        src={shop.cover_path}
+                        alt={shop.name}
+                        loading="lazy"
+                        referrerPolicy="no-referrer"
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent"
+                      />
+                    </>
+                  ) : (
+                    <div className="imigongo-surface flex h-full w-full items-center justify-center">
+                      <Store className="h-9 w-9 text-[#0B6E4F]" aria-hidden="true" />
+                    </div>
+                  )}
                 </div>
                 <div className="relative px-4 pb-4 pt-0">
                   <div className="-mt-6 flex items-end justify-between gap-3">
@@ -379,11 +374,32 @@ export const HomePage: React.FC = () => {
           </span>
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:gap-5">
-          {activeCatalog.slice(0, visibleCount).map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {activeCatalog.length > 0 ? (
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:gap-5">
+            {activeCatalog.slice(0, visibleCount).map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="imigongo-surface mt-4 rounded-2xl border border-slate-200 p-7 text-center sm:p-10">
+            <Package className="mx-auto h-10 w-10 text-[#0B6E4F]" aria-hidden="true" />
+            <h3 className="mt-3 font-display text-base font-bold text-[#1B1F23]">
+              Nta bicuruzwa birashyirwaho.
+            </h3>
+            <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-slate-600">
+              Isoko ntigaragaza ibicuruzwa by’igerageza. Abacuruzi bazashyiraho ibicuruzwa
+              byabo n’amafoto babifitiye uburenganzira.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate('/abacuruzi')}
+              className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white hover:bg-[#08553D]"
+            >
+              <Store className="h-4 w-4" aria-hidden="true" />
+              Fungura iduka ryawe
+            </button>
+          </div>
+        )}
 
         {visibleCount < activeCatalog.length && (
           <div className="mt-8 text-center">
