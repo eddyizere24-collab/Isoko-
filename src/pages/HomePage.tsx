@@ -10,7 +10,7 @@ import {
   Store,
   Tag,
 } from 'lucide-react';
-import { ImigongoHeroCorner, IsokoMark, IsokoVerifiedSeal } from '../components/IsokoLogo';
+import { ImigongoHeroCorner, IsokoMark, IsokoVerifiedSeal, RwandanGeometricPattern } from '../components/IsokoLogo';
 import { ProductCard } from '../components/ProductCard';
 import { PromoCarousel } from '../components/PromoCarousel';
 import { useT } from '../context/LangContext';
@@ -94,58 +94,53 @@ export const HomePage: React.FC<HomePageProps> = () => {
   const hasCatalog = activeCatalog.length > 0;
 
   return (
-    <main className="mx-auto max-w-7xl space-y-4 bg-[#F7F5F0] pb-6">
-      {/* Compact editorial hero. The mark is the colour-rich brand focal point;
-          the surrounding interface stays calm and deliberately restrained. */}
+    <main className="mx-auto max-w-7xl space-y-4 bg-[#FAFAF7] pb-6">
       <section className="px-2 pt-2 sm:px-6">
-        <div className="relative flex min-h-[76px] items-center justify-between overflow-hidden rounded-xl border border-[#E3E0D8] bg-[#FFFEFB] px-3 py-2.5 sm:min-h-[84px] sm:px-5">
-          <div className="relative z-10 min-w-0 flex-1 pr-2">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#BD594A]">
-              ISOKO · RWANDA
-            </p>
-            <h1 className="mt-0.5 max-w-[270px] text-[18px] font-semibold leading-[23px] text-[#202724] sm:max-w-none sm:text-[20px] sm:leading-[26px]">
-              {t('hero_title')}
-            </h1>
-            <p className="mt-0.5 max-w-[280px] text-[10.5px] leading-[15px] text-[#68716D]">
-              {t('hero_subtitle')}
-            </p>
+        <div className="relative overflow-hidden rounded-2xl border border-[#DCE4DE] bg-white shadow-sm">
+          <RwandanGeometricPattern size="header" />
+          <div className="relative flex min-h-[176px] items-center justify-between gap-3 px-4 py-4 sm:min-h-[200px] sm:px-7 sm:py-6">
+            <div className="relative z-10 min-w-0 max-w-[78%]">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#C0392B]">
+                ISOKO · RWANDA
+              </p>
+              <h1 className="mt-2 max-w-[620px] text-[23px] font-extrabold leading-[1.12] tracking-tight text-[#1A1F1C] sm:text-[32px]">
+                {t('hero_title')}
+              </h1>
+              <p className="mt-2 max-w-[520px] text-[13px] leading-[19px] text-[#4B544F] sm:text-[15px] sm:leading-6">
+                {t('hero_subtitle')}
+              </p>
+              <a
+                href="/abacuruzi"
+                onClick={(event) => {
+                  event.preventDefault();
+                  navigate('/abacuruzi');
+                }}
+                className="mt-4 inline-flex min-h-[48px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#07543C]"
+              >
+                <Store className="h-4 w-4" aria-hidden="true" />
+                <span>{t('register_seller')}</span>
+              </a>
+            </div>
+            <div className="relative z-10 mr-1 flex shrink-0 flex-col items-center gap-1 sm:mr-3">
+              <IsokoMark className="h-12 w-12 sm:h-16 sm:w-16" />
+              <span className="text-[9px] font-bold tracking-[0.12em] text-[#4B544F]">ISOKO</span>
+            </div>
+            <ImigongoHeroCorner className="absolute -right-2 -bottom-8 h-36 w-36 opacity-75 sm:h-52 sm:w-52" />
           </div>
-          <div className="relative z-10 ml-2 flex shrink-0 flex-col items-center gap-1">
-            <IsokoMark className="h-9 w-9 sm:h-11 sm:w-11" />
-            <span className="hidden text-[8px] font-medium tracking-[0.08em] text-[#68716D] sm:block">
-              ISOKO
-            </span>
-          </div>
-          <ImigongoHeroCorner className="pointer-events-none absolute -right-1 -top-1 opacity-80" />
-        </div>
-        <div className="mt-2 flex items-center justify-between gap-2 px-1">
-          <span className="text-[10.5px] text-[#68716D]">
-            {t('shops')} · WhatsApp
-          </span>
-          <a
-            href="/abacuruzi"
-            onClick={(event) => {
-              event.preventDefault();
-              navigate('/abacuruzi');
-            }}
-            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-[#D8DED7] bg-white px-3 text-[10.5px] font-semibold text-[#214E43] transition-colors hover:bg-[#E9F0EB]"
-          >
-            <Store className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>{t('register_seller')}</span>
-          </a>
+          <RwandanGeometricPattern size="footer" />
         </div>
       </section>
 
       {/* Compact visual category rail: real category definitions, never demo products. */}
       <section aria-labelledby="home-categories-heading" className="px-2 sm:px-6">
         <div className="mb-2 flex items-center justify-between px-1">
-          <h2 id="home-categories-heading" className="text-[14px] font-semibold text-[#202724]">
+          <h2 id="home-categories-heading" className="text-[14px] font-semibold text-[#1A1F1C]">
             {t('categories')}
           </h2>
           <button
             type="button"
             onClick={() => navigate('/ibyiciro')}
-            className="inline-flex min-h-[32px] items-center gap-0.5 text-[10.5px] font-semibold text-[#214E43] hover:underline"
+            className="inline-flex min-h-[32px] items-center gap-0.5 text-[10.5px] font-semibold text-[#0B6E4F] hover:underline"
           >
             <span>{t('all_categories')}</span>
             <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -159,13 +154,13 @@ export const HomePage: React.FC<HomePageProps> = () => {
                 key={category.id}
                 type="button"
                 onClick={() => navigate(`/c/${category.slug}`)}
-                className="flex min-h-[70px] w-[78px] shrink-0 flex-col items-center justify-center gap-1.5 rounded-lg border border-[#E3E0D8] bg-[#FFFEFB] px-1.5 py-2 text-center transition-colors hover:border-[#214E43]/45 hover:bg-white"
+                className="flex min-h-[92px] w-[96px] shrink-0 flex-col items-center justify-center gap-2 rounded-xl border border-[#DCE4DE] bg-white px-2 py-2.5 text-center transition-colors hover:border-[#0B6E4F] hover:bg-white"
                 aria-label={category.name_rw}
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#EEECE6] text-[#505A55]">
-                  <Icon className="h-[17px] w-[17px]" strokeWidth={1.65} aria-hidden="true" />
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E6F3ED] text-[#0B6E4F]">
+                  <Icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
                 </span>
-                <span className="max-w-full text-[9.5px] font-medium leading-[12px] text-[#333D38] line-clamp-2">
+                <span className="w-full whitespace-normal break-words text-[11px] font-semibold leading-[14px] text-[#1A1F1C]">
                   {category.name_rw}
                 </span>
               </button>
@@ -177,14 +172,14 @@ export const HomePage: React.FC<HomePageProps> = () => {
       {/* Products never block the rest of the page. Only this area loads. */}
       <section aria-labelledby="new-arrivals-heading" className="px-2 sm:px-6">
         <div className="mb-2 flex items-center justify-between gap-2 px-1">
-          <h2 id="new-arrivals-heading" className="text-[14px] font-semibold leading-tight text-[#202724]">
+          <h2 id="new-arrivals-heading" className="text-[14px] font-semibold leading-tight text-[#1A1F1C]">
             {t('new_arrivals')}
           </h2>
           {hasCatalog && (
             <button
               type="button"
               onClick={() => navigate('/shakisha?sort=newest')}
-              className="inline-flex min-h-[32px] items-center gap-0.5 text-[10.5px] font-semibold text-[#214E43] hover:underline"
+              className="inline-flex min-h-[32px] items-center gap-0.5 text-[10.5px] font-semibold text-[#0B6E4F] hover:underline"
             >
               <span>{t('see_all')}</span>
               <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -197,20 +192,20 @@ export const HomePage: React.FC<HomePageProps> = () => {
             {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={index}
-                className="overflow-hidden rounded-lg border border-[#E3E0D8] bg-[#FFFEFB]"
+                className="overflow-hidden rounded-lg border border-[#DCE4DE] bg-white"
               >
-                <div className="aspect-square animate-pulse bg-[#EEECE6]" />
+                <div className="aspect-square animate-pulse bg-[#F2F5F2]" />
                 <div className="space-y-1.5 p-1.5">
-                  <div className="h-3 w-2/3 animate-pulse rounded bg-[#EEECE6]" />
-                  <div className="h-2.5 w-full animate-pulse rounded bg-[#EEECE6]" />
-                  <div className="h-2 w-1/2 animate-pulse rounded bg-[#EEECE6]" />
+                  <div className="h-3 w-2/3 animate-pulse rounded bg-[#F2F5F2]" />
+                  <div className="h-2.5 w-full animate-pulse rounded bg-[#F2F5F2]" />
+                  <div className="h-2 w-1/2 animate-pulse rounded bg-[#F2F5F2]" />
                 </div>
               </div>
             ))}
           </div>
         ) : error ? (
-          <div className="rounded-xl border border-[#E6D3CE] bg-[#FFFEFB] px-4 py-5 text-center">
-            <p className="text-[12px] font-medium text-[#6E4038]">{error}</p>
+          <div className="rounded-xl border border-[#E8BDB7] bg-white px-4 py-5 text-center">
+            <p className="text-[12px] font-medium text-[#982C22]">{error}</p>
             <button
               type="button"
               onClick={refreshBootstrap}
@@ -226,14 +221,14 @@ export const HomePage: React.FC<HomePageProps> = () => {
             ))}
           </div>
         ) : (
-          <div className="rounded-xl border border-[#E3E0D8] bg-[#FFFEFB] px-4 py-5 text-center sm:py-6">
-            <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#EEECE6] text-[#68716D]">
+          <div className="rounded-xl border border-[#DCE4DE] bg-white px-4 py-5 text-center sm:py-6">
+            <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#F2F5F2] text-[#4B544F]">
               <Package className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />
             </span>
-            <h3 className="mt-2 text-[13px] font-semibold text-[#202724]">
+            <h3 className="mt-2 text-[13px] font-semibold text-[#1A1F1C]">
               Nta bicuruzwa birashyirwaho ubu
             </h3>
-            <p className="mx-auto mt-1 max-w-sm text-[10.5px] leading-[15px] text-[#68716D]">
+            <p className="mx-auto mt-1 max-w-sm text-[10.5px] leading-[15px] text-[#4B544F]">
               Ibicuruzwa bigaragara hano iyo abacuruzi babyishyize kuri Isoko. Nta bicuruzwa by’icyitegererezo dushyiramo.
             </p>
             <button
@@ -254,10 +249,10 @@ export const HomePage: React.FC<HomePageProps> = () => {
           <button
             type="button"
             onClick={() => navigate('/shakisha?discounted=1')}
-            className="flex min-h-[54px] items-center justify-between gap-2 rounded-lg border border-[#E5DCD6] bg-[#FFFEFB] px-3 py-2 text-left transition-colors hover:border-[#BD594A]/50"
+            className="flex min-h-[54px] items-center justify-between gap-2 rounded-lg border border-[#E5DCD6] bg-white px-3 py-2 text-left transition-colors hover:border-[#BD594A]/50"
           >
             <div className="min-w-0">
-              <p className="truncate text-[11px] font-semibold leading-snug text-[#333D38]">
+              <p className="truncate text-[11px] font-semibold leading-snug text-[#1A1F1C]">
                 {t('discounted')}
               </p>
               <p className="mt-0.5 text-[9.5px] text-[#8F493F] tabular-nums">
@@ -270,17 +265,17 @@ export const HomePage: React.FC<HomePageProps> = () => {
           <button
             type="button"
             onClick={() => navigate('/abacuruzi')}
-            className="flex min-h-[54px] items-center justify-between gap-2 rounded-lg border border-[#D8DED7] bg-[#FFFEFB] px-3 py-2 text-left transition-colors hover:border-[#214E43]/50"
+            className="flex min-h-[54px] items-center justify-between gap-2 rounded-lg border border-[#D8DED7] bg-white px-3 py-2 text-left transition-colors hover:border-[#214E43]/50"
           >
             <div className="min-w-0">
-              <p className="truncate text-[11px] font-semibold leading-snug text-[#333D38]">
+              <p className="truncate text-[11px] font-semibold leading-snug text-[#1A1F1C]">
                 {t('register_seller')}
               </p>
-              <p className="mt-0.5 text-[9.5px] text-[#68716D] tabular-nums">
+              <p className="mt-0.5 text-[9.5px] text-[#4B544F] tabular-nums">
                 {shops.length} {t('shops')}
               </p>
             </div>
-            <ShieldCheck className="h-4 w-4 shrink-0 text-[#214E43]" strokeWidth={1.65} aria-hidden="true" />
+            <ShieldCheck className="h-4 w-4 shrink-0 text-[#0B6E4F]" strokeWidth={1.65} aria-hidden="true" />
           </button>
         </div>
       </section>
@@ -330,10 +325,10 @@ export const HomePage: React.FC<HomePageProps> = () => {
       {shops.length > 0 && (
         <section
           aria-labelledby="shops-heading"
-          className="border-y border-[#E3E0D8] bg-[#FFFEFB] px-2 py-3 sm:px-6"
+          className="border-y border-[#DCE4DE] bg-white px-2 py-3 sm:px-6"
         >
           <div className="mb-2 flex items-center justify-between gap-2">
-            <h2 id="shops-heading" className="text-[14px] font-semibold text-[#202724]">
+            <h2 id="shops-heading" className="text-[14px] font-semibold text-[#1A1F1C]">
               {t('verified_shops_title')}
             </h2>
           </div>
@@ -348,28 +343,28 @@ export const HomePage: React.FC<HomePageProps> = () => {
                     event.preventDefault();
                     navigate(`/i/${shop.slug}`);
                   }}
-                  className="flex w-[164px] shrink-0 flex-col rounded-lg border border-[#E3E0D8] bg-[#F7F5F0] p-2.5 transition-colors hover:border-[#214E43]/45 sm:w-auto"
+                  className="flex w-[164px] shrink-0 flex-col rounded-lg border border-[#DCE4DE] bg-[#F7F5F0] p-2.5 transition-colors hover:border-[#214E43]/45 sm:w-auto"
                 >
                   <div className="flex items-center gap-2">
                     {shop.logo_path ? (
                       <img
                         src={shop.logo_path}
                         alt={shop.name}
-                        className="h-9 w-9 shrink-0 rounded-full border border-[#E3E0D8] bg-white object-cover"
+                        className="h-9 w-9 shrink-0 rounded-full border border-[#DCE4DE] bg-white object-cover"
                       />
                     ) : (
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#EEECE6] text-[#505A55]">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F2F5F2] text-[#505A55]">
                         <Store className="h-4 w-4" aria-hidden="true" />
                       </div>
                     )}
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1">
-                        <h3 className="truncate text-[11.5px] font-semibold text-[#202724]">
+                        <h3 className="truncate text-[11.5px] font-semibold text-[#1A1F1C]">
                           {shop.name}
                         </h3>
                         {verified && <IsokoVerifiedSeal className="h-3.5 w-3.5 shrink-0" />}
                       </div>
-                      <p className="truncate text-[10px] text-[#68716D] tabular-nums">
+                      <p className="truncate text-[10px] text-[#4B544F] tabular-nums">
                         {shop.district_name} · {shop.active_product_count ?? 0}
                       </p>
                     </div>
@@ -384,10 +379,10 @@ export const HomePage: React.FC<HomePageProps> = () => {
       {hasCatalog && (
         <section aria-labelledby="all-products-heading" className="px-2 sm:px-6">
           <div className="mb-2 flex items-center justify-between gap-2 px-1">
-            <h2 id="all-products-heading" className="text-[14px] font-semibold text-[#202724]">
+            <h2 id="all-products-heading" className="text-[14px] font-semibold text-[#1A1F1C]">
               {t('all_products_title')}
             </h2>
-            <span className="text-[10.5px] text-[#68716D] tabular-nums">
+            <span className="text-[10.5px] text-[#4B544F] tabular-nums">
               {activeCatalog.length}
             </span>
           </div>
@@ -403,7 +398,7 @@ export const HomePage: React.FC<HomePageProps> = () => {
               <button
                 type="button"
                 onClick={() => setVisibleCount((count) => count + 21)}
-                className="min-h-[40px] rounded-full border border-[#C9D2CB] bg-[#FFFEFB] px-5 text-[11px] font-semibold text-[#214E43] transition-colors hover:bg-[#E9F0EB]"
+                className="min-h-[40px] rounded-full border border-[#C9D2CB] bg-white px-5 text-[11px] font-semibold text-[#0B6E4F] transition-colors hover:bg-[#E9F0EB]"
               >
                 {t('load_more')}
               </button>
@@ -430,11 +425,11 @@ const DenseShelfSection: React.FC<DenseShelfSectionProps> = ({
 }) => (
   <section className="px-2 sm:px-6">
     <div className="mb-2 flex items-center justify-between gap-2 px-1">
-      <h2 className="truncate text-[14px] font-semibold leading-tight text-[#202724]">{title}</h2>
+      <h2 className="truncate text-[14px] font-semibold leading-tight text-[#1A1F1C]">{title}</h2>
       <button
         type="button"
         onClick={onSeeAll}
-        className="inline-flex min-h-[32px] shrink-0 items-center gap-0.5 text-[10.5px] font-semibold text-[#214E43] hover:underline"
+        className="inline-flex min-h-[32px] shrink-0 items-center gap-0.5 text-[10.5px] font-semibold text-[#0B6E4F] hover:underline"
       >
         <span>{seeAllLabel}</span>
         <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
