@@ -70,7 +70,7 @@ test('capture Android mobile pages at 360/412 CSS pixels with DPR 2', async ({ b
       const page = await context.newPage();
       await page.goto(BASE_URL + routePath, { waitUntil: 'domcontentloaded' });
       await page.waitForLoadState('networkidle').catch(() => undefined);
-      await page.evaluate(() => document.fonts.ready);
+      await page.evaluate(async () => { await document.fonts.ready; });
       await page.waitForTimeout(250);
       const target = path.join(outputDir, `${name}-${viewport.label}.png`);
       await page.screenshot({ path: target, animations: 'disabled' });
