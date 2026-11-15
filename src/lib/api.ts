@@ -1,3 +1,4 @@
+import { getPrivateRequestSignal } from './authLifecycle';
 import type {
   AuditLogEntry, MarketplaceSettings, PriceHistoryEntry, Product, Profile,
   PromoCampaign, Report, SellerKyc, Shop, Synonym,
@@ -188,6 +189,7 @@ async function uploadThroughFunction(dataUrl: string, kind: string): Promise<{ k
     method: 'POST',
     headers: { authorization: 'Bearer ' + token, 'content-type': 'application/json' },
     body: JSON.stringify({ dataUrl, kind }),
+    signal: getPrivateRequestSignal(),
   });
   const body = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(body.error ?? 'Ifoto ntiyoherejwe. Ongera ugerageze.');
