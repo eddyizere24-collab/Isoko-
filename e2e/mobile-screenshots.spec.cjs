@@ -94,18 +94,22 @@ test('capture Android mobile pages at 360/412 CSS pixels with DPR 2', async ({ b
         );
         await brandPage.locator('img').evaluate((img) => img.decode());
         const target = path.join(outputDir, filename);
-        await brandPage.screenshot({ path: target, animations: 'disabled' });
+        await brandPage.locator('img').screenshot({ path: target, animations: 'disabled' });
         expect(fs.statSync(target).size, filename).toBeLessThanOrEqual(400 * 1024);
       }
       await brandPage.goto(BASE_URL + '/', { waitUntil: 'domcontentloaded' });
+      const patternPath = path.join(outputDir, 'imigongo-360.png');
       await brandPage.locator('.imigongo-header-strip').screenshot({
-        path: path.join(outputDir, 'imigongo-360.png'),
+        path: patternPath,
         animations: 'disabled',
       });
+      expect(fs.statSync(patternPath).size, 'imigongo-360.png').toBeLessThanOrEqual(400 * 1024);
+      const logoPath = path.join(outputDir, 'logo-360.png');
       await brandPage.locator('header a').first().screenshot({
-        path: path.join(outputDir, 'logo-360.png'),
+        path: logoPath,
         animations: 'disabled',
       });
+      expect(fs.statSync(logoPath).size, 'logo-360.png').toBeLessThanOrEqual(400 * 1024);
       await brandPage.close();
     }
 
