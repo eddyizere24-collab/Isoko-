@@ -1,9 +1,46 @@
 const { test, expect } = require('@playwright/test');
 
+const EMPTY_CATALOGUE = {
+  categories: [],
+  areas: [],
+  synonyms: [],
+  campaigns: [],
+  settings: {},
+  shops: [],
+  products: [],
+};
+
+const CORS_HEADERS = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-headers': '*',
+  'access-control-allow-methods': 'GET,HEAD,OPTIONS',
+};
+
 test.beforeEach(async ({ page }) => {
-  // These tests exercise the public UI only. Block all Neon endpoints so CI
-  // cannot read or write Setup/Production data and no real account is needed.
-  await page.route(/\.aws\.neon\.tech\//, (route) => route.abort());
+  // Keep screenshots and copy deterministic: Kinyarwanda is ISOKO's primary UI language.
+  await page.addInitScript(() => window.localStorage.setItem('isoko.lang', 'rw'));
+
+  // Supply only an empty public catalogue fixture. All other Neon traffic is
+  // blocked, so CI never reads/writes Setup or Production and needs no account.
+  await page.route(/\.aws\.neon\.tech\//, async (route) => {
+    const request = route.request();
+    const url = new URL(request.url());
+    if (
+      url.hostname.includes('.apirest.') &&
+      url.pathname.endsWith('/v_public_bootstrap')
+    ) {
+      if (request.method() === 'OPTIONS') {
+        return route.fulfill({ status: 204, headers: CORS_HEADERS });
+      }
+      return route.fulfill({
+        status: 200,
+        headers: { ...CORS_HEADERS, 'content-type': 'application/json' },
+        body: JSON.stringify({ payload: EMPTY_CATALOGUE }),
+      });
+    }
+    return route.abort();
+  });
+
   page.on('pageerror', (error) => console.log('Browser page error:', error.message));
 });
 
