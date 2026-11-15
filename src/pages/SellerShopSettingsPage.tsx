@@ -272,16 +272,102 @@ export const SellerShopSettingsPage: React.FC = () => {
         onSubmit={handleSave}
         className="mt-5 rounded-lg border border-[#E5E7EB] bg-white p-6 space-y-4"
       >
-        <section className="rounded-2xl border border-[#0B6E4F]/20 bg-[#F7FAF8] p-4 sm:p-5 space-y-4">
-          <div><h2 className="text-base font-bold text-[#1B1F23]">Umwirondoro wawe n’isura y’iduka</h2><p className="mt-1 text-xs leading-5 text-slate-600">Amafoto n’amakuru ubika ni byo bizagaragara ku rubuga rw’iduka ryawe.</p></div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div><p className="text-xs font-semibold text-slate-700">Ifoto yawe (profile)</p><div className="mt-2 flex items-center gap-3">{avatarPath?<img src={avatarPath} alt="Ifoto yawe" className="h-16 w-16 rounded-full border border-slate-200 object-cover"/>:<div className="grid h-16 w-16 place-items-center rounded-full bg-white text-2xl font-bold text-[#0B6E4F]">{fullName.slice(0,1).toUpperCase()||'U'}</div>}<label className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 text-xs font-semibold text-[#1B1F23]"><ImagePlus className="h-4 w-4"/> Hitamo ifoto<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={Boolean(uploading)} onChange={(e)=>{void uploadBrandImage(e.currentTarget.files?.[0],'profile',setAvatarPath);e.currentTarget.value='';}}/></label></div></div>
-            <div><p className="text-xs font-semibold text-slate-700">Logo y’iduka</p><div className="mt-2 flex items-center gap-3">{logoPath?<img src={logoPath} alt="Logo y’iduka" className="h-16 w-16 rounded-2xl border border-slate-200 bg-white object-cover"/>:<div className="grid h-16 w-16 place-items-center rounded-2xl bg-white text-xs font-bold text-[#0B6E4F]">LOGO</div>}<label className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 text-xs font-semibold text-[#1B1F23]"><ImagePlus className="h-4 w-4"/> Hitamo logo<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={Boolean(uploading)} onChange={(e)=>{void uploadBrandImage(e.currentTarget.files?.[0],'shop',setLogoPath);e.currentTarget.value='';}}/></label></div></div>
-            <div><p className="text-xs font-semibold text-slate-700">Ifoto yo hejuru (cover)</p>{coverPath?<img src={coverPath} alt="Ifoto yo hejuru y’iduka" className="mt-2 h-16 w-full rounded-xl border border-slate-200 object-cover"/>:<div className="imigongo-surface mt-2 h-16 rounded-xl border border-slate-200"/>}<label className="mt-2 inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 text-xs font-semibold text-[#1B1F23]"><ImagePlus className="h-4 w-4"/> Hitamo cover<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={Boolean(uploading)} onChange={(e)=>{void uploadBrandImage(e.currentTarget.files?.[0],'shop',setCoverPath);e.currentTarget.value='';}}/></label></div>
+        <section className="overflow-hidden rounded-xl border border-[#E3E0D8] bg-[#FFFEFB]">
+          <div className="relative h-28 bg-[#EEECE6] sm:h-36">
+            {coverPath ? (
+              <img src={coverPath} alt="Ifoto yo hejuru y’iduka" className="h-full w-full object-cover" />
+            ) : (
+              <div className="imigongo-surface h-full w-full" />
+            )}
+            <label className="absolute bottom-2 right-2 inline-flex min-h-9 cursor-pointer items-center gap-2 rounded-full border border-[#E3E0D8] bg-[#FFFEFB]/95 px-3 text-[10.5px] font-semibold text-[#202724]">
+              <ImagePlus className="h-3.5 w-3.5 text-[#214E43]" aria-hidden="true" />
+              Hindura cover
+              <input
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                disabled={Boolean(uploading)}
+                onChange={(e) => {
+                  const file = e.currentTarget.files?.[0];
+                  e.currentTarget.value = '';
+                  void uploadBrandImage(file, 'shop', setCoverPath);
+                }}
+              />
+            </label>
           </div>
-          {uploading&&<p role="status" className="text-xs font-medium text-[#0B6E4F]">Turimo kohereza ifoto...</p>}
-          <div><label htmlFor="seller-profile-name" className="block text-sm font-semibold text-[#1B1F23]">Amazina agaragara ku iduka</label><input id="seller-profile-name" value={fullName} onChange={(e)=>setFullName(e.target.value)} maxLength={120} className="mt-1.5 min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm"/></div>
-          <div><div className="flex items-center justify-between"><label htmlFor="seller-profile-bio" className="text-sm font-semibold text-[#1B1F23]">Ibyerekeye wowe</label><span className="text-xs tabular-nums text-slate-500">{profileBio.length}/2500</span></div><textarea id="seller-profile-bio" rows={3} maxLength={2500} value={profileBio} onChange={(e)=>setProfileBio(e.target.value)} placeholder="Andika uwo uri we, ibyo ukunda n’impamvu abakiriya bakugirira icyizere..." className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white p-3 text-sm"/></div>
+
+          <div className="px-3 pb-4 sm:px-4">
+            <div className="-mt-7 flex flex-wrap items-end gap-3">
+              <div className="relative shrink-0">
+                {avatarPath ? (
+                  <img src={avatarPath} alt="Ifoto ya profile yawe" className="h-16 w-16 rounded-full border-[3px] border-[#FFFEFB] bg-white object-cover sm:h-[72px] sm:w-[72px]" />
+                ) : (
+                  <div className="grid h-16 w-16 place-items-center rounded-full border-[3px] border-[#FFFEFB] bg-[#E9F0EB] text-xl font-semibold text-[#214E43] sm:h-[72px] sm:w-[72px]">
+                    {fullName.slice(0, 1).toUpperCase() || 'U'}
+                  </div>
+                )}
+                <label aria-label="Hindura ifoto ya profile" className="absolute bottom-0 right-0 grid h-7 w-7 cursor-pointer place-items-center rounded-full border-2 border-[#FFFEFB] bg-[#214E43] text-white">
+                  <ImagePlus className="h-3.5 w-3.5" aria-hidden="true" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="sr-only"
+                    disabled={Boolean(uploading)}
+                    onChange={(e) => {
+                      const file = e.currentTarget.files?.[0];
+                      e.currentTarget.value = '';
+                      void uploadBrandImage(file, 'profile', setAvatarPath);
+                    }}
+                  />
+                </label>
+              </div>
+
+              <div className="min-w-[140px] flex-1 pb-1">
+                <p className="text-[10px] font-semibold tracking-[0.08em] text-[#8F493F]">PROFILE PHOTO</p>
+                <p className="mt-1 text-[11px] leading-relaxed text-[#68716D]">Ifoto igaragaza umucuruzi uri inyuma y’iduka.</p>
+              </div>
+
+              <div className="flex items-center gap-2 rounded-lg border border-[#E3E0D8] bg-[#F7F5F0] p-2">
+                {logoPath ? (
+                  <img src={logoPath} alt="Logo y’iduka" className="h-10 w-10 rounded-md border border-[#E3E0D8] bg-white object-cover" />
+                ) : (
+                  <div className="grid h-10 w-10 place-items-center rounded-md bg-white text-[9px] font-bold tracking-wide text-[#68716D]">LOGO</div>
+                )}
+                <div>
+                  <p className="text-[10px] font-semibold text-[#202724]">Shop logo</p>
+                  <label className="mt-0.5 inline-flex min-h-7 cursor-pointer items-center text-[10px] font-semibold text-[#214E43] hover:underline">
+                    Hindura
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="sr-only"
+                      disabled={Boolean(uploading)}
+                      onChange={(e) => {
+                        const file = e.currentTarget.files?.[0];
+                        e.currentTarget.value = '';
+                        void uploadBrandImage(file, 'shop', setLogoPath);
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div>
+                <label htmlFor="seller-profile-name" className="block text-[11px] font-semibold text-[#333D38]">Amazina agaragara kuri profile</label>
+                <input id="seller-profile-name" value={fullName} onChange={(e) => setFullName(e.target.value)} maxLength={120} className="mt-1.5 min-h-10 w-full rounded-lg border border-[#D9D6CE] bg-white px-3 text-xs text-[#202724] focus:border-[#214E43] focus:outline-none" />
+              </div>
+              <div>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="seller-profile-bio" className="text-[11px] font-semibold text-[#333D38]">Ibyerekeye wowe (Bio)</label>
+                  <span className="text-[10px] tabular-nums text-[#68716D]">{profileBio.length}/2500</span>
+                </div>
+                <textarea id="seller-profile-bio" rows={3} maxLength={2500} value={profileBio} onChange={(e) => setProfileBio(e.target.value)} placeholder="Andika uwo uri we n’ibyo ukora..." className="mt-1.5 w-full rounded-lg border border-[#D9D6CE] bg-white p-3 text-xs text-[#202724] focus:border-[#214E43] focus:outline-none" />
+              </div>
+            </div>
+          </div>
+          {uploading && <p role="status" className="border-t border-[#E3E0D8] bg-[#F7F5F0] px-3 py-2 text-[10.5px] font-medium text-[#214E43]">Turimo gutunganya no kohereza ifoto...</p>}
         </section>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
