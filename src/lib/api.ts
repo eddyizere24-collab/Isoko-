@@ -539,6 +539,20 @@ export async function updateSellerAvatar(avatarPath:string):Promise<{profile:Pro
   };
 }
 
+export async function updateSellerBrandImage(payload:{kind:'logo'|'cover';path:string}):Promise<{shop:Shop}> {
+  const current=await currentAccount();
+  if(!current.shop) throw new Error('Iduka ryawe ntiriboneka.');
+  const key=payload.path ? storageKey(payload.path) : null;
+  const field=payload.kind==='logo' ? 'logo_key' : 'cover_key';
+  const row=first<any>(dataOf<any>(
+    await neon.from('shops').update({[field]:key})
+      .eq('owner_id',current.profile.id).select('*').maybeSingle(),
+    'Ntibishobotse kubika ifoto y’iduka.'
+  ));
+  if(!row) throw new Error('Ifoto y’iduka ntiyabitswe.');
+  return {shop:mapShop(row)};
+}
+
 export async function updateSellerProfile(payload:Record<string,unknown>):Promise<{profile:Profile}> {
   const current=await currentAccount();
   const fullName=String(payload.fullName??current.profile.full_name??'').trim();
