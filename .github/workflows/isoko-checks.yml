@@ -75,6 +75,14 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/isoko-playwright/node_modules
         run: '"$RUNNER_TEMP/isoko-playwright/node_modules/.bin/playwright" test --config=playwright.config.cjs --workers=1'
 
+      - name: Upload mobile visual QA screenshots
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: isoko-mobile-qa-${{ github.run_id }}
+          path: docs/design/qa/2026-11-16/*.png
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Install pinned Neon Function dependency
         run: npm install --prefix infra/neon/functions/isokoapi --no-save --no-package-lock --ignore-scripts --no-audit --no-fund
 
