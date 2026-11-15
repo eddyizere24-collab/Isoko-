@@ -387,7 +387,7 @@ export const SellerShopSettingsPage: React.FC = () => {
           </div>
           {uploading && <p role="status" className="border-t border-[#E3E0E8] bg-white px-3 py-2 text-[11px] font-medium text-[#0B6E4F]">Turimo kohereza no kubika ifoto...</p>}
           {savedMsg && <p role="status" className="border-t border-[#D7E8DE] bg-white px-3 py-2 text-[11px] font-semibold text-[#0B6E4F]">{savedMsg}</p>}
-          {error && uploading && <p role="alert" className="border-t border-red-200 bg-white px-3 py-2 text-[11px] font-medium text-[#C0392B]">{error}</p>}
+          {error && <p role="alert" className="border-t border-red-200 bg-white px-3 py-2 text-[11px] font-medium text-[#C0392B]">{error}</p>}
         </section>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
