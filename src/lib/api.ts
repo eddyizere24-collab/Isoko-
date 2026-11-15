@@ -1,3 +1,4 @@
+import { getPrivateRequestSignal } from './authLifecycle';
 import type {
   AuditLogEntry, MarketplaceSettings, PriceHistoryEntry, Product, Profile,
   PromoCampaign, Report, SellerKyc, Shop, Synonym,
@@ -188,6 +189,7 @@ async function uploadThroughFunction(dataUrl: string, kind: string): Promise<{ k
     method: 'POST',
     headers: { authorization: 'Bearer ' + token, 'content-type': 'application/json' },
     body: JSON.stringify({ dataUrl, kind }),
+    signal: getPrivateRequestSignal(),
   });
   const body = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(body.error ?? 'Ifoto ntiyoherejwe. Ongera ugerageze.');
@@ -307,6 +309,38 @@ export async function loginAccount(identifier:string,password:string):Promise<{t
   if(result?.error) fail(result.error,'Email cyangwa ijambo ry’ibanga si byo. Konti za Admin za kera ziracyinjira hakoreshejwe nimero.');
   const current=await currentAccount();
   return {...storedSession(current.profile),profile:current.profile,shop:current.shop};
+}
+
+export function supportsAccountPasswordChange(): boolean {
+  return typeof (neon.auth as any).changePassword === 'function';
+}
+
+export async function changeAccountPassword(currentPassword:string,newPassword:string):Promise<void> {
+  if (currentPassword.length < 1) throw new Error('Andika ijambo ry’ibanga ukoresha ubu.');
+  if (newPassword.length < 8) throw new Error('Ijambo ry’ibanga rishya rigomba kugira nibura inyuguti 8.');
+  const changePassword = (neon.auth as any).changePassword;
+  if (typeof changePassword !== 'function') {
+    throw new Error('Guhindura password ako kanya ntibirashyigikirwa n’iyi verisiyo ya Neon Auth. Koresha uburyo bwo koherezwa link yo kuyihindura.');
+  }
+  const result = await changePassword.call(neon.auth, {
+    currentPassword,
+    newPassword,
+    revokeOtherSessions: false,
+  });
+  if (result?.error) fail(result.error, 'Ntibishobotse guhindura password. Reba password yawe usanzwe ukoresha.');
+}
+
+export function supportsSignOutOtherDevices(): boolean {
+  return typeof (neon.auth as any).revokeOtherSessions === 'function';
+}
+
+export async function signOutOtherDevices(): Promise<void> {
+  const revokeOtherSessions = (neon.auth as any).revokeOtherSessions;
+  if (typeof revokeOtherSessions !== 'function') {
+    throw new Error('Neon Auth iri muri iyi verisiyo ntigaragaza uburyo bwo gusohora izindi devices.');
+  }
+  const result = await revokeOtherSessions.call(neon.auth);
+  if (result?.error) fail(result.error, 'Ntibishobotse gusohora izindi devices.');
 }
 
 export async function requestAccountPasswordReset(email:string,redirectTo:string):Promise<void> {

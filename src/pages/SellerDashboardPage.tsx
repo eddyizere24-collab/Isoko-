@@ -7,6 +7,7 @@ import {
   Copy,
   Eye,
   MessageCircle,
+  LogOut,
   Package,
   Plus,
   QrCode,
@@ -24,7 +25,7 @@ import { formatRwfCurrency } from '../lib/whatsapp';
 import type { Product, Profile, Shop } from '../types/marketplace';
 
 export const SellerDashboardPage: React.FC = () => {
-  const { navigate, authSession, refreshBootstrap } = useMarketplace();
+  const { navigate, authSession, refreshBootstrap, logout } = useMarketplace();
   const { t } = useT();
   const [data, setData] = useState<{
     profile: Pick<Profile, 'id' | 'full_name' | 'status' | 'status_reason' | 'email' | 'email_verified' | 'identity_status' | 'avatar_path' | 'bio'>;
@@ -39,6 +40,8 @@ export const SellerDashboardPage: React.FC = () => {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [qrOpen, setQrOpen] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
+  const [logoutBusy, setLogoutBusy] = useState(false);
+  const [logoutError, setLogoutError] = useState<string | null>(null);
 
   const load = async () => {
     try {
@@ -105,6 +108,18 @@ export const SellerDashboardPage: React.FC = () => {
       setTimeout(() => setCopiedUrl(false), 2000);
     } catch {
       // ignore
+    }
+  };
+
+  const handleLogout = async () => {
+    setLogoutError(null);
+    setLogoutBusy(true);
+    try {
+      await logout();
+    } catch (err) {
+      setLogoutError(err instanceof Error ? err.message : 'Ntibishobotse gusohoka. Ongera ugerageze.');
+    } finally {
+      setLogoutBusy(false);
     }
   };
 
@@ -241,7 +256,17 @@ export const SellerDashboardPage: React.FC = () => {
             <Plus className="h-4 w-4" aria-hidden="true" />
             <span>{t('add_product')}</span>
           </button>
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={logoutBusy}
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-[#C0392B]/40 bg-white px-3.5 text-[13px] font-semibold text-[#C0392B] disabled:opacity-60"
+          >
+            <LogOut className="h-4 w-4" aria-hidden="true" />
+            <span>{logoutBusy ? 'Turagusohora...' : 'Sohoka'}</span>
+          </button>
         </div>
+        {logoutError && <p role="alert" className="mt-2 w-full text-right text-xs text-[#C0392B]">{logoutError}</p>}
       </div>
 
       {/* KPI Row */}

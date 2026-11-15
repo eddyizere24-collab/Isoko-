@@ -5,6 +5,7 @@ import {
   ArrowUp,
   CheckCircle2,
   Download,
+  LogOut,
   Eye,
   Flag,
   Megaphone,
@@ -17,6 +18,7 @@ import {
   X,
 } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
+import { getPrivateRequestSignal } from '../lib/authLifecycle';
 import { RW } from '../i18n/rw';
 import {
   addAdminSynonym,
@@ -61,11 +63,13 @@ const REJECTION_TEMPLATES = [
 ];
 
 export const AdminPage: React.FC = () => {
-  const { pathname, navigate, authSession, authProfile, refreshBootstrap } = useMarketplace();
+  const { pathname, navigate, authSession, authProfile, refreshBootstrap, logout } = useMarketplace();
   const [data, setData] = useState<AdminOverviewResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [logoutBusy, setLogoutBusy] = useState(false);
+  const [logoutError, setLogoutError] = useState<string | null>(null);
 
   // KYC Modal state
   const [kycModalSellerId, setKycModalSellerId] = useState<string | null>(null);
@@ -241,11 +245,24 @@ export const AdminPage: React.FC = () => {
     refreshBootstrap();
   };
 
+  const handleLogout = async () => {
+    setLogoutError(null);
+    setLogoutBusy(true);
+    try {
+      await logout();
+    } catch (err) {
+      setLogoutError(err instanceof Error ? err.message : 'Ntibishobotse gusohoka. Ongera ugerageze.');
+    } finally {
+      setLogoutBusy(false);
+    }
+  };
+
   const handleExportCsv = async () => {
     try {
       const sess = loadAuthSession();
       const res = await fetch('/api/admin/export.csv', {
         headers: sess?.token ? { Authorization: `Bearer ${sess.token}` } : {},
+        signal: getPrivateRequestSignal(),
       });
       if (!res.ok) throw new Error('Ntibishobotse gukuramo dosiye ya CSV.');
       const blob = await res.blob();
@@ -319,6 +336,7 @@ export const AdminPage: React.FC = () => {
           </h1>
         </div>
 
+        <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={handleExportCsv}
@@ -327,6 +345,17 @@ export const AdminPage: React.FC = () => {
           <Download className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
           <span>Kuramo imibare (CSV)</span>
         </button>
+        <button
+          type="button"
+          onClick={handleLogout}
+          disabled={logoutBusy}
+          className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-[#C0392B]/40 bg-white px-4 text-xs font-semibold text-[#C0392B] disabled:opacity-60"
+        >
+          <LogOut className="h-4 w-4" aria-hidden="true" />
+          <span>{logoutBusy ? 'Turagusohora...' : 'Sohoka'}</span>
+        </button>
+        </div>
+        {logoutError && <p role="alert" className="mt-2 text-xs text-[#C0392B]">{logoutError}</p>}
       </div>
 
       {/* Sub-Navigation Tabs */}
