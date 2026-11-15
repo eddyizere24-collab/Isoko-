@@ -43,7 +43,7 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="mt-8 border-t border-[#E3E0D8] bg-[#F7F5F0] text-[#202724]">
+    <footer className="mt-8 border-t border-[#DCE4DE] bg-[#FAFAF7] text-[#1A1F1C]">
       {/* 12px 100%-opacity SVG Imigongo strip above footer (§9) */}
       <RwandanGeometricPattern size="footer" />
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-10">
@@ -54,7 +54,7 @@ export const Footer: React.FC = () => {
               markClassName="h-6 w-6"
               wordmarkClassName="h-[17px] w-auto"
             />
-            <p className="mt-2.5 max-w-xs text-[12.5px] leading-relaxed text-[#68716D]">
+            <p className="mt-2.5 max-w-xs text-[12.5px] leading-relaxed text-[#4B544F]">
               {t('app_tagline')} — {t('hero_subtitle')}
             </p>
             <div className="mt-3.5 flex flex-wrap items-center gap-2.5">
@@ -199,7 +199,7 @@ export const Footer: React.FC = () => {
                 <button
                   type="submit"
                   disabled={subLoading}
-                  className="h-9 rounded-md bg-[#BD594A] px-3.5 text-[12px] font-semibold text-white hover:bg-[#A94C40] disabled:opacity-60"
+                  className="h-9 rounded-md bg-[#C0392B] px-3.5 text-[12px] font-semibold text-white hover:bg-[#982C22] disabled:opacity-60"
                 >
                   {t('confirm')}
                 </button>
