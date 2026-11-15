@@ -57,7 +57,7 @@ test('homepage keeps discovery visible while catalogue data is loading', async (
 
   // A real empty result is shown after the request resolves; never insert demo products.
   await expect(page.getByRole('heading', { name: 'Nta bicuruzwa birashyirwaho ubu' })).toBeVisible();
-  await expect(page.getByText(/Nta bicuruzwa by’icyitegererezo dushyiramo/)).toHaveCount(0);
+  await expect(page.getByText(/Nta bicuruzwa by’icyitegererezo dushyiramo/)).toBeVisible();
 });
 test('login route exposes the real seller sign-in form without public demo credentials', async ({ page }) => {
   const response = await page.goto('/injira');
