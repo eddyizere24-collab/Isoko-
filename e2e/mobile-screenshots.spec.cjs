@@ -116,3 +116,37 @@ test('capture Android mobile pages at 360/412 CSS pixels with DPR 2', async ({ b
     await context.close();
   }
 });
+
+
+test('rasterise the compact vector mark into Android and Apple PWA PNG assets', async ({ browser }) => {
+  test.setTimeout(60_000);
+  const context = await browser.newContext({
+    viewport: { width: 520, height: 520 },
+    deviceScaleFactor: 1,
+    serviceWorkers: 'block',
+  });
+  const page = await context.newPage();
+  const icons = [
+    { src: '/pwa-icon.svg', file: 'pwa-192x192.png', width: 192, height: 192 },
+    { src: '/pwa-icon.svg', file: 'pwa-512x512.png', width: 512, height: 512 },
+    { src: '/pwa-maskable.svg', file: 'pwa-maskable-512x512.png', width: 512, height: 512 },
+    { src: '/apple-touch-icon.svg', file: 'apple-touch-icon.png', width: 180, height: 180 },
+  ];
+
+  for (const icon of icons) {
+    await page.setContent(
+      `<!doctype html><html lang="rw"><body style="margin:0;background:#fff;width:${icon.width}px;height:${icon.height}px"><img src="${BASE_URL}${icon.src}" width="${icon.width}" height="${icon.height}" style="display:block" alt="ISOKO app icon"></body></html>`,
+      { waitUntil: 'load' }
+    );
+    const image = page.locator('img');
+    await image.evaluate((img) => img.decode());
+    const target = path.resolve(process.cwd(), 'public', icon.file);
+    await image.screenshot({ path: target, animations: 'disabled' });
+    const bytes = fs.readFileSync(target);
+    expect(bytes.readUInt32BE(16), icon.file + ' width').toBe(icon.width);
+    expect(bytes.readUInt32BE(20), icon.file + ' height').toBe(icon.height);
+    expect(bytes.length, icon.file + ' size').toBeLessThanOrEqual(400 * 1024);
+  }
+
+  await context.close();
+});
