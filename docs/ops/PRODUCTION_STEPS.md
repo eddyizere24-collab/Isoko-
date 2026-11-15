@@ -89,10 +89,14 @@ Migration file: `infra/neon/migrations/019_seller_upload_daily_quota.sql`
 
 It creates a private per-seller daily usage counter and a `SECURITY DEFINER` RPC. The RPC derives the seller from `auth.user_id()`; it does not accept a seller id from the browser. The assumed starting quota is 50 validated upload attempts per seller per UTC day. Failed object-storage writes after the quota check still consume an attempt; this is intentionally conservative and should be reviewed during QA.
 
+**QA status on 2026-11-16:** migration 019 has already been applied to isolated branch `isoko-full-flow-qa-20261114`. Read-back confirmed the table, function, migration marker, RLS, authenticated execute grant and lack of anonymous execute. The updated `isokoapi` Function bundle was deployed there as deployment 3 and read back as `completed`. No real upload or authenticated quota-boundary test has yet been performed.
+
+For a fresh QA branch, or when repeating the migration in a new isolated branch:
+
 1. On an Android phone, open the repository file `infra/neon/migrations/019_seller_upload_daily_quota.sql` in GitHub.
 2. Use the GitHub file menu to copy the complete SQL text. Do not edit the file or change any values.
 3. Open Neon Console and choose project `isoko-marketplace`.
-4. Select the isolated QA branch `isoko-full-flow-qa-20261114` (not `isoko-production`), database `isoko`, then open SQL Editor.
+4. Select the isolated QA branch you intend to use (for the current QA branch, `isoko-full-flow-qa-20261114`), database `isoko`, then open SQL Editor.
 5. Paste the migration SQL and run it once. If Neon reports an error, stop. Do not try fragments or run it against Production.
 6. Run the read-only migration 019 check above on that same QA branch. Confirm all expected values before testing uploads.
 7. Test the avatar, logo, cover and product upload flows on a QA seller account. Check that the 51st upload attempt for that seller on the same UTC day is rejected with the Kinyarwanda daily-limit message, and that a different seller has a separate count.
