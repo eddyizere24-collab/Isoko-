@@ -16,11 +16,11 @@ interface ProductCardProps {
  * Rulebook §5 Compliant Product Card:
  * - 1:1 square photo
  * - 6px body padding (p-1.5)
- * - Price 13px 700 #214E43
- * - Title 11.5px / 14px line-height (2 lines clamped)
- * - Shop / district 10.5px
- * - Discount badge 10px
- * - Max height <= 185px on mobile, zero drop shadow
+ * - Price 20px / 24px bold green
+ * - Product name 15px / 20px, wraps without cutting the name
+ * - Shop / district 11px with accessible secondary text
+ * - Discount badge 10px red
+ * - White card, crisp border, square product photo, no fixed height
  */
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { navigate } = useMarketplace();
