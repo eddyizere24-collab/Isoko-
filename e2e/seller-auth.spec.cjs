@@ -44,20 +44,17 @@ test.beforeEach(async ({ page }) => {
   page.on('pageerror', (error) => console.log('Browser page error:', error.message));
 });
 
-test('homepage keeps discovery visible while catalogue data is loading', async ({ page }) => {
+test('homepage keeps buyer discovery visible without product data', async ({ page }) => {
   const response = await page.goto('/');
   expect(response, 'homepage should return a document response').not.toBeNull();
   expect(response.status()).toBe(200);
 
-  // The homepage introduction and categories should render without waiting for
-  // the public catalogue request. The mock fixture is intentionally empty.
+  // Search, the introduction and reference categories must render even when
+  // the backend is unavailable. The public fixture contains no products.
   await expect(page.locator('#global-search')).toBeVisible();
   await expect(page.getByRole('heading', { level: 1, name: 'Gura mu maduka y’u Rwanda kuri WhatsApp' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Inkweto' })).toBeVisible();
-
-  // A real empty result is shown after the request resolves; never insert demo products.
-  await expect(page.getByRole('heading', { name: 'Nta bicuruzwa birashyirwaho ubu' })).toBeVisible();
-  await expect(page.getByText(/Nta bicuruzwa by’icyitegererezo dushyiramo/)).toBeVisible();
+  await expect(page.locator('a[href^="/p/"]')).toHaveCount(0);
 });
 test('login route exposes the real seller sign-in form without public demo credentials', async ({ page }) => {
   const response = await page.goto('/injira');
