@@ -127,7 +127,7 @@ export const SellerShopSettingsPage: React.FC = () => {
   if (loading) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <div className="h-48 animate-pulse rounded-lg bg-[#F1F6F3]" />
+        <div className="h-48 animate-pulse rounded-lg bg-[#E9F0EB]" />
       </main>
     );
   }
@@ -165,19 +165,19 @@ export const SellerShopSettingsPage: React.FC = () => {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E7EB] pb-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E3E0D8] pb-5">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate('/umucuruzi')}
             aria-label={t('back')}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-[#E5E7EB] hover:bg-[#E8F3EE]"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-[#E3E0D8] hover:bg-[#E9F0EB]"
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-[#1B1F23]">Amakuru y’iduka</h1>
-            <p className="text-xs text-[#64748B]">
+            <h1 className="text-xl font-bold text-[#202724]">Amakuru y’iduka</h1>
+            <p className="text-xs text-[#68716D]">
               Vugurura nimero ya WhatsApp, aho uherereye n’amasaha yo gukora
             </p>
           </div>
@@ -195,9 +195,9 @@ export const SellerShopSettingsPage: React.FC = () => {
                 // ignore
               }
             }}
-            className="inline-flex min-h-[42px] items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-3.5 text-xs font-semibold text-[#1B1F23] hover:bg-[#E8F3EE]"
+            className="inline-flex min-h-[42px] items-center gap-1.5 rounded-lg border border-[#E3E0D8] bg-white px-3.5 text-xs font-semibold text-[#202724] hover:bg-[#E9F0EB]"
           >
-            <Copy className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+            <Copy className="h-4 w-4 text-[#214E43]" aria-hidden="true" />
             <span>{copiedUrl ? t('copied') : t('copy_link')}</span>
           </button>
           <a
@@ -212,9 +212,9 @@ export const SellerShopSettingsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setQrOpen(true)}
-            className="inline-flex min-h-[42px] items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-3.5 text-xs font-semibold text-[#1B1F23] hover:bg-[#E8F3EE]"
+            className="inline-flex min-h-[42px] items-center gap-1.5 rounded-lg border border-[#E3E0D8] bg-white px-3.5 text-xs font-semibold text-[#202724] hover:bg-[#E9F0EB]"
           >
-            <QrCode className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+            <QrCode className="h-4 w-4 text-[#214E43]" aria-hidden="true" />
             <span>QR y’iduka</span>
           </button>
         </div>
@@ -222,30 +222,30 @@ export const SellerShopSettingsPage: React.FC = () => {
 
       {/* Live Profile Completion Bar & Optional Verified Badge Request */}
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
-          <div className="flex items-center justify-between text-xs font-semibold text-[#1B1F23]">
+        <div className="rounded-lg border border-[#E3E0D8] bg-white p-4">
+          <div className="flex items-center justify-between text-xs font-semibold text-[#202724]">
             <span>{t('profile_completion', { n: completion.percent })}</span>
-            <span className="tabular-nums text-[#0B6E4F]">
+            <span className="tabular-nums text-[#214E43]">
               {completion.completedCount}/{completion.totalCount}
             </span>
           </div>
-          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#E5E7EB]">
+          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#E3E0D8]">
             <div
-              className="h-full rounded-full bg-[#0B6E4F] transition-all duration-300"
+              className="h-full rounded-full bg-[#214E43] transition-all duration-300"
               style={{ width: `${completion.percent}%` }}
             />
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-3 rounded-lg border border-[#E5E7EB] bg-white p-4">
+        <div className="flex items-center justify-between gap-3 rounded-lg border border-[#E3E0D8] bg-white p-4">
           <div className="min-w-0">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#1B1F23]">
-              <ShieldCheck className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#202724]">
+              <ShieldCheck className="h-4 w-4 text-[#214E43]" aria-hidden="true" />
               <span>
                 {profileMeta?.identity_status === 'verified' ? t('verified') : t('unverified')}
               </span>
             </div>
-            <p className="mt-0.5 text-[11px] text-[#64748B]">
+            <p className="mt-0.5 text-[11px] text-[#68716D]">
               {profileMeta?.identity_status === 'verified'
                 ? 'Iduka ryawe rifite ikimenyetso cya Verified.'
                 : 'Kugenzurwa si itegeko, ariko byongerera icyizere abaguzi.'}
@@ -258,8 +258,8 @@ export const SellerShopSettingsPage: React.FC = () => {
               onClick={handleRequestVerified}
               className={`shrink-0 rounded-lg px-3 py-2 text-xs font-semibold ${
                 verifiedRequested
-                  ? 'bg-[#E8F3EE] text-[#064E3B]'
-                  : 'border border-[#0B6E4F] text-[#0B6E4F] hover:bg-[#E8F3EE]'
+                  ? 'bg-[#E9F0EB] text-[#183B33]'
+                  : 'border border-[#214E43] text-[#214E43] hover:bg-[#E9F0EB]'
               }`}
             >
               {verifiedRequested ? t('verified_requested') : t('request_verified')}
@@ -270,7 +270,7 @@ export const SellerShopSettingsPage: React.FC = () => {
 
       <form
         onSubmit={handleSave}
-        className="mt-5 rounded-lg border border-[#E5E7EB] bg-white p-6 space-y-4"
+        className="mt-5 rounded-lg border border-[#E3E0D8] bg-white p-6 space-y-4"
       >
         <section className="overflow-hidden rounded-xl border border-[#E3E0D8] bg-[#FFFEFB]">
           <div className="relative h-28 bg-[#EEECE6] sm:h-36">
@@ -371,7 +371,7 @@ export const SellerShopSettingsPage: React.FC = () => {
         </section>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label htmlFor="shop-name" className="block text-sm font-semibold text-[#1B1F23]">
+            <label htmlFor="shop-name" className="block text-sm font-semibold text-[#202724]">
               Izina ry’iduka (2–40)
             </label>
             <input
@@ -381,12 +381,12 @@ export const SellerShopSettingsPage: React.FC = () => {
               maxLength={40}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#0B6E4F] focus:outline-none"
+              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#214E43] focus:outline-none"
             />
           </div>
 
           <div>
-            <label htmlFor="shop-hours" className="block text-sm font-semibold text-[#1B1F23]">
+            <label htmlFor="shop-hours" className="block text-sm font-semibold text-[#202724]">
               Amasaha yo gukora
             </label>
             <input
@@ -394,12 +394,12 @@ export const SellerShopSettingsPage: React.FC = () => {
               value={hoursText}
               onChange={(e) => setHoursText(e.target.value)}
               placeholder="08:30 – 19:30"
-              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#0B6E4F] focus:outline-none"
+              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#214E43] focus:outline-none"
             />
           </div>
 
           <div>
-            <label htmlFor="shop-wa" className="block text-sm font-semibold text-[#1B1F23]">
+            <label htmlFor="shop-wa" className="block text-sm font-semibold text-[#202724]">
               Nimero ya WhatsApp
             </label>
             <input
@@ -408,12 +408,12 @@ export const SellerShopSettingsPage: React.FC = () => {
               required
               value={whatsapp}
               onChange={(e) => setWhatsapp(e.target.value)}
-              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#0B6E4F] focus:outline-none"
+              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#214E43] focus:outline-none"
             />
           </div>
 
           <div>
-            <label htmlFor="shop-phone" className="block text-sm font-semibold text-[#1B1F23]">
+            <label htmlFor="shop-phone" className="block text-sm font-semibold text-[#202724]">
               Nimero yo guhamagara
             </label>
             <input
@@ -422,12 +422,12 @@ export const SellerShopSettingsPage: React.FC = () => {
               required
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#0B6E4F] focus:outline-none"
+              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#214E43] focus:outline-none"
             />
           </div>
 
           <div>
-            <label htmlFor="shop-district" className="block text-sm font-semibold text-[#1B1F23]">
+            <label htmlFor="shop-district" className="block text-sm font-semibold text-[#202724]">
               Akarere
             </label>
             <select
@@ -437,7 +437,7 @@ export const SellerShopSettingsPage: React.FC = () => {
                 setDistrictId(Number(e.target.value));
                 setSectorId('');
               }}
-              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm focus:border-[#0B6E4F] focus:outline-none"
+              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm focus:border-[#214E43] focus:outline-none"
             >
               {RWANDA_DISTRICTS.map((d) => (
                 <option key={d.id} value={d.id}>
@@ -448,7 +448,7 @@ export const SellerShopSettingsPage: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="shop-sector" className="block text-sm font-semibold text-[#1B1F23]">
+            <label htmlFor="shop-sector" className="block text-sm font-semibold text-[#202724]">
               Umurenge
             </label>
             <select
@@ -456,7 +456,7 @@ export const SellerShopSettingsPage: React.FC = () => {
               value={sectorId}
               onChange={(e) => setSectorId(e.target.value)}
               disabled={sectors.length === 0}
-              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm disabled:bg-slate-100 focus:border-[#0B6E4F] focus:outline-none"
+              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm disabled:bg-slate-100 focus:border-[#214E43] focus:outline-none"
             >
               <option value="">{sectors.length ? 'Hitamo umurenge' : 'Ntabwo ugenwe'}</option>
               {sectors.map((s) => (
@@ -469,7 +469,7 @@ export const SellerShopSettingsPage: React.FC = () => {
         </div>
 
         <div>
-          <label htmlFor="shop-landmark" className="block text-sm font-semibold text-[#1B1F23]">
+          <label htmlFor="shop-landmark" className="block text-sm font-semibold text-[#202724]">
             Ikimenyetso cy’aho iduka riherereye
           </label>
           <input
@@ -477,12 +477,12 @@ export const SellerShopSettingsPage: React.FC = () => {
             maxLength={80}
             value={landmark}
             onChange={(e) => setLandmark(e.target.value)}
-            className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#0B6E4F] focus:outline-none"
+            className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#214E43] focus:outline-none"
           />
         </div>
 
         <div>
-          <label htmlFor="shop-delivery" className="block text-sm font-semibold text-[#1B1F23]">
+          <label htmlFor="shop-delivery" className="block text-sm font-semibold text-[#202724]">
             Uko mutanga ibicuruzwa (kugeza kuri 120)
           </label>
           <input
@@ -490,12 +490,12 @@ export const SellerShopSettingsPage: React.FC = () => {
             maxLength={120}
             value={deliveryText}
             onChange={(e) => setDeliveryText(e.target.value)}
-            className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#0B6E4F] focus:outline-none"
+            className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#214E43] focus:outline-none"
           />
         </div>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
-          <h2 className="text-sm font-bold text-[#1B1F23]">Imbuga nkoranyambaga</h2>
+          <h2 className="text-sm font-bold text-[#202724]">Imbuga nkoranyambaga</h2>
           {[
             ['website','Urubuga rwawe'],['facebook','Facebook'],['instagram','Instagram'],['tiktok','TikTok'],['youtube','YouTube'],
           ].map(([key,label])=><div key={key}><label htmlFor={`social-${key}`} className="block text-xs font-semibold text-slate-700">{label}</label><input id={`social-${key}`} type="url" inputMode="url" placeholder="https://" value={socialLinks[key]??''} onChange={(e)=>setSocialLinks((old)=>({...old,[key]:e.target.value}))} className="mt-1 min-h-10 w-full rounded-xl border border-slate-300 px-3 text-sm"/></div>)}
@@ -503,7 +503,7 @@ export const SellerShopSettingsPage: React.FC = () => {
 
         <div>
           <div className="flex items-center justify-between">
-            <label htmlFor="shop-about" className="text-sm font-semibold text-[#1B1F23]">
+            <label htmlFor="shop-about" className="text-sm font-semibold text-[#202724]">
               Ibyerekeye iduka
             </label>
             <span className="text-xs text-slate-500 tabular-nums">{about.length}/3000</span>
@@ -514,14 +514,14 @@ export const SellerShopSettingsPage: React.FC = () => {
             maxLength={3000}
             value={about}
             onChange={(e) => setAbout(e.target.value)}
-            className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
+            className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-[#214E43] focus:outline-none"
           />
         </div>
 
         {error && (
           <div
             role="alert"
-            className="rounded-xl border border-[#C0392B]/30 bg-[#C0392B]/10 px-4 py-3 text-sm text-[#C0392B]"
+            className="rounded-xl border border-[#BD594A]/30 bg-[#BD594A]/10 px-4 py-3 text-sm text-[#BD594A]"
           >
             {error}
           </div>
@@ -530,7 +530,7 @@ export const SellerShopSettingsPage: React.FC = () => {
         {savedMsg && (
           <div
             role="status"
-            className="flex items-center gap-2 rounded-xl border border-[#0B6E4F]/30 bg-[#F1F6F3] px-4 py-3 text-sm font-medium text-[#0B6E4F]"
+            className="flex items-center gap-2 rounded-xl border border-[#214E43]/30 bg-[#E9F0EB] px-4 py-3 text-sm font-medium text-[#214E43]"
           >
             <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
             <span>{savedMsg}</span>
@@ -540,7 +540,7 @@ export const SellerShopSettingsPage: React.FC = () => {
         <button
           type="submit"
           disabled={saving || Boolean(uploading)}
-          className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-[#0B6E4F] px-6 text-sm font-semibold text-white hover:bg-[#08553D] disabled:opacity-60"
+          className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-[#214E43] px-6 text-sm font-semibold text-white hover:bg-[#183B33] disabled:opacity-60"
         >
           <Save className="h-4 w-4" aria-hidden="true" />
           <span>{uploading ? 'Tegereza ifoto irangize koherezwa...' : saving ? 'Bika...' : RW.save}</span>
