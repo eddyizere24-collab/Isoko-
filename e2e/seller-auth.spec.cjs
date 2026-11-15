@@ -93,3 +93,24 @@ test('seller signup keeps full name optional and credentials required', async ({
   await expect(page.locator('#reg-email')).toHaveAttribute('required', '');
   await expect(page.locator('#reg-pass')).toHaveAttribute('required', '');
 });
+
+
+test('signed-out visitor is redirected away from admin after auth restoration', async ({ page }) => {
+  await page.goto('/admin');
+  await expect(page).toHaveURL(/\\/injira$/);
+  await expect(page.getByRole('heading', { name: 'Injira', exact: true })).toBeVisible();
+});
+
+test('Konti tab gives buyers a sign-in-free explanation and seller entry point', async ({ page }) => {
+  await page.goto('/konti');
+  await expect(page.getByRole('heading', { name: 'Konti', exact: true })).toBeVisible();
+  await expect(page.getByText(/batabanje gufungura konti/i)).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Injira muri konti' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Fungura iduka' })).toBeVisible();
+});
+
+test('private account settings cannot be opened without a signed-in account', async ({ page }) => {
+  await page.goto('/konti/yanjye');
+  await expect(page).toHaveURL(/\\/injira$/);
+  await expect(page.getByRole('heading', { name: 'Injira', exact: true })).toBeVisible();
+});
