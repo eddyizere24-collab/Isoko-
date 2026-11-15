@@ -18,6 +18,7 @@ import {
   X,
 } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
+import { getPrivateRequestSignal } from '../lib/authLifecycle';
 import { RW } from '../i18n/rw';
 import {
   addAdminSynonym,
@@ -261,6 +262,7 @@ export const AdminPage: React.FC = () => {
       const sess = loadAuthSession();
       const res = await fetch('/api/admin/export.csv', {
         headers: sess?.token ? { Authorization: `Bearer ${sess.token}` } : {},
+        signal: getPrivateRequestSignal(),
       });
       if (!res.ok) throw new Error('Ntibishobotse gukuramo dosiye ya CSV.');
       const blob = await res.blob();
