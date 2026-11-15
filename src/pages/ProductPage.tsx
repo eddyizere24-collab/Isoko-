@@ -206,7 +206,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
     return (
       <div className="mx-auto max-w-6xl px-2 py-4 sm:px-6">
         <div className="grid gap-6 lg:grid-cols-12">
-          <div className="aspect-[4/3] max-h-[46vh] animate-pulse rounded-md bg-white border border-[#E5E7EB] lg:col-span-6" />
+          <div className="aspect-[4/3] max-h-[46vh] animate-pulse rounded-md bg-white border border-[#E3E0D8] lg:col-span-6" />
           <div className="space-y-3 lg:col-span-6">
             <div className="h-6 w-3/4 animate-pulse rounded bg-white" />
             <div className="h-8 w-1/3 animate-pulse rounded bg-white" />
@@ -220,12 +220,12 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
   if (notFound || !product) {
     return (
       <div className="mx-auto max-w-6xl px-3 py-10 sm:px-6">
-        <div className="rounded-lg border border-[#E5E7EB] bg-[#F1F6F3] p-6 text-center">
-          <h1 className="text-[18px] font-semibold text-[#1B1F23]">{t('product_missing')}</h1>
+        <div className="rounded-lg border border-[#E3E0D8] bg-[#E9F0EB] p-6 text-center">
+          <h1 className="text-[18px] font-semibold text-[#202724]">{t('product_missing')}</h1>
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="mt-4 h-10 rounded-md bg-[#0B6E4F] px-5 text-xs font-semibold text-white"
+            className="mt-4 h-10 rounded-md bg-[#214E43] px-5 text-xs font-semibold text-white"
           >
             {t('back_home')}
           </button>
@@ -233,7 +233,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
 
         {alternatives.length > 0 && (
           <section className="mt-8">
-            <h2 className="text-[15px] font-semibold text-[#1B1F23]">{t('similar')}</h2>
+            <h2 className="text-[15px] font-semibold text-[#202724]">{t('similar')}</h2>
             <div className="mt-2.5 grid grid-cols-3 gap-1.5 min-[480px]:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 sm:gap-2.5">
               {alternatives.map((p) => (
                 <ProductCard key={p.id} product={p} />
@@ -336,14 +336,14 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
   return (
     <div className="mx-auto max-w-6xl px-2 py-3 pb-20 sm:px-6 lg:pb-12">
       {/* Compact Breadcrumb */}
-      <nav aria-label="Breadcrumb" className="mb-2.5 flex items-center gap-1.5 text-[11.5px] text-[#6B7280] overflow-hidden">
+      <nav aria-label="Breadcrumb" className="mb-2.5 flex items-center gap-1.5 text-[11.5px] text-[#68716D] overflow-hidden">
         <a
           href="/"
           onClick={(e) => {
             e.preventDefault();
             navigate('/');
           }}
-          className="shrink-0 hover:text-[#0B6E4F] hover:underline"
+          className="shrink-0 hover:text-[#214E43] hover:underline"
         >
           {t('home')}
         </a>
@@ -356,20 +356,20 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                 e.preventDefault();
                 navigate(`/c/${product.parent_category!.slug}`);
               }}
-              className="shrink-0 hover:text-[#0B6E4F] hover:underline"
+              className="shrink-0 hover:text-[#214E43] hover:underline"
             >
               {product.parent_category.name_rw}
             </a>
           </>
         )}
         <span aria-hidden="true">/</span>
-        <span className="truncate font-medium text-[#1B1F23]">{product.name}</span>
+        <span className="truncate font-medium text-[#202724]">{product.name}</span>
       </nav>
 
       <div className="grid gap-4 lg:grid-cols-12 lg:gap-8">
         {/* Left: 4:3 (<=46vh) Gallery + 48px Thumbnails */}
         <div className="lg:col-span-6">
-          <div className="relative aspect-[4/3] max-h-[46vh] w-full overflow-hidden rounded-md border border-[#E5E7EB] bg-[#F4F6F5]">
+          <div className="relative aspect-[4/3] max-h-[46vh] w-full overflow-hidden rounded-md border border-[#E3E0D8] bg-[#EEECE6]">
             {activeImg && (
               <button
                 type="button"
@@ -392,7 +392,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                   type="button"
                   aria-label={t('back')}
                   onClick={() => setActiveImgIdx((i) => (i === 0 ? images.length - 1 : i - 1))}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#1B1F23] border border-[#E5E7EB] hover:bg-white"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#202724] border border-[#E3E0D8] hover:bg-white"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
@@ -400,18 +400,18 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                   type="button"
                   aria-label={t('continue_btn')}
                   onClick={() => setActiveImgIdx((i) => (i + 1) % images.length)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#1B1F23] border border-[#E5E7EB] hover:bg-white"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#202724] border border-[#E3E0D8] hover:bg-white"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
-                <span className="absolute bottom-2 right-2 rounded bg-[#1B1F23]/75 px-2 py-0.5 text-[11px] font-semibold text-white tabular-nums">
+                <span className="absolute bottom-2 right-2 rounded bg-[#202724]/75 px-2 py-0.5 text-[11px] font-semibold text-white tabular-nums">
                   {activeImgIdx + 1}/{images.length}
                 </span>
               </>
             )}
 
             {isSoldOut && (
-              <div className="absolute inset-x-0 bottom-0 bg-[#1B1F23]/85 py-1.5 text-center text-xs font-semibold text-white">
+              <div className="absolute inset-x-0 bottom-0 bg-[#202724]/85 py-1.5 text-center text-xs font-semibold text-white">
                 {t('sold_out')}
               </div>
             )}
@@ -427,7 +427,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                   onClick={() => setActiveImgIdx(idx)}
                   aria-label={`${product.name} ${idx + 1}`}
                   className={`h-12 w-12 shrink-0 overflow-hidden rounded border-2 transition-colors ${
-                    idx === activeImgIdx ? 'border-[#0B6E4F]' : 'border-[#E5E7EB]'
+                    idx === activeImgIdx ? 'border-[#214E43]' : 'border-[#E3E0D8]'
                   }`}
                 >
                   <img
@@ -445,20 +445,20 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
         {/* Right: Title (15/20 600), Price (20/24 700), 12px Meta, 52px Shop Row, 32px Size/Color Chips, Specs */}
         <div className="lg:col-span-6 space-y-3.5">
           <div>
-            <h1 className="text-[15px] font-semibold leading-[20px] text-[#1B1F23] line-clamp-2 sm:text-[18px] sm:leading-[24px]">
+            <h1 className="text-[15px] font-semibold leading-[20px] text-[#202724] line-clamp-2 sm:text-[18px] sm:leading-[24px]">
               {product.name}
             </h1>
 
             <div className="mt-1.5 flex flex-wrap items-baseline gap-2.5">
-              <span className="text-[20px] font-bold leading-[24px] text-[#0B6E4F] tabular-nums">
+              <span className="text-[20px] font-bold leading-[24px] text-[#214E43] tabular-nums">
                 {formatRwfCurrency(product.price)}
               </span>
               {discountPct >= 5 && product.old_price && (
                 <>
-                  <span className="text-xs text-[#6B7280] line-through tabular-nums">
+                  <span className="text-xs text-[#68716D] line-through tabular-nums">
                     {formatRwfCurrency(product.old_price)}
                   </span>
-                  <span className="rounded bg-[#C0392B] px-1.5 py-0.5 text-[10px] font-semibold text-white tabular-nums">
+                  <span className="rounded bg-[#BD594A] px-1.5 py-0.5 text-[10px] font-semibold text-white tabular-nums">
                     -{discountPct}%
                   </span>
                 </>
@@ -466,8 +466,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
             </div>
 
             {/* 12px Meta line */}
-            <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[12px] text-[#6B7280]">
-              <span className="font-medium text-[#1B1F23]">
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[12px] text-[#68716D]">
+              <span className="font-medium text-[#202724]">
                 {product.condition === 'new' ? t('condition_new') : t('condition_used')}
               </span>
               <span aria-hidden="true">·</span>
@@ -479,7 +479,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
               {lowStock !== null && (
                 <>
                   <span aria-hidden="true">·</span>
-                  <span className="font-semibold text-[#C0392B]">
+                  <span className="font-semibold text-[#BD594A]">
                     {t('only_left', { n: lowStock })}
                   </span>
                 </>
@@ -489,36 +489,36 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
 
           {/* 52px Shop Row (36px avatar, name, Verified if approved, district, "Reba iduka") */}
           {shop && (
-            <div className="flex min-h-[52px] items-center justify-between gap-2.5 rounded-md border border-[#E5E7EB] bg-white px-2.5 py-1.5">
+            <div className="flex min-h-[52px] items-center justify-between gap-2.5 rounded-md border border-[#E3E0D8] bg-white px-2.5 py-1.5">
               <div className="flex min-w-0 items-center gap-2.5">
                 {shop.logo_path ? (
                   <img
                     src={shop.logo_path}
                     alt={shop.name}
-                    className="h-9 w-9 shrink-0 rounded-full border border-[#E5E7EB] object-cover"
+                    className="h-9 w-9 shrink-0 rounded-full border border-[#E3E0D8] object-cover"
                   />
                 ) : (
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0B6E4F] text-xs font-bold text-white">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#214E43] text-xs font-bold text-white">
                     {shop.name.slice(0, 2).toUpperCase()}
                   </div>
                 )}
                 <div className="min-w-0">
                   <div className="flex items-center gap-1">
-                    <span className="truncate text-[13px] font-semibold text-[#1B1F23]">
+                    <span className="truncate text-[13px] font-semibold text-[#202724]">
                       {shop.name}
                     </span>
                     {isShopVerified ? (
-                      <span className="inline-flex shrink-0 items-center gap-0.5 text-[11px] font-semibold text-[#0B6E4F]">
+                      <span className="inline-flex shrink-0 items-center gap-0.5 text-[11px] font-semibold text-[#214E43]">
                         <IsokoVerifiedSeal className="h-3.5 w-3.5" />
                         <span>{t('verified')}</span>
                       </span>
                     ) : (
-                      <span className="shrink-0 text-[10.5px] text-[#6B7280]">
+                      <span className="shrink-0 text-[10.5px] text-[#68716D]">
                         {t('unverified')}
                       </span>
                     )}
                   </div>
-                  <p className="truncate text-[11px] text-[#6B7280]">
+                  <p className="truncate text-[11px] text-[#68716D]">
                     {shop.district_name}
                     {shop.sector_name ? `, ${shop.sector_name}` : ''}
                   </p>
@@ -530,7 +530,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                   e.preventDefault();
                   navigate(`/i/${shop.slug}`);
                 }}
-                className="inline-flex h-8 shrink-0 items-center gap-1 rounded-md border border-[#0B6E4F] px-2.5 text-[11.5px] font-semibold text-[#0B6E4F] hover:bg-[#0B6E4F] hover:text-white transition-colors"
+                className="inline-flex h-8 shrink-0 items-center gap-1 rounded-md border border-[#214E43] px-2.5 text-[11.5px] font-semibold text-[#214E43] hover:bg-[#214E43] hover:text-white transition-colors"
               >
                 <Store className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>{t('view_shop')}</span>
@@ -541,14 +541,14 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
           {/* 32px Visible Variant / Size Buttons (NO drop-down!) */}
           <div>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[12.5px] font-semibold text-[#1B1F23]">
+              <span className="text-[12.5px] font-semibold text-[#202724]">
                 {t('choose_size')}
               </span>
               {(isShoe || isClothing) && (
                 <button
                   type="button"
                   onClick={() => setShowSizeGuide((s) => !s)}
-                  className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-[#0B6E4F] hover:underline"
+                  className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-[#214E43] hover:underline"
                 >
                   <Ruler className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{t('size_guide')}</span>
@@ -570,10 +570,10 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                     }}
                     className={`h-8 min-w-[40px] rounded border px-2.5 text-xs font-semibold transition-colors ${
                       !available
-                        ? 'border-[#E5E7EB] bg-slate-100 text-slate-400 line-through cursor-not-allowed'
+                        ? 'border-[#E3E0D8] bg-slate-100 text-slate-400 line-through cursor-not-allowed'
                         : active
-                          ? 'border-[#0B6E4F] bg-[#0B6E4F] text-white'
-                          : 'border-[#CBD5D1] bg-white text-[#1B1F23] hover:border-[#0B6E4F]'
+                          ? 'border-[#214E43] bg-[#214E43] text-white'
+                          : 'border-[#C9CEC7] bg-white text-[#202724] hover:border-[#214E43]'
                     }`}
                   >
                     {v.size_label}
@@ -584,16 +584,16 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
 
             {/* Baymard Footwear / Apparel Sizing Chart */}
             {showSizeGuide && (isShoe || isClothing) && (
-              <div className="mt-2 rounded-md border border-[#E5E7EB] bg-[#F7F8FA] p-2.5 text-[11.5px]">
-                <p className="font-semibold text-[#1B1F23]">{t('size_guide')}</p>
+              <div className="mt-2 rounded-md border border-[#E3E0D8] bg-[#F7F5F0] p-2.5 text-[11.5px]">
+                <p className="font-semibold text-[#202724]">{t('size_guide')}</p>
                 {isShoe ? (
                   <>
-                    <p className="mt-0.5 text-[11px] text-[#6B7280]">{t('size_guide_shoe_note')}</p>
+                    <p className="mt-0.5 text-[11px] text-[#68716D]">{t('size_guide_shoe_note')}</p>
                     <div className="mt-2 grid grid-cols-4 gap-1 sm:grid-cols-6">
                       {SHOE_SIZE_CHART.map((row) => (
-                        <div key={row.eu} className="rounded bg-white border border-[#E5E7EB] px-1.5 py-1 text-center tabular-nums">
-                          <span className="font-semibold text-[#1B1F23]">EU {row.eu}</span>
-                          <span className="block text-[10px] text-[#6B7280]">{row.cm} cm</span>
+                        <div key={row.eu} className="rounded bg-white border border-[#E3E0D8] px-1.5 py-1 text-center tabular-nums">
+                          <span className="font-semibold text-[#202724]">EU {row.eu}</span>
+                          <span className="block text-[10px] text-[#68716D]">{row.cm} cm</span>
                         </div>
                       ))}
                     </div>
@@ -601,9 +601,9 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                 ) : (
                   <div className="mt-2 grid grid-cols-3 gap-1 sm:grid-cols-6">
                     {CLOTHES_SIZE_CHART.map((row) => (
-                      <div key={row.size} className="rounded bg-white border border-[#E5E7EB] px-1.5 py-1 text-center tabular-nums">
-                        <span className="font-semibold text-[#1B1F23]">{row.size}</span>
-                        <span className="block text-[10px] text-[#6B7280]">{row.chest}</span>
+                      <div key={row.size} className="rounded bg-white border border-[#E3E0D8] px-1.5 py-1 text-center tabular-nums">
+                        <span className="font-semibold text-[#202724]">{row.size}</span>
+                        <span className="block text-[10px] text-[#68716D]">{row.chest}</span>
                       </div>
                     ))}
                   </div>
@@ -615,9 +615,9 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
           {/* 32px Visible Color Chips */}
           {product.colors.length > 0 && (
             <div>
-              <span className="block text-[12.5px] font-semibold text-[#1B1F23]">
+              <span className="block text-[12.5px] font-semibold text-[#202724]">
                 {t('color_label')}:{' '}
-                <span className="font-normal text-[#6B7280]">{selectedColor || product.colors[0]}</span>
+                <span className="font-normal text-[#68716D]">{selectedColor || product.colors[0]}</span>
               </span>
               <div className="mt-1.5 flex flex-wrap gap-1.5">
                 {product.colors.map((c) => {
@@ -629,8 +629,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                       onClick={() => setSelectedColor(c)}
                       className={`h-8 rounded border px-2.5 text-xs font-semibold transition-colors ${
                         active
-                          ? 'border-[#0B6E4F] bg-[#E8F3EE] text-[#0B6E4F]'
-                          : 'border-[#CBD5D1] bg-white text-[#1B1F23] hover:border-[#0B6E4F]'
+                          ? 'border-[#214E43] bg-[#E9F0EB] text-[#214E43]'
+                          : 'border-[#C9CEC7] bg-white text-[#202724] hover:border-[#214E43]'
                       }`}
                     >
                       {c}
@@ -651,7 +651,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                 recordCategoryInterest(product.category_id, 5);
                 trackEvent('wa_click', product.id, product.shop_id);
               }}
-              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-md border border-[#1A7F43] bg-white px-4 text-sm font-semibold text-[#1A7F43] hover:bg-[#E8F3EE] transition-colors"
+              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-md border border-[#1A7F43] bg-white px-4 text-sm font-semibold text-[#1A7F43] hover:bg-[#E9F0EB] transition-colors"
             >
               <MessageCircle className="h-4 w-4" aria-hidden="true" />
               <span>{t('chat_seller')} (WhatsApp)</span>
@@ -661,7 +661,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
               disabled={isSoldOut}
               onClick={() => performAddToCart(false)}
               aria-label={t('add_to_cart')}
-              className="inline-flex h-11 w-12 items-center justify-center rounded-md border border-[#0B6E4F] bg-white text-[#0B6E4F] hover:bg-[#E8F3EE] disabled:opacity-40 transition-colors"
+              className="inline-flex h-11 w-12 items-center justify-center rounded-md border border-[#214E43] bg-white text-[#214E43] hover:bg-[#E9F0EB] disabled:opacity-40 transition-colors"
             >
               <ShoppingCart className="h-4 w-4" aria-hidden="true" />
             </button>
@@ -669,57 +669,57 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
               type="button"
               disabled={isSoldOut}
               onClick={() => performAddToCart(true)}
-              className="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-[#0B6E4F] px-5 text-sm font-semibold text-white hover:bg-[#08553D] disabled:bg-slate-300 transition-colors"
+              className="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-[#214E43] px-5 text-sm font-semibold text-white hover:bg-[#183B33] disabled:bg-slate-300 transition-colors"
             >
               {isSoldOut ? t('sold_out') : t('buy_now')}
             </button>
           </div>
 
           {feedback && (
-            <div role="status" className="rounded-md border border-[#0B6E4F]/30 bg-[#E8F3EE] px-3 py-2 text-xs font-medium text-[#0B6E4F]">
+            <div role="status" className="rounded-md border border-[#214E43]/30 bg-[#E9F0EB] px-3 py-2 text-xs font-medium text-[#214E43]">
               {feedback}
             </div>
           )}
 
           {/* Description */}
           {product.description && (
-            <p className="text-[13px] leading-relaxed text-[#374151] whitespace-pre-line">
+            <p className="text-[13px] leading-relaxed text-[#49524D] whitespace-pre-line">
               {product.description}
             </p>
           )}
 
           {/* Baymard Specifications & Delivery/Return Table */}
-          <div className="rounded-md border border-[#E5E7EB] bg-white p-3">
-            <h2 className="text-[13px] font-semibold text-[#1B1F23]">{t('specs_title')}</h2>
-            <dl className="mt-2 divide-y divide-[#E5E7EB] text-[12px]">
+          <div className="rounded-md border border-[#E3E0D8] bg-white p-3">
+            <h2 className="text-[13px] font-semibold text-[#202724]">{t('specs_title')}</h2>
+            <dl className="mt-2 divide-y divide-[#E3E0D8] text-[12px]">
               <div className="flex justify-between gap-2 py-1.5">
-                <dt className="text-[#6B7280]">{t('category_label')}</dt>
-                <dd className="font-medium text-[#1B1F23] text-right">
+                <dt className="text-[#68716D]">{t('category_label')}</dt>
+                <dd className="font-medium text-[#202724] text-right">
                   {product.parent_category?.name_rw ?? product.category?.name_rw ?? '—'}
                 </dd>
               </div>
               <div className="flex justify-between gap-2 py-1.5">
-                <dt className="text-[#6B7280]">{t('condition_label')}</dt>
-                <dd className="font-medium text-[#1B1F23]">
+                <dt className="text-[#68716D]">{t('condition_label')}</dt>
+                <dd className="font-medium text-[#202724]">
                   {product.condition === 'new' ? t('condition_new') : t('condition_used')}
                 </dd>
               </div>
               <div className="flex justify-between gap-2 py-1.5">
-                <dt className="text-[#6B7280]">{t('brand_label')}</dt>
-                <dd className="font-medium text-[#1B1F23]">{product.brand || t('no_brand')}</dd>
+                <dt className="text-[#68716D]">{t('brand_label')}</dt>
+                <dd className="font-medium text-[#202724]">{product.brand || t('no_brand')}</dd>
               </div>
               <div className="flex justify-between gap-2 py-1.5">
-                <dt className="text-[#6B7280] flex items-center gap-1">
-                  <Truck className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
+                <dt className="text-[#68716D] flex items-center gap-1">
+                  <Truck className="h-3.5 w-3.5 text-[#214E43]" aria-hidden="true" />
                   <span>{t('delivery_label')}</span>
                 </dt>
-                <dd className="font-medium text-[#1B1F23] text-right max-w-[60%]">
+                <dd className="font-medium text-[#202724] text-right max-w-[60%]">
                   {shop?.delivery_text || 'Kigali & Intara · Kuri WhatsApp'}
                 </dd>
               </div>
               <div className="flex justify-between gap-2 py-1.5">
-                <dt className="text-[#6B7280]">{t('return_label')}</dt>
-                <dd className="font-medium text-[#1B1F23] text-right max-w-[60%]">
+                <dt className="text-[#68716D]">{t('return_label')}</dt>
+                <dd className="font-medium text-[#202724] text-right max-w-[60%]">
                   {t('return_policy_default')}
                 </dd>
               </div>
@@ -727,13 +727,13 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
           </div>
 
           {/* Share & Report Bar */}
-          <div className="flex flex-wrap items-center gap-2 border-t border-[#E5E7EB] pt-3">
+          <div className="flex flex-wrap items-center gap-2 border-t border-[#E3E0D8] pt-3">
             <button
               type="button"
               onClick={handleShare}
-              className="inline-flex h-9 items-center gap-1.5 rounded-md border border-[#E5E7EB] bg-white px-3 text-xs font-semibold text-[#1B1F23] hover:border-[#0B6E4F]"
+              className="inline-flex h-9 items-center gap-1.5 rounded-md border border-[#E3E0D8] bg-white px-3 text-xs font-semibold text-[#202724] hover:border-[#214E43]"
             >
-              <Share2 className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
+              <Share2 className="h-3.5 w-3.5 text-[#214E43]" aria-hidden="true" />
               <span>{copiedLink ? t('copied') : t('share')}</span>
             </button>
             <button
@@ -743,7 +743,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                 setCopiedLink(true);
                 setTimeout(() => setCopiedLink(false), 2000);
               }}
-              className="inline-flex h-9 items-center gap-1.5 rounded-md border border-[#E5E7EB] bg-white px-3 text-xs font-semibold text-[#1B1F23] hover:border-[#0B6E4F]"
+              className="inline-flex h-9 items-center gap-1.5 rounded-md border border-[#E3E0D8] bg-white px-3 text-xs font-semibold text-[#202724] hover:border-[#214E43]"
             >
               <Copy className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{t('copy_link')}</span>
@@ -752,16 +752,16 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
               <a
                 href={`tel:+${shop.phone}`}
                 onClick={() => trackEvent('call_click', product.id, product.shop_id)}
-                className="inline-flex h-9 items-center gap-1.5 rounded-md border border-[#E5E7EB] bg-white px-3 text-xs font-semibold text-[#1B1F23] hover:border-[#0B6E4F]"
+                className="inline-flex h-9 items-center gap-1.5 rounded-md border border-[#E3E0D8] bg-white px-3 text-xs font-semibold text-[#202724] hover:border-[#214E43]"
               >
-                <Phone className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
+                <Phone className="h-3.5 w-3.5 text-[#214E43]" aria-hidden="true" />
                 <span>{t('call')}</span>
               </a>
             )}
             <button
               type="button"
               onClick={() => setReportOpen(true)}
-              className="ml-auto inline-flex h-9 items-center gap-1 rounded-md px-2.5 text-xs font-semibold text-[#C0392B] hover:bg-[#FBEAE8]"
+              className="ml-auto inline-flex h-9 items-center gap-1 rounded-md px-2.5 text-xs font-semibold text-[#BD594A] hover:bg-[#FAF0ED]"
             >
               <Flag className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{t('report')}</span>
@@ -769,9 +769,9 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
           </div>
 
           {/* Safety tips */}
-          <div className="rounded-md border border-[#E5E7EB] bg-[#F7F8FA] p-3 text-[11.5px] text-[#4B5563] space-y-1">
-            <p className="flex items-center gap-1.5 font-semibold text-[#1B1F23]">
-              <ShieldAlert className="h-3.5 w-3.5 text-[#C0392B]" aria-hidden="true" />
+          <div className="rounded-md border border-[#E3E0D8] bg-[#F7F5F0] p-3 text-[11.5px] text-[#68716D] space-y-1">
+            <p className="flex items-center gap-1.5 font-semibold text-[#202724]">
+              <ShieldAlert className="h-3.5 w-3.5 text-[#BD594A]" aria-hidden="true" />
               <span>{t('safety_title')}</span>
             </p>
             <p>1. {t('safety_short')}</p>
@@ -784,7 +784,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
       {moreFromShop.length > 0 && (
         <section className="mt-6">
           <div className="mb-2 flex items-center justify-between gap-2">
-            <h2 className="text-[15px] font-semibold text-[#1B1F23]">{t('more_from_shop')}</h2>
+            <h2 className="text-[15px] font-semibold text-[#202724]">{t('more_from_shop')}</h2>
             {shop && (
               <a
                 href={`/i/${shop.slug}`}
@@ -792,7 +792,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                   e.preventDefault();
                   navigate(`/i/${shop.slug}`);
                 }}
-                className="text-xs font-semibold text-[#0B6E4F] hover:underline"
+                className="text-xs font-semibold text-[#214E43] hover:underline"
               >
                 {t('view_shop')}
               </a>
@@ -812,7 +812,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
       {similarItems.length > 0 && (
         <section className="mt-6">
           <div className="mb-2 flex items-center justify-between gap-2">
-            <h2 className="text-[15px] font-semibold text-[#1B1F23]">{t('similar')}</h2>
+            <h2 className="text-[15px] font-semibold text-[#202724]">{t('similar')}</h2>
             <button
               type="button"
               onClick={() =>
@@ -822,7 +822,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                     : '/shakisha'
                 )
               }
-              className="text-xs font-semibold text-[#0B6E4F] hover:underline"
+              className="text-xs font-semibold text-[#214E43] hover:underline"
             >
               {t('load_more')}
             </button>
@@ -838,7 +838,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
       {/* Bottom Section (3): "Wabonye vuba" — Recently viewed */}
       {recentlyViewedProducts.length > 0 && (
         <section className="mt-6">
-          <h2 className="mb-2 text-[15px] font-semibold text-[#1B1F23]">{t('recent')}</h2>
+          <h2 className="mb-2 text-[15px] font-semibold text-[#202724]">{t('recent')}</h2>
           <div className="grid grid-cols-3 gap-1.5 min-[480px]:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 sm:gap-2.5">
             {recentlyViewedProducts.map((p) => (
               <ProductCard key={p.id} product={p} />
@@ -848,7 +848,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
       )}
 
       {/* 52px Sticky Bottom Bar: [Vugana | Igare (icon) | Gura] (§8) */}
-      <div className="fixed bottom-0 inset-x-0 z-40 h-[52px] border-t border-[#E5E7EB] bg-white px-2.5 flex items-center gap-2 lg:hidden">
+      <div className="fixed bottom-0 inset-x-0 z-40 h-[52px] border-t border-[#E3E0D8] bg-white px-2.5 flex items-center gap-2 lg:hidden">
         <a
           href={waUrl}
           target="_blank"
@@ -868,11 +868,11 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
           disabled={isSoldOut}
           onClick={() => performAddToCart(false)}
           aria-label={t('add_to_cart')}
-          className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-[#CBD5D1] bg-white text-[#1B1F23] disabled:opacity-40"
+          className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-[#C9CEC7] bg-white text-[#202724] disabled:opacity-40"
         >
           <ShoppingCart className="h-4 w-4" aria-hidden="true" />
           {cartCount > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#C0392B] px-1 text-[9px] font-bold text-white tabular-nums">
+            <span className="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#BD594A] px-1 text-[9px] font-bold text-white tabular-nums">
               {cartCount}
             </span>
           )}
@@ -882,7 +882,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
           type="button"
           disabled={isSoldOut}
           onClick={() => performAddToCart(true)}
-          className="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-[#0B6E4F] px-4 text-xs font-semibold text-white hover:bg-[#08553D] disabled:bg-slate-300"
+          className="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-[#214E43] px-4 text-xs font-semibold text-white hover:bg-[#183B33] disabled:bg-slate-300"
         >
           {isSoldOut ? t('sold_out') : t('buy_now')}
         </button>
