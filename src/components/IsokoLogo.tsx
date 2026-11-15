@@ -6,7 +6,7 @@ interface LogoProps {
 }
 
 /**
- * Isoko 2-color Imigongo Diamond Mark (#0B6E4F + #C0392B, or white-on-green variant).
+ * ISOKO's original multicolour hollow-centre sun mark. Preserve its many coloured beads and open centre.
  */
 const SUN_BEADS = [
   [20,3.8,1.45,'#E8A33D'], [24.15,4.55,1.05,'#0B6E4F'], [28,6.15,1.55,'#C0392B'],
