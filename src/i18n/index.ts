@@ -17,7 +17,7 @@ export interface LanguageMeta {
 
 export const SUPPORTED_LANGUAGES: LanguageMeta[] = [
   { code: 'rw', shortCode: 'RW', label: 'Ikinyarwanda', reviewed: true },
-  { code: 'en', shortCode: 'EN', label: 'English', reviewed: true },
+  { code: 'en', shortCode: 'EN', label: 'English', reviewed: false },
   { code: 'fr', shortCode: 'FR', label: 'Français', reviewed: false },
   { code: 'sw', shortCode: 'SW', label: 'Kiswahili', reviewed: false },
   { code: 'rn', shortCode: 'RN', label: 'Ikirundi', reviewed: false },
