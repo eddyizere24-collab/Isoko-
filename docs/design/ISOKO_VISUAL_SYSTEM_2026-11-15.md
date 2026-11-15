@@ -20,20 +20,21 @@ The original ISOKO mark is a ring of many small, differently coloured beads arou
 - Update all app marks consistently: header/footer, auth headers, favicon, PWA 192/512/maskable icons and Apple touch icon. Keep enough clear space around the mark and test legibility at 16px, 24px and 32px.
 - The wordmark must remain quiet and distinctive. Do not let the wordmark become louder than the sun mark.
 
-Brand accents may reuse colours already present in the original logo (ochre, clay red, blue, violet, teal and rose), but the application interface itself must not become a rainbow. The sun is the colour-rich focal point; the UI around it is restrained.
+Brand accents are governed by the owner's explicit decision dated 2026-11-16: the multicolour sun remains intact; the interface's primary brand colours are clear green `#0B6E4F` and clear red `#C0392B`. Ochre, blue and violet are reserved for the sun mark, not used as broad UI accents. The application interface must remain restrained and high-contrast.
 
 ## 3. Visual direction: quiet editorial commerce
 
 Target feeling: composed, confident, crafted, contemporary, Rwanda-rooted, premium but approachable. It should look deliberately art-directed, not like a beginner Tailwind template or a default component-library demo.
 
 Use:
-- Warm paper / mineral canvas rather than stark app-green backgrounds.
-- White or warm-white cards with precise borders and clean spacing.
+- White or light neutral canvas `#F7F8FA` / `#FFFFFF`.
+- White cards with precise light-grey borders and clean spacing.
 - Charcoal typography for primary reading.
-- Deep forest as a single high-value action colour, used sparingly.
-- Clay red and warm ochre for selected accents, sale indicators and fine details.
-- A precise Imigongo line signature to give ISOKO its Rwandan identity.
-- Strong information hierarchy, subtle alignment, measured whitespace and compact components.
+- Clear green `#0B6E4F` for the primary action and real product prices, used sparingly.
+- Clear red `#C0392B` for secondary brand accents, alerts and fine details, not full-page red slabs.
+- Ochre, blue and violet only within the original sun mark.
+- A bold, recognisable Imigongo line signature in clear green and red.
+- Strong information hierarchy, precise alignment, measured whitespace and compact components.
 
 Avoid:
 - Large green slabs, green gradients and green-tinted panels everywhere.
@@ -43,17 +44,16 @@ Avoid:
 - A rainbow UI that competes with the multicolour sun.
 - Stock/AI product imagery or fabricated sellers, reviews, prices, counts and testimonials.
 
-Suggested starting tokens (adjust only with visual evidence, not arbitrary taste):
-- Canvas: warm paper `#F7F5F0`
+Approved interface tokens (owner decision overrides the previous warm-paper/forest/clay proposal):
+- Canvas: `#F7F8FA` or white `#FFFFFF`
 - Card: `#FFFFFF`
-- Soft stone: `#EEECE6`
+- Soft neutral: `#F7F8FA`
 - Text: charcoal `#202724`
 - Muted text: `#68716D`
-- Border: `#E3E0D8`
-- Primary action: deep forest `#214E43`
-- Soft forest: `#E9F0EB`
-- Clay red: `#BD594A`
-- Ochre: `#C99A4B`
+- Border: `#E3E7EB`
+- Primary green: `#0B6E4F`
+- Primary red: `#C0392B`
+- Ochre, blue and violet: reserved for the multicolour sun mark only.
 
 These are a design direction, not a licence to paint every surface green. A screen should remain mostly paper/white/charcoal, with the action colour reserved for the one most important action.
 
@@ -61,7 +61,7 @@ These are a design direction, not a licence to paint every surface green. A scre
 
 The user explicitly wants designed line work, not a generic green background. Imigongo must be a recognisable, consistent visual signature.
 
-Build one lightweight, editable SVG pattern family based on genuine geometric Imigongo principles: connected diamonds, nested forms, precise angular turns and controlled zig-zag/spiral-like linework. Use proper paths and repeatable tiling, not a row of unrelated triangles.
+Build one lightweight, editable SVG pattern family based on genuine geometric Imigongo principles: connected diamonds that touch, nested forms, precise angular turns and continuous zig-zag/spiral-like linework. Use proper paths and repeatable 1:1 tile geometry, not a row of unrelated triangles or dots. Header strip height is 10–12px; strokes are at least 1.5px at rendered CSS size and use clear green/red at 100% opacity. Footer strip height is 14px. The login and seller-registration headers must show a visible pattern strip; the home hero gets a 100–140px corner composition aligned to an edge.
 
 Use it in these restrained places:
 1. A fine but visible branded rule below the main header.
