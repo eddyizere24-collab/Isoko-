@@ -1,0 +1,46 @@
+# ISOKO implementation rules
+
+One rule per line. Add a line whenever behaviour or an operational boundary changes.
+
+- Seller avatar, shop logo and shop cover are persisted immediately after each successful upload — sellers must not lose an uploaded image because they missed a later general Save action.
+- Avatar, logo and cover use distinct upload kinds and storage prefixes (`profiles/`, `logos/`, `shops/`) — each image has a separate purpose and must never be confused with another.
+- Seller image ownership is derived from the authenticated Neon user on the server — a browser-supplied seller id is not an ownership credential.
+- Seller uploads are limited by a server-side per-seller daily counter — client-side limits can be bypassed.
+- Upload quotas fail closed when the server cannot verify the current count — an unavailable quota check must not silently disable abuse protection.
+- Image MIME and magic-byte checks plus the 500 KB server limit remain authoritative — file extensions and browser labels are not trustworthy.
+- Public image URLs must match the configured HTTPS Object Storage origin and bucket path — reject unexpected hosts and unsafe object keys.
+- A rejected public image URL is logged only in development and never exposes secrets — developers need diagnostics without leaking production details.
+- Broken seller profile, logo and cover images show an honest local placeholder — a failed image must not be replaced with an invented seller/product photo.
+- Seller avatar is at least 72 px and its upload control is at least 44 px — identity photos need to be recognisable and usable on touch screens.
+- Seller avatar and shop logo sit below, not on top of, the cover image — three separate assets must remain visually distinguishable.
+- Storage base URLs and Content Security Policy image hosts must point to the same Neon Object Storage endpoint — a correct upload is useless if the browser blocks the image.
+- Production SQL, Function deployment, environment variables, DNS and billing are not changed without the owner's documented release approval — the public marketplace must not be altered by an unreviewed change.
+- Additive schema changes are verified on an isolated QA branch before Production — test writes and policy checks must never run against live seller data.
+- A feature is not reported complete until CI, device-size screenshots and the required real-account QA evidence are available — source code alone does not prove the user journey works.
+- Server-side sign-out must complete before local auth state is cleared — otherwise the UI can claim a user is signed out while the Neon session remains active.
+- Sign-out clears auth and private account caches but preserves anonymous cart, follows, browsing history and language — guest shopping must survive seller logout.
+- Private routes check a restored, verified session before rendering account data — browser history must not reveal a private page after sign-out.
+- The Back button after sign-out replaces the current history entry with the public home route — a private screen must not be restored from browser history.
+- Direct private fetches use a shared abort signal that is cancelled on sign-out — pending exports and uploads must not continue as if an account were active.
+- Password-change and revoke-other-session controls appear only when the installed Neon Auth client exposes those methods — unsupported APIs must never be invented or called blindly.
+- The Konti tab is a shared account hub for signed-in sellers/admins and signed-out buyers — ordinary buyers must still browse and use WhatsApp without registration.
+- Email verification status is shown from the stored profile value and is not assumed verified when null or false — security must reflect evidence, not optimistic defaults.
+- Seller and admin dashboards each provide a visible sign-out action — users must not need to return to another screen to secure their account.
+- New visitors default to Kinyarwanda unless they already chose a saved language — the primary language must not be replaced by a browser locale.
+- Language names are displayed in their own language — visitors should recognise the language they want to choose.
+- A dictionary key must exist in all seven supported languages — missing translations must fail CI instead of silently falling back.
+- Unreviewed language translations keep reviewed=false in code and are not labelled beta in the UI — users see a clean switcher without falsely claiming native-speaker review.
+- Translated legal pages state that Kinyarwanda is the source text — translated terms must not be mistaken for the controlling source copy.
+- Legal translations are not represented as human-reviewed until a native speaker and legal reviewer verify them — translation quality and legal meaning require human review.
+- Cards use pure white surfaces and the page background uses #FAFAF7 — avoid the faded grey-beige appearance.
+- Primary actions use #0B6E4F and discount/error emphasis uses #C0392B — Isoko's primary colours must remain clear and consistent.
+- Secondary body text uses an accessible dark value such as #4B544F — low-contrast grey must not reduce readability.
+- Imigongo uses visible green, red and ochre strokes with at least 1.5px thickness — local identity must remain visible rather than decorative noise.
+- Product-card names remain readable and do not truncate important names — mobile density must not sacrifice product identification.
+- The multicolour sun mark retains sufficient bead size/weight at 24px — the logo must remain recognisable on small mobile screens.
+- Google OAuth is hidden behind a feature flag until owner-owned credentials are configured and the QA flow is verified — shared provider credentials are not production branding.
+- Google sign-in uses the installed Neon Auth social OAuth method only — do not invent One Tap or Identity Services APIs that the SDK does not document.
+- Buyer email marketing is sent only after explicit opt-in with a timestamp and a working unsubscribe path — no email is sent on inferred or absent consent.
+- Ownership isolation is tested with separate seller identities on an isolated QA database — never use Production records or credentials for adversarial access tests.
+- Rate limiting for authenticated and public APIs is enforced server-side using verified identity or server-derived network context — client-supplied session identifiers are untrusted.
+- Email verification is required before publishing only after the configured Neon Auth verification flow is tested — do not block legitimate sellers based on an unverified assumption about provider support.

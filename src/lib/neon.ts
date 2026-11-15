@@ -104,7 +104,11 @@ export function unwrapNeon<T>(result: any, fallbackMessage = 'Habaye ikibazo mu 
 }
 
 export function publicAssetUrl(key: string | null | undefined): string | null {
-  return buildPublicAssetUrl(key, publicStorageUrl);
+  const resolved = buildPublicAssetUrl(key, publicStorageUrl);
+  if (import.meta.env.DEV && key && !resolved) {
+    console.warn('[ISOKO] Rejected a public image URL because it does not match the configured storage origin/path or is not a safe object key.');
+  }
+  return resolved;
 }
 
 export function objectKeyFromPublicUrl(value: string): string {

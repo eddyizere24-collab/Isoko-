@@ -190,7 +190,16 @@ async function uploadThroughFunction(dataUrl: string, kind: string): Promise<{ k
     body: JSON.stringify({ dataUrl, kind }),
   });
   const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.error ?? 'Ifoto ntiyoherejwe. Ongera ugerageze.');
+  if (!response.ok) {
+    const code = String(body.error ?? '');
+    if (code === 'SELLER_UPLOAD_DAILY_LIMIT') {
+      throw new Error('Wageze ku mubare ntarengwa w’amafoto 50 ku munsi. Ongera ugerageze ejo.');
+    }
+    if (code === 'UPLOAD_QUOTA_CHECK_FAILED' || code === 'UPLOAD_QUOTA_UNAVAILABLE') {
+      throw new Error('Kugenzura umubare w’amafoto byanze. Ifoto ntiyoherejwe kugira ngo konti yawe irindwe. Ongera ugerageze nyuma.');
+    }
+    throw new Error(code || 'Ifoto ntiyoherejwe. Ongera ugerageze.');
+  }
   if (!body.key) throw new Error('Ifoto ntiyabitswe neza.');
   return body as { key: string; url: string | null; bytes: number };
 }
@@ -400,7 +409,7 @@ export async function fetchMe():Promise<{profile:Profile;shop:Shop|null}> {
   return {profile:current.profile,shop:current.shop};
 }
 
-export async function uploadImagePair(dataUrl:string,kind:'full'|'thumb'|'shop'|'profile'):Promise<{url:string;bytes:number}> {
+export async function uploadImagePair(dataUrl:string,kind:'full'|'thumb'|'shop'|'logo'|'profile'):Promise<{url:string;bytes:number}> {
   const result=await uploadThroughFunction(dataUrl,kind);
   if(!result.url) throw new Error('Ifoto rusange ntiyabonetse.');
   return {url:result.url,bytes:result.bytes};
@@ -514,6 +523,34 @@ export async function setSellerProductVisibility(id:string,action:'hide'|'unhide
     'Ntibishobotse guhindura uko igicuruzwa kigaragara.'
   );
   return {ok:Boolean(result?.ok),status:result.status as Product['status']};
+}
+
+export async function updateSellerAvatar(avatarPath:string):Promise<{profile:Profile}> {
+  const current=await currentAccount();
+  const avatarKey=avatarPath ? storageKey(avatarPath) : null;
+  const row=first<any>(dataOf<any>(
+    await neon.from('profiles').update({avatar_key:avatarKey})
+      .eq('id',current.profile.id).select('id,avatar_key').maybeSingle(),
+    'Ntibishobotse kubika ifoto ya profile.'
+  ));
+  if(!row) throw new Error('Ifoto ya profile ntiyabitswe.');
+  return {
+    profile:{...current.profile,...row,avatar_path:publicAssetUrl(row.avatar_key)} as Profile,
+  };
+}
+
+export async function updateSellerBrandImage(payload:{kind:'logo'|'cover';path:string}):Promise<{shop:Shop}> {
+  const current=await currentAccount();
+  if(!current.shop) throw new Error('Iduka ryawe ntiriboneka.');
+  const key=payload.path ? storageKey(payload.path) : null;
+  const field=payload.kind==='logo' ? 'logo_key' : 'cover_key';
+  const row=first<any>(dataOf<any>(
+    await neon.from('shops').update({[field]:key})
+      .eq('owner_id',current.profile.id).select('*').maybeSingle(),
+    'Ntibishobotse kubika ifoto y’iduka.'
+  ));
+  if(!row) throw new Error('Ifoto y’iduka ntiyabitswe.');
+  return {shop:mapShop(row)};
 }
 
 export async function updateSellerProfile(payload:Record<string,unknown>):Promise<{profile:Profile}> {

@@ -5,7 +5,7 @@ import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { getSectorsForDistrict, RWANDA_DISTRICTS } from '../data/rwandaAreas';
 import { RW } from '../i18n/rw';
-import { fetchSellerOverview, updateSellerProfile, updateSellerShop, uploadImagePair } from '../lib/api';
+import { fetchSellerOverview, updateSellerAvatar, updateSellerBrandImage, updateSellerProfile, updateSellerShop, uploadImagePair } from '../lib/api';
 import { processProductImage } from '../lib/image';
 import { calculateProfileCompletion } from '../lib/profileCompletion';
 import { buildWhatsAppLink } from '../lib/whatsapp';
@@ -78,16 +78,34 @@ export const SellerShopSettingsPage: React.FC = () => {
 
   const sectors = useMemo(() => getSectorsForDistrict(districtId), [districtId]);
 
-  const uploadBrandImage = async (file: File | undefined, kind: 'shop' | 'profile', setter: (value:string)=>void) => {
+  const uploadBrandImage = async (file: File | undefined, kind: 'shop' | 'logo' | 'profile') => {
     if (!file) return;
     setError(null);
+    setSavedMsg(null);
     setUploading(kind);
     try {
       const image = await processProductImage(file);
       const uploaded = await uploadImagePair(image.fullDataUrl, kind);
-      setter(uploaded.url);
+      if (kind === 'profile') {
+        const result = await updateSellerAvatar(uploaded.url);
+        setAvatarPath(result.profile.avatar_path ?? uploaded.url);
+        setProfileMeta((current) => current
+          ? { ...current, avatar_path: result.profile.avatar_path ?? uploaded.url }
+          : current);
+      } else {
+        const result = await updateSellerBrandImage({
+          kind: kind === 'logo' ? 'logo' : 'cover',
+          path: uploaded.url,
+        });
+        setShop(result.shop);
+        if (kind === 'logo') setLogoPath(result.shop.logo_path ?? uploaded.url);
+        else setCoverPath(result.shop.cover_path ?? uploaded.url);
+      }
+      setSavedMsg('Ifoto yabitswe ✓');
+      refreshBootstrap();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ifoto ntiyoherejwe. Ongera ugerageze.');
+      setSavedMsg(null);
+      setError(err instanceof Error ? err.message : 'Ifoto ntiyoherejwe cyangwa ngo ibikwe. Ongera ugerageze.');
     } finally {
       setUploading(null);
     }
@@ -275,11 +293,11 @@ export const SellerShopSettingsPage: React.FC = () => {
         <section className="overflow-hidden rounded-xl border border-[#E3E0D8] bg-[#FFFEFB]">
           <div className="relative h-28 bg-[#EEECE6] sm:h-36">
             {coverPath ? (
-              <img src={coverPath} alt="Ifoto yo hejuru y’iduka" className="h-full w-full object-cover" />
+              <img src={coverPath} alt="Ifoto yo hejuru y’iduka" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/shop-image-fallback.svg'; }} className="h-full w-full object-cover" />
             ) : (
               <div className="imigongo-surface h-full w-full" />
             )}
-            <label className="absolute bottom-2 right-2 inline-flex min-h-9 cursor-pointer items-center gap-2 rounded-full border border-[#E3E0D8] bg-[#FFFEFB]/95 px-3 text-[10.5px] font-semibold text-[#202724]">
+            <label className="absolute bottom-2 right-2 inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full border border-[#E3E0D8] bg-white px-3 text-[10.5px] font-semibold text-[#1A1F1C]">
               <ImagePlus className="h-3.5 w-3.5 text-[#214E43]" aria-hidden="true" />
               Hindura cover
               <input
@@ -290,23 +308,23 @@ export const SellerShopSettingsPage: React.FC = () => {
                 onChange={(e) => {
                   const file = e.currentTarget.files?.[0];
                   e.currentTarget.value = '';
-                  void uploadBrandImage(file, 'shop', setCoverPath);
+                  void uploadBrandImage(file, 'shop');
                 }}
               />
             </label>
           </div>
 
           <div className="px-3 pb-4 sm:px-4">
-            <div className="-mt-7 flex flex-wrap items-end gap-3">
+            <div className="mt-3 flex flex-wrap items-start gap-3">
               <div className="relative shrink-0">
                 {avatarPath ? (
-                  <img src={avatarPath} alt="Ifoto ya profile yawe" className="h-16 w-16 rounded-full border-[3px] border-[#FFFEFB] bg-white object-cover sm:h-[72px] sm:w-[72px]" />
+                  <img src={avatarPath} alt="Ifoto ya profile yawe" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/shop-image-fallback.svg'; }} className="h-[72px] w-[72px] rounded-full border-[3px] border-[#FFFEFB] bg-white object-cover" />
                 ) : (
-                  <div className="grid h-16 w-16 place-items-center rounded-full border-[3px] border-[#FFFEFB] bg-[#E9F0EB] text-xl font-semibold text-[#214E43] sm:h-[72px] sm:w-[72px]">
+                  <div className="grid h-[72px] w-[72px] place-items-center rounded-full border-[3px] border-[#FFFEFB] bg-[#E9F0EB] text-xl font-semibold text-[#214E43]">
                     {fullName.slice(0, 1).toUpperCase() || 'U'}
                   </div>
                 )}
-                <label aria-label="Hindura ifoto ya profile" className="absolute bottom-0 right-0 grid h-7 w-7 cursor-pointer place-items-center rounded-full border-2 border-[#FFFEFB] bg-[#214E43] text-white">
+                <label aria-label="Hindura ifoto ya profile" className="absolute bottom-0 right-0 grid h-11 w-11 cursor-pointer place-items-center rounded-full border-2 border-[#FFFEFB] bg-[#0B6E4F] text-white">
                   <ImagePlus className="h-3.5 w-3.5" aria-hidden="true" />
                   <input
                     type="file"
@@ -316,7 +334,7 @@ export const SellerShopSettingsPage: React.FC = () => {
                     onChange={(e) => {
                       const file = e.currentTarget.files?.[0];
                       e.currentTarget.value = '';
-                      void uploadBrandImage(file, 'profile', setAvatarPath);
+                      void uploadBrandImage(file, 'profile');
                     }}
                   />
                 </label>
@@ -329,13 +347,13 @@ export const SellerShopSettingsPage: React.FC = () => {
 
               <div className="flex items-center gap-2 rounded-lg border border-[#E3E0D8] bg-[#F7F5F0] p-2">
                 {logoPath ? (
-                  <img src={logoPath} alt="Logo y’iduka" className="h-10 w-10 rounded-md border border-[#E3E0D8] bg-white object-cover" />
+                  <img src={logoPath} alt="Logo y’iduka" onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/shop-image-fallback.svg'; }} className="h-12 w-12 rounded-md border border-[#E3E0D8] bg-white object-cover" />
                 ) : (
                   <div className="grid h-10 w-10 place-items-center rounded-md bg-white text-[9px] font-bold tracking-wide text-[#68716D]">LOGO</div>
                 )}
                 <div>
                   <p className="text-[10px] font-semibold text-[#202724]">Shop logo</p>
-                  <label className="mt-0.5 inline-flex min-h-7 cursor-pointer items-center text-[10px] font-semibold text-[#214E43] hover:underline">
+                  <label className="mt-1 inline-flex min-h-[44px] cursor-pointer items-center text-[11px] font-semibold text-[#0B6E4F] hover:underline">
                     Hindura
                     <input
                       type="file"
@@ -345,7 +363,7 @@ export const SellerShopSettingsPage: React.FC = () => {
                       onChange={(e) => {
                         const file = e.currentTarget.files?.[0];
                         e.currentTarget.value = '';
-                        void uploadBrandImage(file, 'shop', setLogoPath);
+                        void uploadBrandImage(file, 'logo');
                       }}
                     />
                   </label>
@@ -367,7 +385,9 @@ export const SellerShopSettingsPage: React.FC = () => {
               </div>
             </div>
           </div>
-          {uploading && <p role="status" className="border-t border-[#E3E0D8] bg-[#F7F5F0] px-3 py-2 text-[10.5px] font-medium text-[#214E43]">Turimo gutunganya no kohereza ifoto...</p>}
+          {uploading && <p role="status" className="border-t border-[#E3E0E8] bg-white px-3 py-2 text-[11px] font-medium text-[#0B6E4F]">Turimo kohereza no kubika ifoto...</p>}
+          {savedMsg && <p role="status" className="border-t border-[#D7E8DE] bg-white px-3 py-2 text-[11px] font-semibold text-[#0B6E4F]">{savedMsg}</p>}
+          {error && <p role="alert" className="border-t border-red-200 bg-white px-3 py-2 text-[11px] font-medium text-[#C0392B]">{error}</p>}
         </section>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
