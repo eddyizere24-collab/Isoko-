@@ -320,13 +320,13 @@ export const AuthBrandHeader: React.FC<{
   title: string;
   subtitle?: string;
 }> = ({ title, subtitle }) => (
-  <div className="relative overflow-hidden rounded-xl border border-[#E3E0D8] bg-[#FFFEFB] text-[#202724]">
+  <div className="relative overflow-hidden rounded-xl border border-[#E3E7EB] bg-white text-[#202724]">
     <div className="relative z-10 flex min-h-[104px] flex-col justify-center px-5 py-4 sm:min-h-[116px] sm:px-7">
       <div className="flex items-center justify-between gap-4">
         <IsokoWordmark markClassName="h-7 w-7" wordmarkClassName="h-[18px] w-auto" />
-        <span className="text-[10px] font-medium tracking-[0.12em] text-[#8F493F]">RWANDA MARKETPLACE</span>
+        <span className="text-[10px] font-medium tracking-[0.12em] text-[#C0392B]">RWANDA MARKETPLACE</span>
       </div>
-      <h1 className="mt-2 text-[18px] font-semibold leading-tight text-[#202724] sm:text-[20px]">
+      <h1 className="mt-2 max-w-[260px] text-[16px] font-semibold leading-tight text-[#202724] sm:max-w-none sm:text-[18px]">
         {title}
       </h1>
       {subtitle && <p className="mt-1 max-w-xl text-[11px] leading-relaxed text-[#68716D]">{subtitle}</p>}
@@ -336,13 +336,17 @@ export const AuthBrandHeader: React.FC<{
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
-      className="pointer-events-none absolute right-0 top-0 h-full w-28 opacity-25"
+      className="pointer-events-none absolute right-0 top-0 h-full w-28 opacity-100"
     >
-      <path d="M120 0 64 56 120 112" stroke="#214E43" strokeWidth="1.4" />
-      <path d="M120 18 82 56 120 94" stroke="#BD594A" strokeWidth="1.1" />
-      <path d="M120 36 100 56 120 76" stroke="#C99A4B" strokeWidth="1.1" />
-      <path d="M88 0 32 56 88 112" stroke="#214E43" strokeWidth="1" opacity=".7" />
+      <defs>
+        <pattern id="auth-imigongo-pattern" width="24" height="24" patternUnits="userSpaceOnUse">
+          <path d="M-12 12 0 0 12 12 24 0 36 12" stroke="#0B6E4F" strokeWidth="1.8" fill="none" />
+          <path d="M-12 12 0 24 12 12 24 24 36 12" stroke="#C0392B" strokeWidth="1.8" fill="none" />
+          <path d="M0 12 6 6 12 12 6 18Z" stroke="#C0392B" strokeWidth="1.5" fill="none" />
+        </pattern>
+      </defs>
+      <path d="M120 0V112H8L120 0Z" fill="url(#auth-imigongo-pattern)" />
     </svg>
-    <div aria-hidden="true" className="h-2 w-full imigongo-header-strip" />
+    <div aria-hidden="true" className="w-full imigongo-header-strip" />
   </div>
 );
