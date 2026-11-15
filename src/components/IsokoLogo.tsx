@@ -293,19 +293,13 @@ export const ImigongoHeroCorner: React.FC<{ className?: string }> = ({ className
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     aria-hidden="true"
-    className={`h-[120px] w-[120px] pointer-events-none select-none opacity-15 ${className}`}
+    className={`h-[120px] w-[120px] pointer-events-none select-none opacity-100 ${className}`}
   >
     <defs>
-      <pattern id="imigongo-hero-pattern" width="48" height="24" patternUnits="userSpaceOnUse">
-        <polygon points="12,2 22,12 12,22 2,12" stroke="#0B6E4F" strokeWidth="2" fill="none" />
-        <polygon points="12,6 18,12 12,18 6,12" fill="#C0392B" />
-        <path
-          d="M26 3H45V21H29V7H41V17H33"
-          stroke="#1B1F23"
-          strokeWidth="2"
-          fill="none"
-          strokeLinecap="square"
-        />
+      <pattern id="imigongo-hero-pattern" width="24" height="24" patternUnits="userSpaceOnUse">
+        <path d="M-12 12 0 0 12 12 24 0 36 12" stroke="#0B6E4F" strokeWidth="1.8" fill="none" />
+        <path d="M-12 12 0 24 12 12 24 24 36 12" stroke="#C0392B" strokeWidth="1.8" fill="none" />
+        <path d="M0 12 6 6 12 12 6 18Z" stroke="#C0392B" strokeWidth="1.5" fill="none" />
       </pattern>
     </defs>
     <path d="M120 0V120H0L120 0Z" fill="url(#imigongo-hero-pattern)" />
