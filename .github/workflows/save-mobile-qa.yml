@@ -57,11 +57,17 @@ jobs:
           unzip -q "${zip_path}" -d "${extract_dir}"
 
           mapfile -t qa_pngs < <(find "${extract_dir}" -type f -path '*/docs/design/qa/2026-11-16/*.png' | sort)
-          mapfile -t pwa_pngs < <(find "${extract_dir}" -type f \\
-            \( -path '*/public/pwa-192x192.png' \\
-            -o -path '*/public/pwa-512x512.png' \\
-            -o -path '*/public/pwa-maskable-512x512.png' \\
-            -o -path '*/public/apple-touch-icon.png' \) | sort)
+          pwa_pngs=()
+          for icon_name in pwa-192x192.png pwa-512x512.png pwa-maskable-512x512.png apple-touch-icon.png; do
+            icon_path="$(find "${extract_dir}" -type f -name "${icon_name}" -print -quit)"
+            if [[ -n "${icon_path}" ]]; then
+              if [[ "${icon_path}" != *"/public/${icon_name}" ]]; then
+                echo "PWA icon is not in the expected public directory: ${icon_path}" >&2
+                exit 1
+              fi
+              pwa_pngs+=("${icon_path}")
+            fi
+          done
 
           if [[ "${#qa_pngs[@]}" -ne 21 ]]; then
             echo "Expected 21 Playwright QA PNGs, found ${#qa_pngs[@]}." >&2
