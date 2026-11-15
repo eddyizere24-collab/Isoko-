@@ -73,7 +73,7 @@ test('a signed-out visitor cannot open seller product creation', async ({ page }
 
   // The route guard redirects visitors without a seller session to sign-in.
   // The test never creates or uses a real account.
-  await expect(page).toHaveURL(/\/injira$/);
+  await expect(page).toHaveURL((url) => url.pathname === '/injira');
   await expect(page.getByRole('heading', { name: 'Injira', exact: true })).toBeVisible();
   await expect(page.locator('#login-identifier')).toBeVisible();
   await expect(page.locator('#login-pass')).toBeVisible();
@@ -97,7 +97,7 @@ test('seller signup keeps full name optional and credentials required', async ({
 
 test('signed-out visitor is redirected away from admin after auth restoration', async ({ page }) => {
   await page.goto('/admin');
-  await expect(page).toHaveURL(/\\/injira$/);
+  await expect(page).toHaveURL((url) => url.pathname === '/injira');
   await expect(page.getByRole('heading', { name: 'Injira', exact: true })).toBeVisible();
 });
 
@@ -111,6 +111,6 @@ test('Konti tab gives buyers a sign-in-free explanation and seller entry point',
 
 test('private account settings cannot be opened without a signed-in account', async ({ page }) => {
   await page.goto('/konti/yanjye');
-  await expect(page).toHaveURL(/\\/injira$/);
+  await expect(page).toHaveURL((url) => url.pathname === '/injira');
   await expect(page.getByRole('heading', { name: 'Injira', exact: true })).toBeVisible();
 });
