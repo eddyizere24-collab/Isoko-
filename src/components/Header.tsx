@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ChevronDown, MapPin, Search, ShoppingCart, User } from 'lucide-react';
+import { ChevronDown, LogOut, MapPin, Search, ShoppingCart, User } from 'lucide-react';
 import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { IsokoWordmark, RwandanGeometricPattern } from './IsokoLogo';
@@ -22,11 +22,14 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
     setLocationModalOpen,
     bootstrap,
     authProfile,
+    logout,
   } = useMarketplace();
   const { t } = useT();
 
   const [query, setQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [logoutBusy, setLogoutBusy] = useState(false);
+  const [logoutError, setLogoutError] = useState<string | null>(null);
 
   const suggestions = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -70,17 +73,20 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
     navigate(trimmed ? `/shakisha?q=${encodeURIComponent(trimmed)}` : '/shakisha');
   };
 
-  const accountHref = authProfile
-    ? authProfile.role === 'admin' || authProfile.role === 'moderator'
-      ? '/admin'
-      : '/umucuruzi'
-    : '/injira';
+  const accountHref = '/konti';
+  const accountLabel = t('account');
 
-  const accountLabel = authProfile
-    ? authProfile.role === 'admin' || authProfile.role === 'moderator'
-      ? 'Admin'
-      : t('my_shop')
-    : t('login');
+  const handleHeaderLogout = async () => {
+    setLogoutError(null);
+    setLogoutBusy(true);
+    try {
+      await logout();
+    } catch (err) {
+      setLogoutError(err instanceof Error ? err.message : 'Ntibishobotse gusohoka. Ongera ugerageze.');
+    } finally {
+      setLogoutBusy(false);
+    }
+  };
 
   const categories = bootstrap?.categories?.length ? bootstrap.categories : FALLBACK_CATEGORIES;
   const locationLabel = location ? location.districtName : 'Kigali';
@@ -228,6 +234,18 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
               <User className="h-3.5 w-3.5 text-[#68716D]" strokeWidth={1.75} aria-hidden="true" />
               <span>{accountLabel}</span>
             </a>
+            {authProfile && (
+              <button
+                type="button"
+                onClick={handleHeaderLogout}
+                disabled={logoutBusy}
+                className="hidden lg:inline-flex min-h-[44px] items-center gap-1.5 rounded-md border border-[#C0392B]/35 bg-white px-3 text-xs font-semibold text-[#C0392B] disabled:opacity-60"
+              >
+                <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>{logoutBusy ? 'Turagusohora...' : 'Sohoka'}</span>
+              </button>
+            )}
+            {logoutError && <span role="alert" className="hidden lg:inline text-[11px] font-medium text-[#C0392B]">{logoutError}</span>}
 
             <button
               type="button"
