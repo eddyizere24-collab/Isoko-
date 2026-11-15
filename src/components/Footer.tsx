@@ -91,7 +91,7 @@ export const Footer: React.FC = () => {
                     e.preventDefault();
                     navigate('/abacuruzi');
                   }}
-                  className="hover:text-white hover:underline"
+                  className="hover:text-[#214E43] hover:underline"
                 >
                   {t('sell_on_platform')}
                 </a>
@@ -103,7 +103,7 @@ export const Footer: React.FC = () => {
                     e.preventDefault();
                     navigate('/ibyerekeye');
                   }}
-                  className="hover:text-white hover:underline"
+                  className="hover:text-[#214E43] hover:underline"
                 >
                   {t('about')}
                 </a>
@@ -115,7 +115,7 @@ export const Footer: React.FC = () => {
                     e.preventDefault();
                     navigate('/ubufasha');
                   }}
-                  className="hover:text-white hover:underline"
+                  className="hover:text-[#214E43] hover:underline"
                 >
                   {t('help')}
                 </a>
@@ -127,7 +127,7 @@ export const Footer: React.FC = () => {
                     e.preventDefault();
                     navigate('/brand-preview');
                   }}
-                  className="hover:text-white hover:underline"
+                  className="hover:text-[#214E43] hover:underline"
                 >
                   Brand Preview
                 </a>
@@ -148,7 +148,7 @@ export const Footer: React.FC = () => {
                     e.preventDefault();
                     navigate('/amategeko');
                   }}
-                  className="hover:text-white hover:underline"
+                  className="hover:text-[#214E43] hover:underline"
                 >
                   {t('terms')}
                 </a>
@@ -160,7 +160,7 @@ export const Footer: React.FC = () => {
                     e.preventDefault();
                     navigate('/ibanga');
                   }}
-                  className="hover:text-white hover:underline"
+                  className="hover:text-[#214E43] hover:underline"
                 >
                   {t('privacy')}
                 </a>
@@ -172,7 +172,7 @@ export const Footer: React.FC = () => {
                     e.preventDefault();
                     navigate('/amabwiriza-y-abacuruzi');
                   }}
-                  className="hover:text-white hover:underline"
+                  className="hover:text-[#214E43] hover:underline"
                 >
                   {t('seller_rules')}
                 </a>
@@ -181,7 +181,7 @@ export const Footer: React.FC = () => {
           </details>
 
           <div className="border-t border-[#E3E0D8] pt-4 md:border-0 md:pt-0">
-            <h3 className="text-[13px] font-semibold text-white">{t('newsletter_title')}</h3>
+            <h3 className="text-[13px] font-semibold text-[#202724]">{t('newsletter_title')}</h3>
             <p className="mt-1 text-[12px] text-[#68716D]">{t('newsletter_desc')}</p>
             <form onSubmit={handleSubscribe} className="mt-2.5 space-y-2">
               <div className="flex gap-2">
