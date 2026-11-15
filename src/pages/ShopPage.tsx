@@ -79,10 +79,10 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
   if (loading) {
     return (
       <div className="mx-auto max-w-7xl px-2 py-4 sm:px-6 space-y-4">
-        <div className="h-44 animate-pulse rounded-md bg-white border border-[#E5E7EB]" />
+        <div className="h-44 animate-pulse rounded-md bg-white border border-[#E3E0D8]" />
         <div className="grid grid-cols-3 gap-1.5 min-[480px]:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-[175px] animate-pulse rounded-md bg-white border border-[#E5E7EB]" />
+            <div key={i} className="h-[175px] animate-pulse rounded-md bg-white border border-[#E3E0D8]" />
           ))}
         </div>
       </div>
@@ -92,12 +92,12 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
   if (error || !shop) {
     return (
       <div className="mx-auto max-w-xl px-4 py-14 text-center">
-        <h1 className="text-lg font-semibold text-[#1B1F23]">{t('shop_missing')}</h1>
-        <p className="mt-2 text-xs text-[#6B7280]">{error || t('shop_missing')}</p>
+        <h1 className="text-lg font-semibold text-[#202724]">{t('shop_missing')}</h1>
+        <p className="mt-2 text-xs text-[#68716D]">{error || t('shop_missing')}</p>
         <button
           type="button"
           onClick={() => navigate('/')}
-          className="mt-4 h-10 rounded-md bg-[#0B6E4F] px-5 text-xs font-semibold text-white"
+          className="mt-4 h-10 rounded-md bg-[#214E43] px-5 text-xs font-semibold text-white"
         >
           {t('back_home')}
         </button>
@@ -165,8 +165,8 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
   return (
     <div className="mx-auto max-w-7xl px-2 py-4 sm:px-6 space-y-5">
       {/* Storefront Hero Banner (True SVG Imigongo fallback when cover_path is absent) */}
-      <section className="overflow-hidden rounded-lg border border-[#E5E7EB] bg-white">
-        <div className="relative h-32 sm:h-44 w-full bg-[#064E3B]">
+      <section className="overflow-hidden rounded-lg border border-[#E3E0D8] bg-white">
+        <div className="relative h-32 sm:h-44 w-full bg-[#EEECE6]">
           {shop.cover_path ? (
             <>
               <img
@@ -199,27 +199,27 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                   className="-mt-10 sm:-mt-12 relative z-10 h-16 w-16 sm:h-20 sm:w-20 shrink-0 rounded-lg border-4 border-white bg-white object-cover"
                 />
               ) : (
-                <div className="-mt-10 sm:-mt-12 relative z-10 flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-lg border-4 border-white bg-[#0B6E4F] text-lg font-bold text-white">
+                <div className="-mt-10 sm:-mt-12 relative z-10 flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-lg border-4 border-white bg-[#214E43] text-lg font-bold text-white">
                   {shop.name.slice(0, 2).toUpperCase()}
                 </div>
               )}
 
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-[19px] font-semibold text-[#1B1F23] sm:text-2xl">{shop.name}</h1>
+                  <h1 className="text-[19px] font-semibold text-[#202724] sm:text-2xl">{shop.name}</h1>
                   {isVerified ? (
-                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#0B6E4F]">
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#214E43]">
                       <IsokoVerifiedSeal className="h-4 w-4" />
                       <span>{t('verified')}</span>
                     </span>
                   ) : (
-                    <span className="text-xs font-medium text-[#6B7280]">{t('unverified')}</span>
+                    <span className="text-xs font-medium text-[#68716D]">{t('unverified')}</span>
                   )}
                 </div>
 
-                <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#6B7280]">
+                <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#68716D]">
                   <span className="inline-flex items-center gap-1">
-                    <MapPin className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
+                    <MapPin className="h-3.5 w-3.5 text-[#214E43]" aria-hidden="true" />
                     {shop.district_name}
                     {shop.sector_name ? `, ${shop.sector_name}` : ''}
                   </span>
@@ -229,18 +229,18 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                   <span className="tabular-nums font-medium">{products.length} {t('products')}</span>
                 </div>
 
-                {shop.about && <p className="mt-2 text-xs leading-relaxed text-[#374151] max-w-xl">{shop.about}</p>}
+                {shop.about && <p className="mt-2 text-xs leading-relaxed text-[#49524D] max-w-xl">{shop.about}</p>}
 
-                <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#6B7280]">
+                <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#68716D]">
                   {shop.delivery_text && (
                     <span className="inline-flex items-center gap-1">
-                      <Truck className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
+                      <Truck className="h-3.5 w-3.5 text-[#214E43]" aria-hidden="true" />
                       <span>{shop.delivery_text}</span>
                     </span>
                   )}
                   {shop.hours_text && (
                     <span className="inline-flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
+                      <Clock className="h-3.5 w-3.5 text-[#214E43]" aria-hidden="true" />
                       <span>{shop.hours_text}</span>
                     </span>
                   )}
@@ -255,7 +255,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                         href={url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded border border-[#E5E7EB] bg-[#F7F8FA] px-2 py-1 text-[11px] font-medium capitalize text-[#0B6E4F] hover:border-[#0B6E4F]"
+                        className="inline-flex items-center gap-1 rounded border border-[#E3E0D8] bg-[#F7F5F0] px-2 py-1 text-[11px] font-medium capitalize text-[#214E43] hover:border-[#214E43]"
                       >
                         <span>{key}</span>
                         <ExternalLink className="h-3 w-3" aria-hidden="true" />
@@ -280,15 +280,15 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
               <a
                 href={`tel:+${shop.phone}`}
                 onClick={() => trackEvent('call_click', null, shop.id)}
-                className="inline-flex h-10 items-center gap-1.5 rounded-md border border-[#CBD5D1] bg-white px-3 text-xs font-semibold text-[#1B1F23] hover:bg-[#F7F8FA]"
+                className="inline-flex h-10 items-center gap-1.5 rounded-md border border-[#C9CEC7] bg-white px-3 text-xs font-semibold text-[#202724] hover:bg-[#F7F5F0]"
               >
-                <Phone className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+                <Phone className="h-4 w-4 text-[#214E43]" aria-hidden="true" />
                 <span>{t('call')}</span>
               </a>
               <button
                 type="button"
                 onClick={handleShare}
-                className="inline-flex h-10 items-center gap-1.5 rounded-md border border-[#CBD5D1] bg-white px-3 text-xs font-semibold text-[#1B1F23] hover:bg-[#F7F8FA]"
+                className="inline-flex h-10 items-center gap-1.5 rounded-md border border-[#C9CEC7] bg-white px-3 text-xs font-semibold text-[#202724] hover:bg-[#F7F5F0]"
               >
                 <Share2 className="h-4 w-4" aria-hidden="true" />
                 <span>{copied ? t('copied') : t('share_shop')}</span>
@@ -297,9 +297,9 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                 type="button"
                 onClick={() => setQrOpen(true)}
                 aria-label="QR Code"
-                className="inline-flex h-10 items-center gap-1.5 rounded-md border border-[#CBD5D1] bg-white px-3 text-xs font-semibold text-[#1B1F23] hover:bg-[#F7F8FA]"
+                className="inline-flex h-10 items-center gap-1.5 rounded-md border border-[#C9CEC7] bg-white px-3 text-xs font-semibold text-[#202724] hover:bg-[#F7F5F0]"
               >
-                <QrCode className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+                <QrCode className="h-4 w-4 text-[#214E43]" aria-hidden="true" />
                 <span>QR</span>
               </button>
               <button
@@ -307,8 +307,8 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                 onClick={handleFollow}
                 className={`inline-flex h-10 items-center gap-1.5 rounded-md border px-3 text-xs font-semibold transition-colors ${
                   isFollowing
-                    ? 'border-[#0B6E4F] bg-[#0B6E4F] text-white'
-                    : 'border-[#CBD5D1] bg-white text-[#1B1F23] hover:border-[#0B6E4F]'
+                    ? 'border-[#214E43] bg-[#214E43] text-white'
+                    : 'border-[#C9CEC7] bg-white text-[#202724] hover:border-[#214E43]'
                 }`}
               >
                 <Bell className="h-4 w-4" aria-hidden="true" />
@@ -321,12 +321,12 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
 
       {/* In-Shop Filter Bar */}
       <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-1 rounded-md bg-white border border-[#E5E7EB] p-1">
+        <div className="flex flex-wrap items-center gap-1 rounded-md bg-white border border-[#E3E0D8] p-1">
           <button
             type="button"
             onClick={() => setFilterCat('')}
             className={`h-8 rounded px-3 text-xs font-semibold ${
-              filterCat === '' ? 'bg-[#0B6E4F] text-white' : 'text-[#4B5563]'
+              filterCat === '' ? 'bg-[#214E43] text-white' : 'text-[#68716D]'
             }`}
           >
             {t('all')} ({products.length})
@@ -337,7 +337,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
               type="button"
               onClick={() => setFilterCat(c.slug)}
               className={`h-8 rounded px-3 text-xs font-semibold ${
-                filterCat === c.slug ? 'bg-[#0B6E4F] text-white' : 'text-[#4B5563]'
+                filterCat === c.slug ? 'bg-[#214E43] text-white' : 'text-[#68716D]'
               }`}
             >
               {c.name_rw}
@@ -348,7 +348,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
         <div className="flex items-center gap-2">
           <div className="relative flex-1 sm:w-60">
             <Search
-              className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B7280]"
+              className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#68716D]"
               aria-hidden="true"
             />
             <input
@@ -357,14 +357,14 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
               onChange={(e) => setShopSearch(e.target.value)}
               placeholder={t('search_placeholder')}
               aria-label={t('search_placeholder')}
-              className="h-10 w-full rounded-md border border-[#E5E7EB] bg-white pl-8 pr-3 text-xs focus:border-[#0B6E4F] focus:outline-none"
+              className="h-10 w-full rounded-md border border-[#E3E0D8] bg-white pl-8 pr-3 text-xs focus:border-[#214E43] focus:outline-none"
             />
           </div>
 
           <button
             type="button"
             onClick={() => setReportOpen(true)}
-            className="inline-flex h-10 items-center gap-1 text-xs font-semibold text-[#C0392B] hover:underline shrink-0"
+            className="inline-flex h-10 items-center gap-1 text-xs font-semibold text-[#BD594A] hover:underline shrink-0"
           >
             <Flag className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{t('report')}</span>
@@ -374,8 +374,8 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
 
       {/* Product Grid — 3/4/5/6/7 columns */}
       {filteredProducts.length === 0 ? (
-        <div className="rounded-md bg-[#F1F6F3] p-6 text-center">
-          <p className="text-xs font-medium text-[#374151]">{t('no_results')}</p>
+        <div className="rounded-md bg-[#E9F0EB] p-6 text-center">
+          <p className="text-xs font-medium text-[#49524D]">{t('no_results')}</p>
           {(filterCat || shopSearch) && (
             <button
               type="button"
@@ -383,7 +383,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                 setFilterCat('');
                 setShopSearch('');
               }}
-              className="mt-3 h-9 rounded-md bg-[#0B6E4F] px-4 text-xs font-semibold text-white"
+              className="mt-3 h-9 rounded-md bg-[#214E43] px-4 text-xs font-semibold text-white"
             >
               {t('clear_filters')}
             </button>
