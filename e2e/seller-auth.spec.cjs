@@ -1,12 +1,9 @@
 const { test, expect } = require('@playwright/test');
 
 test.beforeEach(async ({ page }) => {
-  // These tests exercise the public UI only. Block every Neon endpoint so CI
+  // These tests exercise the public UI only. Block all Neon endpoints so CI
   // cannot read or write Setup/Production data and no real account is needed.
-  await page.route(
-    /.(?:neonauth|apirest|compute|storage).c-8.eu-central-1.aws.neon.tech\//,
-    (route) => route.abort()
-  );
+  await page.route(/\.aws\.neon\.tech\//, (route) => route.abort());
   page.on('pageerror', (error) => console.log('Browser page error:', error.message));
 });
 
@@ -18,7 +15,7 @@ test('homepage opens and shows the current ISOKO introduction', async ({ page })
   await expect(
     page.getByRole('heading', { level: 1, name: 'Gura mu maduka y’u Rwanda kuri WhatsApp' })
   ).toBeVisible();
-  await expect(page.getByText('Ibyiciro byose', { exact: true })).toBeVisible();
+  await expect(page.getByText('Ibyiciro byose', { exact: true }).first()).toBeVisible();
 });
 
 test('login route exposes the real seller sign-in form without public demo credentials', async ({ page }) => {
@@ -36,8 +33,8 @@ test('login route exposes the real seller sign-in form without public demo crede
 test('a signed-out visitor cannot open seller product creation', async ({ page }) => {
   await page.goto('/umucuruzi/ongeraho');
 
-  // The public route guard sends visitors without an existing seller session
-  // to the ordinary sign-in page. The test never creates or uses an account.
+  // The route guard redirects visitors without a seller session to sign-in.
+  // The test never creates or uses a real account.
   await expect(page).toHaveURL(/\/injira$/);
   await expect(page.getByRole('heading', { name: 'Injira', exact: true })).toBeVisible();
   await expect(page.locator('#login-identifier')).toBeVisible();
