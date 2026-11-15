@@ -69,7 +69,11 @@ export const AdminPage: React.FC = () => {
 
   // KYC Modal state
   const [kycModalSellerId, setKycModalSellerId] = useState<string | null>(null);
-  const [kycDoc, setKycDoc] = useState<SellerKyc | null>(null);
+  const [kycDoc, setKycDoc] = useState<
+    | (Awaited<ReturnType<typeof fetchAdminKyc>>['kyc'] &
+        Partial<SellerKyc>)
+    | null
+  >(null);
   const [kycTtl, setKycTtl] = useState<number>(60);
   const [reviewReason, setReviewReason] = useState('');
   const [phoneVerified, setPhoneVerified] = useState(true);
@@ -1036,7 +1040,7 @@ export const AdminPage: React.FC = () => {
                     <strong>Amazina ku ndangamuntu:</strong> {kycDoc.full_name_on_id}
                   </p>
                   <p className="tabular-nums">
-                    <strong>Indangamuntu:</strong> {kycDoc.national_id_number}
+                    <strong>Indangamuntu:</strong> {kycDoc.national_id_number || 'Ntirasabwa'}
                   </p>
                   <p>
                     <strong>Ubwoko bw’ubucuruzi:</strong> {kycDoc.business_type}
@@ -1048,17 +1052,23 @@ export const AdminPage: React.FC = () => {
 
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   {[
-                    { label: 'Indangamuntu (Imbere)', src: kycDoc.id_front_path },
-                    { label: 'Indangamuntu (Inyuma)', src: kycDoc.id_back_path },
-                    { label: 'Selfie', src: kycDoc.selfie_path },
-                    { label: 'Iduka', src: kycDoc.shop_photo_path },
+                    { label: 'Indangamuntu (Imbere)', src: kycDoc.idFrontUrl || kycDoc.id_front_path || '' },
+                    { label: 'Indangamuntu (Inyuma)', src: kycDoc.idBackUrl || kycDoc.id_back_path || '' },
+                    { label: 'Selfie', src: kycDoc.selfieUrl || kycDoc.selfie_path || '' },
+                    { label: 'Iduka', src: kycDoc.shopPhotoUrl || kycDoc.shop_photo_path || '' },
                   ].map((doc) => (
                     <div key={doc.label} className="rounded-xl border border-[#E5E7EB] p-2">
-                      <img
-                        src={doc.src}
-                        alt={doc.label}
-                        className="aspect-4/3 w-full rounded-lg object-cover"
-                      />
+                      {doc.src ? (
+                        <img
+                          src={doc.src}
+                          alt={doc.label}
+                          className="aspect-4/3 w-full rounded-lg object-cover"
+                        />
+                      ) : (
+                        <div className="flex aspect-4/3 w-full items-center justify-center rounded-lg bg-[#F7F8FA] text-[11px] text-[#64748B]">
+                          Nta foto
+                        </div>
+                      )}
                       <p className="mt-1 text-center text-[11px] font-medium text-slate-600">
                         {doc.label}
                       </p>

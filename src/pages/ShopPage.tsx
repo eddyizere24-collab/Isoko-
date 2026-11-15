@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   Bell,
   Clock,
+  ExternalLink,
   Flag,
   MapPin,
   MessageCircle,
@@ -15,8 +16,8 @@ import { IsokoVerifiedSeal, RwandanGeometricPattern } from '../components/IsokoL
 import { ProductCard } from '../components/ProductCard';
 import { QrCodeModal } from '../components/QrCodeModal';
 import { ReportModal } from '../components/ReportModal';
+import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
-import { RW } from '../i18n/rw';
 import { fetchShopDetail, subscribeUpdates } from '../lib/api';
 import { trackEvent } from '../lib/track';
 import { buildWhatsAppLink } from '../lib/whatsapp';
@@ -26,10 +27,9 @@ interface ShopPageProps {
   slug: string;
 }
 
-const DEFAULT_COVER = '/src/assets/images/promo_kigali_market_1794567241262.jpg';
-
 export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
   const { navigate, followedShops, toggleFollowShop } = useMarketplace();
+  const { t } = useT();
   const [shop, setShop] = useState<Shop | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,7 +52,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
         trackEvent('view', null, res.shop.id);
       })
       .catch((err) => {
-        if (active) setError(err instanceof Error ? err.message : RW.shop_missing);
+        if (active) setError(err instanceof Error ? err.message : t('shop_missing'));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -60,7 +60,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
     return () => {
       active = false;
     };
-  }, [slug]);
+  }, [slug, t]);
 
   const filteredProducts = useMemo(() => {
     const q = shopSearch.trim().toLowerCase();
@@ -78,11 +78,11 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 space-y-6">
-        <div className="h-56 animate-pulse rounded-lg bg-[#F1F6F3]" />
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="aspect-square animate-pulse rounded-xl bg-[#F1F6F3]" />
+      <div className="mx-auto max-w-7xl px-2 py-4 sm:px-6 space-y-4">
+        <div className="h-44 animate-pulse rounded-md bg-white border border-[#E5E7EB]" />
+        <div className="grid grid-cols-3 gap-1.5 min-[480px]:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-[175px] animate-pulse rounded-md bg-white border border-[#E5E7EB]" />
           ))}
         </div>
       </div>
@@ -91,15 +91,15 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
 
   if (error || !shop) {
     return (
-      <div className="mx-auto max-w-xl px-4 py-16 text-center">
-        <h1 className="font-display text-xl font-bold text-[#1B1F23]">{RW.shop_missing}</h1>
-        <p className="mt-2 text-sm text-slate-600">{error || 'Iri duka ntiribonetse.'}</p>
+      <div className="mx-auto max-w-xl px-4 py-14 text-center">
+        <h1 className="text-lg font-semibold text-[#1B1F23]">{t('shop_missing')}</h1>
+        <p className="mt-2 text-xs text-[#6B7280]">{error || t('shop_missing')}</p>
         <button
           type="button"
           onClick={() => navigate('/')}
-          className="mt-4 min-h-[44px] rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white"
+          className="mt-4 h-10 rounded-md bg-[#0B6E4F] px-5 text-xs font-semibold text-white"
         >
-          Subira ahabanza
+          {t('back_home')}
         </button>
       </div>
     );
@@ -107,6 +107,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
 
   const shopUrl = `${window.location.origin}/i/${shop.slug}`;
   const isFollowing = followedShops.includes(shop.id);
+  const isVerified = shop.status === 'approved' || shop.identity_status === 'verified';
   const memberDays = shop.approved_at
     ? Math.max(1, Math.floor((Date.now() - new Date(shop.approved_at).getTime()) / (1000 * 60 * 60 * 24)))
     : 30;
@@ -117,6 +118,18 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
 
   const handleShare = async () => {
     trackEvent('share', null, shop.id);
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: shop.name,
+          text: `${shop.name} — Isoko Rwanda`,
+          url: shopUrl,
+        });
+        return;
+      } catch {
+        // fallback to clipboard
+      }
+    }
     try {
       await navigator.clipboard.writeText(shopUrl);
       setCopied(true);
@@ -145,80 +158,111 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
     ).values()
   );
 
+  const socialEntries = Object.entries(shop.social_links ?? {}).filter(
+    ([, url]) => typeof url === 'string' && url.trim().length > 0
+  );
+
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 space-y-8">
-      {/* Storefront Hero Banner + Verified Merchant Profile */}
-      <section className="overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-xs">
-        <div className="relative h-40 sm:h-52 w-full bg-[#0F1E18]">
-          <img
-            src={shop.cover_path || DEFAULT_COVER}
-            alt={`Ifoto y'iduka ${shop.name}`}
-            referrerPolicy="no-referrer"
-            className="h-full w-full object-cover"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent"
-          />
-          <div className="absolute bottom-3 sm:left-[120px] hidden sm:block text-xs font-medium text-white/95">
-            Iduka ryemewe ku Isoko · {shop.district_name}
+    <div className="mx-auto max-w-7xl px-2 py-4 sm:px-6 space-y-5">
+      {/* Storefront Hero Banner (True SVG Imigongo fallback when cover_path is absent) */}
+      <section className="overflow-hidden rounded-lg border border-[#E5E7EB] bg-white">
+        <div className="relative h-32 sm:h-44 w-full bg-[#064E3B]">
+          {shop.cover_path ? (
+            <>
+              <img
+                src={shop.cover_path}
+                alt={shop.name}
+                referrerPolicy="no-referrer"
+                className="h-full w-full object-cover"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent"
+              />
+            </>
+          ) : (
+            <div className="imigongo-surface h-full w-full" aria-hidden="true" />
+          )}
+          <div className="absolute bottom-2.5 sm:left-[110px] hidden sm:block text-xs font-medium text-white/95">
+            {isVerified ? t('verified') : t('unverified')} · {shop.district_name}
           </div>
         </div>
-        <RwandanGeometricPattern className="h-2 w-full text-[#0B6E4F]/20 bg-[#F1F6F3]" />
+        <RwandanGeometricPattern size="header" />
 
-        <div className="p-5 sm:p-6">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+        <div className="p-4 sm:p-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
               {shop.logo_path ? (
                 <img
                   src={shop.logo_path}
                   alt={shop.name}
-                  className="-mt-12 sm:-mt-14 relative z-10 h-20 w-20 shrink-0 rounded-lg border-4 border-white bg-white object-cover shadow-md"
+                  className="-mt-10 sm:-mt-12 relative z-10 h-16 w-16 sm:h-20 sm:w-20 shrink-0 rounded-lg border-4 border-white bg-white object-cover"
                 />
               ) : (
-                <div className="-mt-12 sm:-mt-14 relative z-10 flex h-20 w-20 shrink-0 items-center justify-center rounded-lg border-4 border-white bg-[#0B6E4F] text-xl font-bold text-white shadow-md">
+                <div className="-mt-10 sm:-mt-12 relative z-10 flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-lg border-4 border-white bg-[#0B6E4F] text-lg font-bold text-white">
                   {shop.name.slice(0, 2).toUpperCase()}
                 </div>
               )}
 
               <div>
-                <div className="flex flex-wrap items-center gap-2.5">
-                  <h1 className="font-display text-2xl font-bold text-[#1B1F23]">{shop.name}</h1>
-                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0B6E4F]">
-                    <IsokoVerifiedSeal className="h-4 w-4" />
-                    <span>{RW.verified}</span>
-                  </span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="text-[19px] font-semibold text-[#1B1F23] sm:text-2xl">{shop.name}</h1>
+                  {isVerified ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#0B6E4F]">
+                      <IsokoVerifiedSeal className="h-4 w-4" />
+                      <span>{t('verified')}</span>
+                    </span>
+                  ) : (
+                    <span className="text-xs font-medium text-[#6B7280]">{t('unverified')}</span>
+                  )}
                 </div>
 
-                <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-600">
+                <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#6B7280]">
                   <span className="inline-flex items-center gap-1">
                     <MapPin className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
                     {shop.district_name}
                     {shop.sector_name ? `, ${shop.sector_name}` : ''}
                   </span>
                   <span aria-hidden="true">·</span>
-                  <span>{RW.member_since.replace('{n}', String(memberDays))}</span>
+                  <span>{t('member_since', { n: memberDays })}</span>
                   <span aria-hidden="true">·</span>
-                  <span className="tabular-nums font-medium">{products.length} ibicuruzwa</span>
+                  <span className="tabular-nums font-medium">{products.length} {t('products')}</span>
                 </div>
 
-                {shop.about && <p className="mt-2.5 text-sm text-slate-700 max-w-xl">{shop.about}</p>}
+                {shop.about && <p className="mt-2 text-xs leading-relaxed text-[#374151] max-w-xl">{shop.about}</p>}
 
-                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-slate-600">
+                <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#6B7280]">
                   {shop.delivery_text && (
-                    <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-flex items-center gap-1">
                       <Truck className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
                       <span>{shop.delivery_text}</span>
                     </span>
                   )}
                   {shop.hours_text && (
-                    <span className="inline-flex items-center gap-1.5">
+                    <span className="inline-flex items-center gap-1">
                       <Clock className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
                       <span>{shop.hours_text}</span>
                     </span>
                   )}
-                  {shop.landmark && <span>Aho biherereye: {shop.landmark}</span>}
+                  {shop.landmark && <span>{shop.landmark}</span>}
                 </div>
+
+                {socialEntries.length > 0 && (
+                  <div className="mt-2.5 flex flex-wrap gap-2">
+                    {socialEntries.map(([key, url]) => (
+                      <a
+                        key={key}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded border border-[#E5E7EB] bg-[#F7F8FA] px-2 py-1 text-[11px] font-medium capitalize text-[#0B6E4F] hover:border-[#0B6E4F]"
+                      >
+                        <span>{key}</span>
+                        <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -228,7 +272,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackEvent('wa_click', null, shop.id)}
-                className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#1A7F43] px-4 text-sm font-semibold text-white hover:bg-[#146635]"
+                className="inline-flex h-10 items-center gap-1.5 rounded-md bg-[#1A7F43] px-3.5 text-xs font-semibold text-white hover:bg-[#146635]"
               >
                 <MessageCircle className="h-4 w-4" aria-hidden="true" />
                 <span>WhatsApp</span>
@@ -236,24 +280,24 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
               <a
                 href={`tel:+${shop.phone}`}
                 onClick={() => trackEvent('call_click', null, shop.id)}
-                className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50"
+                className="inline-flex h-10 items-center gap-1.5 rounded-md border border-[#CBD5D1] bg-white px-3 text-xs font-semibold text-[#1B1F23] hover:bg-[#F7F8FA]"
               >
                 <Phone className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
-                <span>{RW.call}</span>
+                <span>{t('call')}</span>
               </a>
               <button
                 type="button"
                 onClick={handleShare}
-                className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-slate-300 bg-white px-3.5 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50"
+                className="inline-flex h-10 items-center gap-1.5 rounded-md border border-[#CBD5D1] bg-white px-3 text-xs font-semibold text-[#1B1F23] hover:bg-[#F7F8FA]"
               >
                 <Share2 className="h-4 w-4" aria-hidden="true" />
-                <span>{copied ? RW.copied : RW.share_shop}</span>
+                <span>{copied ? t('copied') : t('share_shop')}</span>
               </button>
               <button
                 type="button"
                 onClick={() => setQrOpen(true)}
-                aria-label="QR Code y'iduka"
-                className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50"
+                aria-label="QR Code"
+                className="inline-flex h-10 items-center gap-1.5 rounded-md border border-[#CBD5D1] bg-white px-3 text-xs font-semibold text-[#1B1F23] hover:bg-[#F7F8FA]"
               >
                 <QrCode className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
                 <span>QR</span>
@@ -261,39 +305,39 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
               <button
                 type="button"
                 onClick={handleFollow}
-                className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border px-3.5 text-sm font-semibold transition-colors ${
+                className={`inline-flex h-10 items-center gap-1.5 rounded-md border px-3 text-xs font-semibold transition-colors ${
                   isFollowing
                     ? 'border-[#0B6E4F] bg-[#0B6E4F] text-white'
-                    : 'border-slate-300 bg-white text-[#1B1F23] hover:border-[#0B6E4F]'
+                    : 'border-[#CBD5D1] bg-white text-[#1B1F23] hover:border-[#0B6E4F]'
                 }`}
               >
                 <Bell className="h-4 w-4" aria-hidden="true" />
-                <span>{isFollowing ? 'Ukurikira iri duka' : 'Kurikira iduka'}</span>
+                <span>{isFollowing ? t('following_shop') : t('follow_shop')}</span>
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* In-Shop Search, Category Filter Bar & Report */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-1.5 rounded-xl bg-[#F1F6F3] p-1">
+      {/* In-Shop Filter Bar */}
+      <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-1 rounded-md bg-white border border-[#E5E7EB] p-1">
           <button
             type="button"
             onClick={() => setFilterCat('')}
-            className={`min-h-[38px] rounded-lg px-3.5 text-xs font-semibold ${
-              filterCat === '' ? 'bg-white text-[#0B6E4F] shadow-xs' : 'text-slate-600'
+            className={`h-8 rounded px-3 text-xs font-semibold ${
+              filterCat === '' ? 'bg-[#0B6E4F] text-white' : 'text-[#4B5563]'
             }`}
           >
-            {RW.all} ({products.length})
+            {t('all')} ({products.length})
           </button>
           {parentCategories.map((c) => (
             <button
               key={c.slug}
               type="button"
               onClick={() => setFilterCat(c.slug)}
-              className={`min-h-[38px] rounded-lg px-3.5 text-xs font-semibold ${
-                filterCat === c.slug ? 'bg-white text-[#0B6E4F] shadow-xs' : 'text-slate-600'
+              className={`h-8 rounded px-3 text-xs font-semibold ${
+                filterCat === c.slug ? 'bg-[#0B6E4F] text-white' : 'text-[#4B5563]'
               }`}
             >
               {c.name_rw}
@@ -301,39 +345,37 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="relative flex-1 sm:w-64">
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1 sm:w-60">
             <Search
-              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+              className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#6B7280]"
               aria-hidden="true"
             />
             <input
               type="search"
               value={shopSearch}
               onChange={(e) => setShopSearch(e.target.value)}
-              placeholder="Shakisha muri iri duka..."
-              aria-label="Shakisha muri iri duka"
-              className="min-h-[44px] w-full rounded-xl border border-[#E5E7EB] bg-white pl-9 pr-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
+              placeholder={t('search_placeholder')}
+              aria-label={t('search_placeholder')}
+              className="h-10 w-full rounded-md border border-[#E5E7EB] bg-white pl-8 pr-3 text-xs focus:border-[#0B6E4F] focus:outline-none"
             />
           </div>
 
           <button
             type="button"
             onClick={() => setReportOpen(true)}
-            className="inline-flex min-h-[44px] items-center gap-1.5 text-xs font-semibold text-[#C0392B] hover:underline shrink-0"
+            className="inline-flex h-10 items-center gap-1 text-xs font-semibold text-[#C0392B] hover:underline shrink-0"
           >
             <Flag className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>{RW.report}</span>
+            <span>{t('report')}</span>
           </button>
         </div>
       </div>
 
-      {/* Product Grid */}
+      {/* Product Grid — 3/4/5/6/7 columns */}
       {filteredProducts.length === 0 ? (
-        <div className="rounded-lg bg-[#F1F6F3] p-8 text-center">
-          <p className="text-sm font-medium text-slate-700">
-            Nta bicuruzwa bihuye n'ibyo wasabye muri iri duka.
-          </p>
+        <div className="rounded-md bg-[#F1F6F3] p-6 text-center">
+          <p className="text-xs font-medium text-[#374151]">{t('no_results')}</p>
           {(filterCat || shopSearch) && (
             <button
               type="button"
@@ -341,14 +383,14 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                 setFilterCat('');
                 setShopSearch('');
               }}
-              className="mt-3 min-h-[44px] rounded-xl bg-[#0B6E4F] px-4 text-xs font-semibold text-white"
+              className="mt-3 h-9 rounded-md bg-[#0B6E4F] px-4 text-xs font-semibold text-white"
             >
-              Reba byose ({products.length})
+              {t('clear_filters')}
             </button>
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:gap-5">
+        <div className="grid grid-cols-3 gap-1.5 min-[480px]:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 sm:gap-2.5">
           {filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

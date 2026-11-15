@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   ChevronRight,
   Home,
   LayoutGrid,
   Search,
   ShoppingCart,
-  Store,
   User,
   X,
 } from 'lucide-react';
+import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
-import { RW } from '../i18n/rw';
 
 interface BottomNavProps {
   categoriesOpen: boolean;
@@ -19,7 +18,7 @@ interface BottomNavProps {
 
 export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategoriesOpen }) => {
   const { pathname, navigate, cartCount, bootstrap, authProfile } = useMarketplace();
-  const [bannerDismissed, setBannerDismissed] = useState(false);
+  const { t } = useT();
 
   if (pathname.startsWith('/p/')) return null;
 
@@ -30,6 +29,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
     : '/injira';
 
   const isHome = pathname === '/' || pathname === '';
+  const isCategories = pathname === '/ibyiciro' || pathname.startsWith('/c/') || pathname.startsWith('/icyiciro/');
   const isSearch = pathname === '/shakisha';
   const isCart = pathname === '/igare';
   const isAccount =
@@ -37,13 +37,6 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
     pathname === '/abacuruzi' ||
     pathname.startsWith('/umucuruzi') ||
     pathname.startsWith('/admin');
-
-  const showSignInStrip =
-    !authProfile &&
-    !bannerDismissed &&
-    !isAccount &&
-    !isCart &&
-    !pathname.startsWith('/ubufasha');
 
   const topCategories = (bootstrap?.categories ?? []).filter((c) => c.parent_id === null);
   const allCategories = bootstrap?.categories ?? [];
@@ -55,7 +48,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
           className="fixed inset-0 z-50 flex items-end bg-black/45 md:items-center md:justify-center"
           role="dialog"
           aria-modal="true"
-          aria-label="Ibyiciro byose"
+          aria-label={t('all_categories')}
           onClick={() => setCategoriesOpen(false)}
         >
           <div
@@ -63,11 +56,11 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-2.5">
-              <h2 className="text-[15px] font-bold text-[#1B1F23]">Ibyiciro byose</h2>
+              <h2 className="text-[15px] font-semibold text-[#1B1F23]">{t('all_categories')}</h2>
               <button
                 type="button"
                 onClick={() => setCategoriesOpen(false)}
-                aria-label="Funga ibyiciro"
+                aria-label={t('cancel')}
                 className="flex h-9 w-9 items-center justify-center rounded-lg text-[#4B5563] hover:bg-[#F7F8FA]"
               >
                 <X className="h-4 w-4" aria-hidden="true" />
@@ -78,11 +71,11 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
                 type="button"
                 onClick={() => {
                   setCategoriesOpen(false);
-                  navigate('/shakisha');
+                  navigate('/ibyiciro');
                 }}
                 className="flex min-h-[44px] w-full items-center justify-between py-2 text-left text-[13px] font-semibold text-[#0B6E4F]"
               >
-                <span>Ibicuruzwa byose</span>
+                <span>{t('all_categories')}</span>
                 <ChevronRight className="h-4 w-4" aria-hidden="true" />
               </button>
               {(topCategories.length > 0 ? topCategories : allCategories).map((cat) => {
@@ -125,42 +118,9 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
         </div>
       )}
 
-      {/* Soft Tinted Sign-In Prompt Bar above mobile bottom nav (ISOKO green tint + pill button) */}
-      {showSignInStrip && (
-        <div className="fixed bottom-14 inset-x-0 z-30 border-t border-[#CFE3D9] bg-[#E8F3EE] px-3 py-2 md:hidden">
-          <div className="mx-auto flex max-w-md items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white text-[#0B6E4F] border border-[#CFE3D9]">
-                <Store className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden="true" />
-              </span>
-              <p className="truncate text-[12px] font-medium text-[#1B1F23]">
-                Injira cyangwa ufungure iduka ryawe
-              </p>
-            </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              <button
-                type="button"
-                onClick={() => navigate('/injira')}
-                className="inline-flex h-7 items-center rounded-full bg-[#0B6E4F] px-3 text-[11.5px] font-semibold text-white hover:bg-[#08553D]"
-              >
-                Injira
-              </button>
-              <button
-                type="button"
-                onClick={() => setBannerDismissed(true)}
-                aria-label="Hisha"
-                className="flex h-7 w-7 items-center justify-center rounded-full text-[#4B5563] hover:bg-white/70"
-              >
-                <X className="h-3.5 w-3.5" aria-hidden="true" />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Fixed 56px 5-tab Mobile Bottom Nav */}
       <nav
-        aria-label="Ibice by'ingenzi"
+        aria-label={t('categories')}
         className="fixed bottom-0 inset-x-0 z-40 h-14 border-t border-[#E5E7EB] bg-white md:hidden"
       >
         <div className="grid h-full grid-cols-5">
@@ -175,24 +135,25 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
             }`}
           >
             <Home className="h-[19px] w-[19px]" strokeWidth={isHome ? 2.1 : 1.6} aria-hidden="true" />
-            <span>Ahabanza</span>
+            <span>{t('home')}</span>
           </button>
 
           <button
             type="button"
-            onClick={() => setCategoriesOpen(true)}
+            onClick={() => {
+              setCategoriesOpen(false);
+              navigate('/ibyiciro');
+            }}
             className={`flex flex-col items-center justify-center gap-0.5 text-[10.5px] ${
-              categoriesOpen || pathname.startsWith('/c/')
-                ? 'font-semibold text-[#0B6E4F]'
-                : 'font-medium text-[#4B5563]'
+              isCategories ? 'font-semibold text-[#0B6E4F]' : 'font-medium text-[#4B5563]'
             }`}
           >
             <LayoutGrid
               className="h-[19px] w-[19px]"
-              strokeWidth={categoriesOpen || pathname.startsWith('/c/') ? 2.1 : 1.6}
+              strokeWidth={isCategories ? 2.1 : 1.6}
               aria-hidden="true"
             />
-            <span>Ibyiciro</span>
+            <span>{t('categories')}</span>
           </button>
 
           <button
@@ -206,7 +167,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
             }`}
           >
             <Search className="h-[19px] w-[19px]" strokeWidth={isSearch ? 2.1 : 1.6} aria-hidden="true" />
-            <span>Shakisha</span>
+            <span>{t('search_btn')}</span>
           </button>
 
           <button
@@ -215,7 +176,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
               setCategoriesOpen(false);
               navigate('/igare');
             }}
-            aria-label={`${RW.cart} (${cartCount})`}
+            aria-label={`${t('cart')} (${cartCount})`}
             className={`relative flex flex-col items-center justify-center gap-0.5 text-[10.5px] ${
               isCart ? 'font-semibold text-[#0B6E4F]' : 'font-medium text-[#4B5563]'
             }`}
@@ -228,7 +189,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
                 </span>
               )}
             </span>
-            <span>Igare</span>
+            <span>{t('cart')}</span>
           </button>
 
           <button
@@ -242,7 +203,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
             }`}
           >
             <User className="h-[19px] w-[19px]" strokeWidth={isAccount ? 2.1 : 1.6} aria-hidden="true" />
-            <span>Konti</span>
+            <span>{t('account')}</span>
           </button>
         </div>
       </nav>

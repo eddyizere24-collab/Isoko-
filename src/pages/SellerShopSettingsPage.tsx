@@ -1,16 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, CheckCircle2, ImagePlus, MessageCircle, QrCode, Save } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Copy, ImagePlus, MessageCircle, QrCode, Save, ShieldCheck } from 'lucide-react';
 import { QrCodeModal } from '../components/QrCodeModal';
+import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { getSectorsForDistrict, RWANDA_DISTRICTS } from '../data/rwandaAreas';
 import { RW } from '../i18n/rw';
 import { fetchSellerOverview, updateSellerProfile, updateSellerShop, uploadImagePair } from '../lib/api';
 import { processProductImage } from '../lib/image';
+import { calculateProfileCompletion } from '../lib/profileCompletion';
 import { buildWhatsAppLink } from '../lib/whatsapp';
-import type { Shop } from '../types/marketplace';
+import type { Profile, Shop } from '../types/marketplace';
 
 export const SellerShopSettingsPage: React.FC = () => {
   const { navigate, authSession, refreshBootstrap } = useMarketplace();
+  const { t } = useT();
+  const [profileMeta, setProfileMeta] = useState<Pick<Profile, 'full_name' | 'avatar_path' | 'bio' | 'identity_status'> | null>(null);
   const [shop, setShop] = useState<Shop | null>(null);
   const [name, setName] = useState('');
   const [about, setAbout] = useState('');
@@ -33,6 +37,8 @@ export const SellerShopSettingsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [savedMsg, setSavedMsg] = useState<string | null>(null);
   const [qrOpen, setQrOpen] = useState(false);
+  const [copiedUrl, setCopiedUrl] = useState(false);
+  const [verifiedRequested, setVerifiedRequested] = useState(false);
 
   useEffect(() => {
     if (!authSession) {
@@ -41,6 +47,7 @@ export const SellerShopSettingsPage: React.FC = () => {
     }
     fetchSellerOverview()
       .then((res) => {
+        setProfileMeta(res.profile);
         setShop(res.shop);
         setName(res.shop.name);
         setAbout(res.shop.about);
@@ -57,6 +64,13 @@ export const SellerShopSettingsPage: React.FC = () => {
         setLogoPath(res.shop.logo_path ?? '');
         setCoverPath(res.shop.cover_path ?? '');
         setSocialLinks(res.shop.social_links ?? {});
+        try {
+          if (localStorage.getItem(`isoko.verified_req.${res.shop.id}`) === '1') {
+            setVerifiedRequested(true);
+          }
+        } catch {
+          // ignore
+        }
       })
       .catch((err) => setError(err instanceof Error ? err.message : 'Ikibazo mu gufungura iduka.'))
       .finally(() => setLoading(false));
@@ -122,42 +136,83 @@ export const SellerShopSettingsPage: React.FC = () => {
     whatsapp,
     `Muraho ${name}, ndi kugerageza link ya WhatsApp y'iduka ryanjye ku Isoko.`
   );
-  const shopUrl = shop ? `${window.location.origin}/i/${shop.slug}` : window.location.origin;
+  const shopUrl = shop ? `${window.location.origin}/s/${shop.slug}` : window.location.origin;
+  const completion = calculateProfileCompletion(
+    { ...profileMeta, full_name: fullName, avatar_path: avatarPath, bio: profileBio },
+    shop
+      ? {
+          ...shop,
+          name,
+          logo_path: logoPath,
+          cover_path: coverPath,
+          about,
+          hours_text: hoursText,
+          delivery_text: deliveryText,
+        }
+      : null
+  );
+
+  const handleRequestVerified = () => {
+    if (shop) {
+      try {
+        localStorage.setItem(`isoko.verified_req.${shop.id}`, '1');
+      } catch {
+        // ignore
+      }
+    }
+    setVerifiedRequested(true);
+  };
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-[#E5E7EB]">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E7EB] pb-5">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate('/umucuruzi')}
-            aria-label="Subira inyuma"
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#E5E7EB] hover:bg-[#F1F6F3]"
+            aria-label={t('back')}
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-[#E5E7EB] hover:bg-[#E8F3EE]"
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
           <div>
             <h1 className="text-xl font-bold text-[#1B1F23]">Amakuru y’iduka</h1>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[#64748B]">
               Vugurura nimero ya WhatsApp, aho uherereye n’amasaha yo gukora
             </p>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(shopUrl);
+                setCopiedUrl(true);
+                setTimeout(() => setCopiedUrl(false), 2000);
+              } catch {
+                // ignore
+              }
+            }}
+            className="inline-flex min-h-[42px] items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-3.5 text-xs font-semibold text-[#1B1F23] hover:bg-[#E8F3EE]"
+          >
+            <Copy className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+            <span>{copiedUrl ? t('copied') : t('copy_link')}</span>
+          </button>
           <a
             href={testWaHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#1A7F43] px-4 text-xs font-semibold text-white hover:bg-[#146635]"
+            className="inline-flex min-h-[42px] items-center gap-2 rounded-lg bg-[#1A7F43] px-4 text-xs font-semibold text-white hover:bg-[#146635]"
           >
             <MessageCircle className="h-4 w-4" aria-hidden="true" />
-            <span>Gerageza link ya WhatsApp yanjye</span>
+            <span>Gerageza WhatsApp</span>
           </a>
           <button
             type="button"
             onClick={() => setQrOpen(true)}
-            className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 text-xs font-semibold text-[#1B1F23] hover:bg-[#F1F6F3]"
+            className="inline-flex min-h-[42px] items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-3.5 text-xs font-semibold text-[#1B1F23] hover:bg-[#E8F3EE]"
           >
             <QrCode className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
             <span>QR y’iduka</span>
@@ -165,9 +220,57 @@ export const SellerShopSettingsPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Live Profile Completion Bar & Optional Verified Badge Request */}
+      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
+          <div className="flex items-center justify-between text-xs font-semibold text-[#1B1F23]">
+            <span>{t('profile_completion', { n: completion.percent })}</span>
+            <span className="tabular-nums text-[#0B6E4F]">
+              {completion.completedCount}/{completion.totalCount}
+            </span>
+          </div>
+          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#E5E7EB]">
+            <div
+              className="h-full rounded-full bg-[#0B6E4F] transition-all duration-300"
+              style={{ width: `${completion.percent}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-3 rounded-lg border border-[#E5E7EB] bg-white p-4">
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#1B1F23]">
+              <ShieldCheck className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+              <span>
+                {profileMeta?.identity_status === 'verified' ? t('verified') : t('unverified')}
+              </span>
+            </div>
+            <p className="mt-0.5 text-[11px] text-[#64748B]">
+              {profileMeta?.identity_status === 'verified'
+                ? 'Iduka ryawe rifite ikimenyetso cya Verified.'
+                : 'Kugenzurwa si itegeko, ariko byongerera icyizere abaguzi.'}
+            </p>
+          </div>
+          {profileMeta?.identity_status !== 'verified' && (
+            <button
+              type="button"
+              disabled={verifiedRequested}
+              onClick={handleRequestVerified}
+              className={`shrink-0 rounded-lg px-3 py-2 text-xs font-semibold ${
+                verifiedRequested
+                  ? 'bg-[#E8F3EE] text-[#064E3B]'
+                  : 'border border-[#0B6E4F] text-[#0B6E4F] hover:bg-[#E8F3EE]'
+              }`}
+            >
+              {verifiedRequested ? t('verified_requested') : t('request_verified')}
+            </button>
+          )}
+        </div>
+      </div>
+
       <form
         onSubmit={handleSave}
-        className="mt-6 rounded-lg border border-[#E5E7EB] bg-white p-6 space-y-4"
+        className="mt-5 rounded-lg border border-[#E5E7EB] bg-white p-6 space-y-4"
       >
         <section className="rounded-2xl border border-[#0B6E4F]/20 bg-[#F7FAF8] p-4 sm:p-5 space-y-4">
           <div><h2 className="text-base font-bold text-[#1B1F23]">Umwirondoro wawe n’isura y’iduka</h2><p className="mt-1 text-xs leading-5 text-slate-600">Amafoto n’amakuru ubika ni byo bizagaragara ku rubuga rw’iduka ryawe.</p></div>

@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Trash2,
 } from 'lucide-react';
+import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { RW } from '../i18n/rw';
 import { validateCartItems } from '../lib/api';
@@ -18,6 +19,7 @@ import { buildCartWhatsAppMessages, formatRwfCurrency } from '../lib/whatsapp';
 import type { CartItem } from '../types/marketplace';
 
 export const CartPage: React.FC = () => {
+  const { t } = useT();
   const {
     cart,
     updateCartQty,
@@ -101,17 +103,15 @@ export const CartPage: React.FC = () => {
   if (cart.length === 0) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center">
-        <div className="rounded-lg border border-[#E5E7EB] bg-[#F1F6F3] p-8">
-          <h1 className="text-xl font-bold text-[#1B1F23]">{RW.empty_cart}</h1>
-          <p className="mt-2 text-sm text-slate-600">
-            Hitamo ibicuruzwa ukunda ubyongere mu gare, hanyuma uvugane n’umucuruzi kuri WhatsApp.
-          </p>
+        <div className="rounded-lg border border-[#E5E7EB] bg-[#E8F3EE] p-8">
+          <h1 className="text-xl font-bold text-[#1B1F23]">{t('empty_cart')}</h1>
+          <p className="mt-2 text-sm text-[#475569]">{t('empty_cart_desc')}</p>
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="mt-5 min-h-[44px] rounded-xl bg-[#0B6E4F] px-6 text-sm font-semibold text-white"
+            className="mt-5 min-h-[44px] rounded-lg bg-[#0B6E4F] px-6 text-sm font-semibold text-white hover:bg-[#064E3B]"
           >
-            Shakisha ibicuruzwa
+            {t('browse_products')}
           </button>
         </div>
       </div>
@@ -123,9 +123,9 @@ export const CartPage: React.FC = () => {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[#1B1F23]">
-            {RW.cart} ({cart.reduce((s, i) => s + i.qty, 0)})
+            {t('cart')} ({cart.reduce((s, i) => s + i.qty, 0)})
           </h1>
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-[#64748B]">
             Igare rigabanywa ku mucuruzi: wohereza ubutumwa kuri buri duka ukwayo.
           </p>
         </div>
@@ -133,21 +133,21 @@ export const CartPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setLocationModalOpen(true)}
-          className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-[#E5E7EB] bg-[#F1F6F3] px-4 text-sm font-medium text-[#1B1F23] hover:border-[#0B6E4F]"
+          className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-[#E5E7EB] bg-[#E8F3EE] px-4 text-sm font-medium text-[#1B1F23] hover:border-[#0B6E4F]"
         >
           <MapPin className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
           <span>
             {location
-              ? `Aho uri: ${location.districtName}${location.sectorName ? `, ${location.sectorName}` : ''}`
-              : 'Hitamo aho uri (si itegeko)'}
+              ? `${t('choose_location')}: ${location.districtName}${location.sectorName ? `, ${location.sectorName}` : ''}`
+              : t('choose_location')}
           </span>
         </button>
       </div>
 
       {/* Permanent Trust Notice (E-07) */}
-      <div className="flex items-start gap-2.5 rounded-xl border border-[#E5E7EB] bg-[#F1F6F3] p-4 text-xs leading-relaxed text-[#1B1F23]">
+      <div className="flex items-start gap-2.5 rounded-lg border border-[#E5E7EB] bg-[#E8F3EE] p-4 text-xs leading-relaxed text-[#1B1F23]">
         <ShieldCheck className="h-4 w-4 text-[#0B6E4F] shrink-0 mt-0.5" aria-hidden="true" />
-        <span>{RW.payment_note}</span>
+        <span>{t('payment_note')}</span>
       </div>
 
       {/* Grouped by Seller (E-02: NO combined cross-seller grand total!) */}
@@ -268,14 +268,14 @@ export const CartPage: React.FC = () => {
 
                           <button
                             type="button"
-                            aria-label={`Kuraho ${item.productName}`}
+                            aria-label={`${t('remove')} ${item.productName}`}
                             onClick={() =>
                               removeFromCart(item.productId, item.size, item.color)
                             }
-                            className="inline-flex min-h-[36px] items-center gap-1 text-xs font-medium text-slate-500 hover:text-[#C0392B]"
+                            className="inline-flex min-h-[36px] items-center gap-1 text-xs font-medium text-[#64748B] hover:text-[#C0392B]"
                           >
                             <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-                            <span>{RW.remove}</span>
+                            <span>{t('remove')}</span>
                           </button>
                         </div>
                       </div>
@@ -311,10 +311,10 @@ export const CartPage: React.FC = () => {
                   <a
                     href={`tel:+${group.shopPhone}`}
                     onClick={() => trackEvent('call_click', null, group.shopId)}
-                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-[#E5E7EB] bg-white px-4 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50"
                   >
                     <Phone className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
-                    <span>{RW.call}</span>
+                    <span>{t('call')}</span>
                   </a>
                 )}
 
@@ -330,10 +330,10 @@ export const CartPage: React.FC = () => {
                         // ignore
                       }
                     }}
-                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-[#E5E7EB] bg-white px-4 text-sm font-semibold text-[#1B1F23] hover:bg-slate-50"
                   >
                     <Copy className="h-4 w-4" aria-hidden="true" />
-                    <span>{copiedShopId === group.shopId ? RW.copied : RW.copy_message}</span>
+                    <span>{copiedShopId === group.shopId ? t('copied') : t('copy_message')}</span>
                   </button>
                 )}
               </div>

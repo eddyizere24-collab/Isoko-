@@ -2,26 +2,32 @@ import React, { useEffect, useState } from 'react';
 import {
   AlertCircle,
   BarChart3,
+  Check,
   CheckCircle2,
+  Copy,
   Eye,
   MessageCircle,
   Package,
   Plus,
   QrCode,
   Settings,
+  ShieldCheck,
   Store,
 } from 'lucide-react';
 import { QrCodeModal } from '../components/QrCodeModal';
+import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { RW } from '../i18n/rw';
 import { fetchSellerOverview, updateSellerProduct } from '../lib/api';
+import { calculateProfileCompletion } from '../lib/profileCompletion';
 import { formatRwfCurrency } from '../lib/whatsapp';
 import type { Product, Profile, Shop } from '../types/marketplace';
 
 export const SellerDashboardPage: React.FC = () => {
   const { navigate, authSession, refreshBootstrap } = useMarketplace();
+  const { t } = useT();
   const [data, setData] = useState<{
-    profile: Pick<Profile, 'id' | 'full_name' | 'status' | 'status_reason' | 'email' | 'email_verified' | 'identity_status'>;
+    profile: Pick<Profile, 'id' | 'full_name' | 'status' | 'status_reason' | 'email' | 'email_verified' | 'identity_status' | 'avatar_path' | 'bio'>;
     shop: Shop;
     products: Product[];
     staleProducts: Product[];
@@ -32,6 +38,7 @@ export const SellerDashboardPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [qrOpen, setQrOpen] = useState(false);
+  const [copiedUrl, setCopiedUrl] = useState(false);
 
   const load = async () => {
     try {
@@ -67,7 +74,7 @@ export const SellerDashboardPage: React.FC = () => {
   if (loading) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <div className="h-32 animate-pulse rounded-lg bg-[#F1F6F3]" />
+        <div className="h-32 animate-pulse rounded-lg bg-[#E8F3EE]" />
       </main>
     );
   }
@@ -79,31 +86,42 @@ export const SellerDashboardPage: React.FC = () => {
         <button
           type="button"
           onClick={() => navigate('/injira')}
-          className="mt-4 inline-flex min-h-[44px] items-center rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white"
+          className="mt-4 inline-flex min-h-[44px] items-center rounded-lg bg-[#0B6E4F] px-5 text-sm font-semibold text-white"
         >
-          {RW.login}
+          {t('login')}
         </button>
       </main>
     );
   }
 
   const activeCount = data.products.filter((p) => p.status === 'active').length;
-  const shopUrl = `${window.location.origin}/i/${data.shop.slug}`;
+  const shopUrl = `${window.location.origin}/s/${data.shop.slug}`;
+  const completion = calculateProfileCompletion(data.profile, data.shop);
+
+  const handleCopyShopUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(shopUrl);
+      setCopiedUrl(true);
+      setTimeout(() => setCopiedUrl(false), 2000);
+    } catch {
+      // ignore
+    }
+  };
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+    <main className="mx-auto max-w-6xl px-4 py-5 sm:px-6">
       {/* Seller Status Banner (Pending / Needs Changes / Rejected / Suspended) */}
       {data.profile.status !== 'approved' && (
         <div
           role="status"
-          className="mb-6 rounded-lg border border-[#C0392B]/35 bg-[#FBEAE8] p-4 text-sm text-[#1B1F23]"
+          className="mb-5 rounded-lg border border-[#C0392B]/35 bg-[#FBEAE8] p-4 text-sm text-[#1B1F23]"
         >
           <div className="flex items-start gap-3">
             <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#C0392B]" aria-hidden="true" />
             <div>
-              <p className="font-bold">
+              <p className="font-semibold">
                 {data.profile.status === 'pending'
-                  ? RW.pending_review
+                  ? t('pending_review')
                   : `Imiterere ya konti: ${RW.seller_statuses[data.profile.status]}`}
               </p>
               {data.profile.status_reason && (
@@ -118,53 +136,110 @@ export const SellerDashboardPage: React.FC = () => {
         </div>
       )}
 
-      {data.profile.identity_status !== 'verified' && data.profile.status === 'approved' && (
-        <div role="status" className="mb-5 rounded-xl border border-slate-200 bg-[#F7FAF8] px-4 py-3 text-xs leading-5 text-slate-700">
-          Konti yawe irakora. Indangamuntu n’andi makuru y’inyongera ntibiragenzurwa. Kuzuza Profile birambuye bizongerwaho mu kindi cyiciro; ushobora gutangira gushyiraho ibicuruzwa ubu.
-        </div>
+      {/* Profile Completion Meter (§10 / Instant onboarding follow-up) */}
+      {completion.percent < 100 && (
+        <section className="mb-5 rounded-lg border border-[#E5E7EB] bg-white p-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+              <h2 className="text-[14px] font-semibold text-[#1B1F23]">
+                {t('profile_completion', { n: completion.percent })}
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate('/umucuruzi/iduka')}
+              className="text-xs font-semibold text-[#0B6E4F] hover:underline"
+            >
+              Uzuza amakuru y’iduka →
+            </button>
+          </div>
+          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#E5E7EB]">
+            <div
+              className="h-full rounded-full bg-[#0B6E4F] transition-all duration-300"
+              style={{ width: `${completion.percent}%` }}
+            />
+          </div>
+          <div className="mt-2.5 flex flex-wrap gap-1.5">
+            {completion.items.map((item) => (
+              <button
+                key={item.key}
+                type="button"
+                onClick={() => navigate('/umucuruzi/iduka')}
+                className={`inline-flex items-center gap-1 rounded px-2 py-1 text-[11px] font-medium ${
+                  item.completed
+                    ? 'bg-[#E8F3EE] text-[#064E3B]'
+                    : 'border border-[#E5E7EB] bg-[#F7F8FA] text-[#475569] hover:border-[#0B6E4F]'
+                }`}
+              >
+                {item.completed && <Check className="h-3 w-3" aria-hidden="true" />}
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </div>
+        </section>
       )}
 
       {/* Header + Primary Action */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[#E5E7EB]">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E5E7EB] pb-5">
         <div>
           <p className="text-xs font-semibold text-[#0B6E4F]">Ibiro by’umucuruzi</p>
-          <h1 className="text-2xl font-bold text-[#1B1F23]">{data.shop.name}</h1>
-          <p className="mt-0.5 text-xs text-slate-600">
-            {data.shop.district_name}
-            {data.shop.sector_name ? ` · ${data.shop.sector_name}` : ''} ·{' '}
-            <span className="font-semibold text-[#0B6E4F]">
-              {data.profile.status === 'approved' ? 'Konti irakora' : RW.seller_statuses[data.profile.status]}
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-xl font-bold text-[#1B1F23] sm:text-2xl">{data.shop.name}</h1>
+            <span
+              className={`rounded px-2 py-0.5 text-[11px] font-semibold ${
+                data.profile.identity_status === 'verified'
+                  ? 'bg-[#E8F3EE] text-[#0B6E4F]'
+                  : 'bg-[#F1F5F9] text-[#475569]'
+              }`}
+            >
+              {data.profile.identity_status === 'verified' ? t('verified') : t('unverified')}
             </span>
-          </p>
+          </div>
+          <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[#64748B]">
+            <span>
+              {data.shop.district_name}
+              {data.shop.sector_name ? ` · ${data.shop.sector_name}` : ''}
+            </span>
+            <span>·</span>
+            <button
+              type="button"
+              onClick={handleCopyShopUrl}
+              className="inline-flex items-center gap-1 font-medium text-[#0B6E4F] hover:underline"
+            >
+              <Copy className="h-3 w-3" aria-hidden="true" />
+              <span>{copiedUrl ? t('copied') : `/s/${data.shop.slug}`}</span>
+            </button>
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-2.5">
+        <div className="flex flex-wrap gap-2">
           <button
             type="button"
             onClick={() => setQrOpen(true)}
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-[#1B1F23] hover:bg-[#F1F6F3]"
+            className="inline-flex min-h-[42px] items-center gap-2 rounded-lg border border-[#E5E7EB] bg-white px-3.5 text-[13px] font-semibold text-[#1B1F23] hover:bg-[#E8F3EE]"
           >
             <QrCode className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
             <span>QR y’iduka</span>
           </button>
           <a
-            href={`/i/${data.shop.slug}`}
+            href={`/s/${data.shop.slug}`}
             onClick={(e) => {
               e.preventDefault();
-              navigate(`/i/${data.shop.slug}`);
+              navigate(`/s/${data.shop.slug}`);
             }}
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-[#1B1F23] hover:bg-[#F1F6F3]"
+            className="inline-flex min-h-[42px] items-center gap-2 rounded-lg border border-[#E5E7EB] bg-white px-3.5 text-[13px] font-semibold text-[#1B1F23] hover:bg-[#E8F3EE]"
           >
             <Store className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
-            <span>{RW.view_shop}</span>
+            <span>{t('view_shop')}</span>
           </a>
           <button
             type="button"
             onClick={() => navigate('/umucuruzi/ongeraho')}
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white hover:bg-[#08553D]"
+            className="inline-flex min-h-[42px] items-center gap-2 rounded-lg bg-[#0B6E4F] px-4 text-[13px] font-semibold text-white hover:bg-[#064E3B]"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />
-            <span>{RW.add_product}</span>
+            <span>{t('add_product')}</span>
           </button>
         </div>
       </div>

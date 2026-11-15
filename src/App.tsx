@@ -4,9 +4,12 @@ import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { LocationSheet } from './components/LocationSheet';
 import { OfflineAndPwaBar } from './components/OfflineAndPwaBar';
+import { LangProvider } from './context/LangContext';
 import { MarketplaceProvider, useMarketplace } from './context/MarketplaceContext';
 import { AdminPage } from './pages/AdminPage';
+import { BrandPreviewPage } from './pages/BrandPreviewPage';
 import { CartPage } from './pages/CartPage';
+import { CategoriesPage } from './pages/CategoriesPage';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import { ProductPage } from './pages/ProductPage';
@@ -36,6 +39,12 @@ const AppRouter: React.FC = () => {
     if (pathname === '/' || pathname === '') {
       return <HomePage onOpenCategories={() => setCategoriesOpen(true)} />;
     }
+    if (pathname === '/ibyiciro') {
+      return <CategoriesPage />;
+    }
+    if (pathname === '/brand-preview') {
+      return <BrandPreviewPage />;
+    }
     if (pathname === '/shakisha') {
       return <SearchPage />;
     }
@@ -48,7 +57,7 @@ const AppRouter: React.FC = () => {
       const id = decodeURIComponent(pathname.slice(3).split('/')[0]);
       return <ProductPage productId={id} />;
     }
-    if (pathname.startsWith('/i/')) {
+    if (pathname.startsWith('/i/') || pathname.startsWith('/s/')) {
       const slug = decodeURIComponent(pathname.slice(3).split('/')[0]);
       return <ShopPage slug={slug} />;
     }
@@ -87,7 +96,7 @@ const AppRouter: React.FC = () => {
   return (
     <div
       className={`flex min-h-screen flex-col bg-[#F7F8FA] text-[#1B1F23] ${
-        hasBottomNav ? 'pb-24 md:pb-0' : ''
+        hasBottomNav ? 'pb-16 md:pb-0' : ''
       }`}
     >
       <OfflineAndPwaBar />
@@ -102,8 +111,10 @@ const AppRouter: React.FC = () => {
 
 export default function App() {
   return (
-    <MarketplaceProvider>
-      <AppRouter />
-    </MarketplaceProvider>
+    <LangProvider>
+      <MarketplaceProvider>
+        <AppRouter />
+      </MarketplaceProvider>
+    </LangProvider>
   );
 }

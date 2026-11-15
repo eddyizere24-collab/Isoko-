@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { ArrowRight, KeyRound, Lock, Phone, ShieldCheck, Store } from 'lucide-react';
+import { ArrowRight, KeyRound, Lock, Mail, ShieldCheck, Store } from 'lucide-react';
+import { AuthBrandHeader } from '../components/IsokoLogo';
+import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
-import { RW } from '../i18n/rw';
 import { loginAccount } from '../lib/api';
 
 const DEMO_ACCOUNTS = [
@@ -18,7 +19,7 @@ const DEMO_ACCOUNTS = [
     role: 'seller',
   },
   {
-    label: 'Umucuruzi 4 — Nyarugenge Style (Itegereje KYC)',
+    label: 'Umucuruzi 4 — Nyarugenge Style',
     phone: '250788100004',
     pass: 'style123',
     role: 'seller',
@@ -33,16 +34,17 @@ const DEMO_ACCOUNTS = [
 
 export const LoginPage: React.FC = () => {
   const { navigate, setAuthData, authProfile } = useMarketplace();
-  const [phone, setPhone] = useState('');
+  const { t } = useT();
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const performLogin = async (p: string, pw: string) => {
+  const performLogin = async (idValue: string, pw: string) => {
     setError(null);
     setSubmitting(true);
     try {
-      const res = await loginAccount(p, pw);
+      const res = await loginAccount(idValue, pw);
       setAuthData(
         {
           token: res.token,
@@ -67,25 +69,20 @@ export const LoginPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    performLogin(phone, password);
+    performLogin(identifier, password);
   };
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      <div className="grid gap-8 lg:grid-cols-12">
-        <section className="rounded-lg border border-[#E5E7EB] bg-white p-6 shadow-xs sm:p-8 lg:col-span-7">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold  text-[#1B1F23]">
-              Injira muri konti yawe
-            </h1>
-            <p className="mt-1.5 text-sm text-slate-600">
-              Abaguzi ntibakenera konti — bashobora kugura ako kanya. Aha ni ah’abacuruzi bemejwe
-              n’abayobozi b’urubuga.
-            </p>
-          </div>
+    <main className="mx-auto max-w-5xl px-3 py-4 sm:px-6 sm:py-6">
+      <AuthBrandHeader
+        title={t('login')}
+        subtitle="Abaguzi ntibakenera konti — abacuruzi binjira hano kugira ngo bashyireho ibicuruzwa."
+      />
 
+      <div className="mt-4 grid gap-5 lg:grid-cols-12">
+        <section className="rounded-lg border border-[#E5E7EB] bg-white p-5 sm:p-6 lg:col-span-7">
           {authProfile && (
-            <div className="mb-6 rounded-xl border border-[#0B6E4F]/30 bg-[#F1F6F3] p-4 text-sm">
+            <div className="mb-5 rounded-lg border border-[#0B6E4F]/30 bg-[#E8F3EE] p-4 text-sm">
               <p className="font-semibold text-[#1B1F23]">
                 Usanzwe winjiye nka {authProfile.full_name}
               </p>
@@ -99,7 +96,7 @@ export const LoginPage: React.FC = () => {
                         : '/umucuruzi'
                     )
                   }
-                  className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-4 text-sm font-semibold text-white hover:bg-[#08553D]"
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-[#0B6E4F] px-4 text-sm font-semibold text-white hover:bg-[#064E3B]"
                 >
                   <span>Jya ku rupapuro rwawe</span>
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -110,35 +107,35 @@ export const LoginPage: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="login-phone" className="block text-sm font-semibold text-[#1B1F23]">
-                {RW.phone}
+              <label htmlFor="login-identifier" className="block text-[13px] font-semibold text-[#1B1F23]">
+                {t('email')} / {t('phone')}
               </label>
               <div className="relative mt-1.5">
-                <Phone
-                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                <Mail
+                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#64748B]"
                   aria-hidden="true"
                 />
                 <input
-                  id="login-phone"
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
+                  id="login-identifier"
+                  type="text"
+                  inputMode="email"
+                  autoComplete="username"
                   required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="0788 100 001 cyangwa 250788100001"
-                  className="min-h-[44px] w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  placeholder="izina@gmail.com cyangwa 0788 100 001"
+                  className="min-h-[44px] w-full rounded-lg border border-[#E5E7EB] bg-white pl-10 pr-4 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="login-pass" className="block text-sm font-semibold text-[#1B1F23]">
-                {RW.password}
+              <label htmlFor="login-pass" className="block text-[13px] font-semibold text-[#1B1F23]">
+                {t('password')}
               </label>
               <div className="relative mt-1.5">
                 <Lock
-                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#64748B]"
                   aria-hidden="true"
                 />
                 <input
@@ -149,8 +146,8 @@ export const LoginPage: React.FC = () => {
                   minLength={6}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Nibura inyuguti cyangwa imibare 6"
-                  className="min-h-[44px] w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20"
+                  placeholder="Nibura inyuguti cyangwa imibare 8"
+                  className="min-h-[44px] w-full rounded-lg border border-[#E5E7EB] bg-white pl-10 pr-4 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20"
                 />
               </div>
             </div>
@@ -158,7 +155,7 @@ export const LoginPage: React.FC = () => {
             {error && (
               <div
                 role="alert"
-                className="rounded-xl border border-[#C0392B]/30 bg-[#C0392B]/10 px-4 py-3 text-sm font-medium text-[#C0392B]"
+                className="rounded-lg border border-[#C0392B]/30 bg-[#FBEAE8] px-4 py-3 text-sm font-medium text-[#C0392B]"
               >
                 {error}
               </div>
@@ -167,61 +164,60 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white transition hover:bg-[#08553D] disabled:opacity-60"
+              className="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-[#0B6E4F] px-5 text-sm font-semibold text-white transition hover:bg-[#064E3B] disabled:opacity-60"
             >
               <KeyRound className="h-4 w-4" aria-hidden="true" />
-              <span>{submitting ? 'Tegereza...' : RW.login}</span>
+              <span>{submitting ? '...' : t('login')}</span>
             </button>
           </form>
 
-          <p className="mt-4 text-xs text-slate-500">
-            Iyo winjiye, ukomeza kuba uri muri konti iminsi 30 kuri iyi telefoni cyangwa mudasobwa
-            keretse ukanda Sohoka. Wibagiwe ijambo ry’ibanga? Twandikire kuri WhatsApp y’ubufasha.
+          <p className="mt-4 text-xs text-[#64748B]">
+            Iyo winjiye, ukomeza kuba uri muri konti iminsi 30 kuri iyi telefoni keretse ukanda {t('logout')}.
           </p>
 
-          <div className="mt-6 border-t border-[#E5E7EB] pt-5 flex flex-wrap items-center justify-between gap-3">
-            <span className="text-sm text-slate-600">Ntabwo urandikisha iduka ryawe?</span>
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#E5E7EB] pt-4">
+            <span className="text-[13px] text-[#475569]">Ntabwo urafungura iduka ryawe?</span>
             <a
               href="/abacuruzi"
               onClick={(e) => {
                 e.preventDefault();
                 navigate('/abacuruzi');
               }}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-[#0B6E4F] px-4 text-sm font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3]"
+              className="inline-flex min-h-[42px] items-center gap-2 rounded-lg border border-[#0B6E4F] px-4 text-[13px] font-semibold text-[#0B6E4F] hover:bg-[#E8F3EE]"
             >
               <Store className="h-4 w-4" aria-hidden="true" />
-              <span>Iyandikishe nk’umucuruzi</span>
+              <span>{t('register_seller')}</span>
             </a>
           </div>
         </section>
 
-        <aside className="rounded-lg border border-[#E5E7EB] bg-[#F1F6F3] p-6 lg:col-span-5">
+        <aside className="rounded-lg border border-[#E5E7EB] bg-[#E8F3EE]/60 p-5 lg:col-span-5">
           <div className="flex items-center gap-2 text-[#0B6E4F]">
             <ShieldCheck className="h-5 w-5" aria-hidden="true" />
-            <h2 className="text-base font-bold text-[#1B1F23]">
+            <h2 className="text-[15px] font-semibold text-[#1B1F23]">
               Konti zo kugerageza (Demo)
             </h2>
           </div>
-          <p className="mt-1.5 text-xs text-slate-600">
-            Kanda kuri imwe muri izi konti winjire ako kanya urebe iby’abacuruzi cyangwa Admin:
+          <p className="mt-1.5 text-xs text-[#475569]">
+            Kanda kuri imwe muri izi konti winjire ako kanya urebe ibiro by’abacuruzi cyangwa Admin:
           </p>
 
-          <div className="mt-4 space-y-2.5">
+          <div className="mt-3.5 space-y-2">
             {DEMO_ACCOUNTS.map((acc) => (
               <button
                 key={acc.phone}
                 type="button"
                 disabled={submitting}
                 onClick={() => {
-                  setPhone(acc.phone);
+                  setIdentifier(acc.phone);
                   setPassword(acc.pass);
                   performLogin(acc.phone, acc.pass);
                 }}
-                className="flex min-h-[52px] w-full flex-col items-start justify-center rounded-xl border border-[#E5E7EB] bg-white px-4 py-2.5 text-left transition hover:border-[#0B6E4F]"
+                className="flex min-h-[48px] w-full flex-col items-start justify-center rounded-lg border border-[#E5E7EB] bg-white px-3.5 py-2 text-left transition hover:border-[#0B6E4F]"
               >
-                <span className="text-sm font-semibold text-[#1B1F23]">{acc.label}</span>
-                <span className="mt-0.5 text-xs text-slate-500 tabular-nums">
-                  {acc.phone} · Ijambo ry’ibanga: {acc.pass}
+                <span className="text-[13px] font-semibold text-[#1B1F23]">{acc.label}</span>
+                <span className="mt-0.5 text-xs text-[#64748B] tabular-nums">
+                  {acc.phone} · {acc.pass}
                 </span>
               </button>
             ))}

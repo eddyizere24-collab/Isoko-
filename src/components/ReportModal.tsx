@@ -53,7 +53,6 @@ export const ReportModal: React.FC<ReportModalProps> = ({
         details,
         reporterPhone: reporterPhone.trim() || undefined,
         sessionId: getSessionId(),
-        turnstileOk,
       });
       setDone(true);
     } catch (err) {

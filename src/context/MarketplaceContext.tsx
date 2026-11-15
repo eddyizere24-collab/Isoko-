@@ -19,6 +19,7 @@ import {
   toggleFollowedShop,
   type StoredAuthSession,
 } from '../lib/storage';
+import { ScrollPositionStore } from '../lib/scrollRestoration';
 import { trackEvent } from '../lib/track';
 import type {
   BuyerLocation,
@@ -28,6 +29,8 @@ import type {
   RecentItem,
   Shop,
 } from '../types/marketplace';
+
+const scrollStore = new ScrollPositionStore();
 
 interface MarketplaceContextValue {
   pathname: string;
@@ -87,7 +90,9 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [authShop, setAuthShop] = useState<Shop | null>(null);
 
   const navigate = useCallback((to: string) => {
-    if (to === `${window.location.pathname}${window.location.search}`) return;
+    const currentKey = `${window.location.pathname || '/'}${window.location.search || ''}`;
+    if (to === currentKey) return;
+    scrollStore.save(currentKey, window.scrollY);
     window.history.pushState({}, '', to);
     setUrlState({
       pathname: window.location.pathname || '/',
@@ -97,10 +102,21 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }, []);
 
   useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
     const onPopState = () => {
+      const nextKey = `${window.location.pathname || '/'}${window.location.search || ''}`;
       setUrlState({
         pathname: window.location.pathname || '/',
         search: window.location.search || '',
+      });
+      const targetY = scrollStore.get(nextKey);
+      requestAnimationFrame(() => {
+        window.scrollTo({ top: targetY, behavior: 'instant' as ScrollBehavior });
+        setTimeout(() => {
+          window.scrollTo({ top: targetY, behavior: 'instant' as ScrollBehavior });
+        }, 60);
       });
     };
     window.addEventListener('popstate', onPopState);

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { ChevronDown, MessageCircle } from 'lucide-react';
+import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
-import { RW } from '../i18n/rw';
 import { subscribeUpdates } from '../lib/api';
 import { buildWhatsAppLink } from '../lib/whatsapp';
 import { IsokoWordmark, RwandanGeometricPattern } from './IsokoLogo';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 export const Footer: React.FC = () => {
   const { navigate, bootstrap, location } = useMarketplace();
+  const { t } = useT();
   const [email, setEmail] = useState('');
   const [consent, setConsent] = useState(false);
   const [subMessage, setSubMessage] = useState<string | null>(null);
@@ -42,8 +44,9 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="mt-10 bg-[#064E3B] text-white">
-      <RwandanGeometricPattern />
+    <footer className="mt-8 bg-[#064E3B] text-white">
+      {/* 12px 100%-opacity SVG Imigongo strip above footer (§9) */}
+      <RwandanGeometricPattern size="footer" />
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-10">
         <div className="grid gap-6 md:grid-cols-4 md:gap-8">
           <div>
@@ -53,27 +56,28 @@ export const Footer: React.FC = () => {
               wordmarkClassName="h-[17px] w-auto"
             />
             <p className="mt-2.5 text-[12.5px] leading-relaxed text-[#E8F3EE]/85 max-w-xs">
-              Isoko ry’abacuruzi benshi ryo kuri interineti ry’u Rwanda: imyambaro, inkweto,
-              amasogisi n’ibyo kwambara. Nta komisiyo, uvugana n’umucuruzi kuri WhatsApp.
+              {t('app_tagline')} — {t('hero_subtitle')}
             </p>
-            <a
-              href={supportUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3.5 inline-flex min-h-[40px] items-center gap-2 rounded-lg bg-[#1A7F43] px-3.5 py-2 text-[12.5px] font-semibold text-white hover:bg-[#146635] transition-colors"
-            >
-              <MessageCircle className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
-              <span>{RW.help_whatsapp}</span>
-            </a>
-            <p className="mt-2 text-[11.5px] text-[#E8F3EE]/70">
+            <div className="mt-3.5 flex flex-wrap items-center gap-2.5">
+              <a
+                href={supportUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-[38px] items-center gap-2 rounded-md bg-[#1A7F43] px-3.5 py-2 text-[12px] font-semibold text-white hover:bg-[#146635] transition-colors"
+              >
+                <MessageCircle className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+                <span>{t('help_whatsapp')}</span>
+              </a>
+              <LanguageSwitcher variant="footer" />
+            </div>
+            <p className="mt-2 text-[11px] text-[#E8F3EE]/70">
               {bootstrap?.settings.SUPPORT_HOURS || 'Buri munsi · 08:00 – 20:00 (CAT)'}
             </p>
           </div>
 
-          {/* Mobile accordion / Desktop column */}
           <details className="group border-t border-white/15 pt-3 md:border-0 md:pt-0" open>
             <summary className="flex min-h-[36px] cursor-pointer list-none items-center justify-between text-[13px] font-semibold text-white md:cursor-default">
-              <span>Amakuru y’urubuga</span>
+              <span>{t('app_name')}</span>
               <ChevronDown className="h-4 w-4 text-white/70 transition-transform group-open:rotate-180 md:hidden" />
             </summary>
             <ul className="mt-2 space-y-2 text-[12.5px] text-[#E8F3EE]/85">
@@ -86,7 +90,7 @@ export const Footer: React.FC = () => {
                   }}
                   className="hover:text-white hover:underline"
                 >
-                  {RW.sell_on_platform}
+                  {t('sell_on_platform')}
                 </a>
               </li>
               <li>
@@ -98,7 +102,7 @@ export const Footer: React.FC = () => {
                   }}
                   className="hover:text-white hover:underline"
                 >
-                  {RW.about}
+                  {t('about')}
                 </a>
               </li>
               <li>
@@ -110,7 +114,19 @@ export const Footer: React.FC = () => {
                   }}
                   className="hover:text-white hover:underline"
                 >
-                  Ubufasha
+                  {t('help')}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/brand-preview"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/brand-preview');
+                  }}
+                  className="hover:text-white hover:underline"
+                >
+                  Brand Preview
                 </a>
               </li>
             </ul>
@@ -118,7 +134,7 @@ export const Footer: React.FC = () => {
 
           <details className="group border-t border-white/15 pt-3 md:border-0 md:pt-0">
             <summary className="flex min-h-[36px] cursor-pointer list-none items-center justify-between text-[13px] font-semibold text-white md:cursor-default">
-              <span>Amategeko</span>
+              <span>{t('terms')}</span>
               <ChevronDown className="h-4 w-4 text-white/70 transition-transform group-open:rotate-180 md:hidden" />
             </summary>
             <ul className="mt-2 space-y-2 text-[12.5px] text-[#E8F3EE]/85 md:block">
@@ -131,7 +147,7 @@ export const Footer: React.FC = () => {
                   }}
                   className="hover:text-white hover:underline"
                 >
-                  {RW.terms}
+                  {t('terms')}
                 </a>
               </li>
               <li>
@@ -143,7 +159,7 @@ export const Footer: React.FC = () => {
                   }}
                   className="hover:text-white hover:underline"
                 >
-                  {RW.privacy}
+                  {t('privacy')}
                 </a>
               </li>
               <li>
@@ -155,21 +171,19 @@ export const Footer: React.FC = () => {
                   }}
                   className="hover:text-white hover:underline"
                 >
-                  {RW.seller_rules}
+                  {t('seller_rules')}
                 </a>
               </li>
             </ul>
           </details>
 
           <div className="border-t border-white/15 pt-4 md:border-0 md:pt-0">
-            <h3 className="text-[13px] font-semibold text-white">Akira amakuru y’ibishya</h3>
-            <p className="mt-1 text-[12px] text-[#E8F3EE]/80">
-              Ibicuruzwa bishya n’ibiciro byagabanyijwe rimwe mu cyumweru.
-            </p>
+            <h3 className="text-[13px] font-semibold text-white">{t('newsletter_title')}</h3>
+            <p className="mt-1 text-[12px] text-[#E8F3EE]/80">{t('newsletter_desc')}</p>
             <form onSubmit={handleSubscribe} className="mt-2.5 space-y-2">
               <div className="flex gap-2">
                 <label htmlFor="footer-email" className="sr-only">
-                  Imeri yawe
+                  {t('email')}
                 </label>
                 <input
                   id="footer-email"
@@ -177,24 +191,24 @@ export const Footer: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="imeri@urugero.rw"
-                  className="h-9 min-w-0 flex-1 rounded-lg border border-white/25 bg-white/10 px-3 text-[12.5px] text-white placeholder:text-white/60 focus:border-white focus:outline-none"
+                  className="h-9 min-w-0 flex-1 rounded-md border border-white/25 bg-white/10 px-3 text-[12.5px] text-white placeholder:text-white/60 focus:border-white focus:outline-none"
                 />
                 <button
                   type="submit"
                   disabled={subLoading}
-                  className="h-9 rounded-lg bg-[#C0392B] px-3.5 text-[12.5px] font-semibold text-white hover:bg-[#A93226] disabled:opacity-60"
+                  className="h-9 rounded-md bg-[#C0392B] px-3.5 text-[12.5px] font-semibold text-white hover:bg-[#A93226] disabled:opacity-60"
                 >
-                  Emeza
+                  {t('confirm')}
                 </button>
               </div>
-              <label className="flex items-start gap-2 text-[11.5px] text-[#E8F3EE]/80 cursor-pointer">
+              <label className="flex items-start gap-2 text-[11px] text-[#E8F3EE]/80 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={consent}
                   onChange={(e) => setConsent(e.target.checked)}
                   className="mt-0.5 h-3.5 w-3.5 accent-[#C0392B]"
                 />
-                <span>Nemeye kwakira amakuru kuri imeri nk’uko bisobanuwe muri Politiki y’ibanga.</span>
+                <span>{t('terms')} &amp; {t('privacy')}</span>
               </label>
               {subMessage && <p className="text-[12px] font-medium text-[#E8F3EE]">{subMessage}</p>}
             </form>
@@ -202,8 +216,8 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="mt-8 flex flex-col gap-1.5 border-t border-white/15 pt-5 text-[11.5px] text-[#E8F3EE]/75 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} {RW.app_name} Rwanda. Uburenganzira bwose burarinzwe.</p>
-          <p>Urubuga ntirwakira amafaranga; ibiganiro byose bikorwa hagati y’umukiriya n’umucuruzi.</p>
+          <p>© {new Date().getFullYear()} {t('app_name')} Rwanda.</p>
+          <p>{t('footer_disclaimer')}</p>
         </div>
       </div>
     </footer>

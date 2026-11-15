@@ -1,8 +1,8 @@
 import React from 'react';
 import { SlidersHorizontal, X } from 'lucide-react';
+import { useT } from '../context/LangContext';
 import { COLORS_LIST, SIZE_SETS } from '../data/categories';
 import { RWANDA_DISTRICTS } from '../data/rwandaAreas';
-import { RW } from '../i18n/rw';
 import type { Category, MySizePreference } from '../types/marketplace';
 
 export interface ActiveFilters {
@@ -41,6 +41,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   open = true,
   onClose,
 }) => {
+  const { t } = useT();
   if (isMobileSheet && !open) return null;
 
   const topCategories = categories.filter((c) => c.parent_id === null);
@@ -57,7 +58,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
-          <h2 className="text-base font-bold text-[#1B1F23]">{RW.filter}</h2>
+          <h2 className="text-base font-bold text-[#1B1F23]">{t('filter')}</h2>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -65,14 +66,14 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
             onClick={onClear}
             className="text-xs font-semibold text-[#0B6E4F] hover:underline min-h-[36px] px-2"
           >
-            {RW.clear_filters}
+            {t('clear_filters')}
           </button>
           {isMobileSheet && onClose && (
             <button
               type="button"
               onClick={onClose}
-              aria-label="Funga ibyungurura"
-              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-slate-500 hover:bg-[#F1F6F3]"
+              aria-label={t('cancel')}
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-slate-500 hover:bg-[#E8F3EE]"
             >
               <X className="h-5 w-5" />
             </button>
@@ -81,9 +82,9 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       </div>
 
       {/* Size yanjye (B-08) */}
-      <div className="rounded-xl bg-[#F1F6F3] p-3.5 space-y-2.5">
+      <div className="rounded-xl bg-[#E8F3EE] p-3.5 space-y-2.5">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-bold text-[#1B1F23]">{RW.my_size}</span>
+          <span className="text-xs font-bold text-[#1B1F23]">{t('my_size')}</span>
           <label className="flex items-center gap-2 text-xs font-medium text-[#0B6E4F] cursor-pointer">
             <input
               type="checkbox"
@@ -195,12 +196,12 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
 
       {/* Condition */}
       <div>
-        <span className="block text-xs font-bold text-[#1B1F23]">Imiterere</span>
-        <div className="mt-1.5 grid grid-cols-3 gap-1.5 rounded-xl bg-[#F1F6F3] p-1">
+        <span className="block text-xs font-bold text-[#1B1F23]">{t('condition_label')}</span>
+        <div className="mt-1.5 grid grid-cols-3 gap-1.5 rounded-xl bg-[#E8F3EE] p-1">
           {[
-            { val: '', label: RW.all },
-            { val: 'new', label: RW.condition_new },
-            { val: 'used', label: RW.condition_used },
+            { val: '', label: t('all') },
+            { val: 'new', label: t('condition_new') },
+            { val: 'used', label: t('condition_used') },
           ].map((opt) => (
             <button
               key={opt.val}
@@ -287,7 +288,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
             onChange={(e) => onChange({ ...filters, inStockOnly: e.target.checked })}
             className="h-4 w-4 accent-[#0B6E4F]"
           />
-          <span>{RW.in_stock_only}</span>
+          <span>{t('in_stock_only')}</span>
         </label>
         <label className="flex min-h-[40px] items-center gap-2.5 text-sm text-[#1B1F23] cursor-pointer">
           <input
@@ -296,7 +297,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
             onChange={(e) => onChange({ ...filters, discountedOnly: e.target.checked })}
             className="h-4 w-4 accent-[#0B6E4F]"
           />
-          <span>{RW.discounted_only}</span>
+          <span>{t('discounted_only')}</span>
         </label>
       </div>
 
@@ -304,9 +305,9 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         <button
           type="button"
           onClick={onClose}
-          className="min-h-[44px] w-full rounded-xl bg-[#0B6E4F] text-sm font-semibold text-white hover:bg-[#08553D]"
+          className="min-h-[44px] w-full rounded-lg bg-[#0B6E4F] text-sm font-semibold text-white hover:bg-[#064E3B]"
         >
-          Emeza ibyungurura
+          {t('confirm')}
         </button>
       )}
     </div>
@@ -317,7 +318,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={RW.filter}
+        aria-label={t('filter')}
         className="fixed inset-0 z-50 flex items-end bg-black/50 lg:hidden"
       >
         <div className="w-full max-h-[88vh] overflow-y-auto rounded-t-xl bg-white p-5 shadow-xl">

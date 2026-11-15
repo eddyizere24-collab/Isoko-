@@ -2,8 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
 import { FilterPanel, type ActiveFilters } from '../components/FilterSheet';
 import { ProductCard } from '../components/ProductCard';
+import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
-import { RW } from '../i18n/rw';
 import { searchAndRankProducts } from '../lib/algorithm';
 
 interface SearchPageProps {
@@ -12,6 +12,7 @@ interface SearchPageProps {
 
 export const SearchPage: React.FC<SearchPageProps> = ({ initialCategorySlug }) => {
   const { bootstrap, searchParams, navigate, location, mySize, setMySize } = useMarketplace();
+  const { t } = useT();
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   const q = searchParams.get('q') ?? '';
@@ -66,7 +67,6 @@ export const SearchPage: React.FC<SearchPageProps> = ({ initialCategorySlug }) =
   const synonyms = bootstrap?.synonyms ?? [];
   const products = bootstrap?.products ?? [];
 
-  // Apply My Size automatically if enabled and user didn't override size
   const effectiveSize = useMemo(() => {
     if (filters.size) return filters.size;
     if (!mySize.enabled) return undefined;
@@ -94,20 +94,24 @@ export const SearchPage: React.FC<SearchPageProps> = ({ initialCategorySlug }) =
 
   const activeCategoryName = categories.find((c) => c.slug === filters.categorySlug)?.name_rw;
 
+  const sortLabels: Record<ActiveFilters['sort'], string> = {
+    newest: t('sort_newest'),
+    price_asc: t('sort_price_asc'),
+    price_desc: t('sort_price_desc'),
+    popular: t('sort_popular'),
+    nearby: t('sort_nearby'),
+  };
+
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-      <div className="flex flex-col gap-3 border-b border-[#E5E7EB] pb-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-[#1B1F23]">
-            {q
-              ? `Ibisubizo bya "${q}"`
-              : activeCategoryName
-                ? activeCategoryName
-                : 'Shakisha ibicuruzwa'}
+    <div className="mx-auto max-w-7xl px-2 py-4 sm:px-6">
+      <div className="flex flex-col gap-2.5 border-b border-[#E5E7EB] pb-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-[18px] font-semibold leading-tight text-[#1B1F23] truncate">
+            {q ? `"${q}"` : activeCategoryName ? activeCategoryName : t('browse_products')}
           </h1>
-          <p className="mt-1 text-xs text-slate-600 tabular-nums">
-            Habonetse ibicuruzwa {results.length}
-            {effectiveSize && mySize.enabled && !filters.size ? ` · Size yawe: ${effectiveSize}` : ''}
+          <p className="mt-0.5 text-xs text-[#6B7280] tabular-nums">
+            {t('found_count', { n: results.length })}
+            {effectiveSize && mySize.enabled && !filters.size ? ` · ${t('size_label')}: ${effectiveSize}` : ''}
           </p>
         </div>
 
@@ -115,17 +119,17 @@ export const SearchPage: React.FC<SearchPageProps> = ({ initialCategorySlug }) =
           <button
             type="button"
             onClick={() => setMobileFilterOpen(true)}
-            className="inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-lg border border-[#CBD5D1] bg-white px-3.5 text-sm font-semibold text-[#1B1F23] lg:hidden"
+            className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border border-[#CBD5D1] bg-white px-3 text-xs font-semibold text-[#1B1F23] lg:hidden"
           >
-            <SlidersHorizontal className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
-            <span>{RW.filter}</span>
+            <SlidersHorizontal className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
+            <span>{t('filter')}</span>
             {activeFilterCount > 0 && (
               <span className="tabular-nums text-[#0B6E4F]">({activeFilterCount})</span>
             )}
           </button>
 
           <label htmlFor="sort-select" className="sr-only">
-            {RW.sort}
+            {t('sort')}
           </label>
           <select
             id="sort-select"
@@ -136,18 +140,18 @@ export const SearchPage: React.FC<SearchPageProps> = ({ initialCategorySlug }) =
                 sort: e.target.value as ActiveFilters['sort'],
               })
             }
-            className="h-11 min-w-0 flex-1 sm:flex-none rounded-lg border border-[#CBD5D1] bg-white px-2.5 text-sm font-medium text-[#1B1F23]"
+            className="h-9 min-w-0 flex-1 sm:flex-none rounded-md border border-[#CBD5D1] bg-white px-2.5 text-xs font-medium text-[#1B1F23]"
           >
-            {Object.entries(RW.sort_options).map(([val, label]) => (
+            {Object.entries(sortLabels).map(([val, label]) => (
               <option key={val} value={val}>
-                {RW.sort}: {label}
+                {t('sort')}: {label}
               </option>
             ))}
           </select>
         </div>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-12">
+      <div className="mt-4 grid gap-5 lg:grid-cols-12">
         <aside className="hidden lg:block lg:col-span-3">
           <FilterPanel
             filters={filters}
@@ -159,32 +163,30 @@ export const SearchPage: React.FC<SearchPageProps> = ({ initialCategorySlug }) =
           />
         </aside>
 
-        <div className="lg:col-span-9">
+        <div className="lg:col-span-9 min-w-0">
           {results.length === 0 ? (
-            <div className="rounded-lg border border-[#E5E7EB] bg-[#F1F6F3] p-8 text-center">
-              <p className="text-base font-semibold text-[#1B1F23]">{RW.no_results}</p>
-              <p className="mt-2 text-sm text-slate-600">
-                Gerageza guhindura ijambo cyangwa kuvanaho ibyungurura kugira ngo ubone ibindi bicuruzwa.
-              </p>
-              <div className="mt-5 flex flex-wrap justify-center gap-3">
+            <div className="rounded-lg border border-[#E5E7EB] bg-[#F1F6F3] p-6 text-center">
+              <p className="text-[15px] font-semibold text-[#1B1F23]">{t('no_results')}</p>
+              <p className="mt-1.5 text-xs text-[#6B7280]">{t('no_results_hint')}</p>
+              <div className="mt-4 flex flex-wrap justify-center gap-2.5">
                 <button
                   type="button"
                   onClick={clearFilters}
-                  className="min-h-[44px] rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white"
+                  className="h-10 rounded-md bg-[#0B6E4F] px-4 text-xs font-semibold text-white"
                 >
-                  {RW.clear_filters}
+                  {t('clear_filters')}
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate('/shakisha')}
-                  className="min-h-[44px] rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-[#1B1F23]"
+                  className="h-10 rounded-md border border-[#E5E7EB] bg-white px-4 text-xs font-semibold text-[#1B1F23]"
                 >
-                  Reba byose
+                  {t('see_all')}
                 </button>
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:gap-5">
+            <div className="grid grid-cols-3 gap-1.5 min-[480px]:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 sm:gap-2.5">
               {results.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
