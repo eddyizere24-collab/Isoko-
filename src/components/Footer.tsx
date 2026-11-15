@@ -91,7 +91,7 @@ export const Footer: React.FC = () => {
                     e.preventDefault();
                     navigate('/abacuruzi');
                   }}
-                  className="hover:text-[#214E43] hover:underline"
+                  className="hover:text-[#0B6E4F] hover:underline"
                 >
                   {t('sell_on_platform')}
                 </a>
@@ -103,7 +103,7 @@ export const Footer: React.FC = () => {
                     e.preventDefault();
                     navigate('/ibyerekeye');
                   }}
-                  className="hover:text-[#214E43] hover:underline"
+                  className="hover:text-[#0B6E4F] hover:underline"
                 >
                   {t('about')}
                 </a>
@@ -115,7 +115,7 @@ export const Footer: React.FC = () => {
                     e.preventDefault();
                     navigate('/ubufasha');
                   }}
-                  className="hover:text-[#214E43] hover:underline"
+                  className="hover:text-[#0B6E4F] hover:underline"
                 >
                   {t('help')}
                 </a>
@@ -127,7 +127,7 @@ export const Footer: React.FC = () => {
                     e.preventDefault();
                     navigate('/brand-preview');
                   }}
-                  className="hover:text-[#214E43] hover:underline"
+                  className="hover:text-[#0B6E4F] hover:underline"
                 >
                   Brand Preview
                 </a>
@@ -148,7 +148,7 @@ export const Footer: React.FC = () => {
                     e.preventDefault();
                     navigate('/amategeko');
                   }}
-                  className="hover:text-[#214E43] hover:underline"
+                  className="hover:text-[#0B6E4F] hover:underline"
                 >
                   {t('terms')}
                 </a>
@@ -160,7 +160,7 @@ export const Footer: React.FC = () => {
                     e.preventDefault();
                     navigate('/ibanga');
                   }}
-                  className="hover:text-[#214E43] hover:underline"
+                  className="hover:text-[#0B6E4F] hover:underline"
                 >
                   {t('privacy')}
                 </a>
@@ -172,7 +172,7 @@ export const Footer: React.FC = () => {
                     e.preventDefault();
                     navigate('/amabwiriza-y-abacuruzi');
                   }}
-                  className="hover:text-[#214E43] hover:underline"
+                  className="hover:text-[#0B6E4F] hover:underline"
                 >
                   {t('seller_rules')}
                 </a>
@@ -194,7 +194,7 @@ export const Footer: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="imeri@urugero.rw"
-                  className="h-9 min-w-0 flex-1 rounded-md border border-[#D9D6CE] bg-white px-3 text-[12.5px] text-[#1A1F1C] placeholder:text-[#929A95] focus:border-[#214E43] focus:outline-none"
+                  className="h-9 min-w-0 flex-1 rounded-md border border-[#AEBBB2] bg-white px-3 text-[12.5px] text-[#1A1F1C] placeholder:text-[#4B544F] focus:border-[#0B6E4F] focus:outline-none"
                 />
                 <button
                   type="submit"
