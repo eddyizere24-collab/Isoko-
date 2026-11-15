@@ -79,7 +79,12 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: isoko-mobile-qa-${{ github.run_id }}
-          path: docs/design/qa/2026-11-16/*.png
+          path: |
+            docs/design/qa/2026-11-16/*.png
+            public/pwa-192x192.png
+            public/pwa-512x512.png
+            public/pwa-maskable-512x512.png
+            public/apple-touch-icon.png
           if-no-files-found: error
           retention-days: 14
 
