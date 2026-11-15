@@ -63,7 +63,7 @@ export const Footer: React.FC = () => {
                   href={supportUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-[38px] items-center gap-2 rounded-full bg-[#214E43] px-4 py-2 text-[11px] font-semibold text-white transition-colors hover:bg-[#183B33]"
+                  className="inline-flex min-h-[38px] items-center gap-2 rounded-full bg-[#0B6E4F] px-4 py-2 text-[11px] font-semibold text-white transition-colors hover:bg-[#07543C]"
                 >
                   <MessageCircle className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
                   <span>{t('help_whatsapp')}</span>
@@ -72,18 +72,18 @@ export const Footer: React.FC = () => {
               <LanguageSwitcher variant="header" />
             </div>
             {supportUrl && bootstrap?.settings.SUPPORT_HOURS && (
-              <p className="mt-2 text-[10.5px] text-[#68716D]">
+              <p className="mt-2 text-[10.5px] text-[#4B544F]">
                 {bootstrap.settings.SUPPORT_HOURS}
               </p>
             )}
           </div>
 
-          <details className="group border-t border-[#E3E0D8] pt-3 md:border-0 md:pt-0" open>
-            <summary className="flex min-h-[36px] cursor-pointer list-none items-center justify-between text-[13px] font-semibold text-[#202724] md:cursor-default">
+          <details className="group border-t border-[#DCE4DE] pt-3 md:border-0 md:pt-0" open>
+            <summary className="flex min-h-[36px] cursor-pointer list-none items-center justify-between text-[13px] font-semibold text-[#1A1F1C] md:cursor-default">
               <span>{t('app_name')}</span>
-              <ChevronDown className="h-4 w-4 text-[#68716D] transition-transform group-open:rotate-180 md:hidden" />
+              <ChevronDown className="h-4 w-4 text-[#4B544F] transition-transform group-open:rotate-180 md:hidden" />
             </summary>
-            <ul className="mt-2 space-y-2 text-[12.5px] text-[#68716D]">
+            <ul className="mt-2 space-y-2 text-[12.5px] text-[#4B544F]">
               <li>
                 <a
                   href="/abacuruzi"
@@ -135,12 +135,12 @@ export const Footer: React.FC = () => {
             </ul>
           </details>
 
-          <details className="group border-t border-[#E3E0D8] pt-3 md:border-0 md:pt-0">
-            <summary className="flex min-h-[36px] cursor-pointer list-none items-center justify-between text-[13px] font-semibold text-[#202724] md:cursor-default">
+          <details className="group border-t border-[#DCE4DE] pt-3 md:border-0 md:pt-0">
+            <summary className="flex min-h-[36px] cursor-pointer list-none items-center justify-between text-[13px] font-semibold text-[#1A1F1C] md:cursor-default">
               <span>{t('terms')}</span>
-              <ChevronDown className="h-4 w-4 text-[#68716D] transition-transform group-open:rotate-180 md:hidden" />
+              <ChevronDown className="h-4 w-4 text-[#4B544F] transition-transform group-open:rotate-180 md:hidden" />
             </summary>
-            <ul className="mt-2 space-y-2 text-[12.5px] text-[#68716D] md:block">
+            <ul className="mt-2 space-y-2 text-[12.5px] text-[#4B544F] md:block">
               <li>
                 <a
                   href="/amategeko"
@@ -180,9 +180,9 @@ export const Footer: React.FC = () => {
             </ul>
           </details>
 
-          <div className="border-t border-[#E3E0D8] pt-4 md:border-0 md:pt-0">
-            <h3 className="text-[13px] font-semibold text-[#202724]">{t('newsletter_title')}</h3>
-            <p className="mt-1 text-[12px] text-[#68716D]">{t('newsletter_desc')}</p>
+          <div className="border-t border-[#DCE4DE] pt-4 md:border-0 md:pt-0">
+            <h3 className="text-[13px] font-semibold text-[#1A1F1C]">{t('newsletter_title')}</h3>
+            <p className="mt-1 text-[12px] text-[#4B544F]">{t('newsletter_desc')}</p>
             <form onSubmit={handleSubscribe} className="mt-2.5 space-y-2">
               <div className="flex gap-2">
                 <label htmlFor="footer-email" className="sr-only">
@@ -194,7 +194,7 @@ export const Footer: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="imeri@urugero.rw"
-                  className="h-9 min-w-0 flex-1 rounded-md border border-[#D9D6CE] bg-white px-3 text-[12.5px] text-[#202724] placeholder:text-[#929A95] focus:border-[#214E43] focus:outline-none"
+                  className="h-9 min-w-0 flex-1 rounded-md border border-[#D9D6CE] bg-white px-3 text-[12.5px] text-[#1A1F1C] placeholder:text-[#929A95] focus:border-[#214E43] focus:outline-none"
                 />
                 <button
                   type="submit"
@@ -204,21 +204,21 @@ export const Footer: React.FC = () => {
                   {t('confirm')}
                 </button>
               </div>
-              <label className="flex items-start gap-2 text-[11px] text-[#68716D] cursor-pointer">
+              <label className="flex items-start gap-2 text-[11px] text-[#4B544F] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={consent}
                   onChange={(e) => setConsent(e.target.checked)}
-                  className="mt-0.5 h-3.5 w-3.5 accent-[#BD594A]"
+                  className="mt-0.5 h-3.5 w-3.5 accent-[#C0392B]"
                 />
                 <span>{t('terms')} &amp; {t('privacy')}</span>
               </label>
-              {subMessage && <p className="text-[12px] font-medium text-[#68716D]">{subMessage}</p>}
+              {subMessage && <p className="text-[12px] font-medium text-[#4B544F]">{subMessage}</p>}
             </form>
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-1.5 border-t border-[#E3E0D8] pt-5 text-[11.5px] text-[#68716D] sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 flex flex-col gap-1.5 border-t border-[#DCE4DE] pt-5 text-[11.5px] text-[#4B544F] sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} {t('app_name')} Rwanda.</p>
           <p>{t('footer_disclaimer')}</p>
         </div>
