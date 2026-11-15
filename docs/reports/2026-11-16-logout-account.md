@@ -45,7 +45,11 @@ Production: untouched. No Production SQL, Function deployment, env-var, Render, 
 
 ## Tests and evidence
 
-### Added but pending CI result
+### Passed CI
+
+- GitHub Actions run [43774651469](https://github.com/eddyizere24-collab/Isoko-/actions/runs/43774651469) passed on commit `3eb3cd4e6fdd062d84f8c5f4cc44eb0e6b513682`: TypeScript, unit tests, Neon Setup/Production smoke checks, Production CORS, Vite build, Playwright browser smoke tests, and Neon Function bundling.
+
+### Tests added
 
 - `src/lib/authLifecycle.test.ts`: cancellation and storage cleanup/preservation checks.
 - `e2e/seller-auth.spec.cjs`: signed-out `/admin`, `/konti/yanjye`, and public `/konti` behaviour.
@@ -53,7 +57,7 @@ Production: untouched. No Production SQL, Function deployment, env-var, Render, 
 
 ### Not yet tested
 
-- CI TypeScript, unit test, build and Playwright results for this branch.
+- The successful CI run uses browser mocks and synthetic anonymous catalogue data; it is not a real authenticated session or Android device test.
 - A real QA account sign-in followed by sign-out in Android Chrome.
 - Server-side session invalidation after logout read-back.
 - Back-button verification on an Android device.
@@ -61,7 +65,7 @@ Production: untouched. No Production SQL, Function deployment, env-var, Render, 
 - Whether Neon Auth uses IndexedDB or Cache Storage for any extra private state not named with an auth-related key. The SDK's signOut handles its managed session, but no undocumented storage key names are assumed.
 - Internal Data API requests issued by the Neon SDK do not currently accept this app-level AbortSignal through the existing client abstraction. Direct upload and Admin CSV fetches are cancellable; the private route guard and cleared Neon session prevent rendering private pages after logout.
 
-No real account or mobile screenshot result is claimed.
+No real account or mobile screenshot result is claimed. The existing CI Playwright smoke suite does not produce the required 320×800/360×800 screenshot matrix.
 
 ## Production impact
 
