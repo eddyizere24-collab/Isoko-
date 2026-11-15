@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
 test('homepage shows a clear Kinyarwanda message when catalogue service is unavailable', async ({ page }) => {
-  await page.route(/\\.aws\\.neon\\.tech\\//, async (route) => {
+  await page.route(/\.aws\.neon\.tech\//, async (route) => {
     const url = new URL(route.request().url());
     if (url.hostname.includes('.apirest.') && url.pathname.endsWith('/v_public_bootstrap')) {
       return route.fulfill({
