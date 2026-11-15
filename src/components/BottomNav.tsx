@@ -17,7 +17,7 @@ interface BottomNavProps {
 }
 
 export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategoriesOpen }) => {
-  const { pathname, navigate, cartCount, bootstrap, authProfile } = useMarketplace();
+  const { pathname, navigate, cartCount, bootstrap } = useMarketplace();
   const { t } = useT();
 
   if (pathname.startsWith('/p/')) return null;
