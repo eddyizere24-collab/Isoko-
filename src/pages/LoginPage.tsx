@@ -5,33 +5,6 @@ import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { loginAccount } from '../lib/api';
 
-const DEMO_ACCOUNTS = [
-  {
-    label: 'Umucuruzi 1 — Iduka rya Mugisha (Yemejwe)',
-    phone: '250788100001',
-    pass: 'mugisha123',
-    role: 'seller',
-  },
-  {
-    label: 'Umucuruzi 2 — Iduka rya Aline (Yemejwe)',
-    phone: '250788100002',
-    pass: 'aline123',
-    role: 'seller',
-  },
-  {
-    label: 'Umucuruzi 4 — Nyarugenge Style',
-    phone: '250788100004',
-    pass: 'style123',
-    role: 'seller',
-  },
-  {
-    label: 'Admin — Ubuyobozi bw’Urubuga',
-    phone: '250788000000',
-    pass: 'admin123',
-    role: 'admin',
-  },
-];
-
 export const LoginPage: React.FC = () => {
   const { navigate, setAuthData, authProfile } = useMarketplace();
   const { t } = useT();
@@ -191,36 +164,40 @@ export const LoginPage: React.FC = () => {
           </div>
         </section>
 
-        <aside className="rounded-lg border border-[#E5E7EB] bg-[#E8F3EE]/60 p-5 lg:col-span-5">
+        <aside className="rounded-lg border border-[#E5E7EB] bg-white p-5 lg:col-span-5">
           <div className="flex items-center gap-2 text-[#0B6E4F]">
             <ShieldCheck className="h-5 w-5" aria-hidden="true" />
             <h2 className="text-[15px] font-semibold text-[#1B1F23]">
-              Konti zo kugerageza (Demo)
+              Uko Isoko ikora
             </h2>
           </div>
-          <p className="mt-1.5 text-xs text-[#475569]">
-            Kanda kuri imwe muri izi konti winjire ako kanya urebe ibiro by’abacuruzi cyangwa Admin:
-          </p>
 
-          <div className="mt-3.5 space-y-2">
-            {DEMO_ACCOUNTS.map((acc) => (
+          <div className="mt-4 space-y-4 text-sm">
+            <div>
+              <p className="font-semibold text-[#1B1F23]">Ku baguzi</p>
+              <p className="mt-1 text-xs leading-relaxed text-[#64748B]">
+                Ushobora kureba ibicuruzwa, gushakisha amaduka no gukoresha igare utabanje gufungura konti.
+                Iyo uhisemo igicuruzwa, uvugana n’umucuruzi kuri WhatsApp.
+              </p>
+            </div>
+            <div className="border-t border-[#E5E7EB] pt-3">
+              <p className="font-semibold text-[#1B1F23]">Ku bacuruzi</p>
+              <p className="mt-1 text-xs leading-relaxed text-[#64748B]">
+                Konti yawe ikoreshwa mu gucunga iduka, gushyiraho ibicuruzwa, amafoto n’amakuru y’ubucuruzi.
+                Buri mucuruzi agomba gukoresha konti ye bwite.
+              </p>
               <button
-                key={acc.phone}
                 type="button"
-                disabled={submitting}
-                onClick={() => {
-                  setIdentifier(acc.phone);
-                  setPassword(acc.pass);
-                  performLogin(acc.phone, acc.pass);
-                }}
-                className="flex min-h-[48px] w-full flex-col items-start justify-center rounded-lg border border-[#E5E7EB] bg-white px-3.5 py-2 text-left transition hover:border-[#0B6E4F]"
+                onClick={() => navigate('/abacuruzi')}
+                className="mt-3 inline-flex min-h-[40px] items-center gap-2 rounded-md border border-[#0B6E4F] px-3 text-xs font-semibold text-[#0B6E4F] hover:bg-[#E8F3EE]"
               >
-                <span className="text-[13px] font-semibold text-[#1B1F23]">{acc.label}</span>
-                <span className="mt-0.5 text-xs text-[#64748B] tabular-nums">
-                  {acc.phone} · {acc.pass}
-                </span>
+                <Store className="h-4 w-4" aria-hidden="true" />
+                Fungura iduka
               </button>
-            ))}
+            </div>
+            <p className="border-t border-[#E5E7EB] pt-3 text-[11px] leading-relaxed text-[#64748B]">
+              Isoko ihuza umuguzi n’umucuruzi. Kwishyura no gutanga ibicuruzwa byumvikanwaho hagati yabo.
+            </p>
           </div>
         </aside>
       </div>
