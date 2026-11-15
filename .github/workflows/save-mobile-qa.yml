@@ -56,12 +56,24 @@ jobs:
           mkdir -p "${extract_dir}"
           unzip -q "${zip_path}" -d "${extract_dir}"
 
-          mapfile -t pngs < <(find "${extract_dir}" -type f -name '*.png' | sort)
-          if [[ "${#pngs[@]}" -ne 21 ]]; then
-            echo "Expected 21 Playwright PNGs, found ${#pngs[@]}." >&2
+          mapfile -t qa_pngs < <(find "${extract_dir}" -type f -path '*/docs/design/qa/2026-11-16/*.png' | sort)
+          mapfile -t pwa_pngs < <(find "${extract_dir}" -type f \\
+            \( -path '*/public/pwa-192x192.png' \\
+            -o -path '*/public/pwa-512x512.png' \\
+            -o -path '*/public/pwa-maskable-512x512.png' \\
+            -o -path '*/public/apple-touch-icon.png' \) | sort)
+
+          if [[ "${#qa_pngs[@]}" -ne 21 ]]; then
+            echo "Expected 21 Playwright QA PNGs, found ${#qa_pngs[@]}." >&2
             exit 1
           fi
-          for file in "${pngs[@]}"; do
+          if [[ "${#pwa_pngs[@]}" -ne 0 && "${#pwa_pngs[@]}" -ne 4 ]]; then
+            echo "Expected either zero or four raster PWA icons, found ${#pwa_pngs[@]}." >&2
+            exit 1
+          fi
+
+          all_pngs=("${qa_pngs[@]}" "${pwa_pngs[@]}")
+          for file in "${all_pngs[@]}"; do
             bytes="$(stat -c '%s' "${file}")"
             if [[ "${bytes}" -gt 409600 ]]; then
               echo "PNG exceeds 400 KB: ${file} (${bytes} bytes)" >&2
@@ -70,17 +82,23 @@ jobs:
           done
 
           qa_dir="docs/design/qa/2026-11-16"
-          mkdir -p "${qa_dir}"
-          cp "${pngs[@]}" "${qa_dir}/"
+          mkdir -p "${qa_dir}" public
+          cp "${qa_pngs[@]}" "${qa_dir}/"
+          if [[ "${#pwa_pngs[@]}" -eq 4 ]]; then
+            cp "${pwa_pngs[@]}" public/
+          fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "${qa_dir}"/*.png
+          if [[ "${#pwa_pngs[@]}" -eq 4 ]]; then
+            git add public/pwa-192x192.png public/pwa-512x512.png public/pwa-maskable-512x512.png public/apple-touch-icon.png
+          fi
           if git diff --cached --quiet; then
-            echo "The current Playwright PNGs already match the committed evidence." >> "${GITHUB_STEP_SUMMARY}"
+            echo "The current QA PNGs and PWA icons already match the committed evidence." >> "${GITHUB_STEP_SUMMARY}"
             exit 0
           fi
-          git commit -m "test(qa): add mobile screenshots from run ${SOURCE_RUN_ID}"
+          git commit -m "test(qa): save Playwright screenshots and PWA raster icons from run ${SOURCE_RUN_ID}"
           git push origin "HEAD:${TARGET_BRANCH}"
 
-          echo "Committed ${#pngs[@]} Playwright PNGs under ${qa_dir}/." >> "${GITHUB_STEP_SUMMARY}"
+          echo "Committed ${#qa_pngs[@]} QA PNGs and ${#pwa_pngs[@]} PWA raster icons." >> "${GITHUB_STEP_SUMMARY}"
