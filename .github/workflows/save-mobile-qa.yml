@@ -31,6 +31,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           SOURCE_RUN_ID: ${{ github.event.workflow_run.id }}
+          TARGET_BRANCH: ${{ github.event.workflow_run.head_branch }}
         run: |
           set -euo pipefail
           artifact_name="isoko-mobile-qa-${SOURCE_RUN_ID}"
@@ -80,6 +81,6 @@ jobs:
             exit 0
           fi
           git commit -m "test(qa): add mobile screenshots from run ${SOURCE_RUN_ID}"
-          git push origin "HEAD:${{ github.event.workflow_run.head_branch }}"
+          git push origin "HEAD:${TARGET_BRANCH}"
 
           echo "Committed ${#pngs[@]} Playwright PNGs under ${qa_dir}/." >> "${GITHUB_STEP_SUMMARY}"
