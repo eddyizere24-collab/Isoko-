@@ -127,7 +127,7 @@ export const SellerShopSettingsPage: React.FC = () => {
   if (loading) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <div className="h-48 animate-pulse rounded-lg bg-[#F1F6F3]" />
+        <div className="h-48 animate-pulse rounded-lg bg-[#E9F0EB]" />
       </main>
     );
   }
@@ -165,19 +165,19 @@ export const SellerShopSettingsPage: React.FC = () => {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E7EB] pb-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E3E0D8] pb-5">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate('/umucuruzi')}
             aria-label={t('back')}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-[#E5E7EB] hover:bg-[#E8F3EE]"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-[#E3E0D8] hover:bg-[#E9F0EB]"
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-[#1B1F23]">Amakuru y’iduka</h1>
-            <p className="text-xs text-[#64748B]">
+            <h1 className="text-xl font-bold text-[#202724]">Amakuru y’iduka</h1>
+            <p className="text-xs text-[#68716D]">
               Vugurura nimero ya WhatsApp, aho uherereye n’amasaha yo gukora
             </p>
           </div>
@@ -195,9 +195,9 @@ export const SellerShopSettingsPage: React.FC = () => {
                 // ignore
               }
             }}
-            className="inline-flex min-h-[42px] items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-3.5 text-xs font-semibold text-[#1B1F23] hover:bg-[#E8F3EE]"
+            className="inline-flex min-h-[42px] items-center gap-1.5 rounded-lg border border-[#E3E0D8] bg-white px-3.5 text-xs font-semibold text-[#202724] hover:bg-[#E9F0EB]"
           >
-            <Copy className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+            <Copy className="h-4 w-4 text-[#214E43]" aria-hidden="true" />
             <span>{copiedUrl ? t('copied') : t('copy_link')}</span>
           </button>
           <a
@@ -212,9 +212,9 @@ export const SellerShopSettingsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setQrOpen(true)}
-            className="inline-flex min-h-[42px] items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-3.5 text-xs font-semibold text-[#1B1F23] hover:bg-[#E8F3EE]"
+            className="inline-flex min-h-[42px] items-center gap-1.5 rounded-lg border border-[#E3E0D8] bg-white px-3.5 text-xs font-semibold text-[#202724] hover:bg-[#E9F0EB]"
           >
-            <QrCode className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+            <QrCode className="h-4 w-4 text-[#214E43]" aria-hidden="true" />
             <span>QR y’iduka</span>
           </button>
         </div>
@@ -222,30 +222,30 @@ export const SellerShopSettingsPage: React.FC = () => {
 
       {/* Live Profile Completion Bar & Optional Verified Badge Request */}
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
-          <div className="flex items-center justify-between text-xs font-semibold text-[#1B1F23]">
+        <div className="rounded-lg border border-[#E3E0D8] bg-white p-4">
+          <div className="flex items-center justify-between text-xs font-semibold text-[#202724]">
             <span>{t('profile_completion', { n: completion.percent })}</span>
-            <span className="tabular-nums text-[#0B6E4F]">
+            <span className="tabular-nums text-[#214E43]">
               {completion.completedCount}/{completion.totalCount}
             </span>
           </div>
-          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#E5E7EB]">
+          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#E3E0D8]">
             <div
-              className="h-full rounded-full bg-[#0B6E4F] transition-all duration-300"
+              className="h-full rounded-full bg-[#214E43] transition-all duration-300"
               style={{ width: `${completion.percent}%` }}
             />
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-3 rounded-lg border border-[#E5E7EB] bg-white p-4">
+        <div className="flex items-center justify-between gap-3 rounded-lg border border-[#E3E0D8] bg-white p-4">
           <div className="min-w-0">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#1B1F23]">
-              <ShieldCheck className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#202724]">
+              <ShieldCheck className="h-4 w-4 text-[#214E43]" aria-hidden="true" />
               <span>
                 {profileMeta?.identity_status === 'verified' ? t('verified') : t('unverified')}
               </span>
             </div>
-            <p className="mt-0.5 text-[11px] text-[#64748B]">
+            <p className="mt-0.5 text-[11px] text-[#68716D]">
               {profileMeta?.identity_status === 'verified'
                 ? 'Iduka ryawe rifite ikimenyetso cya Verified.'
                 : 'Kugenzurwa si itegeko, ariko byongerera icyizere abaguzi.'}
@@ -258,8 +258,8 @@ export const SellerShopSettingsPage: React.FC = () => {
               onClick={handleRequestVerified}
               className={`shrink-0 rounded-lg px-3 py-2 text-xs font-semibold ${
                 verifiedRequested
-                  ? 'bg-[#E8F3EE] text-[#064E3B]'
-                  : 'border border-[#0B6E4F] text-[#0B6E4F] hover:bg-[#E8F3EE]'
+                  ? 'bg-[#E9F0EB] text-[#183B33]'
+                  : 'border border-[#214E43] text-[#214E43] hover:bg-[#E9F0EB]'
               }`}
             >
               {verifiedRequested ? t('verified_requested') : t('request_verified')}
@@ -270,22 +270,108 @@ export const SellerShopSettingsPage: React.FC = () => {
 
       <form
         onSubmit={handleSave}
-        className="mt-5 rounded-lg border border-[#E5E7EB] bg-white p-6 space-y-4"
+        className="mt-5 rounded-lg border border-[#E3E0D8] bg-white p-6 space-y-4"
       >
-        <section className="rounded-2xl border border-[#0B6E4F]/20 bg-[#F7FAF8] p-4 sm:p-5 space-y-4">
-          <div><h2 className="text-base font-bold text-[#1B1F23]">Umwirondoro wawe n’isura y’iduka</h2><p className="mt-1 text-xs leading-5 text-slate-600">Amafoto n’amakuru ubika ni byo bizagaragara ku rubuga rw’iduka ryawe.</p></div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div><p className="text-xs font-semibold text-slate-700">Ifoto yawe (profile)</p><div className="mt-2 flex items-center gap-3">{avatarPath?<img src={avatarPath} alt="Ifoto yawe" className="h-16 w-16 rounded-full border border-slate-200 object-cover"/>:<div className="grid h-16 w-16 place-items-center rounded-full bg-white text-2xl font-bold text-[#0B6E4F]">{fullName.slice(0,1).toUpperCase()||'U'}</div>}<label className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 text-xs font-semibold text-[#1B1F23]"><ImagePlus className="h-4 w-4"/> Hitamo ifoto<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={Boolean(uploading)} onChange={(e)=>{void uploadBrandImage(e.currentTarget.files?.[0],'profile',setAvatarPath);e.currentTarget.value='';}}/></label></div></div>
-            <div><p className="text-xs font-semibold text-slate-700">Logo y’iduka</p><div className="mt-2 flex items-center gap-3">{logoPath?<img src={logoPath} alt="Logo y’iduka" className="h-16 w-16 rounded-2xl border border-slate-200 bg-white object-cover"/>:<div className="grid h-16 w-16 place-items-center rounded-2xl bg-white text-xs font-bold text-[#0B6E4F]">LOGO</div>}<label className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 text-xs font-semibold text-[#1B1F23]"><ImagePlus className="h-4 w-4"/> Hitamo logo<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={Boolean(uploading)} onChange={(e)=>{void uploadBrandImage(e.currentTarget.files?.[0],'shop',setLogoPath);e.currentTarget.value='';}}/></label></div></div>
-            <div><p className="text-xs font-semibold text-slate-700">Ifoto yo hejuru (cover)</p>{coverPath?<img src={coverPath} alt="Ifoto yo hejuru y’iduka" className="mt-2 h-16 w-full rounded-xl border border-slate-200 object-cover"/>:<div className="imigongo-surface mt-2 h-16 rounded-xl border border-slate-200"/>}<label className="mt-2 inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 text-xs font-semibold text-[#1B1F23]"><ImagePlus className="h-4 w-4"/> Hitamo cover<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={Boolean(uploading)} onChange={(e)=>{void uploadBrandImage(e.currentTarget.files?.[0],'shop',setCoverPath);e.currentTarget.value='';}}/></label></div>
+        <section className="overflow-hidden rounded-xl border border-[#E3E0D8] bg-[#FFFEFB]">
+          <div className="relative h-28 bg-[#EEECE6] sm:h-36">
+            {coverPath ? (
+              <img src={coverPath} alt="Ifoto yo hejuru y’iduka" className="h-full w-full object-cover" />
+            ) : (
+              <div className="imigongo-surface h-full w-full" />
+            )}
+            <label className="absolute bottom-2 right-2 inline-flex min-h-9 cursor-pointer items-center gap-2 rounded-full border border-[#E3E0D8] bg-[#FFFEFB]/95 px-3 text-[10.5px] font-semibold text-[#202724]">
+              <ImagePlus className="h-3.5 w-3.5 text-[#214E43]" aria-hidden="true" />
+              Hindura cover
+              <input
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                disabled={Boolean(uploading)}
+                onChange={(e) => {
+                  const file = e.currentTarget.files?.[0];
+                  e.currentTarget.value = '';
+                  void uploadBrandImage(file, 'shop', setCoverPath);
+                }}
+              />
+            </label>
           </div>
-          {uploading&&<p role="status" className="text-xs font-medium text-[#0B6E4F]">Turimo kohereza ifoto...</p>}
-          <div><label htmlFor="seller-profile-name" className="block text-sm font-semibold text-[#1B1F23]">Amazina agaragara ku iduka</label><input id="seller-profile-name" value={fullName} onChange={(e)=>setFullName(e.target.value)} maxLength={120} className="mt-1.5 min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm"/></div>
-          <div><div className="flex items-center justify-between"><label htmlFor="seller-profile-bio" className="text-sm font-semibold text-[#1B1F23]">Ibyerekeye wowe</label><span className="text-xs tabular-nums text-slate-500">{profileBio.length}/2500</span></div><textarea id="seller-profile-bio" rows={3} maxLength={2500} value={profileBio} onChange={(e)=>setProfileBio(e.target.value)} placeholder="Andika uwo uri we, ibyo ukunda n’impamvu abakiriya bakugirira icyizere..." className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white p-3 text-sm"/></div>
+
+          <div className="px-3 pb-4 sm:px-4">
+            <div className="-mt-7 flex flex-wrap items-end gap-3">
+              <div className="relative shrink-0">
+                {avatarPath ? (
+                  <img src={avatarPath} alt="Ifoto ya profile yawe" className="h-16 w-16 rounded-full border-[3px] border-[#FFFEFB] bg-white object-cover sm:h-[72px] sm:w-[72px]" />
+                ) : (
+                  <div className="grid h-16 w-16 place-items-center rounded-full border-[3px] border-[#FFFEFB] bg-[#E9F0EB] text-xl font-semibold text-[#214E43] sm:h-[72px] sm:w-[72px]">
+                    {fullName.slice(0, 1).toUpperCase() || 'U'}
+                  </div>
+                )}
+                <label aria-label="Hindura ifoto ya profile" className="absolute bottom-0 right-0 grid h-7 w-7 cursor-pointer place-items-center rounded-full border-2 border-[#FFFEFB] bg-[#214E43] text-white">
+                  <ImagePlus className="h-3.5 w-3.5" aria-hidden="true" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="sr-only"
+                    disabled={Boolean(uploading)}
+                    onChange={(e) => {
+                      const file = e.currentTarget.files?.[0];
+                      e.currentTarget.value = '';
+                      void uploadBrandImage(file, 'profile', setAvatarPath);
+                    }}
+                  />
+                </label>
+              </div>
+
+              <div className="min-w-[140px] flex-1 pb-1">
+                <p className="text-[10px] font-semibold tracking-[0.08em] text-[#8F493F]">PROFILE PHOTO</p>
+                <p className="mt-1 text-[11px] leading-relaxed text-[#68716D]">Ifoto igaragaza umucuruzi uri inyuma y’iduka.</p>
+              </div>
+
+              <div className="flex items-center gap-2 rounded-lg border border-[#E3E0D8] bg-[#F7F5F0] p-2">
+                {logoPath ? (
+                  <img src={logoPath} alt="Logo y’iduka" className="h-10 w-10 rounded-md border border-[#E3E0D8] bg-white object-cover" />
+                ) : (
+                  <div className="grid h-10 w-10 place-items-center rounded-md bg-white text-[9px] font-bold tracking-wide text-[#68716D]">LOGO</div>
+                )}
+                <div>
+                  <p className="text-[10px] font-semibold text-[#202724]">Shop logo</p>
+                  <label className="mt-0.5 inline-flex min-h-7 cursor-pointer items-center text-[10px] font-semibold text-[#214E43] hover:underline">
+                    Hindura
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="sr-only"
+                      disabled={Boolean(uploading)}
+                      onChange={(e) => {
+                        const file = e.currentTarget.files?.[0];
+                        e.currentTarget.value = '';
+                        void uploadBrandImage(file, 'shop', setLogoPath);
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div>
+                <label htmlFor="seller-profile-name" className="block text-[11px] font-semibold text-[#333D38]">Amazina agaragara kuri profile</label>
+                <input id="seller-profile-name" value={fullName} onChange={(e) => setFullName(e.target.value)} maxLength={120} className="mt-1.5 min-h-10 w-full rounded-lg border border-[#D9D6CE] bg-white px-3 text-xs text-[#202724] focus:border-[#214E43] focus:outline-none" />
+              </div>
+              <div>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="seller-profile-bio" className="text-[11px] font-semibold text-[#333D38]">Ibyerekeye wowe (Bio)</label>
+                  <span className="text-[10px] tabular-nums text-[#68716D]">{profileBio.length}/2500</span>
+                </div>
+                <textarea id="seller-profile-bio" rows={3} maxLength={2500} value={profileBio} onChange={(e) => setProfileBio(e.target.value)} placeholder="Andika uwo uri we n’ibyo ukora..." className="mt-1.5 w-full rounded-lg border border-[#D9D6CE] bg-white p-3 text-xs text-[#202724] focus:border-[#214E43] focus:outline-none" />
+              </div>
+            </div>
+          </div>
+          {uploading && <p role="status" className="border-t border-[#E3E0D8] bg-[#F7F5F0] px-3 py-2 text-[10.5px] font-medium text-[#214E43]">Turimo gutunganya no kohereza ifoto...</p>}
         </section>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label htmlFor="shop-name" className="block text-sm font-semibold text-[#1B1F23]">
+            <label htmlFor="shop-name" className="block text-sm font-semibold text-[#202724]">
               Izina ry’iduka (2–40)
             </label>
             <input
@@ -295,12 +381,12 @@ export const SellerShopSettingsPage: React.FC = () => {
               maxLength={40}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#0B6E4F] focus:outline-none"
+              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#214E43] focus:outline-none"
             />
           </div>
 
           <div>
-            <label htmlFor="shop-hours" className="block text-sm font-semibold text-[#1B1F23]">
+            <label htmlFor="shop-hours" className="block text-sm font-semibold text-[#202724]">
               Amasaha yo gukora
             </label>
             <input
@@ -308,12 +394,12 @@ export const SellerShopSettingsPage: React.FC = () => {
               value={hoursText}
               onChange={(e) => setHoursText(e.target.value)}
               placeholder="08:30 – 19:30"
-              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#0B6E4F] focus:outline-none"
+              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#214E43] focus:outline-none"
             />
           </div>
 
           <div>
-            <label htmlFor="shop-wa" className="block text-sm font-semibold text-[#1B1F23]">
+            <label htmlFor="shop-wa" className="block text-sm font-semibold text-[#202724]">
               Nimero ya WhatsApp
             </label>
             <input
@@ -322,12 +408,12 @@ export const SellerShopSettingsPage: React.FC = () => {
               required
               value={whatsapp}
               onChange={(e) => setWhatsapp(e.target.value)}
-              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#0B6E4F] focus:outline-none"
+              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#214E43] focus:outline-none"
             />
           </div>
 
           <div>
-            <label htmlFor="shop-phone" className="block text-sm font-semibold text-[#1B1F23]">
+            <label htmlFor="shop-phone" className="block text-sm font-semibold text-[#202724]">
               Nimero yo guhamagara
             </label>
             <input
@@ -336,12 +422,12 @@ export const SellerShopSettingsPage: React.FC = () => {
               required
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#0B6E4F] focus:outline-none"
+              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#214E43] focus:outline-none"
             />
           </div>
 
           <div>
-            <label htmlFor="shop-district" className="block text-sm font-semibold text-[#1B1F23]">
+            <label htmlFor="shop-district" className="block text-sm font-semibold text-[#202724]">
               Akarere
             </label>
             <select
@@ -351,7 +437,7 @@ export const SellerShopSettingsPage: React.FC = () => {
                 setDistrictId(Number(e.target.value));
                 setSectorId('');
               }}
-              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm focus:border-[#0B6E4F] focus:outline-none"
+              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm focus:border-[#214E43] focus:outline-none"
             >
               {RWANDA_DISTRICTS.map((d) => (
                 <option key={d.id} value={d.id}>
@@ -362,7 +448,7 @@ export const SellerShopSettingsPage: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="shop-sector" className="block text-sm font-semibold text-[#1B1F23]">
+            <label htmlFor="shop-sector" className="block text-sm font-semibold text-[#202724]">
               Umurenge
             </label>
             <select
@@ -370,7 +456,7 @@ export const SellerShopSettingsPage: React.FC = () => {
               value={sectorId}
               onChange={(e) => setSectorId(e.target.value)}
               disabled={sectors.length === 0}
-              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm disabled:bg-slate-100 focus:border-[#0B6E4F] focus:outline-none"
+              className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3.5 text-sm disabled:bg-slate-100 focus:border-[#214E43] focus:outline-none"
             >
               <option value="">{sectors.length ? 'Hitamo umurenge' : 'Ntabwo ugenwe'}</option>
               {sectors.map((s) => (
@@ -383,7 +469,7 @@ export const SellerShopSettingsPage: React.FC = () => {
         </div>
 
         <div>
-          <label htmlFor="shop-landmark" className="block text-sm font-semibold text-[#1B1F23]">
+          <label htmlFor="shop-landmark" className="block text-sm font-semibold text-[#202724]">
             Ikimenyetso cy’aho iduka riherereye
           </label>
           <input
@@ -391,12 +477,12 @@ export const SellerShopSettingsPage: React.FC = () => {
             maxLength={80}
             value={landmark}
             onChange={(e) => setLandmark(e.target.value)}
-            className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#0B6E4F] focus:outline-none"
+            className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#214E43] focus:outline-none"
           />
         </div>
 
         <div>
-          <label htmlFor="shop-delivery" className="block text-sm font-semibold text-[#1B1F23]">
+          <label htmlFor="shop-delivery" className="block text-sm font-semibold text-[#202724]">
             Uko mutanga ibicuruzwa (kugeza kuri 120)
           </label>
           <input
@@ -404,12 +490,12 @@ export const SellerShopSettingsPage: React.FC = () => {
             maxLength={120}
             value={deliveryText}
             onChange={(e) => setDeliveryText(e.target.value)}
-            className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#0B6E4F] focus:outline-none"
+            className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#214E43] focus:outline-none"
           />
         </div>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
-          <h2 className="text-sm font-bold text-[#1B1F23]">Imbuga nkoranyambaga</h2>
+          <h2 className="text-sm font-bold text-[#202724]">Imbuga nkoranyambaga</h2>
           {[
             ['website','Urubuga rwawe'],['facebook','Facebook'],['instagram','Instagram'],['tiktok','TikTok'],['youtube','YouTube'],
           ].map(([key,label])=><div key={key}><label htmlFor={`social-${key}`} className="block text-xs font-semibold text-slate-700">{label}</label><input id={`social-${key}`} type="url" inputMode="url" placeholder="https://" value={socialLinks[key]??''} onChange={(e)=>setSocialLinks((old)=>({...old,[key]:e.target.value}))} className="mt-1 min-h-10 w-full rounded-xl border border-slate-300 px-3 text-sm"/></div>)}
@@ -417,7 +503,7 @@ export const SellerShopSettingsPage: React.FC = () => {
 
         <div>
           <div className="flex items-center justify-between">
-            <label htmlFor="shop-about" className="text-sm font-semibold text-[#1B1F23]">
+            <label htmlFor="shop-about" className="text-sm font-semibold text-[#202724]">
               Ibyerekeye iduka
             </label>
             <span className="text-xs text-slate-500 tabular-nums">{about.length}/3000</span>
@@ -428,14 +514,14 @@ export const SellerShopSettingsPage: React.FC = () => {
             maxLength={3000}
             value={about}
             onChange={(e) => setAbout(e.target.value)}
-            className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
+            className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-[#214E43] focus:outline-none"
           />
         </div>
 
         {error && (
           <div
             role="alert"
-            className="rounded-xl border border-[#C0392B]/30 bg-[#C0392B]/10 px-4 py-3 text-sm text-[#C0392B]"
+            className="rounded-xl border border-[#BD594A]/30 bg-[#BD594A]/10 px-4 py-3 text-sm text-[#BD594A]"
           >
             {error}
           </div>
@@ -444,7 +530,7 @@ export const SellerShopSettingsPage: React.FC = () => {
         {savedMsg && (
           <div
             role="status"
-            className="flex items-center gap-2 rounded-xl border border-[#0B6E4F]/30 bg-[#F1F6F3] px-4 py-3 text-sm font-medium text-[#0B6E4F]"
+            className="flex items-center gap-2 rounded-xl border border-[#214E43]/30 bg-[#E9F0EB] px-4 py-3 text-sm font-medium text-[#214E43]"
           >
             <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
             <span>{savedMsg}</span>
@@ -454,7 +540,7 @@ export const SellerShopSettingsPage: React.FC = () => {
         <button
           type="submit"
           disabled={saving || Boolean(uploading)}
-          className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-[#0B6E4F] px-6 text-sm font-semibold text-white hover:bg-[#08553D] disabled:opacity-60"
+          className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-[#214E43] px-6 text-sm font-semibold text-white hover:bg-[#183B33] disabled:opacity-60"
         >
           <Save className="h-4 w-4" aria-hidden="true" />
           <span>{uploading ? 'Tegereza ifoto irangize koherezwa...' : saving ? 'Bika...' : RW.save}</span>

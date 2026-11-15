@@ -74,7 +74,7 @@ export const SellerDashboardPage: React.FC = () => {
   if (loading) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <div className="h-32 animate-pulse rounded-lg bg-[#E8F3EE]" />
+        <div className="h-32 animate-pulse rounded-lg bg-[#E9F0EB]" />
       </main>
     );
   }
@@ -82,11 +82,11 @@ export const SellerDashboardPage: React.FC = () => {
   if (error || !data) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-10 text-center">
-        <p className="text-sm font-medium text-[#C0392B]">{error || 'Injira nk’umucuruzi.'}</p>
+        <p className="text-sm font-medium text-[#BD594A]">{error || 'Injira nk’umucuruzi.'}</p>
         <button
           type="button"
           onClick={() => navigate('/injira')}
-          className="mt-4 inline-flex min-h-[44px] items-center rounded-lg bg-[#0B6E4F] px-5 text-sm font-semibold text-white"
+          className="mt-4 inline-flex min-h-[44px] items-center rounded-lg bg-[#214E43] px-5 text-sm font-semibold text-white"
         >
           {t('login')}
         </button>
@@ -114,10 +114,10 @@ export const SellerDashboardPage: React.FC = () => {
       {data.profile.status !== 'approved' && (
         <div
           role="status"
-          className="mb-5 rounded-lg border border-[#C0392B]/35 bg-[#FBEAE8] p-4 text-sm text-[#1B1F23]"
+          className="mb-5 rounded-lg border border-[#BD594A]/35 bg-[#FAF0ED] p-4 text-sm text-[#202724]"
         >
           <div className="flex items-start gap-3">
-            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#C0392B]" aria-hidden="true" />
+            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#BD594A]" aria-hidden="true" />
             <div>
               <p className="font-semibold">
                 {data.profile.status === 'pending'
@@ -138,25 +138,25 @@ export const SellerDashboardPage: React.FC = () => {
 
       {/* Profile Completion Meter (§10 / Instant onboarding follow-up) */}
       {completion.percent < 100 && (
-        <section className="mb-5 rounded-lg border border-[#E5E7EB] bg-white p-4">
+        <section className="mb-5 rounded-lg border border-[#E3E0D8] bg-white p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
-              <h2 className="text-[14px] font-semibold text-[#1B1F23]">
+              <ShieldCheck className="h-4 w-4 text-[#214E43]" aria-hidden="true" />
+              <h2 className="text-[14px] font-semibold text-[#202724]">
                 {t('profile_completion', { n: completion.percent })}
               </h2>
             </div>
             <button
               type="button"
               onClick={() => navigate('/umucuruzi/iduka')}
-              className="text-xs font-semibold text-[#0B6E4F] hover:underline"
+              className="text-xs font-semibold text-[#214E43] hover:underline"
             >
               Uzuza amakuru y’iduka →
             </button>
           </div>
-          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#E5E7EB]">
+          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-[#E3E0D8]">
             <div
-              className="h-full rounded-full bg-[#0B6E4F] transition-all duration-300"
+              className="h-full rounded-full bg-[#214E43] transition-all duration-300"
               style={{ width: `${completion.percent}%` }}
             />
           </div>
@@ -168,8 +168,8 @@ export const SellerDashboardPage: React.FC = () => {
                 onClick={() => navigate('/umucuruzi/iduka')}
                 className={`inline-flex items-center gap-1 rounded px-2 py-1 text-[11px] font-medium ${
                   item.completed
-                    ? 'bg-[#E8F3EE] text-[#064E3B]'
-                    : 'border border-[#E5E7EB] bg-[#F7F8FA] text-[#475569] hover:border-[#0B6E4F]'
+                    ? 'bg-[#E9F0EB] text-[#183B33]'
+                    : 'border border-[#E3E0D8] bg-[#F7F5F0] text-[#58615C] hover:border-[#214E43]'
                 }`}
               >
                 {item.completed && <Check className="h-3 w-3" aria-hidden="true" />}
@@ -181,22 +181,22 @@ export const SellerDashboardPage: React.FC = () => {
       )}
 
       {/* Header + Primary Action */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E5E7EB] pb-5">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E3E0D8] pb-5">
         <div>
-          <p className="text-xs font-semibold text-[#0B6E4F]">Ibiro by’umucuruzi</p>
+          <p className="text-xs font-semibold text-[#214E43]">Ibiro by’umucuruzi</p>
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-xl font-bold text-[#1B1F23] sm:text-2xl">{data.shop.name}</h1>
+            <h1 className="text-xl font-bold text-[#202724] sm:text-2xl">{data.shop.name}</h1>
             <span
               className={`rounded px-2 py-0.5 text-[11px] font-semibold ${
                 data.profile.identity_status === 'verified'
-                  ? 'bg-[#E8F3EE] text-[#0B6E4F]'
-                  : 'bg-[#F1F5F9] text-[#475569]'
+                  ? 'bg-[#E9F0EB] text-[#214E43]'
+                  : 'bg-[#F1F5F9] text-[#58615C]'
               }`}
             >
               {data.profile.identity_status === 'verified' ? t('verified') : t('unverified')}
             </span>
           </div>
-          <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[#64748B]">
+          <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[#68716D]">
             <span>
               {data.shop.district_name}
               {data.shop.sector_name ? ` · ${data.shop.sector_name}` : ''}
@@ -205,7 +205,7 @@ export const SellerDashboardPage: React.FC = () => {
             <button
               type="button"
               onClick={handleCopyShopUrl}
-              className="inline-flex items-center gap-1 font-medium text-[#0B6E4F] hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-[#214E43] hover:underline"
             >
               <Copy className="h-3 w-3" aria-hidden="true" />
               <span>{copiedUrl ? t('copied') : `/s/${data.shop.slug}`}</span>
@@ -217,9 +217,9 @@ export const SellerDashboardPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setQrOpen(true)}
-            className="inline-flex min-h-[42px] items-center gap-2 rounded-lg border border-[#E5E7EB] bg-white px-3.5 text-[13px] font-semibold text-[#1B1F23] hover:bg-[#E8F3EE]"
+            className="inline-flex min-h-[42px] items-center gap-2 rounded-lg border border-[#E3E0D8] bg-white px-3.5 text-[13px] font-semibold text-[#202724] hover:bg-[#E9F0EB]"
           >
-            <QrCode className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+            <QrCode className="h-4 w-4 text-[#214E43]" aria-hidden="true" />
             <span>QR y’iduka</span>
           </button>
           <a
@@ -228,15 +228,15 @@ export const SellerDashboardPage: React.FC = () => {
               e.preventDefault();
               navigate(`/s/${data.shop.slug}`);
             }}
-            className="inline-flex min-h-[42px] items-center gap-2 rounded-lg border border-[#E5E7EB] bg-white px-3.5 text-[13px] font-semibold text-[#1B1F23] hover:bg-[#E8F3EE]"
+            className="inline-flex min-h-[42px] items-center gap-2 rounded-lg border border-[#E3E0D8] bg-white px-3.5 text-[13px] font-semibold text-[#202724] hover:bg-[#E9F0EB]"
           >
-            <Store className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+            <Store className="h-4 w-4 text-[#214E43]" aria-hidden="true" />
             <span>{t('view_shop')}</span>
           </a>
           <button
             type="button"
             onClick={() => navigate('/umucuruzi/ongeraho')}
-            className="inline-flex min-h-[42px] items-center gap-2 rounded-lg bg-[#0B6E4F] px-4 text-[13px] font-semibold text-white hover:bg-[#064E3B]"
+            className="inline-flex min-h-[42px] items-center gap-2 rounded-lg bg-[#214E43] px-4 text-[13px] font-semibold text-white hover:bg-[#183B33]"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />
             <span>{t('add_product')}</span>
@@ -246,29 +246,29 @@ export const SellerDashboardPage: React.FC = () => {
 
       {/* KPI Row */}
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
+        <div className="rounded-lg border border-[#E3E0D8] bg-white p-4">
           <p className="text-xs font-medium text-slate-500">Ibicuruzwa biri ahagaragara</p>
-          <p className="mt-1 text-2xl font-bold text-[#1B1F23] tabular-nums">
+          <p className="mt-1 text-2xl font-bold text-[#202724] tabular-nums">
             {activeCount} <span className="text-sm font-normal text-slate-400">/ {data.shop.product_limit}</span>
           </p>
         </div>
-        <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
+        <div className="rounded-lg border border-[#E3E0D8] bg-white p-4">
           <p className="text-xs font-medium text-slate-500">Abarebye (iminsi 7)</p>
-          <p className="mt-1 flex items-center gap-2 text-2xl font-bold text-[#1B1F23] tabular-nums">
-            <Eye className="h-5 w-5 text-[#0B6E4F]" aria-hidden="true" />
+          <p className="mt-1 flex items-center gap-2 text-2xl font-bold text-[#202724] tabular-nums">
+            <Eye className="h-5 w-5 text-[#214E43]" aria-hidden="true" />
             {data.stats7d.views}
           </p>
         </div>
-        <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
+        <div className="rounded-lg border border-[#E3E0D8] bg-white p-4">
           <p className="text-xs font-medium text-slate-500">Abakanze WhatsApp (iminsi 7)</p>
-          <p className="mt-1 flex items-center gap-2 text-2xl font-bold text-[#0B6E4F] tabular-nums">
+          <p className="mt-1 flex items-center gap-2 text-2xl font-bold text-[#214E43] tabular-nums">
             <MessageCircle className="h-5 w-5 text-[#1A7F43]" aria-hidden="true" />
             {data.stats7d.wa_clicks}
           </p>
         </div>
-        <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
+        <div className="rounded-lg border border-[#E3E0D8] bg-white p-4">
           <p className="text-xs font-medium text-slate-500">Abashyize mu gare (iminsi 7)</p>
-          <p className="mt-1 text-2xl font-bold text-[#1B1F23] tabular-nums">
+          <p className="mt-1 text-2xl font-bold text-[#202724] tabular-nums">
             {data.stats7d.cart_adds}
           </p>
         </div>
@@ -279,13 +279,13 @@ export const SellerDashboardPage: React.FC = () => {
         <button
           type="button"
           onClick={() => navigate('/umucuruzi/ibicuruzwa')}
-          className="flex min-h-[76px] items-center gap-4 rounded-lg border border-[#E5E7EB] bg-white p-4 text-left transition hover:border-[#0B6E4F]"
+          className="flex min-h-[76px] items-center gap-4 rounded-lg border border-[#E3E0D8] bg-white p-4 text-left transition hover:border-[#214E43]"
         >
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F1F6F3] text-[#0B6E4F]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#E9F0EB] text-[#214E43]">
             <Package className="h-5 w-5" aria-hidden="true" />
           </div>
           <div>
-            <p className="text-sm font-bold text-[#1B1F23]">
+            <p className="text-sm font-bold text-[#202724]">
               Ibicuruzwa byanjye ({data.products.length})
             </p>
             <p className="text-xs text-slate-600">Hindura igiciro, kopora cyangwa shyiraho cyashize</p>
@@ -295,13 +295,13 @@ export const SellerDashboardPage: React.FC = () => {
         <button
           type="button"
           onClick={() => navigate('/umucuruzi/iduka')}
-          className="flex min-h-[76px] items-center gap-4 rounded-lg border border-[#E5E7EB] bg-white p-4 text-left transition hover:border-[#0B6E4F]"
+          className="flex min-h-[76px] items-center gap-4 rounded-lg border border-[#E3E0D8] bg-white p-4 text-left transition hover:border-[#214E43]"
         >
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F1F6F3] text-[#0B6E4F]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#E9F0EB] text-[#214E43]">
             <Settings className="h-5 w-5" aria-hidden="true" />
           </div>
           <div>
-            <p className="text-sm font-bold text-[#1B1F23]">Amakuru y’iduka</p>
+            <p className="text-sm font-bold text-[#202724]">Amakuru y’iduka</p>
             <p className="text-xs text-slate-600">Aho uri, amasaha, WhatsApp no kuyigerageza</p>
           </div>
         </button>
@@ -309,13 +309,13 @@ export const SellerDashboardPage: React.FC = () => {
         <button
           type="button"
           onClick={() => navigate('/umucuruzi/imibare')}
-          className="flex min-h-[76px] items-center gap-4 rounded-lg border border-[#E5E7EB] bg-white p-4 text-left transition hover:border-[#0B6E4F]"
+          className="flex min-h-[76px] items-center gap-4 rounded-lg border border-[#E3E0D8] bg-white p-4 text-left transition hover:border-[#214E43]"
         >
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F1F6F3] text-[#0B6E4F]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#E9F0EB] text-[#214E43]">
             <BarChart3 className="h-5 w-5" aria-hidden="true" />
           </div>
           <div>
-            <p className="text-sm font-bold text-[#1B1F23]">Imibare y’ubucuruzi</p>
+            <p className="text-sm font-bold text-[#202724]">Imibare y’ubucuruzi</p>
             <p className="text-xs text-slate-600">Iminsi 7 n’iminsi 30, ibicuruzwa bikunzwe</p>
           </div>
         </button>
@@ -323,8 +323,8 @@ export const SellerDashboardPage: React.FC = () => {
 
       {/* Section 9.6: Stale product 30-day check ("Iracyahari?") */}
       {data.staleProducts.length > 0 && (
-        <section className="mt-8 rounded-lg border border-[#C0392B]/35 bg-[#FBEAE8] p-5">
-          <h2 className="text-base font-bold text-[#1B1F23]">
+        <section className="mt-8 rounded-lg border border-[#BD594A]/35 bg-[#FAF0ED] p-5">
+          <h2 className="text-base font-bold text-[#202724]">
             {RW.still_available} — Ibicuruzwa bimaze iminsi 30 bitavuguruwe ({data.staleProducts.length})
           </h2>
           <p className="mt-1 text-xs text-slate-600">
@@ -335,7 +335,7 @@ export const SellerDashboardPage: React.FC = () => {
             {data.staleProducts.map((p) => (
               <div
                 key={p.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#E5E7EB] bg-white p-3"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#E3E0D8] bg-white p-3"
               >
                 <div className="flex items-center gap-3">
                   <img
@@ -344,7 +344,7 @@ export const SellerDashboardPage: React.FC = () => {
                     className="h-12 w-12 rounded-lg object-cover"
                   />
                   <div>
-                    <p className="text-sm font-semibold text-[#1B1F23]">{p.name}</p>
+                    <p className="text-sm font-semibold text-[#202724]">{p.name}</p>
                     <p className="text-xs text-slate-500 tabular-nums">
                       {formatRwfCurrency(p.price)}
                     </p>
@@ -356,7 +356,7 @@ export const SellerDashboardPage: React.FC = () => {
                     type="button"
                     disabled={busyId === p.id}
                     onClick={() => handleStaleAction(p.id, 'confirm_available')}
-                    className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-[#0B6E4F] px-3.5 text-xs font-semibold text-white hover:bg-[#08553D]"
+                    className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-[#214E43] px-3.5 text-xs font-semibold text-white hover:bg-[#183B33]"
                   >
                     <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
                     <span>Yego, iracyahari</span>
@@ -379,11 +379,11 @@ export const SellerDashboardPage: React.FC = () => {
       {/* Recent Products Quick Preview */}
       <section className="mt-8">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-[#1B1F23]">Ibicuruzwa byawe biheruka</h2>
+          <h2 className="text-lg font-bold text-[#202724]">Ibicuruzwa byawe biheruka</h2>
           <button
             type="button"
             onClick={() => navigate('/umucuruzi/ibicuruzwa')}
-            className="min-h-[44px] text-sm font-semibold text-[#0B6E4F] hover:underline"
+            className="min-h-[44px] text-sm font-semibold text-[#214E43] hover:underline"
           >
             {RW.see_all}
           </button>
@@ -393,16 +393,16 @@ export const SellerDashboardPage: React.FC = () => {
           {data.products.slice(0, 6).map((p) => (
             <div
               key={p.id}
-              className="flex items-center gap-3 rounded-xl border border-[#E5E7EB] bg-white p-3"
+              className="flex items-center gap-3 rounded-xl border border-[#E3E0D8] bg-white p-3"
             >
               <img
                 src={p.images[0]?.path_thumb || p.images[0]?.path_full}
                 alt={p.name}
-                className="h-16 w-16 rounded-lg object-cover shrink-0 bg-[#F1F6F3]"
+                className="h-16 w-16 rounded-lg object-cover shrink-0 bg-[#E9F0EB]"
               />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-[#1B1F23]">{p.name}</p>
-                <p className="text-xs font-bold text-[#0B6E4F] tabular-nums">
+                <p className="truncate text-sm font-semibold text-[#202724]">{p.name}</p>
+                <p className="text-xs font-bold text-[#214E43] tabular-nums">
                   {formatRwfCurrency(p.price)}
                 </p>
                 <p className="mt-0.5 text-[11px] text-slate-500 tabular-nums">

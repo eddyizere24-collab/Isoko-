@@ -30,30 +30,30 @@ export const SellerAnalyticsPage: React.FC = () => {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-[#E5E7EB]">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-[#E3E0D8]">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate('/umucuruzi')}
             aria-label="Subira inyuma"
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#E5E7EB] hover:bg-[#F1F6F3]"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#E3E0D8] hover:bg-[#E9F0EB]"
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-[#1B1F23]">Imibare y’ubucuruzi</h1>
+            <h1 className="text-xl font-bold text-[#202724]">Imibare y’ubucuruzi</h1>
             <p className="text-xs text-slate-500">
               Uko abaguzi basuye ibicuruzwa byawe n’uko bahisemo kukuvugisha
             </p>
           </div>
         </div>
 
-        <div className="flex rounded-xl border border-[#E5E7EB] bg-white p-1">
+        <div className="flex rounded-xl border border-[#E3E0D8] bg-white p-1">
           <button
             type="button"
             onClick={() => setPeriod('7d')}
             className={`min-h-[38px] rounded-lg px-3.5 text-xs font-semibold ${
-              period === '7d' ? 'bg-[#0B6E4F] text-white' : 'text-slate-600'
+              period === '7d' ? 'bg-[#214E43] text-white' : 'text-slate-600'
             }`}
           >
             Iminsi 7 ishize
@@ -62,7 +62,7 @@ export const SellerAnalyticsPage: React.FC = () => {
             type="button"
             onClick={() => setPeriod('30d')}
             className={`min-h-[38px] rounded-lg px-3.5 text-xs font-semibold ${
-              period === '30d' ? 'bg-[#0B6E4F] text-white' : 'text-slate-600'
+              period === '30d' ? 'bg-[#214E43] text-white' : 'text-slate-600'
             }`}
           >
             Iminsi 30 ishize
@@ -71,7 +71,7 @@ export const SellerAnalyticsPage: React.FC = () => {
       </div>
 
       {loading || !stats || !data ? (
-        <div className="mt-6 h-48 animate-pulse rounded-lg bg-[#F1F6F3]" />
+        <div className="mt-6 h-48 animate-pulse rounded-lg bg-[#E9F0EB]" />
       ) : (
         <>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-5">
@@ -84,20 +84,20 @@ export const SellerAnalyticsPage: React.FC = () => {
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <div key={item.label} className="rounded-lg border border-[#E5E7EB] bg-white p-4">
+                <div key={item.label} className="rounded-lg border border-[#E3E0D8] bg-white p-4">
                   <div className="flex items-center justify-between text-slate-400">
                     <span className="text-xs font-medium text-slate-500">{item.label}</span>
-                    <Icon className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
+                    <Icon className="h-4 w-4 text-[#214E43]" aria-hidden="true" />
                   </div>
-                  <p className="mt-2 text-2xl font-bold text-[#1B1F23] tabular-nums">{item.value}</p>
+                  <p className="mt-2 text-2xl font-bold text-[#202724] tabular-nums">{item.value}</p>
                 </div>
               );
             })}
           </div>
 
           {data.topWa && (
-            <section className="mt-6 rounded-lg border border-[#E5E7EB] bg-[#E8F3EE]/50 p-5">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#0B6E4F]">
+            <section className="mt-6 rounded-lg border border-[#E3E0D8] bg-[#E9F0EB]/50 p-5">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#214E43]">
                 Igicuruzwa cyakunzwe kuri WhatsApp kurusha ibindi
               </p>
               <div className="mt-3 flex items-center justify-between gap-4">
@@ -108,7 +108,7 @@ export const SellerAnalyticsPage: React.FC = () => {
                     className="h-14 w-14 rounded-xl object-cover"
                   />
                   <div>
-                    <p className="text-sm font-bold text-[#1B1F23]">{data.topWa.name}</p>
+                    <p className="text-sm font-bold text-[#202724]">{data.topWa.name}</p>
                     <p className="text-xs text-slate-600 tabular-nums">
                       {formatRwfCurrency(data.topWa.price)} · {data.topWa.wa_clicks_7d ?? 0} inshuro
                       kuri WhatsApp (iminsi 7)
@@ -118,7 +118,7 @@ export const SellerAnalyticsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => navigate(`/p/${data.topWa?.id}`)}
-                  className="min-h-[44px] rounded-xl bg-white px-4 text-xs font-semibold text-[#0B6E4F] border border-[#0B6E4F]"
+                  className="min-h-[44px] rounded-xl bg-white px-4 text-xs font-semibold text-[#214E43] border border-[#214E43]"
                 >
                   Reba
                 </button>
@@ -126,8 +126,8 @@ export const SellerAnalyticsPage: React.FC = () => {
             </section>
           )}
 
-          <section className="mt-6 rounded-lg border border-[#E5E7EB] bg-white p-5">
-            <h2 className="text-base font-bold text-[#1B1F23]">
+          <section className="mt-6 rounded-lg border border-[#E3E0D8] bg-white p-5">
+            <h2 className="text-base font-bold text-[#202724]">
               Ibicuruzwa 5 byasuwe cyane (iminsi 7)
             </h2>
             <div className="mt-4 divide-y divide-slate-100">
@@ -143,14 +143,14 @@ export const SellerAnalyticsPage: React.FC = () => {
                       className="h-11 w-11 rounded-lg object-cover shrink-0"
                     />
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-[#1B1F23]">{p.name}</p>
+                      <p className="truncate text-sm font-semibold text-[#202724]">{p.name}</p>
                       <p className="text-xs text-slate-500 tabular-nums">
                         {formatRwfCurrency(p.price)}
                       </p>
                     </div>
                   </div>
                   <div className="text-right text-xs text-slate-600 tabular-nums shrink-0">
-                    <p className="font-bold text-[#1B1F23]">{p.views_7d ?? 0} barebye</p>
+                    <p className="font-bold text-[#202724]">{p.views_7d ?? 0} barebye</p>
                     <p>{p.wa_clicks_7d ?? 0} WhatsApp</p>
                   </div>
                 </div>

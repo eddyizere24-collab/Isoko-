@@ -115,7 +115,7 @@ export const SellerAddProductPage: React.FC = () => {
     return SIZE_SETS[setKey] ?? SIZE_SETS.shoes_adult;
   }, [selectedCategory]);
 
-  const handlePhotoFiles = async (files: FileList | null) => {
+  const handlePhotoFiles = async (files: FileList | File[] | null) => {
     if (!files || files.length === 0) return;
     setError(null);
     setUploadingPhoto(true);
@@ -308,17 +308,17 @@ export const SellerAddProductPage: React.FC = () => {
 
     return (
       <main className="mx-auto max-w-xl px-4 py-10">
-        <div className="rounded-lg border border-[#0B6E4F]/30 bg-white p-6 text-center shadow-xs sm:p-8">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#F1F6F3] text-[#0B6E4F]">
+        <div className="rounded-lg border border-[#214E43]/30 bg-white p-6 text-center shadow-xs sm:p-8">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E9F0EB] text-[#214E43]">
             <CheckCircle2 className="h-8 w-8" aria-hidden="true" />
           </div>
-          <h1 className="mt-4 text-xl font-bold text-[#1B1F23]">
+          <h1 className="mt-4 text-xl font-bold text-[#202724]">
             {savedProduct.status === 'draft'
               ? 'Igicuruzwa cyabitswe nk’igitabo!'
               : 'Igicuruzwa cyashyizwe ahagaragara!'}
           </h1>
           <p className="mt-1.5 text-sm text-slate-600">{savedProduct.name}</p>
-          <p className="mt-1 text-base font-bold text-[#0B6E4F] tabular-nums">
+          <p className="mt-1 text-base font-bold text-[#214E43] tabular-nums">
             {formatRwfCurrency(savedProduct.price)}
           </p>
 
@@ -345,7 +345,7 @@ export const SellerAddProductPage: React.FC = () => {
                   condition: draft.condition,
                 });
               }}
-              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[#0B6E4F] px-4 text-sm font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3]"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-[#214E43] px-4 text-sm font-semibold text-[#214E43] hover:bg-[#E9F0EB]"
             >
               <Copy className="h-4 w-4" aria-hidden="true" />
               <span>{RW.copy_product} / Shyiraho ikindi</span>
@@ -356,7 +356,7 @@ export const SellerAddProductPage: React.FC = () => {
             <button
               type="button"
               onClick={() => navigate(`/p/${savedProduct.id}`)}
-              className="min-h-[44px] font-semibold text-[#0B6E4F] hover:underline"
+              className="min-h-[44px] font-semibold text-[#214E43] hover:underline"
             >
               Reba uko abaguzi bakibona
             </button>
@@ -376,18 +376,18 @@ export const SellerAddProductPage: React.FC = () => {
   return (
     <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
       {/* Header & Stepper */}
-      <div className="flex items-center justify-between gap-3 pb-4 border-b border-[#E5E7EB]">
+      <div className="flex items-center justify-between gap-3 pb-4 border-b border-[#E3E0D8]">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate('/umucuruzi')}
             aria-label="Subira inyuma"
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#E5E7EB] hover:bg-[#F1F6F3]"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#E3E0D8] hover:bg-[#E9F0EB]"
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
           <div>
-            <h1 className="text-lg font-bold text-[#1B1F23]">{RW.add_product}</h1>
+            <h1 className="text-lg font-bold text-[#202724]">{RW.add_product}</h1>
             <p className="text-xs text-slate-500">Intambwe {draft.step} / 4 · Irabikwa mu buryo bwikora</p>
           </div>
         </div>
@@ -398,7 +398,7 @@ export const SellerAddProductPage: React.FC = () => {
             saveProductDraft(null);
             setDraft(EMPTY_DRAFT);
           }}
-          className="min-h-[44px] text-xs font-semibold text-slate-500 hover:text-[#C0392B]"
+          className="min-h-[44px] text-xs font-semibold text-slate-500 hover:text-[#BD594A]"
         >
           Tangira bushya
         </button>
@@ -420,9 +420,9 @@ export const SellerAddProductPage: React.FC = () => {
             }}
             className={`min-h-[40px] rounded-xl px-2 text-xs font-semibold transition ${
               draft.step === item.s
-                ? 'bg-[#0B6E4F] text-white'
+                ? 'bg-[#214E43] text-white'
                 : item.s < draft.step
-                  ? 'bg-[#F1F6F3] text-[#0B6E4F]'
+                  ? 'bg-[#E9F0EB] text-[#214E43]'
                   : 'bg-slate-100 text-slate-500'
             }`}
           >
@@ -431,12 +431,12 @@ export const SellerAddProductPage: React.FC = () => {
         ))}
       </div>
 
-      <section className="mt-6 rounded-lg border border-[#E5E7EB] bg-white p-5 sm:p-7">
+      <section className="mt-6 rounded-lg border border-[#E3E0D8] bg-white p-5 sm:p-7">
         {/* STEP 1: Photos */}
         {draft.step === 1 && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-base font-bold text-[#1B1F23]">
+              <h2 className="text-base font-bold text-[#202724]">
                 Shyiraho amafoto (1 kugeza kuri 5)
               </h2>
               <p className="mt-1 text-xs text-slate-600">
@@ -446,35 +446,45 @@ export const SellerAddProductPage: React.FC = () => {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <label className="flex min-h-[112px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#0B6E4F] bg-[#F1F6F3] p-4 text-center hover:bg-[#E5EFE9]">
+              <label className="flex min-h-[112px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#214E43] bg-[#E9F0EB] p-4 text-center hover:bg-[#E9F0EB]">
                 <input
                   type="file"
                   accept="image/*"
+                  disabled={uploadingPhoto}
                   capture="environment"
                   className="sr-only"
-                  onChange={(e) => handlePhotoFiles(e.target.files)}
+                  onChange={(e) => {
+                    const files = e.currentTarget.files ? Array.from(e.currentTarget.files) : [];
+                    e.currentTarget.value = '';
+                    void handlePhotoFiles(files);
+                  }}
                 />
-                <Camera className="h-7 w-7 text-[#0B6E4F]" aria-hidden="true" />
-                <span className="mt-2 text-sm font-bold text-[#0B6E4F]">{RW.take_photo}</span>
+                <Camera className="h-7 w-7 text-[#214E43]" aria-hidden="true" />
+                <span className="mt-2 text-sm font-bold text-[#214E43]">{RW.take_photo}</span>
                 <span className="text-xs text-slate-600">Koresha kamera ya telefoni</span>
               </label>
 
-              <label className="flex min-h-[112px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-white p-4 text-center hover:border-[#0B6E4F]">
+              <label className="flex min-h-[112px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-white p-4 text-center hover:border-[#214E43]">
                 <input
                   type="file"
                   accept="image/*"
                   multiple
+                  disabled={uploadingPhoto}
                   className="sr-only"
-                  onChange={(e) => handlePhotoFiles(e.target.files)}
+                  onChange={(e) => {
+                    const files = e.currentTarget.files ? Array.from(e.currentTarget.files) : [];
+                    e.currentTarget.value = '';
+                    void handlePhotoFiles(files);
+                  }}
                 />
                 <ImagePlus className="h-7 w-7 text-slate-600" aria-hidden="true" />
-                <span className="mt-2 text-sm font-bold text-[#1B1F23]">{RW.pick_gallery}</span>
+                <span className="mt-2 text-sm font-bold text-[#202724]">{RW.pick_gallery}</span>
                 <span className="text-xs text-slate-500">Hitamo kugeza kuri 5</span>
               </label>
             </div>
 
             {uploadingPhoto && (
-              <p className="text-xs font-medium text-[#0B6E4F]">
+              <p className="text-xs font-medium text-[#214E43]">
                 Turimo gutunganya no kugabanya uburemere bw’ifoto...
               </p>
             )}
@@ -489,7 +499,7 @@ export const SellerAddProductPage: React.FC = () => {
                   {draft.photos.map((ph, idx) => (
                     <div
                       key={`${ph.path_full}-${idx}`}
-                      className="relative overflow-hidden rounded-xl border border-[#E5E7EB] bg-[#F1F6F3]"
+                      className="relative overflow-hidden rounded-xl border border-[#E3E0D8] bg-[#E9F0EB]"
                     >
                       <img
                         src={ph.path_thumb || ph.path_full}
@@ -502,7 +512,7 @@ export const SellerAddProductPage: React.FC = () => {
                           onClick={() => makeCover(idx)}
                           className={`min-h-[32px] flex-1 rounded-lg px-1.5 text-[11px] font-semibold ${
                             idx === 0
-                              ? 'bg-[#0B6E4F] text-white'
+                              ? 'bg-[#214E43] text-white'
                               : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                           }`}
                         >
@@ -512,7 +522,7 @@ export const SellerAddProductPage: React.FC = () => {
                           type="button"
                           onClick={() => removePhoto(idx)}
                           aria-label="Kuraho ifoto"
-                          className="flex min-h-[32px] min-w-[32px] items-center justify-center rounded-lg text-[#C0392B] hover:bg-[#C0392B]/10"
+                          className="flex min-h-[32px] min-w-[32px] items-center justify-center rounded-lg text-[#BD594A] hover:bg-[#BD594A]/10"
                         >
                           <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                         </button>
@@ -524,7 +534,7 @@ export const SellerAddProductPage: React.FC = () => {
             )}
 
             {/* Quick studio asset selector for fast testing/demoing */}
-            <div className="rounded-xl bg-[#F1F6F3] p-3.5">
+            <div className="rounded-xl bg-[#E9F0EB] p-3.5">
               <p className="text-xs font-semibold text-slate-600">
                 Ushaka kugerageza vuba? Kanda hano wongeremo ifoto y’urugero:
               </p>
@@ -552,9 +562,9 @@ export const SellerAddProductPage: React.FC = () => {
                               ],
                       }))
                     }
-                    className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 text-xs font-medium text-[#1B1F23] hover:border-[#0B6E4F]"
+                    className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-[#E3E0D8] bg-white px-3 text-xs font-medium text-[#202724] hover:border-[#214E43]"
                   >
-                    <Sparkles className="h-3.5 w-3.5 text-[#C0392B]" aria-hidden="true" />
+                    <Sparkles className="h-3.5 w-3.5 text-[#BD594A]" aria-hidden="true" />
                     <span>{sp.label}</span>
                   </button>
                 ))}
@@ -567,7 +577,7 @@ export const SellerAddProductPage: React.FC = () => {
         {draft.step === 2 && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-base font-bold text-[#1B1F23]">Hitamo icyiciro cy’igicuruzwa *</h2>
+              <h2 className="text-base font-bold text-[#202724]">Hitamo icyiciro cy’igicuruzwa *</h2>
               <div className="mt-2.5 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                 {topCategories.map((cat) => (
                   <button
@@ -583,8 +593,8 @@ export const SellerAddProductPage: React.FC = () => {
                     }
                     className={`min-h-[56px] rounded-xl border p-3 text-left text-xs font-bold transition ${
                       draft.topCategoryId === cat.id
-                        ? 'border-[#0B6E4F] bg-[#0B6E4F] text-white'
-                        : 'border-[#E5E7EB] bg-white text-[#1B1F23] hover:bg-[#F1F6F3]'
+                        ? 'border-[#214E43] bg-[#214E43] text-white'
+                        : 'border-[#E3E0D8] bg-white text-[#202724] hover:bg-[#E9F0EB]'
                     }`}
                   >
                     {cat.name_rw}
@@ -610,8 +620,8 @@ export const SellerAddProductPage: React.FC = () => {
                       }
                       className={`min-h-[44px] rounded-xl px-3.5 text-xs font-semibold transition ${
                         draft.categoryId === sub.id
-                          ? 'bg-[#0B6E4F] text-white'
-                          : 'border border-[#E5E7EB] bg-[#F1F6F3] text-[#1B1F23] hover:border-[#0B6E4F]'
+                          ? 'bg-[#214E43] text-white'
+                          : 'border border-[#E3E0D8] bg-[#E9F0EB] text-[#202724] hover:border-[#214E43]'
                       }`}
                     >
                       {sub.name_rw}
@@ -623,7 +633,7 @@ export const SellerAddProductPage: React.FC = () => {
 
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="wiz-name" className="text-sm font-semibold text-[#1B1F23]">
+                <label htmlFor="wiz-name" className="text-sm font-semibold text-[#202724]">
                   Izina ry’igicuruzwa *
                 </label>
                 <span className="text-xs text-slate-500 tabular-nums">{draft.name.length}/60</span>
@@ -634,13 +644,13 @@ export const SellerAddProductPage: React.FC = () => {
                 value={draft.name}
                 onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))}
                 placeholder="Urugero: Inkweto za Nike Air Force 1 zera"
-                className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#0B6E4F] focus:outline-none"
+                className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#214E43] focus:outline-none"
               />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="wiz-price" className="block text-sm font-semibold text-[#1B1F23]">
+                <label htmlFor="wiz-price" className="block text-sm font-semibold text-[#202724]">
                   Igiciro (RWF) *
                 </label>
                 <input
@@ -652,12 +662,12 @@ export const SellerAddProductPage: React.FC = () => {
                   value={draft.price}
                   onChange={(e) => setDraft((d) => ({ ...d, price: e.target.value }))}
                   placeholder="35000"
-                  className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm font-semibold tabular-nums focus:border-[#0B6E4F] focus:outline-none"
+                  className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm font-semibold tabular-nums focus:border-[#214E43] focus:outline-none"
                 />
               </div>
 
               <div>
-                <label htmlFor="wiz-old-price" className="block text-sm font-semibold text-[#1B1F23]">
+                <label htmlFor="wiz-old-price" className="block text-sm font-semibold text-[#202724]">
                   Igiciro cya kera (niba wagabanyije)
                 </label>
                 <input
@@ -667,7 +677,7 @@ export const SellerAddProductPage: React.FC = () => {
                   value={draft.oldPrice}
                   onChange={(e) => setDraft((d) => ({ ...d, oldPrice: e.target.value }))}
                   placeholder="45000"
-                  className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#0B6E4F] focus:outline-none"
+                  className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#214E43] focus:outline-none"
                 />
               </div>
             </div>
@@ -678,7 +688,7 @@ export const SellerAddProductPage: React.FC = () => {
         {draft.step === 3 && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-base font-bold text-[#1B1F23]">Hitamo size ziboneka *</h2>
+              <h2 className="text-base font-bold text-[#202724]">Hitamo size ziboneka *</h2>
               <p className="mt-0.5 text-xs text-slate-600">
                 Kanda kuri size buri yose ufite. Ushobora no kwandikamo umubare w’ibisigaye (1-3
                 bituma igaragara nka “Hasigaye N”).
@@ -693,8 +703,8 @@ export const SellerAddProductPage: React.FC = () => {
                       onClick={() => toggleSize(sz)}
                       className={`min-h-[44px] min-w-[48px] rounded-xl px-3 text-xs font-semibold transition ${
                         chosen
-                          ? 'bg-[#0B6E4F] text-white'
-                          : 'border border-[#E5E7EB] bg-white text-[#1B1F23] hover:bg-[#F1F6F3]'
+                          ? 'bg-[#214E43] text-white'
+                          : 'border border-[#E3E0D8] bg-white text-[#202724] hover:bg-[#E9F0EB]'
                       }`}
                     >
                       {sz}
@@ -708,9 +718,9 @@ export const SellerAddProductPage: React.FC = () => {
                   {draft.selectedSizes.map((sz) => (
                     <div
                       key={sz.size_label}
-                      className="flex items-center justify-between gap-2 rounded-xl border border-[#E5E7EB] bg-[#F1F6F3] px-3 py-2"
+                      className="flex items-center justify-between gap-2 rounded-xl border border-[#E3E0D8] bg-[#E9F0EB] px-3 py-2"
                     >
-                      <span className="text-xs font-bold text-[#1B1F23]">Size {sz.size_label}</span>
+                      <span className="text-xs font-bold text-[#202724]">Size {sz.size_label}</span>
                       <input
                         type="number"
                         inputMode="numeric"
@@ -729,7 +739,7 @@ export const SellerAddProductPage: React.FC = () => {
             </div>
 
             <div>
-              <p className="text-sm font-semibold text-[#1B1F23]">Amabara (kugeza kuri 5)</p>
+              <p className="text-sm font-semibold text-[#202724]">Amabara (kugeza kuri 5)</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {COLORS_LIST.map((col) => {
                   const active = draft.colors.includes(col.name);
@@ -740,8 +750,8 @@ export const SellerAddProductPage: React.FC = () => {
                       onClick={() => toggleColor(col.name)}
                       className={`inline-flex min-h-[44px] items-center gap-2 rounded-xl border px-3 text-xs font-medium transition ${
                         active
-                          ? 'border-[#0B6E4F] bg-[#F1F6F3] font-bold text-[#0B6E4F]'
-                          : 'border-[#E5E7EB] bg-white text-[#1B1F23]'
+                          ? 'border-[#214E43] bg-[#E9F0EB] font-bold text-[#214E43]'
+                          : 'border-[#E3E0D8] bg-white text-[#202724]'
                       }`}
                     >
                       <span
@@ -756,7 +766,7 @@ export const SellerAddProductPage: React.FC = () => {
             </div>
 
             <div>
-              <p className="text-sm font-semibold text-[#1B1F23]">Imiterere *</p>
+              <p className="text-sm font-semibold text-[#202724]">Imiterere *</p>
               <div className="mt-2 grid grid-cols-2 gap-3">
                 {[
                   { id: 'new' as const, label: RW.condition_new },
@@ -768,8 +778,8 @@ export const SellerAddProductPage: React.FC = () => {
                     onClick={() => setDraft((d) => ({ ...d, condition: cond.id }))}
                     className={`min-h-[48px] rounded-xl border text-sm font-semibold transition ${
                       draft.condition === cond.id
-                        ? 'border-[#0B6E4F] bg-[#0B6E4F] text-white'
-                        : 'border-[#E5E7EB] bg-white text-[#1B1F23]'
+                        ? 'border-[#214E43] bg-[#214E43] text-white'
+                        : 'border-[#E3E0D8] bg-white text-[#202724]'
                     }`}
                   >
                     {cond.label}
@@ -778,9 +788,9 @@ export const SellerAddProductPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="rounded-xl border border-[#E5E7EB] p-4 space-y-3">
+            <div className="rounded-xl border border-[#E3E0D8] p-4 space-y-3">
               <div>
-                <label htmlFor="wiz-brand" className="block text-sm font-semibold text-[#1B1F23]">
+                <label htmlFor="wiz-brand" className="block text-sm font-semibold text-[#202724]">
                   Ikirango / Brand (niba gihari)
                 </label>
                 <input
@@ -790,7 +800,7 @@ export const SellerAddProductPage: React.FC = () => {
                   value={draft.brand}
                   onChange={(e) => setDraft((d) => ({ ...d, brand: e.target.value }))}
                   placeholder="Urugero: Nike, Adidas, Zara cyangwa bireke ubusa"
-                  className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#0B6E4F] focus:outline-none"
+                  className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#214E43] focus:outline-none"
                 />
                 <datalist id="popular-brands-list">
                   {POPULAR_BRANDS.map((b) => (
@@ -805,7 +815,7 @@ export const SellerAddProductPage: React.FC = () => {
                     type="checkbox"
                     checked={draft.authentic}
                     onChange={(e) => setDraft((d) => ({ ...d, authentic: e.target.checked }))}
-                    className="mt-0.5 h-5 w-5 rounded border-slate-300 text-[#0B6E4F]"
+                    className="mt-0.5 h-5 w-5 rounded border-slate-300 text-[#214E43]"
                   />
                   <span>
                     Ndemeza ko iki gicuruzwa ari <strong>Original (nyacyo)</strong> koko.
@@ -818,7 +828,7 @@ export const SellerAddProductPage: React.FC = () => {
 
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="wiz-desc" className="text-sm font-semibold text-[#1B1F23]">
+                <label htmlFor="wiz-desc" className="text-sm font-semibold text-[#202724]">
                   Ibisobanuro by’inyongera
                 </label>
                 <span className="text-xs text-slate-500 tabular-nums">
@@ -832,7 +842,7 @@ export const SellerAddProductPage: React.FC = () => {
                 value={draft.description}
                 onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
                 placeholder="Vuga ubwiza bw’igicuruzwa, uko kimeze cyangwa uko gitangwa (ntushyiremo nimero ya telefoni)..."
-                className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
+                className="mt-1.5 w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-[#214E43] focus:outline-none"
               />
             </div>
           </div>
@@ -841,12 +851,12 @@ export const SellerAddProductPage: React.FC = () => {
         {/* STEP 4: Review & Publish */}
         {draft.step === 4 && (
           <div className="space-y-5">
-            <h2 className="text-base font-bold text-[#1B1F23]">
+            <h2 className="text-base font-bold text-[#202724]">
               Suzuma uko igicuruzwa kizagaragara
             </h2>
 
-            <div className="mx-auto max-w-xs overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-xs">
-              <div className="aspect-square bg-[#F1F6F3]">
+            <div className="mx-auto max-w-xs overflow-hidden rounded-lg border border-[#E3E0D8] bg-white shadow-xs">
+              <div className="aspect-square bg-[#E9F0EB]">
                 {draft.photos[0] && (
                   <img
                     src={draft.photos[0].path_full}
@@ -856,9 +866,9 @@ export const SellerAddProductPage: React.FC = () => {
                 )}
               </div>
               <div className="p-3.5">
-                <p className="text-sm font-semibold text-[#1B1F23]">{draft.name}</p>
+                <p className="text-sm font-semibold text-[#202724]">{draft.name}</p>
                 <div className="mt-1 flex items-baseline gap-2">
-                  <span className="text-base font-bold text-[#0B6E4F] tabular-nums">
+                  <span className="text-base font-bold text-[#214E43] tabular-nums">
                     {formatRwfCurrency(Number(draft.price || 0))}
                   </span>
                   {draft.oldPrice && Number(draft.oldPrice) > Number(draft.price) && (
@@ -881,7 +891,7 @@ export const SellerAddProductPage: React.FC = () => {
                 type="button"
                 disabled={submitting}
                 onClick={() => handlePublish(true)}
-                className="min-h-[48px] rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-[#1B1F23] hover:bg-[#F1F6F3] disabled:opacity-60"
+                className="min-h-[48px] rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-[#202724] hover:bg-[#E9F0EB] disabled:opacity-60"
               >
                 {RW.save_draft}
               </button>
@@ -889,7 +899,7 @@ export const SellerAddProductPage: React.FC = () => {
                 type="button"
                 disabled={submitting}
                 onClick={() => handlePublish(false)}
-                className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-[#0B6E4F] px-4 text-sm font-semibold text-white hover:bg-[#08553D] disabled:opacity-60"
+                className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-[#214E43] px-4 text-sm font-semibold text-white hover:bg-[#183B33] disabled:opacity-60"
               >
                 <Check className="h-4 w-4" aria-hidden="true" />
                 <span>{submitting ? 'Bika...' : RW.save_publish}</span>
@@ -901,7 +911,7 @@ export const SellerAddProductPage: React.FC = () => {
         {error && (
           <div
             role="alert"
-            className="mt-4 rounded-xl border border-[#C0392B]/30 bg-[#C0392B]/10 px-4 py-3 text-sm font-medium text-[#C0392B]"
+            className="mt-4 rounded-xl border border-[#BD594A]/30 bg-[#BD594A]/10 px-4 py-3 text-sm font-medium text-[#BD594A]"
           >
             {error}
           </div>
@@ -909,21 +919,21 @@ export const SellerAddProductPage: React.FC = () => {
 
         {/* Stepper Footer Navigation */}
         {draft.step < 4 && (
-          <div className="mt-6 flex items-center justify-between border-t border-[#E5E7EB] pt-4">
+          <div className="mt-6 flex items-center justify-between border-t border-[#E3E0D8] pt-4">
             <button
               type="button"
               disabled={draft.step === 1}
               onClick={() =>
                 setDraft((d) => ({ ...d, step: Math.max(1, d.step - 1) as 1 | 2 | 3 | 4 }))
               }
-              className="min-h-[44px] rounded-xl border border-slate-300 px-4 text-sm font-semibold text-[#1B1F23] disabled:opacity-40"
+              className="min-h-[44px] rounded-xl border border-slate-300 px-4 text-sm font-semibold text-[#202724] disabled:opacity-40"
             >
               Subira inyuma
             </button>
             <button
               type="button"
               onClick={goNext}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white hover:bg-[#08553D]"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#214E43] px-5 text-sm font-semibold text-white hover:bg-[#183B33]"
             >
               <span>Komeza</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />

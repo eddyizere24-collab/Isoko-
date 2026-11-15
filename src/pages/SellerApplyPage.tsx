@@ -28,8 +28,8 @@ export const SellerApplyPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const validateStep1 = (): boolean => {
-    if (fullName.trim().length < 2) {
-      setError('Andika amazina yawe yuzuye (nibura inyuguti 2).');
+    if (fullName.trim().length > 0 && fullName.trim().length < 2) {
+      setError('Amazina wanditse agomba kugira nibura inyuguti 2, cyangwa uyasige ubusa.');
       return false;
     }
     if (!/^[^@]+@[^@]+\.[^@]+$/.test(email.trim().toLowerCase())) {
@@ -129,11 +129,11 @@ export const SellerApplyPage: React.FC = () => {
           }}
           className={`flex min-h-[42px] items-center justify-center gap-2 rounded-lg border px-3 text-[13px] font-semibold transition-colors ${
             step === 1
-              ? 'border-[#0B6E4F] bg-[#E8F3EE] text-[#064E3B]'
-              : 'border-[#E5E7EB] bg-white text-[#475569]'
+              ? 'border-[#214E43] bg-[#E9F0EB] text-[#183B33]'
+              : 'border-[#E3E0D8] bg-white text-[#58615C]'
           }`}
         >
-          {step === 2 && <CheckCircle2 className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />}
+          {step === 2 && <CheckCircle2 className="h-4 w-4 text-[#214E43]" aria-hidden="true" />}
           <span>{t('onboarding_step1')}</span>
         </button>
 
@@ -144,8 +144,8 @@ export const SellerApplyPage: React.FC = () => {
           }}
           className={`flex min-h-[42px] items-center justify-center gap-2 rounded-lg border px-3 text-[13px] font-semibold transition-colors ${
             step === 2
-              ? 'border-[#0B6E4F] bg-[#E8F3EE] text-[#064E3B]'
-              : 'border-[#E5E7EB] bg-white text-[#64748B]'
+              ? 'border-[#214E43] bg-[#E9F0EB] text-[#183B33]'
+              : 'border-[#E3E0D8] bg-white text-[#68716D]'
           }`}
         >
           <span>{t('onboarding_step2')}</span>
@@ -155,39 +155,38 @@ export const SellerApplyPage: React.FC = () => {
       {/* Form Card */}
       <form
         onSubmit={handleSubmit}
-        className="mt-3 rounded-lg border border-[#E5E7EB] bg-white p-5 sm:p-6 space-y-4"
+        className="mt-3 rounded-lg border border-[#E3E0D8] bg-white p-5 sm:p-6 space-y-4"
       >
         {step === 1 ? (
           <div className="space-y-4">
             <div>
-              <label htmlFor="reg-fullname" className="block text-[13px] font-semibold text-[#1B1F23]">
-                {t('full_name')} *
+              <label htmlFor="reg-fullname" className="block text-[13px] font-semibold text-[#202724]">
+                {t('full_name')} (ntibisabwa)
               </label>
               <div className="relative mt-1.5">
                 <User
-                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#64748B]"
+                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#68716D]"
                   aria-hidden="true"
                 />
                 <input
                   id="reg-fullname"
                   type="text"
                   autoComplete="name"
-                  required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Mugisha Jean Paul"
-                  className="min-h-[44px] w-full rounded-lg border border-[#E5E7EB] bg-white pl-10 pr-3.5 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20"
+                  className="min-h-[44px] w-full rounded-lg border border-[#E3E0D8] bg-white pl-10 pr-3.5 text-sm text-[#202724] focus:border-[#214E43] focus:outline-none focus:ring-2 focus:ring-[#214E43]/20"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="reg-email" className="block text-[13px] font-semibold text-[#1B1F23]">
+              <label htmlFor="reg-email" className="block text-[13px] font-semibold text-[#202724]">
                 {t('email')} *
               </label>
               <div className="relative mt-1.5">
                 <Mail
-                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#64748B]"
+                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#68716D]"
                   aria-hidden="true"
                 />
                 <input
@@ -199,18 +198,18 @@ export const SellerApplyPage: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="izina@gmail.com"
-                  className="min-h-[44px] w-full rounded-lg border border-[#E5E7EB] bg-white pl-10 pr-3.5 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20"
+                  className="min-h-[44px] w-full rounded-lg border border-[#E3E0D8] bg-white pl-10 pr-3.5 text-sm text-[#202724] focus:border-[#214E43] focus:outline-none focus:ring-2 focus:ring-[#214E43]/20"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="reg-pass" className="block text-[13px] font-semibold text-[#1B1F23]">
+              <label htmlFor="reg-pass" className="block text-[13px] font-semibold text-[#202724]">
                 {t('password')} (nibura 8) *
               </label>
               <div className="relative mt-1.5">
                 <Lock
-                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#64748B]"
+                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#68716D]"
                   aria-hidden="true"
                 />
                 <input
@@ -222,7 +221,7 @@ export const SellerApplyPage: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Nibura inyuguti cyangwa imibare 8"
-                  className="min-h-[44px] w-full rounded-lg border border-[#E5E7EB] bg-white pl-10 pr-3.5 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20"
+                  className="min-h-[44px] w-full rounded-lg border border-[#E3E0D8] bg-white pl-10 pr-3.5 text-sm text-[#202724] focus:border-[#214E43] focus:outline-none focus:ring-2 focus:ring-[#214E43]/20"
                 />
               </div>
             </div>
@@ -230,7 +229,7 @@ export const SellerApplyPage: React.FC = () => {
             {error && (
               <div
                 role="alert"
-                className="rounded-lg border border-[#C0392B]/30 bg-[#FBEAE8] px-4 py-3 text-sm font-medium text-[#C0392B]"
+                className="rounded-lg border border-[#BD594A]/30 bg-[#FAF0ED] px-4 py-3 text-sm font-medium text-[#BD594A]"
               >
                 {error}
               </div>
@@ -239,7 +238,7 @@ export const SellerApplyPage: React.FC = () => {
             <button
               type="button"
               onClick={handleNextStep}
-              className="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-[#0B6E4F] px-5 text-sm font-semibold text-white transition hover:bg-[#064E3B]"
+              className="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-[#214E43] px-5 text-sm font-semibold text-white transition hover:bg-[#183B33]"
             >
               <span>{t('continue_btn')}</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -248,12 +247,12 @@ export const SellerApplyPage: React.FC = () => {
         ) : (
           <div className="space-y-4">
             <div>
-              <label htmlFor="reg-shopname" className="block text-[13px] font-semibold text-[#1B1F23]">
+              <label htmlFor="reg-shopname" className="block text-[13px] font-semibold text-[#202724]">
                 {t('shop_name')} *
               </label>
               <div className="relative mt-1.5">
                 <Store
-                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#64748B]"
+                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#68716D]"
                   aria-hidden="true"
                 />
                 <input
@@ -265,13 +264,13 @@ export const SellerApplyPage: React.FC = () => {
                   value={shopName}
                   onChange={(e) => setShopName(e.target.value)}
                   placeholder="Iduka rya Mugisha"
-                  className="min-h-[44px] w-full rounded-lg border border-[#E5E7EB] bg-white pl-10 pr-3.5 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20"
+                  className="min-h-[44px] w-full rounded-lg border border-[#E3E0D8] bg-white pl-10 pr-3.5 text-sm text-[#202724] focus:border-[#214E43] focus:outline-none focus:ring-2 focus:ring-[#214E43]/20"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="reg-wa" className="block text-[13px] font-semibold text-[#1B1F23]">
+              <label htmlFor="reg-wa" className="block text-[13px] font-semibold text-[#202724]">
                 {t('whatsapp_number')} *
               </label>
               <div className="relative mt-1.5">
@@ -288,25 +287,25 @@ export const SellerApplyPage: React.FC = () => {
                   value={whatsapp}
                   onChange={(e) => setWhatsapp(e.target.value)}
                   placeholder="0788 123 456"
-                  className="min-h-[44px] w-full rounded-lg border border-[#E5E7EB] bg-white pl-10 pr-3.5 text-sm text-[#1B1F23] tabular-nums focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20"
+                  className="min-h-[44px] w-full rounded-lg border border-[#E3E0D8] bg-white pl-10 pr-3.5 text-sm text-[#202724] tabular-nums focus:border-[#214E43] focus:outline-none focus:ring-2 focus:ring-[#214E43]/20"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="reg-district" className="block text-[13px] font-semibold text-[#1B1F23]">
+              <label htmlFor="reg-district" className="block text-[13px] font-semibold text-[#202724]">
                 {t('district')} *
               </label>
               <div className="relative mt-1.5">
                 <MapPin
-                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#64748B]"
+                  className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#68716D]"
                   aria-hidden="true"
                 />
                 <select
                   id="reg-district"
                   value={districtId}
                   onChange={(e) => setDistrictId(Number(e.target.value))}
-                  className="min-h-[44px] w-full rounded-lg border border-[#E5E7EB] bg-white pl-10 pr-3.5 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20"
+                  className="min-h-[44px] w-full rounded-lg border border-[#E3E0D8] bg-white pl-10 pr-3.5 text-sm text-[#202724] focus:border-[#214E43] focus:outline-none focus:ring-2 focus:ring-[#214E43]/20"
                 >
                   {RWANDA_DISTRICTS.map((d) => (
                     <option key={d.id} value={d.id}>
@@ -317,14 +316,14 @@ export const SellerApplyPage: React.FC = () => {
               </div>
             </div>
 
-            <label className="flex items-start gap-3 rounded-lg border border-[#E5E7EB] bg-[#F7F8FA] p-3.5 cursor-pointer">
+            <label className="flex items-start gap-3 rounded-lg border border-[#E3E0D8] bg-[#F7F5F0] p-3.5 cursor-pointer">
               <input
                 type="checkbox"
                 checked={termsAccepted}
                 onChange={(e) => setTermsAccepted(e.target.checked)}
-                className="mt-0.5 h-5 w-5 rounded border-slate-300 accent-[#0B6E4F]"
+                className="mt-0.5 h-5 w-5 rounded border-slate-300 accent-[#214E43]"
               />
-              <span className="text-xs leading-relaxed text-[#475569]">
+              <span className="text-xs leading-relaxed text-[#58615C]">
                 {t('onboarding_terms_prefix')}{' '}
                 <a
                   href="/amategeko"
@@ -332,7 +331,7 @@ export const SellerApplyPage: React.FC = () => {
                     e.preventDefault();
                     navigate('/amategeko');
                   }}
-                  className="font-semibold text-[#0B6E4F] underline"
+                  className="font-semibold text-[#214E43] underline"
                 >
                   {t('terms')}
                 </a>
@@ -343,7 +342,7 @@ export const SellerApplyPage: React.FC = () => {
                     e.preventDefault();
                     navigate('/ibanga');
                   }}
-                  className="font-semibold text-[#0B6E4F] underline"
+                  className="font-semibold text-[#214E43] underline"
                 >
                   {t('privacy')}
                 </a>{' '}
@@ -354,7 +353,7 @@ export const SellerApplyPage: React.FC = () => {
                     e.preventDefault();
                     navigate('/amabwiriza-y-abacuruzi');
                   }}
-                  className="font-semibold text-[#0B6E4F] underline"
+                  className="font-semibold text-[#214E43] underline"
                 >
                   {t('seller_rules')}
                 </a>
@@ -365,7 +364,7 @@ export const SellerApplyPage: React.FC = () => {
             {error && (
               <div
                 role="alert"
-                className="rounded-lg border border-[#C0392B]/30 bg-[#FBEAE8] px-4 py-3 text-sm font-medium text-[#C0392B]"
+                className="rounded-lg border border-[#BD594A]/30 bg-[#FAF0ED] px-4 py-3 text-sm font-medium text-[#BD594A]"
               >
                 {error}
               </div>
@@ -378,7 +377,7 @@ export const SellerApplyPage: React.FC = () => {
                   setError(null);
                   setStep(1);
                 }}
-                className="inline-flex min-h-[46px] items-center justify-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-4 text-sm font-semibold text-[#1B1F23] hover:bg-[#F7F8FA]"
+                className="inline-flex min-h-[46px] items-center justify-center gap-1.5 rounded-lg border border-[#E3E0D8] bg-white px-4 text-sm font-semibold text-[#202724] hover:bg-[#F7F5F0]"
               >
                 <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                 <span>{t('back')}</span>
@@ -386,7 +385,7 @@ export const SellerApplyPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex min-h-[46px] flex-1 items-center justify-center gap-2 rounded-lg bg-[#0B6E4F] px-5 text-sm font-semibold text-white transition hover:bg-[#064E3B] disabled:opacity-60"
+                className="inline-flex min-h-[46px] flex-1 items-center justify-center gap-2 rounded-lg bg-[#214E43] px-5 text-sm font-semibold text-white transition hover:bg-[#183B33] disabled:opacity-60"
               >
                 <span>{submitting ? '...' : t('onboarding_submit')}</span>
               </button>
@@ -394,15 +393,15 @@ export const SellerApplyPage: React.FC = () => {
           </div>
         )}
 
-        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#E5E7EB] pt-4 text-[13px]">
-          <span className="text-[#475569]">{t('already_have_account')}</span>
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#E3E0D8] pt-4 text-[13px]">
+          <span className="text-[#58615C]">{t('already_have_account')}</span>
           <a
             href="/injira"
             onClick={(e) => {
               e.preventDefault();
               navigate('/injira');
             }}
-            className="font-semibold text-[#0B6E4F] hover:underline"
+            className="font-semibold text-[#214E43] hover:underline"
           >
             {t('login')} →
           </a>

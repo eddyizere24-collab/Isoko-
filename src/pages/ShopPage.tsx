@@ -192,6 +192,20 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
         <div className="p-4 sm:p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+              <div className="-mt-8 sm:-mt-10 relative z-10 flex shrink-0 flex-col items-center gap-1">
+                {shop.seller_avatar_path ? (
+                  <img
+                    src={shop.seller_avatar_path}
+                    alt={shop.seller_name || 'Ifoto ya profile y’umucuruzi'}
+                    className="h-14 w-14 rounded-full border-[3px] border-[#FFFEFB] bg-white object-cover sm:h-16 sm:w-16"
+                  />
+                ) : (
+                  <div className="grid h-14 w-14 place-items-center rounded-full border-[3px] border-[#FFFEFB] bg-[#E9F0EB] text-lg font-semibold text-[#214E43] sm:h-16 sm:w-16">
+                    {(shop.seller_name || shop.name).slice(0, 1).toUpperCase()}
+                  </div>
+                )}
+                <span className="text-[9px] font-medium text-[#68716D]">Umucuruzi</span>
+              </div>
               {shop.logo_path ? (
                 <img
                   src={shop.logo_path}
@@ -230,6 +244,12 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                 </div>
 
                 {shop.about && <p className="mt-2 text-xs leading-relaxed text-[#49524D] max-w-xl">{shop.about}</p>}
+                {shop.seller_bio && (
+                  <div className="mt-3 max-w-xl rounded-lg border border-[#E3E0D8] bg-[#F7F5F0] px-3 py-2.5">
+                    <p className="text-[9px] font-semibold tracking-[0.08em] text-[#8F493F]">IBYEREKEYE UMUCURUZI</p>
+                    <p className="mt-1 whitespace-pre-wrap text-[11px] leading-relaxed text-[#49524D]">{shop.seller_bio}</p>
+                  </div>
+                )}
 
                 <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#68716D]">
                   {shop.delivery_text && (

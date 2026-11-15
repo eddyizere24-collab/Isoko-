@@ -40,3 +40,13 @@ The following items remain release gates and must not be reported as complete wi
 ## Historical context
 
 Earlier design and hosting documents included Cloudflare Pages, Express, local JSON persistence and sample editorial images. Those describe earlier proposals or retired prototypes, not the current Render + Neon Production architecture.
+
+
+## 2026-11-15 — Seller photo intake and profile completion
+
+- Basic seller signup keeps full name optional, consistent with the guarded Neon registration RPC. Email, password, WhatsApp/contact, shop name, district and terms remain validated.
+- Seller photo intake normalizes supported phone/gallery formats on the device to storage-safe WebP/JPEG before upload. Server-side MIME/signature, ownership, object-path and size checks remain authoritative.
+- Seller shop settings support image/* for profile, shop logo and cover, with same-file reselection and an explicit processing/upload state.
+- The public shop profile can show the seller's profile photo and a separate Bio while retaining real shop logo, description, location, delivery, hours, social links and verified status.
+- Seller product photo pickers reset after selection so the same photo can be selected again; the upload remains capped at five photos and the existing secure API is unchanged.
+- No Production records, KYC data, secrets, environment variables or SQL migrations were changed by this code work.

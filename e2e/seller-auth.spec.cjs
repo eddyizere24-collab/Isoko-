@@ -83,3 +83,13 @@ test('footer does not advertise an unconfigured WhatsApp support number', async 
   await page.goto('/');
   await expect(page.locator('a[href*="wa.me/250788000000"]')).toHaveCount(0);
 });
+
+test('seller signup keeps full name optional and credentials required', async ({ page }) => {
+  await page.goto('/abacuruzi');
+
+  const fullName = page.locator('#reg-fullname');
+  await expect(fullName).toBeVisible();
+  await expect(fullName).not.toHaveAttribute('required', '');
+  await expect(page.locator('#reg-email')).toHaveAttribute('required', '');
+  await expect(page.locator('#reg-pass')).toHaveAttribute('required', '');
+});
