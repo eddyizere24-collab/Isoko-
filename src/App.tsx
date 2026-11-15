@@ -95,7 +95,7 @@ const AppRouter: React.FC = () => {
 
   return (
     <div
-      className={`flex min-h-screen flex-col bg-[#F7F8FA] text-[#1B1F23] ${
+      className={`flex min-h-screen flex-col bg-[#F7F5F0] text-[#202724] ${
         hasBottomNav ? 'pb-16 md:pb-0' : ''
       }`}
     >
