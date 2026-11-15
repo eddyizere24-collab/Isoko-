@@ -1,45 +1,45 @@
 const { test, expect } = require('@playwright/test');
 
 test.beforeEach(async ({ page }) => {
-  // E2E is UI-only. Isolate all external Neon traffic so CI never reads or
-  // writes data to Setup or Production and never needs a test account.
+  // These tests exercise the public UI only. Block every Neon endpoint so CI
+  // cannot read or write Setup/Production data and no real account is needed.
   await page.route(
-    /\.(?:neonauth|apirest|compute|storage)\.c-8\.eu-central-1\.aws\.neon\.tech\//,
+    /.(?:neonauth|apirest|compute|storage).c-8.eu-central-1.aws.neon.tech\//,
     (route) => route.abort()
   );
   page.on('pageerror', (error) => console.log('Browser page error:', error.message));
 });
 
-test('homepage opens and shows the real catalogue introduction', async ({ page }) => {
+test('homepage opens and shows the current ISOKO introduction', async ({ page }) => {
   const response = await page.goto('/');
   expect(response, 'homepage should return a document response').not.toBeNull();
   expect(response.status()).toBe(200);
 
   await expect(
-    page.getByRole('heading', { level: 1, name: /Imyambaro, inkweto n'ibyo kwambara byo mu Rwanda/ })
+    page.getByRole('heading', { level: 1, name: 'Gura mu maduka y’u Rwanda kuri WhatsApp' })
   ).toBeVisible();
-  await expect(page.getByText('Hitamo icyiciro', { exact: true })).toBeVisible();
+  await expect(page.getByText('Ibyiciro byose', { exact: true })).toBeVisible();
 });
 
-test('login route opens and exposes email and password fields', async ({ page }) => {
+test('login route exposes the real seller sign-in form without public demo credentials', async ({ page }) => {
   const response = await page.goto('/injira');
   expect(response, 'login route should return a document response').not.toBeNull();
   expect(response.status()).toBe(200);
 
-  await expect(page.getByRole('heading', { name: 'Injira muri konti yawe' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Injira', exact: true })).toBeVisible();
   await expect(page.locator('#login-identifier')).toBeVisible();
   await expect(page.locator('#login-pass')).toBeVisible();
+  await expect(page.getByText(/Konti zo kugerageza \(Demo\)/i)).toHaveCount(0);
+  await expect(page.getByText(/admin123|mugisha123|aline123|style123/)).toHaveCount(0);
 });
 
-test('a signed-out visitor is redirected away from seller product creation', async ({ page }) => {
-  // Force Neon Auth to report an unavailable/signed-out session. This test
-  // must never create or use a real seller identity or write data.
-  await page.route(/\.neonauth\.c-8\.eu-central-1\.aws\.neon\.tech\//, (route) => route.abort());
-
+test('a signed-out visitor cannot open seller product creation', async ({ page }) => {
   await page.goto('/umucuruzi/ongeraho');
-  await expect(page).toHaveURL(/\/injira\?reason=session$/);
-  await expect(page.getByRole('heading', { name: 'Injira muri konti yawe' })).toBeVisible();
-  await expect(page.getByRole('alert')).toContainText(
-    'Igihe winjiraga cyarangiye cyangwa konti ntiyemejwe'
-  );
+
+  // The public route guard sends visitors without an existing seller session
+  // to the ordinary sign-in page. The test never creates or uses an account.
+  await expect(page).toHaveURL(/\/injira$/);
+  await expect(page.getByRole('heading', { name: 'Injira', exact: true })).toBeVisible();
+  await expect(page.locator('#login-identifier')).toBeVisible();
+  await expect(page.locator('#login-pass')).toBeVisible();
 });
