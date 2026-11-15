@@ -37,7 +37,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     product.shop?.status === 'approved' || product.shop?.identity_status === 'verified';
 
   return (
-    <article className="group flex w-full max-h-none flex-col rounded-xl border border-[#DCE4DE] bg-white overflow-hidden transition-colors hover:border-[#214E43]/60">
+    <article className="group flex w-full max-h-none flex-col rounded-xl border border-[#DCE4DE] bg-white overflow-hidden transition-colors hover:border-[#0B6E4F]">
       <a
         href={`/p/${product.id}`}
         onClick={(e) => {
@@ -63,7 +63,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-[#F2F5F2] p-2 text-center text-[#4B544F]">
-              <Package className="h-6 w-6 text-[#214E43]/55" strokeWidth={1.5} aria-hidden="true" />
+              <Package className="h-6 w-6 text-[#4B544F]" strokeWidth={1.5} aria-hidden="true" />
               <span className="text-[10.5px] font-medium line-clamp-2">{product.name}</span>
             </div>
           )}
@@ -82,11 +82,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         <div className="flex flex-1 flex-col p-2">
-          <span className="text-[13px] font-bold leading-[15px] text-[20px] leading-6 font-extrabold text-[#0B6E4F] tabular-nums truncate">
+          <span className="text-[20px] font-extrabold leading-6 text-[#0B6E4F] tabular-nums truncate">
             {formatRwfCurrency(product.price)}
           </span>
 
-          <h3 className="mt-0.5 text-[15px] font-semibold leading-5 text-[#1A1F1C] line-clamp-2 min-h-10">
+          <h3 className="mt-0.5 text-[15px] font-semibold leading-5 text-[#1A1F1C] min-h-10 break-words">
             {product.name}
           </h3>
 
