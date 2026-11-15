@@ -192,6 +192,29 @@ async function getOwnProfile(token) {
   return rows[0];
 }
 
+async function consumeSellerUploadQuota(token) {
+  const dataApiUrl = process.env.NEON_DATA_API_URL;
+  if (!dataApiUrl) throw new Error("UPLOAD_QUOTA_UNAVAILABLE");
+  const response = await fetch(dataApiUrl.replace(/\\/$/, "") +
+    "/rpc/consume_seller_upload_quota_v1", {
+    method: "POST",
+    headers: {
+      authorization: "Bearer " + token,
+      "content-type": "application/json",
+      accept: "application/json",
+    },
+    body: "{}",
+  });
+  if (!response.ok) throw new Error("UPLOAD_QUOTA_CHECK_FAILED");
+  const payload = await response.json();
+  const result = Array.isArray(payload) ? payload[0] : payload;
+  return {
+    allowed: result?.allowed === true,
+    count: Number(result?.count ?? 0),
+    limit: Number(result?.limit ?? 50),
+  };
+}
+
 async function getOwnRegistrationDraft(token) {
   const dataApiUrl = process.env.NEON_DATA_API_URL;
   if (!dataApiUrl) throw new Error("DATA_API_NOT_CONFIGURED");
@@ -298,16 +321,33 @@ export default {
           ? "kyc/" + ownerKey
           : kind === "campaign"
             ? "campaigns/" + ownerKey
-            : kind === "shop"
-              ? "shops/" + ownerKey
-              : kind === "profile"
-                ? "profiles/" + ownerKey
-                : "products/" + ownerKey;
+            : kind === "logo"
+              ? "logos/" + ownerKey
+              : kind === "shop"
+                ? "shops/" + ownerKey
+                : kind === "profile"
+                  ? "profiles/" + ownerKey
+                  : "products/" + ownerKey;
         if (kind === "campaign" && profile?.role !== "admin") {
           return json({ error: "Admin gusa ni we wohereza amafoto ya campaigns." }, 403, cors);
         }
-        if (!["kyc", "campaign", "shop", "profile", "full", "thumb"].includes(kind)) {
+        if (!["kyc", "campaign", "shop", "logo", "profile", "full", "thumb"].includes(kind)) {
           return json({ error: "Ubwoko bw’ifoto ntibwemewe." }, 400, cors);
+        }
+        if (profile?.role === "seller") {
+          let quota;
+          try {
+            quota = await consumeSellerUploadQuota(token);
+          } catch {
+            return json({ error: "UPLOAD_QUOTA_CHECK_FAILED" }, 503, cors);
+          }
+          if (!quota.allowed) {
+            return json({
+              error: "SELLER_UPLOAD_DAILY_LIMIT",
+              count: quota.count,
+              limit: quota.limit,
+            }, 429, cors);
+          }
         }
         const key = prefix + "/" + new Date().toISOString().slice(0, 10) +
           "/" + randomUUID() + "." + extension;
