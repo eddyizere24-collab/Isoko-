@@ -10,7 +10,7 @@ import {
   Store,
   Tag,
 } from 'lucide-react';
-import { ImigongoHeroCorner, IsokoMark, IsokoVerifiedSeal } from '../components/IsokoLogo';
+import { ImigongoHeroCorner, IsokoMark, IsokoVerifiedSeal, RwandanGeometricPattern } from '../components/IsokoLogo';
 import { ProductCard } from '../components/ProductCard';
 import { PromoCarousel } from '../components/PromoCarousel';
 import { useT } from '../context/LangContext';
@@ -94,45 +94,40 @@ export const HomePage: React.FC<HomePageProps> = () => {
   const hasCatalog = activeCatalog.length > 0;
 
   return (
-    <main className="mx-auto max-w-7xl space-y-4 bg-[#F7F5F0] pb-6">
-      {/* Compact editorial hero. The mark is the colour-rich brand focal point;
-          the surrounding interface stays calm and deliberately restrained. */}
+    <main className="mx-auto max-w-7xl space-y-4 bg-[#FAFAF7] pb-6">
       <section className="px-2 pt-2 sm:px-6">
-        <div className="relative flex min-h-[76px] items-center justify-between overflow-hidden rounded-xl border border-[#E3E0D8] bg-[#FFFEFB] px-3 py-2.5 sm:min-h-[84px] sm:px-5">
-          <div className="relative z-10 min-w-0 flex-1 pr-2">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#BD594A]">
-              ISOKO · RWANDA
-            </p>
-            <h1 className="mt-0.5 max-w-[270px] text-[18px] font-semibold leading-[23px] text-[#202724] sm:max-w-none sm:text-[20px] sm:leading-[26px]">
-              {t('hero_title')}
-            </h1>
-            <p className="mt-0.5 max-w-[280px] text-[10.5px] leading-[15px] text-[#68716D]">
-              {t('hero_subtitle')}
-            </p>
+        <div className="relative overflow-hidden rounded-2xl border border-[#DCE4DE] bg-white shadow-sm">
+          <RwandanGeometricPattern size="header" />
+          <div className="relative flex min-h-[176px] items-center justify-between gap-3 px-4 py-4 sm:min-h-[200px] sm:px-7 sm:py-6">
+            <div className="relative z-10 min-w-0 max-w-[78%]">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#C0392B]">
+                ISOKO · RWANDA
+              </p>
+              <h1 className="mt-2 max-w-[620px] text-[23px] font-extrabold leading-[1.12] tracking-tight text-[#1A1F1C] sm:text-[32px]">
+                {t('hero_title')}
+              </h1>
+              <p className="mt-2 max-w-[520px] text-[13px] leading-[19px] text-[#4B544F] sm:text-[15px] sm:leading-6">
+                {t('hero_subtitle')}
+              </p>
+              <a
+                href="/abacuruzi"
+                onClick={(event) => {
+                  event.preventDefault();
+                  navigate('/abacuruzi');
+                }}
+                className="mt-4 inline-flex min-h-[48px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#07543C]"
+              >
+                <Store className="h-4 w-4" aria-hidden="true" />
+                <span>{t('register_seller')}</span>
+              </a>
+            </div>
+            <div className="relative z-10 mr-1 flex shrink-0 flex-col items-center gap-1 sm:mr-3">
+              <IsokoMark className="h-12 w-12 sm:h-16 sm:w-16" />
+              <span className="text-[9px] font-bold tracking-[0.12em] text-[#4B544F]">ISOKO</span>
+            </div>
+            <ImigongoHeroCorner className="absolute -right-2 -bottom-8 h-36 w-36 opacity-75 sm:h-52 sm:w-52" />
           </div>
-          <div className="relative z-10 ml-2 flex shrink-0 flex-col items-center gap-1">
-            <IsokoMark className="h-9 w-9 sm:h-11 sm:w-11" />
-            <span className="hidden text-[8px] font-medium tracking-[0.08em] text-[#68716D] sm:block">
-              ISOKO
-            </span>
-          </div>
-          <ImigongoHeroCorner className="pointer-events-none absolute -right-1 -top-1 opacity-80" />
-        </div>
-        <div className="mt-2 flex items-center justify-between gap-2 px-1">
-          <span className="text-[10.5px] text-[#68716D]">
-            {t('shops')} · WhatsApp
-          </span>
-          <a
-            href="/abacuruzi"
-            onClick={(event) => {
-              event.preventDefault();
-              navigate('/abacuruzi');
-            }}
-            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-[#D8DED7] bg-white px-3 text-[10.5px] font-semibold text-[#214E43] transition-colors hover:bg-[#E9F0EB]"
-          >
-            <Store className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>{t('register_seller')}</span>
-          </a>
+          <RwandanGeometricPattern size="footer" />
         </div>
       </section>
 
@@ -159,13 +154,13 @@ export const HomePage: React.FC<HomePageProps> = () => {
                 key={category.id}
                 type="button"
                 onClick={() => navigate(`/c/${category.slug}`)}
-                className="flex min-h-[70px] w-[78px] shrink-0 flex-col items-center justify-center gap-1.5 rounded-lg border border-[#E3E0D8] bg-[#FFFEFB] px-1.5 py-2 text-center transition-colors hover:border-[#214E43]/45 hover:bg-white"
+                className="flex min-h-[92px] w-[96px] shrink-0 flex-col items-center justify-center gap-2 rounded-xl border border-[#DCE4DE] bg-white px-2 py-2.5 text-center transition-colors hover:border-[#0B6E4F] hover:bg-white"
                 aria-label={category.name_rw}
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#EEECE6] text-[#505A55]">
-                  <Icon className="h-[17px] w-[17px]" strokeWidth={1.65} aria-hidden="true" />
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E6F3ED] text-[#0B6E4F]">
+                  <Icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
                 </span>
-                <span className="max-w-full text-[9.5px] font-medium leading-[12px] text-[#333D38] line-clamp-2">
+                <span className="w-full whitespace-normal break-words text-[11px] font-semibold leading-[14px] text-[#1A1F1C]">
                   {category.name_rw}
                 </span>
               </button>
