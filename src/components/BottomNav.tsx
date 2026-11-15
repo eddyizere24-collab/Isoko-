@@ -22,17 +22,15 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
 
   if (pathname.startsWith('/p/')) return null;
 
-  const accountHref = authProfile
-    ? authProfile.role === 'admin' || authProfile.role === 'moderator'
-      ? '/admin'
-      : '/umucuruzi'
-    : '/injira';
+  const accountHref = '/konti';
 
   const isHome = pathname === '/' || pathname === '';
   const isCategories = pathname === '/ibyiciro' || pathname.startsWith('/c/') || pathname.startsWith('/icyiciro/');
   const isSearch = pathname === '/shakisha';
   const isCart = pathname === '/igare';
   const isAccount =
+    pathname === '/konti' ||
+    pathname.startsWith('/konti/') ||
     pathname === '/injira' ||
     pathname === '/abacuruzi' ||
     pathname.startsWith('/umucuruzi') ||
