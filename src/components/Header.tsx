@@ -152,7 +152,7 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
               <label htmlFor="global-search" className="sr-only">
                 {t('search_placeholder')}
               </label>
-              <div className="relative flex h-9 items-center rounded-full border border-[#D1D5DB] bg-[#F7F8FA] pl-3 pr-1 transition-colors focus-within:border-[#0B6E4F] focus-within:bg-white lg:h-10">
+              <div className="relative flex h-9 items-center rounded-full border border-[#D9D6CE] bg-[#F7F5F0] pl-3 pr-1 transition-colors focus-within:border-[#214E43] focus-within:bg-white lg:h-10">
                 <input
                   id="global-search"
                   type="search"
@@ -164,12 +164,12 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
                   onFocus={() => setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 180)}
                   placeholder={t('search_placeholder')}
-                  className="h-full w-full min-w-0 bg-transparent pr-1.5 text-[12.5px] text-[#1B1F23] placeholder:text-[#6B7280] focus:outline-none"
+                  className="h-full w-full min-w-0 bg-transparent pr-1.5 text-[12.5px] text-[#202724] placeholder:text-[#68716D] focus:outline-none"
                 />
                 <button
                   type="submit"
                   aria-label={t('search_btn')}
-                  className="inline-flex h-7 shrink-0 items-center justify-center gap-1 rounded-full bg-[#0B6E4F] px-2.5 text-xs font-semibold text-white hover:bg-[#08553D] transition-colors lg:h-8 lg:px-3.5"
+                  className="inline-flex h-7 shrink-0 items-center justify-center gap-1 rounded-full bg-[#214E43] px-2.5 text-xs font-semibold text-white hover:bg-[#183B33] transition-colors lg:h-8 lg:px-3.5"
                 >
                   <Search className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
                   <span className="hidden lg:inline">{t('search_btn')}</span>
@@ -177,7 +177,7 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
               </div>
 
               {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute left-0 right-0 top-10 z-50 rounded-lg border border-[#E5E7EB] bg-white py-1 shadow-md">
+                <div className="absolute left-0 right-0 top-10 z-50 rounded-lg border border-[#E3E0D8] bg-white py-1 shadow-md">
                   {suggestions.map((sug, idx) => (
                     <button
                       key={`${sug.to}-${idx}`}
@@ -187,10 +187,10 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
                         setShowSuggestions(false);
                         navigate(sug.to);
                       }}
-                      className="flex min-h-[40px] w-full items-center justify-between px-3 py-1.5 text-left text-[12.5px] hover:bg-[#F7F8FA]"
+                      className="flex min-h-[40px] w-full items-center justify-between px-3 py-1.5 text-left text-[12.5px] hover:bg-[#F7F5F0]"
                     >
-                      <span className="font-medium text-[#1B1F23] truncate">{sug.label}</span>
-                      {sug.sub && <span className="ml-3 shrink-0 text-[11px] text-[#6B7280]">{sug.sub}</span>}
+                      <span className="font-medium text-[#202724] truncate">{sug.label}</span>
+                      {sug.sub && <span className="ml-3 shrink-0 text-[11px] text-[#68716D]">{sug.sub}</span>}
                     </button>
                   ))}
                 </div>
@@ -207,9 +207,9 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
                 type="button"
                 onClick={() => setLocationModalOpen(true)}
                 aria-label={`${t('choose_location')} (${locationLabel})`}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[#E5E7EB] bg-[#F7F8FA] text-[#0B6E4F] lg:w-auto lg:gap-1.5 lg:px-2.5 lg:text-xs lg:font-medium lg:text-[#1B1F23] hover:border-[#0B6E4F] transition-colors"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[#E3E0D8] bg-[#F7F5F0] text-[#214E43] lg:w-auto lg:gap-1.5 lg:px-2.5 lg:text-xs lg:font-medium lg:text-[#202724] hover:border-[#214E43] transition-colors"
               >
-                <MapPin className="h-4 w-4 text-[#0B6E4F] shrink-0" strokeWidth={1.75} aria-hidden="true" />
+                <MapPin className="h-4 w-4 text-[#214E43] shrink-0" strokeWidth={1.75} aria-hidden="true" />
                 <span className="hidden lg:inline whitespace-nowrap">{locationLabel}</span>
               </button>
             )}
@@ -223,9 +223,9 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
                 e.preventDefault();
                 navigate(accountHref);
               }}
-              className="hidden lg:inline-flex h-9 items-center gap-1.5 rounded-md border border-[#E5E7EB] bg-white px-3 text-xs font-medium text-[#1B1F23] hover:border-[#0B6E4F] transition-colors whitespace-nowrap"
+              className="hidden lg:inline-flex h-9 items-center gap-1.5 rounded-md border border-[#E3E0D8] bg-white px-3 text-xs font-medium text-[#202724] hover:border-[#214E43] transition-colors whitespace-nowrap"
             >
-              <User className="h-3.5 w-3.5 text-[#4B5563]" strokeWidth={1.75} aria-hidden="true" />
+              <User className="h-3.5 w-3.5 text-[#68716D]" strokeWidth={1.75} aria-hidden="true" />
               <span>{accountLabel}</span>
             </a>
 
@@ -233,11 +233,11 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
               type="button"
               onClick={() => navigate('/igare')}
               aria-label={`${t('cart')} (${cartCount})`}
-              className="hidden lg:inline-flex h-9 items-center gap-1.5 rounded-md bg-[#0B6E4F] px-3 text-xs font-semibold text-white hover:bg-[#08553D] transition-colors whitespace-nowrap"
+              className="hidden lg:inline-flex h-9 items-center gap-1.5 rounded-md bg-[#214E43] px-3 text-xs font-semibold text-white hover:bg-[#183B33] transition-colors whitespace-nowrap"
             >
               <ShoppingCart className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
               <span>{t('cart')}</span>
-              <span className="rounded bg-[#C0392B] px-1.5 py-0.5 text-[10px] font-bold leading-none text-white tabular-nums">
+              <span className="rounded bg-[#BD594A] px-1.5 py-0.5 text-[10px] font-bold leading-none text-white tabular-nums">
                 {cartCount}
               </span>
             </button>
@@ -248,7 +248,7 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
 
       {/* Desktop/Tablet Secondary Navigation Rows (hidden on narrow mobile to keep 360x640 first screen ultra-compact) */}
       {showBuyerRows && (
-        <div className="hidden md:block border-b border-[#E5E7EB] bg-white">
+        <div className="hidden md:block border-b border-[#E3E0D8] bg-white">
           <div className="mx-auto flex h-9 max-w-7xl items-center justify-between gap-4 px-6">
             <div className="flex items-center gap-5">
               {modeTabs.map((tab) => (
@@ -258,15 +258,15 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
                   onClick={tab.onClick}
                   className={`relative flex h-9 shrink-0 items-center whitespace-nowrap text-[13px] transition-colors ${
                     tab.active
-                      ? 'font-semibold text-[#0B6E4F]'
-                      : 'font-normal text-[#4B5563] hover:text-[#1B1F23]'
+                      ? 'font-semibold text-[#214E43]'
+                      : 'font-normal text-[#68716D] hover:text-[#202724]'
                   }`}
                 >
                   <span>{tab.label}</span>
                   {tab.active && (
                     <span
                       aria-hidden="true"
-                      className="absolute inset-x-0 bottom-0 h-[2px] bg-[#0B6E4F]"
+                      className="absolute inset-x-0 bottom-0 h-[2px] bg-[#214E43]"
                     />
                   )}
                 </button>
@@ -284,8 +284,8 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
                   }}
                   className={`whitespace-nowrap transition-colors ${
                     pathname === `/c/${cat.slug}`
-                      ? 'font-semibold text-[#0B6E4F]'
-                      : 'text-[#4B5563] hover:text-[#0B6E4F]'
+                      ? 'font-semibold text-[#214E43]'
+                      : 'text-[#68716D] hover:text-[#214E43]'
                   }`}
                 >
                   {cat.name_rw}
@@ -294,7 +294,7 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
               <button
                 type="button"
                 onClick={() => (onOpenCategories ? onOpenCategories() : navigate('/ibyiciro'))}
-                className="inline-flex items-center gap-1 text-[#0B6E4F] font-semibold hover:underline whitespace-nowrap"
+                className="inline-flex items-center gap-1 text-[#214E43] font-semibold hover:underline whitespace-nowrap"
               >
                 <span>{t('all_categories')}</span>
                 <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />

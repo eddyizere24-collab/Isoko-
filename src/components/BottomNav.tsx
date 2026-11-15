@@ -52,28 +52,28 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
           onClick={() => setCategoriesOpen(false)}
         >
           <div
-            className="w-full max-w-md rounded-t-xl bg-white p-4 max-h-[80vh] overflow-y-auto md:rounded-xl md:border md:border-[#E5E7EB]"
+            className="w-full max-w-md rounded-t-xl bg-white p-4 max-h-[80vh] overflow-y-auto md:rounded-xl md:border md:border-[#E3E0D8]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-2.5">
-              <h2 className="text-[15px] font-semibold text-[#1B1F23]">{t('all_categories')}</h2>
+            <div className="flex items-center justify-between border-b border-[#E3E0D8] pb-2.5">
+              <h2 className="text-[15px] font-semibold text-[#202724]">{t('all_categories')}</h2>
               <button
                 type="button"
                 onClick={() => setCategoriesOpen(false)}
                 aria-label={t('cancel')}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-[#4B5563] hover:bg-[#F7F8FA]"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-[#68716D] hover:bg-[#F7F5F0]"
               >
                 <X className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
-            <div className="mt-2 divide-y divide-[#E5E7EB]">
+            <div className="mt-2 divide-y divide-[#E3E0D8]">
               <button
                 type="button"
                 onClick={() => {
                   setCategoriesOpen(false);
                   navigate('/ibyiciro');
                 }}
-                className="flex min-h-[44px] w-full items-center justify-between py-2 text-left text-[13px] font-semibold text-[#0B6E4F]"
+                className="flex min-h-[44px] w-full items-center justify-between py-2 text-left text-[13px] font-semibold text-[#214E43]"
               >
                 <span>{t('all_categories')}</span>
                 <ChevronRight className="h-4 w-4" aria-hidden="true" />
@@ -88,10 +88,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
                         setCategoriesOpen(false);
                         navigate(`/c/${cat.slug}`);
                       }}
-                      className="flex min-h-[42px] w-full items-center justify-between text-left text-[13px] font-semibold text-[#1B1F23]"
+                      className="flex min-h-[42px] w-full items-center justify-between text-left text-[13px] font-semibold text-[#202724]"
                     >
                       <span>{cat.name_rw}</span>
-                      <ChevronRight className="h-4 w-4 text-[#6B7280]" aria-hidden="true" />
+                      <ChevronRight className="h-4 w-4 text-[#68716D]" aria-hidden="true" />
                     </button>
                     {children.length > 0 && (
                       <div className="mt-1 flex flex-wrap gap-1.5 pb-1">
@@ -103,7 +103,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
                               setCategoriesOpen(false);
                               navigate(`/c/${sub.slug}`);
                             }}
-                            className="inline-flex min-h-[32px] items-center rounded-md border border-[#E5E7EB] bg-[#F7F8FA] px-2.5 text-[11.5px] font-medium text-[#1B1F23] hover:border-[#0B6E4F]"
+                            className="inline-flex min-h-[32px] items-center rounded-md border border-[#E3E0D8] bg-[#F7F5F0] px-2.5 text-[11.5px] font-medium text-[#202724] hover:border-[#214E43]"
                           >
                             {sub.name_rw}
                           </button>
@@ -121,7 +121,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
       {/* Fixed 56px 5-tab Mobile Bottom Nav */}
       <nav
         aria-label={t('categories')}
-        className="fixed bottom-0 inset-x-0 z-40 h-14 border-t border-[#E5E7EB] bg-white md:hidden"
+        className="fixed bottom-0 inset-x-0 z-40 h-14 border-t border-[#E3E0D8] bg-white md:hidden"
       >
         <div className="grid h-full grid-cols-5">
           <button
@@ -131,7 +131,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
               navigate('/');
             }}
             className={`flex flex-col items-center justify-center gap-0.5 text-[10.5px] ${
-              isHome ? 'font-semibold text-[#0B6E4F]' : 'font-medium text-[#4B5563]'
+              isHome ? 'font-semibold text-[#214E43]' : 'font-medium text-[#68716D]'
             }`}
           >
             <Home className="h-[19px] w-[19px]" strokeWidth={isHome ? 2.1 : 1.6} aria-hidden="true" />
@@ -145,7 +145,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
               navigate('/ibyiciro');
             }}
             className={`flex flex-col items-center justify-center gap-0.5 text-[10.5px] ${
-              isCategories ? 'font-semibold text-[#0B6E4F]' : 'font-medium text-[#4B5563]'
+              isCategories ? 'font-semibold text-[#214E43]' : 'font-medium text-[#68716D]'
             }`}
           >
             <LayoutGrid
@@ -163,7 +163,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
               navigate('/shakisha');
             }}
             className={`flex flex-col items-center justify-center gap-0.5 text-[10.5px] ${
-              isSearch ? 'font-semibold text-[#0B6E4F]' : 'font-medium text-[#4B5563]'
+              isSearch ? 'font-semibold text-[#214E43]' : 'font-medium text-[#68716D]'
             }`}
           >
             <Search className="h-[19px] w-[19px]" strokeWidth={isSearch ? 2.1 : 1.6} aria-hidden="true" />
@@ -178,13 +178,13 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
             }}
             aria-label={`${t('cart')} (${cartCount})`}
             className={`relative flex flex-col items-center justify-center gap-0.5 text-[10.5px] ${
-              isCart ? 'font-semibold text-[#0B6E4F]' : 'font-medium text-[#4B5563]'
+              isCart ? 'font-semibold text-[#214E43]' : 'font-medium text-[#68716D]'
             }`}
           >
             <span className="relative">
               <ShoppingCart className="h-[19px] w-[19px]" strokeWidth={isCart ? 2.1 : 1.6} aria-hidden="true" />
               {cartCount > 0 && (
-                <span className="absolute -right-2.5 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#C0392B] px-1 text-[10px] font-bold leading-none text-white tabular-nums">
+                <span className="absolute -right-2.5 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#BD594A] px-1 text-[10px] font-bold leading-none text-white tabular-nums">
                   {cartCount > 99 ? '99+' : cartCount}
                 </span>
               )}
@@ -199,7 +199,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ categoriesOpen, setCategor
               navigate(accountHref);
             }}
             className={`flex flex-col items-center justify-center gap-0.5 text-[10.5px] ${
-              isAccount ? 'font-semibold text-[#0B6E4F]' : 'font-medium text-[#4B5563]'
+              isAccount ? 'font-semibold text-[#214E43]' : 'font-medium text-[#68716D]'
             }`}
           >
             <User className="h-[19px] w-[19px]" strokeWidth={isAccount ? 2.1 : 1.6} aria-hidden="true" />

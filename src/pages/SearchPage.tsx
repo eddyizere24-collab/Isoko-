@@ -104,12 +104,12 @@ export const SearchPage: React.FC<SearchPageProps> = ({ initialCategorySlug }) =
 
   return (
     <div className="mx-auto max-w-7xl px-2 py-4 sm:px-6">
-      <div className="flex flex-col gap-2.5 border-b border-[#E5E7EB] pb-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-2.5 border-b border-[#E3E0D8] pb-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-[18px] font-semibold leading-tight text-[#1B1F23] truncate">
+          <h1 className="text-[18px] font-semibold leading-tight text-[#202724] truncate">
             {q ? `"${q}"` : activeCategoryName ? activeCategoryName : t('browse_products')}
           </h1>
-          <p className="mt-0.5 text-xs text-[#6B7280] tabular-nums">
+          <p className="mt-0.5 text-xs text-[#68716D] tabular-nums">
             {t('found_count', { n: results.length })}
             {effectiveSize && mySize.enabled && !filters.size ? ` · ${t('size_label')}: ${effectiveSize}` : ''}
           </p>
@@ -119,12 +119,12 @@ export const SearchPage: React.FC<SearchPageProps> = ({ initialCategorySlug }) =
           <button
             type="button"
             onClick={() => setMobileFilterOpen(true)}
-            className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border border-[#CBD5D1] bg-white px-3 text-xs font-semibold text-[#1B1F23] lg:hidden"
+            className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-md border border-[#C9CEC7] bg-white px-3 text-xs font-semibold text-[#202724] lg:hidden"
           >
-            <SlidersHorizontal className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />
+            <SlidersHorizontal className="h-3.5 w-3.5 text-[#214E43]" aria-hidden="true" />
             <span>{t('filter')}</span>
             {activeFilterCount > 0 && (
-              <span className="tabular-nums text-[#0B6E4F]">({activeFilterCount})</span>
+              <span className="tabular-nums text-[#214E43]">({activeFilterCount})</span>
             )}
           </button>
 
@@ -140,7 +140,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ initialCategorySlug }) =
                 sort: e.target.value as ActiveFilters['sort'],
               })
             }
-            className="h-9 min-w-0 flex-1 sm:flex-none rounded-md border border-[#CBD5D1] bg-white px-2.5 text-xs font-medium text-[#1B1F23]"
+            className="h-9 min-w-0 flex-1 sm:flex-none rounded-md border border-[#C9CEC7] bg-white px-2.5 text-xs font-medium text-[#202724]"
           >
             {Object.entries(sortLabels).map(([val, label]) => (
               <option key={val} value={val}>
@@ -165,21 +165,21 @@ export const SearchPage: React.FC<SearchPageProps> = ({ initialCategorySlug }) =
 
         <div className="lg:col-span-9 min-w-0">
           {results.length === 0 ? (
-            <div className="rounded-lg border border-[#E5E7EB] bg-[#F1F6F3] p-6 text-center">
-              <p className="text-[15px] font-semibold text-[#1B1F23]">{t('no_results')}</p>
-              <p className="mt-1.5 text-xs text-[#6B7280]">{t('no_results_hint')}</p>
+            <div className="rounded-lg border border-[#E3E0D8] bg-[#E9F0EB] p-6 text-center">
+              <p className="text-[15px] font-semibold text-[#202724]">{t('no_results')}</p>
+              <p className="mt-1.5 text-xs text-[#68716D]">{t('no_results_hint')}</p>
               <div className="mt-4 flex flex-wrap justify-center gap-2.5">
                 <button
                   type="button"
                   onClick={clearFilters}
-                  className="h-10 rounded-md bg-[#0B6E4F] px-4 text-xs font-semibold text-white"
+                  className="h-10 rounded-md bg-[#214E43] px-4 text-xs font-semibold text-white"
                 >
                   {t('clear_filters')}
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate('/shakisha')}
-                  className="h-10 rounded-md border border-[#E5E7EB] bg-white px-4 text-xs font-semibold text-[#1B1F23]"
+                  className="h-10 rounded-md border border-[#E3E0D8] bg-white px-4 text-xs font-semibold text-[#202724]"
                 >
                   {t('see_all')}
                 </button>

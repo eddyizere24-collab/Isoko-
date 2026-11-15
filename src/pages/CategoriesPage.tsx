@@ -51,13 +51,13 @@ export const CategoriesPage: React.FC = () => {
   }, [categories, activeTop]);
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-120px)] max-w-7xl bg-white border-x border-[#E5E7EB]">
+    <main className="mx-auto flex min-h-[calc(100vh-120px)] max-w-7xl bg-white border-x border-[#E3E0D8]">
       {/* Left Rail — strictly 26% width on mobile */}
       <aside
         aria-label={t('categories')}
-        className="w-[26%] min-w-[90px] max-w-[220px] shrink-0 border-r border-[#E5E7EB] bg-[#F7F8FA]"
+        className="w-[26%] min-w-[90px] max-w-[220px] shrink-0 border-r border-[#E3E0D8] bg-[#F7F5F0]"
       >
-        <div className="divide-y divide-[#E5E7EB]">
+        <div className="divide-y divide-[#E3E0D8]">
           {topCategories.map((cat) => {
             const active = activeTop?.id === cat.id;
             const Icon = categoryIcon(cat.slug);
@@ -68,14 +68,14 @@ export const CategoriesPage: React.FC = () => {
                 onClick={() => setSelectedTopId(cat.id)}
                 className={`relative flex min-h-[56px] w-full flex-col items-center justify-center gap-1 px-1.5 py-2 text-center transition-colors ${
                   active
-                    ? 'bg-white font-semibold text-[#0B6E4F]'
-                    : 'font-medium text-[#4B5563] hover:bg-white/60'
+                    ? 'bg-white font-semibold text-[#214E43]'
+                    : 'font-medium text-[#68716D] hover:bg-white/60'
                 }`}
               >
                 {active && (
                   <span
                     aria-hidden="true"
-                    className="absolute bottom-2 left-0 top-2 w-[3px] bg-[#0B6E4F]"
+                    className="absolute bottom-2 left-0 top-2 w-[3px] bg-[#214E43]"
                   />
                 )}
                 <Icon className="h-4 w-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
@@ -90,8 +90,8 @@ export const CategoriesPage: React.FC = () => {
       <section className="flex-1 min-w-0 p-2.5 sm:p-5">
         {activeTop && (
           <>
-            <div className="mb-3 flex items-center justify-between gap-2 border-b border-[#E5E7EB] pb-2">
-              <h1 className="text-[15px] font-semibold text-[#1B1F23] truncate">
+            <div className="mb-3 flex items-center justify-between gap-2 border-b border-[#E3E0D8] pb-2">
+              <h1 className="text-[15px] font-semibold text-[#202724] truncate">
                 {activeTop.name_rw}
               </h1>
               <a
@@ -100,7 +100,7 @@ export const CategoriesPage: React.FC = () => {
                   e.preventDefault();
                   navigate(`/c/${activeTop.slug}`);
                 }}
-                className="inline-flex shrink-0 items-center gap-0.5 text-[11.5px] font-semibold text-[#0B6E4F] hover:underline"
+                className="inline-flex shrink-0 items-center gap-0.5 text-[11.5px] font-semibold text-[#214E43] hover:underline"
               >
                 <span>{t('see_all')}</span>
                 <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -118,12 +118,12 @@ export const CategoriesPage: React.FC = () => {
                       e.preventDefault();
                       navigate(`/c/${sub.slug}`);
                     }}
-                    className="flex flex-col items-center rounded-md border border-[#E5E7EB] bg-white p-2 text-center hover:border-[#0B6E4F] transition-colors"
+                    className="flex flex-col items-center rounded-md border border-[#E3E0D8] bg-white p-2 text-center hover:border-[#214E43] transition-colors"
                   >
-                    <span className="flex h-12 w-12 items-center justify-center rounded-md bg-[#E8F3EE] text-[#0B6E4F]">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-md bg-[#E9F0EB] text-[#214E43]">
                       <Icon className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
                     </span>
-                    <span className="mt-1.5 text-[11px] font-medium leading-[14px] text-[#1B1F23] line-clamp-2">
+                    <span className="mt-1.5 text-[11px] font-medium leading-[14px] text-[#202724] line-clamp-2">
                       {sub.name_rw}
                     </span>
                   </a>
