@@ -115,7 +115,7 @@ export const SellerAddProductPage: React.FC = () => {
     return SIZE_SETS[setKey] ?? SIZE_SETS.shoes_adult;
   }, [selectedCategory]);
 
-  const handlePhotoFiles = async (files: FileList | null) => {
+  const handlePhotoFiles = async (files: FileList | File[] | null) => {
     if (!files || files.length === 0) return;
     setError(null);
     setUploadingPhoto(true);
@@ -450,9 +450,14 @@ export const SellerAddProductPage: React.FC = () => {
                 <input
                   type="file"
                   accept="image/*"
+                  disabled={uploadingPhoto}
                   capture="environment"
                   className="sr-only"
-                  onChange={(e) => handlePhotoFiles(e.target.files)}
+                  onChange={(e) => {
+                    const files = e.currentTarget.files ? Array.from(e.currentTarget.files) : [];
+                    e.currentTarget.value = '';
+                    void handlePhotoFiles(files);
+                  }}
                 />
                 <Camera className="h-7 w-7 text-[#0B6E4F]" aria-hidden="true" />
                 <span className="mt-2 text-sm font-bold text-[#0B6E4F]">{RW.take_photo}</span>
@@ -464,8 +469,13 @@ export const SellerAddProductPage: React.FC = () => {
                   type="file"
                   accept="image/*"
                   multiple
+                  disabled={uploadingPhoto}
                   className="sr-only"
-                  onChange={(e) => handlePhotoFiles(e.target.files)}
+                  onChange={(e) => {
+                    const files = e.currentTarget.files ? Array.from(e.currentTarget.files) : [];
+                    e.currentTarget.value = '';
+                    void handlePhotoFiles(files);
+                  }}
                 />
                 <ImagePlus className="h-7 w-7 text-slate-600" aria-hidden="true" />
                 <span className="mt-2 text-sm font-bold text-[#1B1F23]">{RW.pick_gallery}</span>
