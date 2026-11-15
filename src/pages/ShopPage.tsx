@@ -173,6 +173,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                 src={shop.cover_path}
                 alt={shop.name}
                 referrerPolicy="no-referrer"
+                onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/shop-image-fallback.svg'; }}
                 className="h-full w-full object-cover"
               />
               <div
@@ -192,15 +193,16 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
         <div className="p-4 sm:p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-              <div className="-mt-8 sm:-mt-10 relative z-10 flex shrink-0 flex-col items-center gap-1">
+              <div className="relative z-10 flex shrink-0 flex-col items-center gap-1">
                 {shop.seller_avatar_path ? (
                   <img
                     src={shop.seller_avatar_path}
                     alt={shop.seller_name || 'Ifoto ya profile y’umucuruzi'}
-                    className="h-14 w-14 rounded-full border-[3px] border-[#FFFEFB] bg-white object-cover sm:h-16 sm:w-16"
+                    onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/shop-image-fallback.svg'; }}
+                    className="h-[72px] w-[72px] rounded-full border-[3px] border-[#FFFEFB] bg-white object-cover"
                   />
                 ) : (
-                  <div className="grid h-14 w-14 place-items-center rounded-full border-[3px] border-[#FFFEFB] bg-[#E9F0EB] text-lg font-semibold text-[#214E43] sm:h-16 sm:w-16">
+                  <div className="grid h-[72px] w-[72px] place-items-center rounded-full border-[3px] border-[#FFFEFB] bg-[#E9F0EB] text-lg font-semibold text-[#214E43]">
                     {(shop.seller_name || shop.name).slice(0, 1).toUpperCase()}
                   </div>
                 )}
@@ -209,11 +211,12 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
               {shop.logo_path ? (
                 <img
                   src={shop.logo_path}
-                  alt={shop.name}
-                  className="-mt-10 sm:-mt-12 relative z-10 h-16 w-16 sm:h-20 sm:w-20 shrink-0 rounded-lg border-4 border-white bg-white object-cover"
+                  alt={shop.name + ' logo'}
+                  onError={(event) => { event.currentTarget.onerror = null; event.currentTarget.src = '/shop-image-fallback.svg'; }}
+                  className="relative z-10 h-16 w-16 shrink-0 rounded-lg border border-[#E3E7EB] bg-white object-cover"
                 />
               ) : (
-                <div className="-mt-10 sm:-mt-12 relative z-10 flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-lg border-4 border-white bg-[#214E43] text-lg font-bold text-white">
+                <div className="relative z-10 flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-[#E3E7EB] bg-[#0B6E4F] text-lg font-bold text-white">
                   {shop.name.slice(0, 2).toUpperCase()}
                 </div>
               )}
