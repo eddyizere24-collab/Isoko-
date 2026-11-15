@@ -113,7 +113,7 @@ export const SellerShopSettingsPage: React.FC = () => {
   if (loading) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <div className="h-48 animate-pulse rounded-2xl bg-[#F1F6F3]" />
+        <div className="h-48 animate-pulse rounded-lg bg-[#F1F6F3]" />
       </main>
     );
   }
@@ -126,13 +126,13 @@ export const SellerShopSettingsPage: React.FC = () => {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-slate-200">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-[#E5E7EB]">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate('/umucuruzi')}
             aria-label="Subira inyuma"
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-slate-200 hover:bg-[#F1F6F3]"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#E5E7EB] hover:bg-[#F1F6F3]"
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -149,7 +149,7 @@ export const SellerShopSettingsPage: React.FC = () => {
             href={testWaHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#25D366] px-4 text-xs font-semibold text-white hover:bg-[#1FB857]"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#1A7F43] px-4 text-xs font-semibold text-white hover:bg-[#146635]"
           >
             <MessageCircle className="h-4 w-4" aria-hidden="true" />
             <span>Gerageza link ya WhatsApp yanjye</span>
@@ -167,7 +167,7 @@ export const SellerShopSettingsPage: React.FC = () => {
 
       <form
         onSubmit={handleSave}
-        className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 space-y-4"
+        className="mt-6 rounded-lg border border-[#E5E7EB] bg-white p-6 space-y-4"
       >
         <section className="rounded-2xl border border-[#0B6E4F]/20 bg-[#F7FAF8] p-4 sm:p-5 space-y-4">
           <div><h2 className="text-base font-bold text-[#1B1F23]">Umwirondoro wawe n’isura y’iduka</h2><p className="mt-1 text-xs leading-5 text-slate-600">Amafoto n’amakuru ubika ni byo bizagaragara ku rubuga rw’iduka ryawe.</p></div>

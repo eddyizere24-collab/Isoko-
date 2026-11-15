@@ -1,36 +1,43 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'IsokoSans';
+  src: url('/fonts/inter-latin.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --color-primary: #0B6E4F;
-  --color-primary-hover: #08553D;
-  --color-accent: #E8A33D;
-  --color-ink: #1B1F23;
-  --color-surface: #F8FAF8;
-  --color-pattern-green: rgba(11, 110, 79, 0.055);
-  --color-pattern-red: rgba(192, 57, 43, 0.04);
-  --color-canvas: #FFFFFF;
-  --color-error: #C0392B;
-  --color-whatsapp: #25D366;
-  --color-whatsapp-hover: #1FB858;
-  --font-display: 'Plus Jakarta Sans', 'DM Sans', system-ui, sans-serif;
-  --font-body: 'DM Sans', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --isoko-green: #0B6E4F;
+  --isoko-green-dark: #064E3B;
+  --isoko-green-hover: #08553D;
+  --isoko-green-soft: #E8F3EE;
+  --isoko-red: #C0392B;
+  --isoko-red-dark: #8E2A20;
+  --isoko-red-soft: #FBEAE8;
+  --isoko-wa: #1A7F43;
+  --isoko-wa-hover: #146635;
+  --isoko-ink: #1B1F23;
+  --isoko-muted: #6B7280;
+  --isoko-bg: #F7F8FA;
+  --isoko-surface: #FFFFFF;
+  --isoko-border: #E5E7EB;
+  --isoko-border-strong: #CBD5D1;
+  --font-sans: 'IsokoSans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 @layer base {
   html {
-    font-family: var(--font-body);
-    color: var(--color-ink);
-    background-color: var(--color-canvas);
+    font-family: var(--font-sans);
+    color: var(--isoko-ink);
+    background-color: var(--isoko-bg);
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
   }
 
   h1, h2, h3, .font-display {
-    font-family: var(--font-display);
-  }
-
-  code, pre, .font-mono {
-    font-family: var(--font-mono);
+    font-family: var(--font-sans);
   }
 
   button,
@@ -39,7 +46,7 @@
   input,
   textarea {
     &:focus-visible {
-      outline: 2px solid var(--color-primary);
+      outline: 2px solid var(--isoko-green);
       outline-offset: 2px;
     }
   }
@@ -47,6 +54,7 @@
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
 }
 
 .no-scrollbar {
@@ -61,14 +69,14 @@
   text-wrap: balance;
 }
 
-/* Quiet Imigongo-inspired diamond geometry on selected white surfaces. */
-.imigongo-surface {
+/* Crisp 4px Rwandan Imigongo geometric accent ribbon (Green + Red + White) */
+.imigongo-band {
+  height: 4px;
+  width: 100%;
   background-color: #FFFFFF;
-  background-image:
-    linear-gradient(45deg, transparent 47.5%, var(--color-pattern-green) 48.5%, var(--color-pattern-green) 51.5%, transparent 52.5%),
-    linear-gradient(-45deg, transparent 47.5%, var(--color-pattern-red) 48.5%, var(--color-pattern-red) 51.5%, transparent 52.5%);
-  background-size: 42px 42px;
-  background-position: 0 0, 21px 21px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='4' viewBox='0 0 24 4'%3E%3Cpolygon points='0,4 6,0 12,4' fill='%230B6E4F'/%3E%3Cpolygon points='12,4 18,0 24,4' fill='%23C0392B'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 24px 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {

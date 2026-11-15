@@ -6,8 +6,8 @@ import { buildWhatsAppLink } from '../lib/whatsapp';
 
 export const StaticPage: React.FC = () => {
   const { pathname, navigate, bootstrap } = useMarketplace();
-  const supportWa = bootstrap?.settings.SUPPORT_WHATSAPP?.trim() ?? '';
-  const supportHours = bootstrap?.settings.SUPPORT_HOURS?.trim() ?? '';
+  const supportWa = bootstrap?.settings.SUPPORT_WHATSAPP ?? '250788000000';
+  const supportHours = bootstrap?.settings.SUPPORT_HOURS ?? '08:00 – 20:00';
 
   if (pathname === '/ibyerekeye') {
     return (
@@ -18,7 +18,7 @@ export const StaticPage: React.FC = () => {
           amasogisi n’ibindi byo kwambara n’abaguzi mu turere twose 30 tw’igihugu.
         </p>
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5">
+          <div className="rounded-lg border border-[#E5E7EB] bg-white p-5">
             <h2 className="text-base font-bold text-[#0B6E4F]">Uko ikora ku muguzi</h2>
             <p className="mt-2 text-xs leading-relaxed text-slate-600">
               Shakisha igicuruzwa ukoresheje izina, size cyangwa akarere, ugishyire mu gare,
@@ -26,7 +26,7 @@ export const StaticPage: React.FC = () => {
               Ntibisaba gufungura konti.
             </p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-5">
+          <div className="rounded-lg border border-[#E5E7EB] bg-white p-5">
             <h2 className="text-base font-bold text-[#0B6E4F]">Icyo urubuga rudakora</h2>
             <p className="mt-2 text-xs leading-relaxed text-slate-600">
               Urubuga ntirwakira amafaranga (nta MoMo cyangwa ikarita iri ku rubuga) kandi
@@ -39,45 +39,28 @@ export const StaticPage: React.FC = () => {
     );
   }
 
-  if (pathname === '/uko-ikoreshwa') {
-    return (
-      <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 space-y-6">
-        <div><p className="text-xs font-bold uppercase tracking-wider text-[#0B6E4F]">ISOKO · Ubuyobozi</p><h1 className="mt-1 text-2xl font-extrabold text-[#1B1F23]">Uko ukoresha ISOKO</h1><p className="mt-2 text-sm leading-6 text-slate-600">ISOKO ihuza abacuruzi n’abaguzi. Umuguzi ashobora gushakisha atinjiye muri konti.</p></div>
-        <section className="rounded-2xl border border-slate-200 bg-white p-5"><h2 className="font-bold text-[#0B6E4F]">Ku muguzi</h2><ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-700"><li>Shakisha ibicuruzwa ukoresheje izina, icyiciro cyangwa akarere.</li><li>Kanda ku ifoto cyangwa izina ry’igicuruzwa kugira ngo urebe ibisobanuro, amafoto, igiciro na sizes.</li><li>Fungura iduka ry’umucuruzi urebe ibindi bicuruzwa afite.</li><li>Vugana na we kuri WhatsApp cyangwa kuri telefoni; mwumvikane uko wishyura n’uko ibicuruzwa bitangwa.</li></ol></section>
-        <section className="rounded-2xl border border-slate-200 bg-white p-5"><h2 className="font-bold text-[#0B6E4F]">Ku mucuruzi</h2><ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-700"><li>Kanda “Fungura iduka”, ukoreshe email na password cyangwa Google, ushyiremo WhatsApp n’izina ry’iduka.</li><li>Konti imaze gufunguka uhita ujya ku dashboard. Uzuza ifoto yawe, logo, cover, ibisobanuro n’imbuga nkoranyambaga muri “Amakuru y’iduka”.</li><li>Koresha “Ongeraho igicuruzwa” ku kimwe, cyangwa “Ongeraho byinshi” ku bicuruzwa byinshi mu batches.</li><li>Shyiraho ifoto nyayo, izina, igiciro, ibisobanuro na size, ubike kugira ngo bigaragare ku iduka ryawe.</li><li>Ushobora guhindura, guhisha, kugarura, kugurisha cyangwa gusiba igicuruzwa.</li></ol></section>
-        <section className="rounded-2xl border border-slate-200 bg-white p-5"><h2 className="font-bold text-[#0B6E4F]">Iby’ingenzi</h2><ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-700"><li>Iduka rishobora kugira ibicuruzwa bigera kuri 500 muri gahunda y’ibanze.</li><li>Buri gicuruzwa gishobora kugira amafoto agera kuri 5.</li><li>Shyiraho amakuru y’ukuri n’amafoto ufitiye uburenganzira.</li><li>“Verified” igaragazwa gusa nyuma yo kugenzura umwirondoro.</li></ul></section>
-        <button type="button" onClick={() => navigate('/abacuruzi')} className="inline-flex min-h-11 items-center rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white">Fungura iduka</button>
-      </main>
-    );
-  }
-
   if (pathname === '/ubufasha') {
-    const waHref = supportWa
-      ? buildWhatsAppLink(supportWa, 'Muraho Ubufasha bwa Isoko, mfite ikibazo nashakaga kubaza.')
-      : null;
+    const waHref = buildWhatsAppLink(
+      supportWa,
+      'Muraho Ubufasha bwa Isoko, mfite ikibazo nashakaga kubaza.'
+    );
     return (
-      <main className="mx-auto max-w-3xl space-y-6 px-4 py-10 sm:px-6">
+      <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 space-y-6">
         <h1 className="text-2xl font-bold text-[#1B1F23]">Ubufasha & Ibibazo bikunze kubazwa</h1>
-        <div className="rounded-2xl border border-[#25D366]/40 bg-[#F1F6F3] p-6">
-          {waHref ? (
-            <>
-              <p className="text-sm font-bold text-[#1B1F23]">Vugana natwe kuri WhatsApp</p>
-              {supportHours && <p className="mt-1 text-xs text-slate-600">Amasaha y’ubufasha: {supportHours}</p>}
-              <a
-                href={waHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#25D366] px-5 text-sm font-semibold text-white hover:bg-[#1FB857]"
-              >
-                <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                <span>{RW.help_whatsapp}</span>
-              </a>
-            </>
-          ) : (
-            <p className="text-sm leading-6 text-slate-700">
-              Nimero y’ubufasha ya ISOKO ntirashyirwa ahagaragara. Izongerwaho imaze kwemezwa kugira ngo utavugana na nimero itari yo.
-            </p>
-          )}
+        <div className="rounded-lg border border-[#E5E7EB] bg-[#E8F3EE]/50 p-6">
+          <p className="text-sm font-bold text-[#1B1F23]">Vugana natwe kuri WhatsApp</p>
+          <p className="mt-1 text-xs text-slate-600">
+            Amasaha y’ubufasha buri munsi: {supportHours}
+          </p>
+          <a
+            href={waHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#1A7F43] px-5 text-sm font-semibold text-white hover:bg-[#146635]"
+          >
+            <MessageCircle className="h-4 w-4" aria-hidden="true" />
+            <span>{RW.help_whatsapp}</span>
+          </a>
         </div>
 
         <div className="space-y-3">
@@ -91,11 +74,11 @@ export const StaticPage: React.FC = () => {
               a: 'Yego, turabigira inama cyane cyane i Kigali. Banza urebe igicuruzwa cyangwa uhure n’umucuruzi ahantu hazwi mbere yo kohereza amafaranga.',
             },
             {
-              q: 'Nabona nte iduka ryagenzuwe?',
-              a: 'Ikimenyetso cya Verified kigaragaza ko ISOKO yagenzuye imyirondoro y’umucuruzi. Amaduka mashya ashobora kugaragara ataragenzurwa; banza urebe ikimenyetso kiri ku iduka mbere yo gufata icyemezo cyo kugura.',
+              q: 'Nabona nte iduka ryemewe?',
+              a: 'Amaduka yose agaragara ku rubuga yabanje kugenzurwa na Admin (indangamuntu, aho akorera na telefoni) agahabwa ikimenyetso cy’uko yagenzuwe.',
             },
           ].map((faq) => (
-            <div key={faq.q} className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div key={faq.q} className="rounded-lg border border-[#E5E7EB] bg-white p-4">
               <p className="text-sm font-bold text-[#1B1F23]">{faq.q}</p>
               <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{faq.a}</p>
             </div>
@@ -173,7 +156,7 @@ export const StaticPage: React.FC = () => {
         <h1 className="text-2xl font-bold text-[#1B1F23]">
           Amabwiriza y’Abacuruzi & Ibicuruzwa Bibujijwe
         </h1>
-        <div className="rounded-2xl border border-[#C0392B]/30 bg-[#C0392B]/5 p-5 text-sm text-slate-700 space-y-2">
+        <div className="rounded-lg border border-[#C0392B]/30 bg-[#C0392B]/5 p-5 text-sm text-slate-700 space-y-2">
           <p className="font-bold text-[#C0392B]">Ibicuruzwa bibujijwe burundu (§10.5):</p>
           <ul className="list-disc pl-5 space-y-1 text-xs">
             <li>Impimbano zigurishwa nka “Original” cyangwa “Authentic”.</li>

@@ -101,7 +101,7 @@ export const CartPage: React.FC = () => {
   if (cart.length === 0) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center">
-        <div className="rounded-2xl border border-slate-200 bg-[#F1F6F3] p-8">
+        <div className="rounded-lg border border-[#E5E7EB] bg-[#F1F6F3] p-8">
           <h1 className="text-xl font-bold text-[#1B1F23]">{RW.empty_cart}</h1>
           <p className="mt-2 text-sm text-slate-600">
             Hitamo ibicuruzwa ukunda ubyongere mu gare, hanyuma uvugane n’umucuruzi kuri WhatsApp.
@@ -133,7 +133,7 @@ export const CartPage: React.FC = () => {
         <button
           type="button"
           onClick={() => setLocationModalOpen(true)}
-          className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-slate-200 bg-[#F1F6F3] px-4 text-sm font-medium text-[#1B1F23] hover:border-[#0B6E4F]"
+          className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-[#E5E7EB] bg-[#F1F6F3] px-4 text-sm font-medium text-[#1B1F23] hover:border-[#0B6E4F]"
         >
           <MapPin className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
           <span>
@@ -145,7 +145,7 @@ export const CartPage: React.FC = () => {
       </div>
 
       {/* Permanent Trust Notice (E-07) */}
-      <div className="flex items-start gap-2.5 rounded-xl border border-slate-200 bg-[#F1F6F3] p-4 text-xs leading-relaxed text-[#1B1F23]">
+      <div className="flex items-start gap-2.5 rounded-xl border border-[#E5E7EB] bg-[#F1F6F3] p-4 text-xs leading-relaxed text-[#1B1F23]">
         <ShieldCheck className="h-4 w-4 text-[#0B6E4F] shrink-0 mt-0.5" aria-hidden="true" />
         <span>{RW.payment_note}</span>
       </div>
@@ -167,9 +167,9 @@ export const CartPage: React.FC = () => {
           return (
             <section
               key={group.shopId}
-              className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4"
+              className="rounded-lg border border-[#E5E7EB] bg-white p-5 space-y-4"
             >
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#E5E7EB] pb-3">
                 <a
                   href={`/i/${group.shopSlug}`}
                   onClick={(e) => {
@@ -199,7 +199,7 @@ export const CartPage: React.FC = () => {
                       <img
                         src={item.thumbUrl}
                         alt={item.productName}
-                        className={`h-20 w-20 shrink-0 rounded-xl border border-slate-200 object-cover ${
+                        className={`h-20 w-20 shrink-0 rounded-xl border border-[#E5E7EB] object-cover ${
                           unavailable ? 'opacity-45 grayscale' : ''
                         }`}
                       />
@@ -231,7 +231,7 @@ export const CartPage: React.FC = () => {
                         )}
 
                         {priceChanged && !unavailable && (
-                          <p className="mt-0.5 text-xs font-semibold text-[#B45309] tabular-nums">
+                          <p className="mt-0.5 text-xs font-semibold text-[#C0392B] tabular-nums">
                             {RW.price_changed}: {formatRwfCurrency(item.priceSeen)} →{' '}
                             {formatRwfCurrency(unitPrice)}
                           </p>
@@ -239,7 +239,7 @@ export const CartPage: React.FC = () => {
 
                         <div className="mt-2 flex items-center gap-3">
                           {!unavailable && (
-                            <div className="inline-flex items-center rounded-xl border border-slate-200">
+                            <div className="inline-flex items-center rounded-xl border border-[#E5E7EB]">
                               <button
                                 type="button"
                                 aria-label={`Gabanya umubare wa ${item.productName}`}
@@ -285,7 +285,7 @@ export const CartPage: React.FC = () => {
               </div>
 
               {/* Action buttons for this seller */}
-              <div className="flex flex-col gap-2.5 border-t border-slate-200 pt-4 sm:flex-row sm:flex-wrap">
+              <div className="flex flex-col gap-2.5 border-t border-[#E5E7EB] pt-4 sm:flex-row sm:flex-wrap">
                 {batches.map((batch, idx) => (
                   <a
                     key={idx}
@@ -296,7 +296,7 @@ export const CartPage: React.FC = () => {
                       setSentShopId(group.shopId);
                       group.items.forEach((it) => trackEvent('wa_click', it.productId, group.shopId));
                     }}
-                    className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 text-sm font-bold text-white hover:bg-[#1FB858] transition-colors"
+                    className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl bg-[#1A7F43] px-4 text-sm font-bold text-white hover:bg-[#146635] transition-colors"
                   >
                     <MessageCircle className="h-4 w-4" aria-hidden="true" />
                     <span>

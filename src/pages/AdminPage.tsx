@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { AdminAssistantPanel } from '../components/admin/AdminAssistantPanel';
 import {
   AlertTriangle,
   ArrowDown,
@@ -34,21 +33,25 @@ import {
   type AdminOverviewResponse,
 } from '../lib/api';
 import { formatRwfCurrency } from '../lib/whatsapp';
-import type { PromoCampaign } from '../types/marketplace';
-import { processProductImage } from '../lib/image';
+import { loadAuthSession } from '../lib/storage';
+import type { PromoCampaign, SellerKyc } from '../types/marketplace';
 
-interface AdminKycReview {
-  seller_id: string;
-  full_name_on_id: string;
-  business_type: string;
-  idFrontUrl: string | null;
-  idBackUrl: string | null;
-  selfieUrl: string | null;
-  shopPhotoUrl: string | null;
-  submitted_at: string;
-}
+type AdminTab = 'overview' | 'sellers' | 'products' | 'reports' | 'campaigns' | 'settings';
 
-type AdminTab = 'overview' | 'assistant' | 'sellers' | 'products' | 'reports' | 'campaigns' | 'settings';
+const CAMPAIGN_BANNER_PRESETS = [
+  {
+    label: 'Isoko ry’Inkweto (Kimironko)',
+    url: '/src/assets/images/promo_kigali_market_1794567241262.jpg',
+  },
+  {
+    label: 'Imyenda ya Ankara (Nyamirambo)',
+    url: '/src/assets/images/promo_ankara_craft_1794567240592.jpg',
+  },
+  {
+    label: 'Isoko rya Kigali (Hero)',
+    url: '/src/assets/images/hero_kigali_fashion_1794551814589.jpg',
+  },
+];
 
 const REJECTION_TEMPLATES = [
   'Ifoto y’indangamuntu ntisobanutse. Nyamuneka ongera uyifate neza ahantu habona.',
@@ -66,7 +69,7 @@ export const AdminPage: React.FC = () => {
 
   // KYC Modal state
   const [kycModalSellerId, setKycModalSellerId] = useState<string | null>(null);
-  const [kycDoc, setKycDoc] = useState<AdminKycReview | null>(null);
+  const [kycDoc, setKycDoc] = useState<SellerKyc | null>(null);
   const [kycTtl, setKycTtl] = useState<number>(60);
   const [reviewReason, setReviewReason] = useState('');
   const [phoneVerified, setPhoneVerified] = useState(true);
@@ -74,9 +77,7 @@ export const AdminPage: React.FC = () => {
 
   // Products & Reports filters
   const [productQuery, setProductQuery] = useState('');
-  const [reportFilter, setReportFilter] = useState<'all' | 'new' | 'in_progress' | 'resolved'>('all');
-  const [reportReplyDrafts, setReportReplyDrafts] = useState<Record<string, string>>({});
-  const [savedReportReplies, setSavedReportReplies] = useState<Record<string, string>>({});
+  const [reportFilter, setReportFilter] = useState<'all' | 'new' | 'resolved'>('all');
 
   // Synonym form
   const [synTerm, setSynTerm] = useState('');
@@ -88,13 +89,10 @@ export const AdminPage: React.FC = () => {
   const [campSubtitle, setCampSubtitle] = useState('');
   const [campCta, setCampCta] = useState('Reba ibicuruzwa');
   const [campTarget, setCampTarget] = useState('/c/inkweto');
-  const [campImage, setCampImage] = useState('');
-  const [campImageBusy, setCampImageBusy] = useState(false);
+  const [campImage, setCampImage] = useState(CAMPAIGN_BANNER_PRESETS[0].url);
   const [campShopId, setCampShopId] = useState('');
 
-  const activeTab: AdminTab = pathname.startsWith('/admin/ubwenge')
-    ? 'assistant'
-    : pathname.startsWith('/admin/abacuruzi')
+  const activeTab: AdminTab = pathname.startsWith('/admin/abacuruzi')
     ? 'sellers'
     : pathname.startsWith('/admin/ibicuruzwa')
       ? 'products'
@@ -167,26 +165,10 @@ export const AdminPage: React.FC = () => {
     refreshBootstrap();
   };
 
-  const handleSaveReportReply = async (reportId: string, reply: string) => {
-    const message = reply.trim();
-    if (message.length < 3) {
-      setFeedback('Andika igisubizo kigufi mbere yo kukibika.');
-      return;
-    }
-    try {
-      await resolveAdminReport(reportId, { status: 'in_progress', resolution: message });
-      setSavedReportReplies((current) => ({ ...current, [reportId]: message }));
-      setFeedback('Igisubizo cyabitswe. Ushobora no kugishyikiriza uwatanze ikibazo kuri WhatsApp.');
-      await load();
-    } catch (err) {
-      setFeedback(err instanceof Error ? err.message : 'Igisubizo nticyabitswe.');
-    }
-  };
-
-  const handleResolveReport = async (reportId: string, hideTarget: boolean, resolution?: string) => {
+  const handleResolveReport = async (reportId: string, hideTarget: boolean) => {
     await resolveAdminReport(reportId, {
       status: 'resolved',
-      resolution: resolution?.trim() || (hideTarget ? 'Igicuruzwa cyahishwe nyuma y’ikibazo' : 'Ikibazo cyasuzumwe kiranogerezwa'),
+      resolution: hideTarget ? 'Igicuruzwa cyahishwe nyuma y’ikibazo' : 'Ikibazo cyasuzumwe kiranogerezwa',
       hideTarget,
     });
     setFeedback('Ikibazo cyarakemutse.');
@@ -212,28 +194,9 @@ export const AdminPage: React.FC = () => {
     refreshBootstrap();
   };
 
-  const handleCampaignImage = async (file?: File) => {
-    if (!file) return;
-    setFeedback(null);
-    setCampImageBusy(true);
-    try {
-      const image = await processProductImage(file);
-      setCampImage(image.fullDataUrl);
-    } catch (err) {
-      setFeedback(err instanceof Error ? err.message : 'Ifoto y’itangazo ntiyemewe.');
-      setCampImage('');
-    } finally {
-      setCampImageBusy(false);
-    }
-  };
-
   const handleCreateCampaign = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!campTitle.trim()) return;
-    if (!campImage) {
-      setFeedback('Banza wohereze ifoto y’itangazo.');
-      return;
-    }
     try {
       await createAdminCampaign({
         kicker: campKicker.trim(),
@@ -274,31 +237,19 @@ export const AdminPage: React.FC = () => {
     refreshBootstrap();
   };
 
-  const handleExportCsv = () => {
+  const handleExportCsv = async () => {
     try {
-      if (!data) throw new Error('Nta makuru ahari yo gukuramo.');
-      const escapeCsv = (value: unknown) => {
-        const text = value == null ? '' : String(value);
-        return '"' + text.replace(/"/g, '""') + '"';
-      };
-      const rows = [
-        ['Ubwoko', 'ID', 'Izina', 'Akarere', 'WhatsApp/Telefoni', 'Status', 'Itariki'],
-        ...data.sellers.map((seller) => [
-          'Umucuruzi', seller.id, seller.full_name, seller.shop?.district_name ?? '',
-          seller.phone, seller.status, seller.created_at,
-        ]),
-        ...data.products.map((product) => [
-          'Igicuruzwa', product.id, product.name, product.shop?.district_name ?? '',
-          product.shop?.whatsapp ?? '', product.status, product.created_at,
-        ]),
-      ];
-      const csv = '\\uFEFF' + rows.map((row) => row.map(escapeCsv).join(',')).join('\\r\\n');
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const sess = loadAuthSession();
+      const res = await fetch('/api/admin/export.csv', {
+        headers: sess?.token ? { Authorization: `Bearer ${sess.token}` } : {},
+      });
+      if (!res.ok) throw new Error('Ntibishobotse gukuramo dosiye ya CSV.');
+      const blob = await res.blob();
       const url = URL.createObjectURL(blob);
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = 'isoko-admin-export.csv';
-      anchor.click();
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'isoko-export.csv';
+      a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
       setFeedback(err instanceof Error ? err.message : 'Ikosa mu gukuramo CSV.');
@@ -308,7 +259,7 @@ export const AdminPage: React.FC = () => {
   if (loading) {
     return (
       <main className="mx-auto max-w-7xl px-4 py-8">
-        <div className="h-40 animate-pulse rounded-2xl bg-[#F1F6F3]" />
+        <div className="h-40 animate-pulse rounded-lg bg-[#F1F6F3]" />
       </main>
     );
   }
@@ -330,7 +281,6 @@ export const AdminPage: React.FC = () => {
 
   const tabs: Array<{ id: AdminTab; path: string; label: string; count?: number }> = [
     { id: 'overview', path: '/admin', label: 'Incamake' },
-    { id: 'assistant', path: '/admin/ubwenge', label: 'Ishakiro ry’Ubuyobozi' },
     { id: 'sellers', path: '/admin/abacuruzi', label: 'Abacuruzi (KYC)', count: data.kpis.pendingSellers },
     { id: 'products', path: '/admin/ibicuruzwa', label: 'Ibicuruzwa', count: data.products.length },
     { id: 'reports', path: '/admin/ibirego', label: 'Ibirego', count: data.kpis.newReports },
@@ -355,7 +305,7 @@ export const AdminPage: React.FC = () => {
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[#E5E7EB]">
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-[#0B6E4F]">
             Ubuyobozi bw’Urubuga
@@ -385,7 +335,7 @@ export const AdminPage: React.FC = () => {
             className={`inline-flex min-h-[44px] items-center gap-2 rounded-xl px-4 text-xs font-semibold transition ${
               activeTab === t.id
                 ? 'bg-[#0B6E4F] text-white'
-                : 'border border-slate-200 bg-white text-[#1B1F23] hover:bg-[#F1F6F3]'
+                : 'border border-[#E5E7EB] bg-white text-[#1B1F23] hover:bg-[#F1F6F3]'
             }`}
           >
             <span>{t.label}</span>
@@ -415,25 +365,25 @@ export const AdminPage: React.FC = () => {
       {activeTab === 'overview' && (
         <div className="mt-6 space-y-6">
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
               <p className="text-xs text-slate-500">Abacuruzi bategereje KYC</p>
-              <p className="mt-1 text-2xl font-bold text-[#B45309] tabular-nums">
+              <p className="mt-1 text-2xl font-bold text-[#C0392B] tabular-nums">
                 {data.kpis.pendingSellers}
               </p>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
               <p className="text-xs text-slate-500">Ibirego bishya</p>
               <p className="mt-1 text-2xl font-bold text-[#C0392B] tabular-nums">
                 {data.kpis.newReports}
               </p>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
               <p className="text-xs text-slate-500">Ibicuruzwa ahagaragara</p>
               <p className="mt-1 text-2xl font-bold text-[#0B6E4F] tabular-nums">
                 {data.kpis.totalActiveProducts}
               </p>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
               <p className="text-xs text-slate-500">Abakanze WhatsApp (bose)</p>
               <p className="mt-1 text-2xl font-bold text-[#1B1F23] tabular-nums">
                 {data.kpis.wa_clicks}
@@ -442,7 +392,7 @@ export const AdminPage: React.FC = () => {
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <section className="rounded-2xl border border-slate-200 bg-white p-5">
+            <section className="rounded-lg border border-[#E5E7EB] bg-white p-5">
               <div className="flex items-center justify-between">
                 <h2 className="text-base font-bold text-[#1B1F23]">
                   Abacuruzi bategereje kugenzurwa
@@ -464,7 +414,7 @@ export const AdminPage: React.FC = () => {
                     .map((s) => (
                       <div
                         key={s.id}
-                        className="flex items-center justify-between rounded-xl border border-slate-200 p-3"
+                        className="flex items-center justify-between rounded-xl border border-[#E5E7EB] p-3"
                       >
                         <div>
                           <p className="text-sm font-semibold text-[#1B1F23]">
@@ -485,7 +435,7 @@ export const AdminPage: React.FC = () => {
               </div>
             </section>
 
-            <section className="rounded-2xl border border-slate-200 bg-white p-5">
+            <section className="rounded-lg border border-[#E5E7EB] bg-white p-5">
               <div className="flex items-center justify-between">
                 <h2 className="text-base font-bold text-[#1B1F23]">Ibikorwa bya vuba (Audit Log)</h2>
               </div>
@@ -515,15 +465,13 @@ export const AdminPage: React.FC = () => {
         </div>
       )}
 
-      {activeTab === 'assistant' && <AdminAssistantPanel onNavigate={navigate} />}
-
       {/* TAB 2: Sellers KYC Queue */}
       {activeTab === 'sellers' && (
         <section className="mt-6 space-y-3">
           {data.sellers.map((s) => (
             <div
               key={s.id}
-              className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4"
+              className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-[#E5E7EB] bg-white p-4"
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F1F6F3] text-[#0B6E4F]">
@@ -574,7 +522,7 @@ export const AdminPage: React.FC = () => {
             {filteredProducts.map((p) => (
               <div
                 key={p.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-3.5"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#E5E7EB] bg-white p-3.5"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <img
@@ -622,7 +570,6 @@ export const AdminPage: React.FC = () => {
             {[
               { id: 'all' as const, label: 'Byose' },
               { id: 'new' as const, label: 'Ibishya' },
-              { id: 'in_progress' as const, label: 'Biri gukorwaho' },
               { id: 'resolved' as const, label: 'Ibyakemutse' },
             ].map((f) => (
               <button
@@ -632,7 +579,7 @@ export const AdminPage: React.FC = () => {
                 className={`min-h-[40px] rounded-xl px-3.5 text-xs font-semibold ${
                   reportFilter === f.id
                     ? 'bg-[#0B6E4F] text-white'
-                    : 'border border-slate-200 bg-white text-[#1B1F23]'
+                    : 'border border-[#E5E7EB] bg-white text-[#1B1F23]'
                 }`}
               >
                 {f.label}
@@ -641,7 +588,7 @@ export const AdminPage: React.FC = () => {
           </div>
 
           {filteredReports.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-600">
+            <div className="rounded-lg border border-dashed border-slate-300 p-8 text-center text-sm text-slate-600">
               Nta birego bihari muri iki gice.
             </div>
           ) : (
@@ -649,7 +596,7 @@ export const AdminPage: React.FC = () => {
               {filteredReports.map((rep) => (
                 <div
                   key={rep.id}
-                  className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3"
+                  className="rounded-lg border border-[#E5E7EB] bg-white p-4 space-y-3"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="flex items-start gap-2.5">
@@ -664,79 +611,36 @@ export const AdminPage: React.FC = () => {
                       </div>
                     </div>
                     <span className="text-xs font-semibold text-slate-500">
-                      {rep.status === 'resolved' ? 'Cyakemutse' : rep.status === 'in_progress' ? 'Birimo gukorwaho' : 'Gishya'}
+                      {rep.status === 'resolved' ? 'Cyakemutse' : 'Gishya'}
                     </span>
                   </div>
 
                   <p className="text-sm text-slate-700">{rep.details}</p>
 
-                  <div className="rounded-xl border border-slate-200 bg-[#F8FAF9] p-3 space-y-2">
-                    <p className="text-xs text-slate-600">
-                      Nimero yo gusubizwa: <strong className="tabular-nums text-[#1B1F23]">{rep.reporter_phone || 'Nta nimero yatanze'}</strong>
-                    </p>
-                    <label htmlFor={'report-reply-' + rep.id} className="block text-xs font-semibold text-[#1B1F23]">
-                      Igisubizo cya Admin
-                    </label>
-                    <textarea
-                      id={'report-reply-' + rep.id}
-                      rows={2}
-                      maxLength={1000}
-                      value={reportReplyDrafts[rep.id] ?? rep.resolution ?? ''}
-                      onChange={(event) => {
-                        const value = event.target.value;
-                        setReportReplyDrafts((current) => ({ ...current, [rep.id]: value }));
-                        setSavedReportReplies((current) => {
-                          const next = { ...current };
-                          delete next[rep.id];
-                          return next;
-                        });
-                      }}
-                      placeholder="Andika igisubizo uzaha uwatanze ikibazo..."
-                      className="w-full rounded-xl border border-slate-300 bg-white p-3 text-sm"
-                    />
-                    <div className="flex flex-wrap gap-2">
+                  {rep.status !== 'resolved' ? (
+                    <div className="flex flex-wrap gap-2 pt-1">
                       <button
                         type="button"
-                        onClick={() => void handleSaveReportReply(rep.id, reportReplyDrafts[rep.id] ?? rep.resolution ?? '')}
-                        className="min-h-[40px] rounded-xl bg-[#0B6E4F] px-3.5 text-xs font-semibold text-white"
+                        onClick={() => handleResolveReport(rep.id, false)}
+                        className="min-h-[44px] rounded-xl border border-[#0B6E4F] px-3.5 text-xs font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3]"
                       >
-                        Bika igisubizo
+                        Kemura (rekera aho)
                       </button>
-                      {rep.reporter_phone && savedReportReplies[rep.id] && (
-                        <a
-                          href={'https://wa.me/' + rep.reporter_phone.replace(/\D/g, '').replace(/^0/, '250') + '?text=' + encodeURIComponent('Muraho. Turagusubiza ku kibazo watanze kuri ISOKO: ' + savedReportReplies[rep.id])}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex min-h-[40px] items-center rounded-xl border border-[#0B6E4F] bg-white px-3.5 text-xs font-semibold text-[#0B6E4F]"
+                      {rep.target_type === 'product' && (
+                        <button
+                          type="button"
+                          onClick={() => handleResolveReport(rep.id, true)}
+                          className="min-h-[44px] rounded-xl bg-[#C0392B] px-3.5 text-xs font-semibold text-white hover:bg-[#A93226]"
                         >
-                          Ohereza kuri WhatsApp
-                        </a>
-                      )}
-                      {rep.status !== 'resolved' && (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => handleResolveReport(rep.id, false, reportReplyDrafts[rep.id] ?? rep.resolution ?? undefined)}
-                            className="min-h-[40px] rounded-xl border border-slate-300 bg-white px-3.5 text-xs font-semibold text-slate-700"
-                          >
-                            Funga ikibazo
-                          </button>
-                          {rep.target_type === 'product' && (
-                            <button
-                              type="button"
-                              onClick={() => handleResolveReport(rep.id, true, reportReplyDrafts[rep.id] ?? rep.resolution ?? undefined)}
-                              className="min-h-[40px] rounded-xl bg-[#C0392B] px-3.5 text-xs font-semibold text-white"
-                            >
-                              Hisha igicuruzwa & Kemura
-                            </button>
-                          )}
-                        </>
+                          Hisha igicuruzwa & Kemura
+                        </button>
                       )}
                     </div>
-                    {rep.resolution && rep.status === 'resolved' && (
-                      <p className="text-xs text-[#0B6E4F]">Umwanzuro wabitswe: {rep.resolution}</p>
-                    )}
-                  </div>
+                  ) : (
+                    rep.resolution && (
+                      <p className="text-xs text-[#0B6E4F]">Umwanzuro: {rep.resolution}</p>
+                    )
+                  )}
                 </div>
               ))}
             </div>
@@ -747,7 +651,7 @@ export const AdminPage: React.FC = () => {
       {/* TAB 5: Kwamamaza / Carousel Campaigns */}
       {activeTab === 'campaigns' && (
         <div className="mt-6 grid gap-6 lg:grid-cols-12">
-          <section className="lg:col-span-5 rounded-2xl border border-slate-200 bg-white p-5 space-y-4">
+          <section className="lg:col-span-5 rounded-lg border border-[#E5E7EB] bg-white p-5 space-y-4">
             <div className="flex items-center gap-2">
               <Megaphone className="h-5 w-5 text-[#0B6E4F]" aria-hidden="true" />
               <h2 className="font-display text-base font-bold text-[#1B1F23]">
@@ -852,26 +756,26 @@ export const AdminPage: React.FC = () => {
                   <label htmlFor="camp-image" className="block text-xs font-semibold text-[#1B1F23]">
                     Ifoto y’itangazo
                   </label>
-                  <input
+                  <select
                     id="camp-image"
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    onChange={(e) => void handleCampaignImage(e.target.files?.[0])}
-                    className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"
-                  />
-                  {campImage && (
-                    <img src={campImage} alt="Ifoto y’itangazo" className="mt-2 h-28 w-full rounded-xl object-cover" />
-                  )}
-                  <p className="mt-1 text-[11px] text-slate-500">JPEG, PNG cyangwa WebP; ifoto izabikwa muri Object Storage ya Isoko.</p>
+                    value={campImage}
+                    onChange={(e) => setCampImage(e.target.value)}
+                    className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 bg-white px-3 text-sm"
+                  >
+                    {CAMPAIGN_BANNER_PRESETS.map((preset) => (
+                      <option key={preset.url} value={preset.url}>
+                        {preset.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
               <button
                 type="submit"
-                disabled={campImageBusy || !campImage}
-                className="min-h-[44px] w-full rounded-xl bg-[#0B6E4F] px-4 text-sm font-semibold text-white hover:bg-[#08553D] disabled:opacity-50"
+                className="min-h-[44px] w-full rounded-xl bg-[#0B6E4F] px-4 text-sm font-semibold text-white hover:bg-[#08553D]"
               >
-                {campImageBusy ? 'Tegereza...' : 'Shyira kuri Carousel'}
+                Shyira kuri Carousel
               </button>
             </form>
           </section>
@@ -888,7 +792,7 @@ export const AdminPage: React.FC = () => {
                 return (
                   <article
                     key={camp.id}
-                    className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between"
+                    className="flex flex-col gap-3 rounded-lg border border-[#E5E7EB] bg-white p-4 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div className="flex items-start gap-3.5 min-w-0">
                       <img
@@ -916,7 +820,7 @@ export const AdminPage: React.FC = () => {
                         type="button"
                         onClick={() => handleShiftCampaignOrder(camp, -1)}
                         aria-label={`Zamura ${camp.title}`}
-                        className="flex min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-slate-200 text-slate-700 hover:bg-[#F1F6F3]"
+                        className="flex min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-[#E5E7EB] text-slate-700 hover:bg-[#F1F6F3]"
                       >
                         <ArrowUp className="h-4 w-4" aria-hidden="true" />
                       </button>
@@ -924,7 +828,7 @@ export const AdminPage: React.FC = () => {
                         type="button"
                         onClick={() => handleShiftCampaignOrder(camp, 1)}
                         aria-label={`Manura ${camp.title}`}
-                        className="flex min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-slate-200 text-slate-700 hover:bg-[#F1F6F3]"
+                        className="flex min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-[#E5E7EB] text-slate-700 hover:bg-[#F1F6F3]"
                       >
                         <ArrowDown className="h-4 w-4" aria-hidden="true" />
                       </button>
@@ -933,7 +837,7 @@ export const AdminPage: React.FC = () => {
                         onClick={() => handleToggleCampaign(camp)}
                         className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border px-3 text-xs font-semibold ${
                           camp.active
-                            ? 'border-[#E8A33D] bg-[#E8A33D]/10 text-[#9A5B00]'
+                            ? 'border-[#C0392B]/40 bg-[#FBEAE8] text-[#8E2A20]'
                             : 'border-[#0B6E4F] bg-[#0B6E4F] text-white'
                         }`}
                       >
@@ -953,7 +857,7 @@ export const AdminPage: React.FC = () => {
                         type="button"
                         onClick={() => handleDeleteCampaign(camp.id)}
                         aria-label={`Siba ${camp.title}`}
-                        className="flex min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-slate-200 text-[#C0392B] hover:bg-[#C0392B]/10"
+                        className="flex min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-[#E5E7EB] text-[#C0392B] hover:bg-[#C0392B]/10"
                       >
                         <Trash2 className="h-4 w-4" aria-hidden="true" />
                       </button>
@@ -968,7 +872,7 @@ export const AdminPage: React.FC = () => {
       {/* TAB 6: Settings, Synonyms (K-06), Phase Flags & Audit Log */}
       {activeTab === 'settings' && (
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          <section className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4">
+          <section className="rounded-lg border border-[#E5E7EB] bg-white p-5 space-y-4">
             <div className="flex items-center gap-2">
               <Settings className="h-5 w-5 text-[#0B6E4F]" aria-hidden="true" />
               <h2 className="text-base font-bold text-[#1B1F23]">
@@ -976,7 +880,7 @@ export const AdminPage: React.FC = () => {
               </h2>
             </div>
 
-            <label className="flex items-center justify-between rounded-xl border border-slate-200 p-3.5 cursor-pointer">
+            <label className="flex items-center justify-between rounded-xl border border-[#E5E7EB] p-3.5 cursor-pointer">
               <div>
                 <p className="text-sm font-semibold text-[#1B1F23]">
                   P3: Ibikoresho by’amatelefoni
@@ -995,7 +899,7 @@ export const AdminPage: React.FC = () => {
               />
             </label>
 
-            <label className="flex items-center justify-between rounded-xl border border-slate-200 p-3.5 cursor-pointer">
+            <label className="flex items-center justify-between rounded-xl border border-[#E5E7EB] p-3.5 cursor-pointer">
               <div>
                 <p className="text-sm font-semibold text-[#1B1F23]">
                   P4: Kwamamaza mu ishakiro (Ads)
@@ -1012,7 +916,7 @@ export const AdminPage: React.FC = () => {
               />
             </label>
 
-            <div className="border-t border-slate-200 pt-4">
+            <div className="border-t border-[#E5E7EB] pt-4">
               <h3 className="text-sm font-bold text-[#1B1F23]">
                 Impuzanyito z’ishakiro (Synonyms)
               </h3>
@@ -1064,7 +968,7 @@ export const AdminPage: React.FC = () => {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-5">
+          <section className="rounded-lg border border-[#E5E7EB] bg-white p-5">
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-[#0B6E4F]" aria-hidden="true" />
               <h2 className="text-base font-bold text-[#1B1F23]">
@@ -1103,8 +1007,8 @@ export const AdminPage: React.FC = () => {
           aria-labelledby="kyc-modal-title"
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto"
         >
-          <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl space-y-4 my-8">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+          <div className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl space-y-4 my-8">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
               <div>
                 <h2 id="kyc-modal-title" className="text-lg font-bold text-[#1B1F23]">
                   Igenzura ry’ibyangombwa (KYC)
@@ -1131,32 +1035,30 @@ export const AdminPage: React.FC = () => {
                   <p>
                     <strong>Amazina ku ndangamuntu:</strong> {kycDoc.full_name_on_id}
                   </p>
+                  <p className="tabular-nums">
+                    <strong>Indangamuntu:</strong> {kycDoc.national_id_number}
+                  </p>
                   <p>
                     <strong>Ubwoko bw’ubucuruzi:</strong> {kycDoc.business_type}
                   </p>
-                  <p className="text-slate-600">
-                    Nimero y’indangamuntu ibikwa mu buryo bw’ibanga; Admin ntabona nimero yuzuye kuri uru rupapuro.
+                  <p className="tabular-nums">
+                    <strong>TIN:</strong> {kycDoc.tin || 'Ntabwo yatanzwe'}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   {[
-                    { label: 'Indangamuntu (Imbere)', src: kycDoc.idFrontUrl },
-                    { label: 'Indangamuntu (Inyuma)', src: kycDoc.idBackUrl },
-                    { label: 'Selfie', src: kycDoc.selfieUrl },
-                    { label: 'Iduka', src: kycDoc.shopPhotoUrl },
+                    { label: 'Indangamuntu (Imbere)', src: kycDoc.id_front_path },
+                    { label: 'Indangamuntu (Inyuma)', src: kycDoc.id_back_path },
+                    { label: 'Selfie', src: kycDoc.selfie_path },
+                    { label: 'Iduka', src: kycDoc.shop_photo_path },
                   ].map((doc) => (
-                    <div key={doc.label} className="rounded-xl border border-slate-200 p-2">
-                      {doc.src ? (
-                        <img
-                          src={doc.src}
-                          alt={doc.label}
-                          referrerPolicy="no-referrer"
-                          className="aspect-4/3 w-full rounded-lg object-cover"
-                        />
-                      ) : (
-                        <div className="flex aspect-4/3 items-center justify-center rounded-lg bg-slate-100 text-xs text-slate-500">Nta foto ibonetse</div>
-                      )}
+                    <div key={doc.label} className="rounded-xl border border-[#E5E7EB] p-2">
+                      <img
+                        src={doc.src}
+                        alt={doc.label}
+                        className="aspect-4/3 w-full rounded-lg object-cover"
+                      />
                       <p className="mt-1 text-center text-[11px] font-medium text-slate-600">
                         {doc.label}
                       </p>
@@ -1203,7 +1105,7 @@ export const AdminPage: React.FC = () => {
                         key={tpl}
                         type="button"
                         onClick={() => setReviewReason(tpl)}
-                        className="rounded-lg border border-slate-200 bg-[#F1F6F3] px-2.5 py-1 text-[11px] text-slate-700 hover:border-[#0B6E4F]"
+                        className="rounded-lg border border-[#E5E7EB] bg-[#F1F6F3] px-2.5 py-1 text-[11px] text-slate-700 hover:border-[#0B6E4F]"
                       >
                         {tpl.slice(0, 42)}…
                       </button>
@@ -1211,7 +1113,7 @@ export const AdminPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-200">
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-[#E5E7EB]">
                   <button
                     type="button"
                     onClick={() => handleSellerDecision('approved')}
@@ -1223,7 +1125,7 @@ export const AdminPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleSellerDecision('needs_changes')}
-                    className="min-h-[44px] rounded-xl border border-[#E8A33D] bg-[#E8A33D]/15 px-4 text-xs font-semibold text-[#9A5B00]"
+                    className="min-h-[44px] rounded-xl border border-[#C0392B]/40 bg-[#FBEAE8] px-4 text-xs font-semibold text-[#8E2A20]"
                   >
                     Saba gukosora
                   </button>

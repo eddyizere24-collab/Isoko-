@@ -32,7 +32,7 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({ open, onClose, shopNam
       aria-labelledby="qr-modal-title"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
     >
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl text-center">
+      <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-xl text-center">
         <div className="flex items-center justify-between pb-2">
           <h2 id="qr-modal-title" className="text-base font-bold text-[#1B1F23]">
             QR Code y'iduka
@@ -55,7 +55,7 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({ open, onClose, shopNam
             <img
               src={dataUrl}
               alt={`QR Code ya ${shopName}`}
-              className="h-56 w-56 rounded-xl border border-slate-200 p-2"
+              className="h-56 w-56 rounded-xl border border-[#E5E7EB] p-2"
             />
           ) : (
             <div className="h-56 w-56 animate-pulse rounded-xl bg-[#F1F6F3]" />

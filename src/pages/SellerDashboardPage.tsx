@@ -67,7 +67,7 @@ export const SellerDashboardPage: React.FC = () => {
   if (loading) {
     return (
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <div className="h-32 animate-pulse rounded-2xl bg-[#F1F6F3]" />
+        <div className="h-32 animate-pulse rounded-lg bg-[#F1F6F3]" />
       </main>
     );
   }
@@ -96,10 +96,10 @@ export const SellerDashboardPage: React.FC = () => {
       {data.profile.status !== 'approved' && (
         <div
           role="status"
-          className="mb-6 rounded-2xl border border-[#E8A33D]/50 bg-[#E8A33D]/15 p-4 text-sm text-[#1B1F23]"
+          className="mb-6 rounded-lg border border-[#C0392B]/35 bg-[#FBEAE8] p-4 text-sm text-[#1B1F23]"
         >
           <div className="flex items-start gap-3">
-            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#B45309]" aria-hidden="true" />
+            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#C0392B]" aria-hidden="true" />
             <div>
               <p className="font-bold">
                 {data.profile.status === 'pending'
@@ -125,7 +125,7 @@ export const SellerDashboardPage: React.FC = () => {
       )}
 
       {/* Header + Primary Action */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-slate-200">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[#E5E7EB]">
         <div>
           <p className="text-xs font-semibold text-[#0B6E4F]">Ibiro by’umucuruzi</p>
           <h1 className="text-2xl font-bold text-[#1B1F23]">{data.shop.name}</h1>
@@ -171,27 +171,27 @@ export const SellerDashboardPage: React.FC = () => {
 
       {/* KPI Row */}
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
           <p className="text-xs font-medium text-slate-500">Ibicuruzwa biri ahagaragara</p>
           <p className="mt-1 text-2xl font-bold text-[#1B1F23] tabular-nums">
             {activeCount} <span className="text-sm font-normal text-slate-400">/ {data.shop.product_limit}</span>
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
           <p className="text-xs font-medium text-slate-500">Abarebye (iminsi 7)</p>
           <p className="mt-1 flex items-center gap-2 text-2xl font-bold text-[#1B1F23] tabular-nums">
             <Eye className="h-5 w-5 text-[#0B6E4F]" aria-hidden="true" />
             {data.stats7d.views}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
           <p className="text-xs font-medium text-slate-500">Abakanze WhatsApp (iminsi 7)</p>
           <p className="mt-1 flex items-center gap-2 text-2xl font-bold text-[#0B6E4F] tabular-nums">
-            <MessageCircle className="h-5 w-5 text-[#25D366]" aria-hidden="true" />
+            <MessageCircle className="h-5 w-5 text-[#1A7F43]" aria-hidden="true" />
             {data.stats7d.wa_clicks}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <div className="rounded-lg border border-[#E5E7EB] bg-white p-4">
           <p className="text-xs font-medium text-slate-500">Abashyize mu gare (iminsi 7)</p>
           <p className="mt-1 text-2xl font-bold text-[#1B1F23] tabular-nums">
             {data.stats7d.cart_adds}
@@ -204,7 +204,7 @@ export const SellerDashboardPage: React.FC = () => {
         <button
           type="button"
           onClick={() => navigate('/umucuruzi/ibicuruzwa')}
-          className="flex min-h-[76px] items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 text-left transition hover:border-[#0B6E4F]"
+          className="flex min-h-[76px] items-center gap-4 rounded-lg border border-[#E5E7EB] bg-white p-4 text-left transition hover:border-[#0B6E4F]"
         >
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F1F6F3] text-[#0B6E4F]">
             <Package className="h-5 w-5" aria-hidden="true" />
@@ -220,7 +220,7 @@ export const SellerDashboardPage: React.FC = () => {
         <button
           type="button"
           onClick={() => navigate('/umucuruzi/iduka')}
-          className="flex min-h-[76px] items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 text-left transition hover:border-[#0B6E4F]"
+          className="flex min-h-[76px] items-center gap-4 rounded-lg border border-[#E5E7EB] bg-white p-4 text-left transition hover:border-[#0B6E4F]"
         >
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F1F6F3] text-[#0B6E4F]">
             <Settings className="h-5 w-5" aria-hidden="true" />
@@ -234,7 +234,7 @@ export const SellerDashboardPage: React.FC = () => {
         <button
           type="button"
           onClick={() => navigate('/umucuruzi/imibare')}
-          className="flex min-h-[76px] items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 text-left transition hover:border-[#0B6E4F]"
+          className="flex min-h-[76px] items-center gap-4 rounded-lg border border-[#E5E7EB] bg-white p-4 text-left transition hover:border-[#0B6E4F]"
         >
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F1F6F3] text-[#0B6E4F]">
             <BarChart3 className="h-5 w-5" aria-hidden="true" />
@@ -248,7 +248,7 @@ export const SellerDashboardPage: React.FC = () => {
 
       {/* Section 9.6: Stale product 30-day check ("Iracyahari?") */}
       {data.staleProducts.length > 0 && (
-        <section className="mt-8 rounded-2xl border border-[#E8A33D]/50 bg-[#FFFBEB] p-5">
+        <section className="mt-8 rounded-lg border border-[#C0392B]/35 bg-[#FBEAE8] p-5">
           <h2 className="text-base font-bold text-[#1B1F23]">
             {RW.still_available} — Ibicuruzwa bimaze iminsi 30 bitavuguruwe ({data.staleProducts.length})
           </h2>
@@ -260,7 +260,7 @@ export const SellerDashboardPage: React.FC = () => {
             {data.staleProducts.map((p) => (
               <div
                 key={p.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#E5E7EB] bg-white p-3"
               >
                 <div className="flex items-center gap-3">
                   <img
@@ -318,7 +318,7 @@ export const SellerDashboardPage: React.FC = () => {
           {data.products.slice(0, 6).map((p) => (
             <div
               key={p.id}
-              className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3"
+              className="flex items-center gap-3 rounded-xl border border-[#E5E7EB] bg-white p-3"
             >
               <img
                 src={p.images[0]?.path_thumb || p.images[0]?.path_full}

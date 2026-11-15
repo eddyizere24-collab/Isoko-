@@ -30,13 +30,13 @@ export const SellerAnalyticsPage: React.FC = () => {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-slate-200">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-[#E5E7EB]">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate('/umucuruzi')}
             aria-label="Subira inyuma"
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-slate-200 hover:bg-[#F1F6F3]"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#E5E7EB] hover:bg-[#F1F6F3]"
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -48,7 +48,7 @@ export const SellerAnalyticsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex rounded-xl border border-slate-200 bg-white p-1">
+        <div className="flex rounded-xl border border-[#E5E7EB] bg-white p-1">
           <button
             type="button"
             onClick={() => setPeriod('7d')}
@@ -71,7 +71,7 @@ export const SellerAnalyticsPage: React.FC = () => {
       </div>
 
       {loading || !stats || !data ? (
-        <div className="mt-6 h-48 animate-pulse rounded-2xl bg-[#F1F6F3]" />
+        <div className="mt-6 h-48 animate-pulse rounded-lg bg-[#F1F6F3]" />
       ) : (
         <>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-5">
@@ -84,7 +84,7 @@ export const SellerAnalyticsPage: React.FC = () => {
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <div key={item.label} className="rounded-2xl border border-slate-200 bg-white p-4">
+                <div key={item.label} className="rounded-lg border border-[#E5E7EB] bg-white p-4">
                   <div className="flex items-center justify-between text-slate-400">
                     <span className="text-xs font-medium text-slate-500">{item.label}</span>
                     <Icon className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
@@ -96,7 +96,7 @@ export const SellerAnalyticsPage: React.FC = () => {
           </div>
 
           {data.topWa && (
-            <section className="mt-6 rounded-2xl border border-[#25D366]/40 bg-[#F1F6F3] p-5">
+            <section className="mt-6 rounded-lg border border-[#E5E7EB] bg-[#E8F3EE]/50 p-5">
               <p className="text-xs font-bold uppercase tracking-wider text-[#0B6E4F]">
                 Igicuruzwa cyakunzwe kuri WhatsApp kurusha ibindi
               </p>
@@ -126,7 +126,7 @@ export const SellerAnalyticsPage: React.FC = () => {
             </section>
           )}
 
-          <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5">
+          <section className="mt-6 rounded-lg border border-[#E5E7EB] bg-white p-5">
             <h2 className="text-base font-bold text-[#1B1F23]">
               Ibicuruzwa 5 byasuwe cyane (iminsi 7)
             </h2>

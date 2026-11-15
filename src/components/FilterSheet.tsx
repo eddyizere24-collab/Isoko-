@@ -54,7 +54,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
 
   const content = (
     <div className="space-y-5">
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+      <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
           <h2 className="text-base font-bold text-[#1B1F23]">{RW.filter}</h2>
@@ -103,7 +103,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               id="mysize-shoe"
               value={mySize.shoeSize}
               onChange={(e) => onSaveMySize({ ...mySize, shoeSize: e.target.value })}
-              className="mt-1 h-9 w-full rounded-lg border border-slate-200 bg-white px-2 text-xs"
+              className="mt-1 h-9 w-full rounded-lg border border-[#E5E7EB] bg-white px-2 text-xs"
             >
               <option value="">Ntayo</option>
               {SIZE_SETS.shoes_adult.map((s) => (
@@ -121,7 +121,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               id="mysize-cloth"
               value={mySize.clothingSize}
               onChange={(e) => onSaveMySize({ ...mySize, clothingSize: e.target.value })}
-              className="mt-1 h-9 w-full rounded-lg border border-slate-200 bg-white px-2 text-xs"
+              className="mt-1 h-9 w-full rounded-lg border border-[#E5E7EB] bg-white px-2 text-xs"
             >
               <option value="">Ntayo</option>
               {SIZE_SETS.clothes_letters.map((s) => (
@@ -143,7 +143,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
           id="filter-cat"
           value={filters.categorySlug}
           onChange={(e) => onChange({ ...filters, categorySlug: e.target.value })}
-          className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm"
+          className="mt-1.5 h-11 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 text-sm"
         >
           <option value="">Ibyiciro byose</option>
           {topCategories.map((c) => (
@@ -171,7 +171,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               placeholder="Kuva"
               value={filters.minPrice}
               onChange={(e) => onChange({ ...filters, minPrice: e.target.value })}
-              className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm tabular-nums"
+              className="h-11 w-full rounded-xl border border-[#E5E7EB] px-3 text-sm tabular-nums"
             />
           </div>
           <div>
@@ -187,7 +187,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
               placeholder="Kugeza"
               value={filters.maxPrice}
               onChange={(e) => onChange({ ...filters, maxPrice: e.target.value })}
-              className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm tabular-nums"
+              className="h-11 w-full rounded-xl border border-[#E5E7EB] px-3 text-sm tabular-nums"
             />
           </div>
         </div>
@@ -227,7 +227,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
           id="filter-size"
           value={filters.size}
           onChange={(e) => onChange({ ...filters, size: e.target.value })}
-          className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm"
+          className="mt-1.5 h-11 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 text-sm"
         >
           <option value="">Size zose</option>
           {allSizes.map((s) => (
@@ -247,7 +247,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
           id="filter-color"
           value={filters.color}
           onChange={(e) => onChange({ ...filters, color: e.target.value })}
-          className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm"
+          className="mt-1.5 h-11 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 text-sm"
         >
           <option value="">Amabara yose</option>
           {COLORS_LIST.map((c) => (
@@ -267,7 +267,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
           id="filter-district"
           value={filters.districtId}
           onChange={(e) => onChange({ ...filters, districtId: e.target.value })}
-          className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm"
+          className="mt-1.5 h-11 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 text-sm"
         >
           <option value="">Uturere twose</option>
           {RWANDA_DISTRICTS.map((d) => (
@@ -320,7 +320,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
         aria-label={RW.filter}
         className="fixed inset-0 z-50 flex items-end bg-black/50 lg:hidden"
       >
-        <div className="w-full max-h-[88vh] overflow-y-auto rounded-t-3xl bg-white p-5 shadow-xl">
+        <div className="w-full max-h-[88vh] overflow-y-auto rounded-t-xl bg-white p-5 shadow-xl">
           <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-slate-300" />
           {content}
         </div>
@@ -328,5 +328,5 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     );
   }
 
-  return <div className="rounded-2xl border border-slate-200 bg-white p-5">{content}</div>;
+  return <div className="rounded-lg border border-[#E5E7EB] bg-white p-5">{content}</div>;
 };

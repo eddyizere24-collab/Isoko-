@@ -48,7 +48,7 @@ export const OfflineAndPwaBar: React.FC = () => {
       {!isOnline && (
         <div
           role="status"
-          className="border-b border-[#E8A33D]/40 bg-[#FEF3C7] px-4 py-2 text-center text-xs font-semibold text-[#92400E]"
+          className="border-b border-[#C0392B]/35 bg-[#FBEAE8] px-4 py-2 text-center text-xs font-semibold text-[#8E2A20]"
         >
           <span className="inline-flex items-center gap-2">
             <WifiOff className="h-4 w-4" aria-hidden="true" />
@@ -71,7 +71,7 @@ export const OfflineAndPwaBar: React.FC = () => {
       )}
 
       {showInstallBanner && (
-        <div className="border-b border-slate-200 bg-white px-4 py-2">
+        <div className="border-b border-[#E5E7EB] bg-white px-4 py-2">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-xs text-[#1B1F23]">
               <Download className="h-4 w-4 text-[#0B6E4F] shrink-0" aria-hidden="true" />
@@ -117,7 +117,7 @@ export const OfflineAndPwaBar: React.FC = () => {
           aria-modal="true"
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
         >
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+          <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-xl">
             <h3 className="text-base font-bold text-[#1B1F23]">{RW.install_app}</h3>
             <p className="mt-2 text-sm text-slate-600 leading-relaxed">
               1. Kanda akamenyetso ka <strong>Share</strong> hasi muri Safari.<br />

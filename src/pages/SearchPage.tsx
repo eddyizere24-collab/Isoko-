@@ -96,7 +96,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ initialCategorySlug }) =
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-      <div className="flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 border-b border-[#E5E7EB] pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-bold text-[#1B1F23]">
             {q
@@ -111,11 +111,11 @@ export const SearchPage: React.FC<SearchPageProps> = ({ initialCategorySlug }) =
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex w-full min-w-0 items-center gap-2 sm:w-auto">
           <button
             type="button"
             onClick={() => setMobileFilterOpen(true)}
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-[#1B1F23] lg:hidden"
+            className="inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-lg border border-[#CBD5D1] bg-white px-3.5 text-sm font-semibold text-[#1B1F23] lg:hidden"
           >
             <SlidersHorizontal className="h-4 w-4 text-[#0B6E4F]" aria-hidden="true" />
             <span>{RW.filter}</span>
@@ -136,7 +136,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ initialCategorySlug }) =
                 sort: e.target.value as ActiveFilters['sort'],
               })
             }
-            className="h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-[#1B1F23]"
+            className="h-11 min-w-0 flex-1 sm:flex-none rounded-lg border border-[#CBD5D1] bg-white px-2.5 text-sm font-medium text-[#1B1F23]"
           >
             {Object.entries(RW.sort_options).map(([val, label]) => (
               <option key={val} value={val}>
@@ -161,7 +161,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ initialCategorySlug }) =
 
         <div className="lg:col-span-9">
           {results.length === 0 ? (
-            <div className="rounded-2xl border border-slate-200 bg-[#F1F6F3] p-8 text-center">
+            <div className="rounded-lg border border-[#E5E7EB] bg-[#F1F6F3] p-8 text-center">
               <p className="text-base font-semibold text-[#1B1F23]">{RW.no_results}</p>
               <p className="mt-2 text-sm text-slate-600">
                 Gerageza guhindura ijambo cyangwa kuvanaho ibyungurura kugira ngo ubone ibindi bicuruzwa.

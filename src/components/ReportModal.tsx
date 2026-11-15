@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flag, X } from 'lucide-react';
+import { Flag, ShieldCheck, X } from 'lucide-react';
 import { RW } from '../i18n/rw';
 import { submitReport } from '../lib/api';
 import { getSessionId } from '../lib/storage';
@@ -24,6 +24,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
   const [type, setType] = useState<ReportType>('fake_price');
   const [details, setDetails] = useState('');
   const [reporterPhone, setReporterPhone] = useState('');
+  const [turnstileOk, setTurnstileOk] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -33,6 +34,10 @@ export const ReportModal: React.FC<ReportModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (!turnstileOk) {
+      setError('Banza wemeze ko utari robot.');
+      return;
+    }
     const errs = validateReportForm({ type, details, reporterPhone });
     if (Object.keys(errs).length > 0) {
       setError(Object.values(errs)[0]);
@@ -48,6 +53,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
         details,
         reporterPhone: reporterPhone.trim() || undefined,
         sessionId: getSessionId(),
+        turnstileOk,
       });
       setDone(true);
     } catch (err) {
@@ -64,8 +70,8 @@ export const ReportModal: React.FC<ReportModalProps> = ({
       aria-labelledby="report-modal-title"
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center sm:p-4"
     >
-      <div className="w-full max-w-md rounded-t-3xl bg-white p-6 shadow-xl sm:rounded-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+      <div className="w-full max-w-md rounded-t-xl bg-white p-6 shadow-xl sm:rounded-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
           <div className="flex items-center gap-2">
             <Flag className="h-5 w-5 text-[#C0392B]" aria-hidden="true" />
             <h2 id="report-modal-title" className="text-lg font-bold text-[#1B1F23]">
@@ -114,7 +120,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
                 id="report-type"
                 value={type}
                 onChange={(e) => setType(e.target.value as ReportType)}
-                className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm"
+                className="mt-1.5 h-11 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 text-sm"
               >
                 {Object.entries(RW.report_types).map(([val, label]) => (
                   <option key={val} value={val}>
@@ -136,7 +142,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
                 placeholder="Andika ibyo wabonye..."
-                className="mt-1.5 w-full rounded-xl border border-slate-200 p-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
+                className="mt-1.5 w-full rounded-xl border border-[#E5E7EB] p-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
               />
             </div>
 
@@ -150,9 +156,20 @@ export const ReportModal: React.FC<ReportModalProps> = ({
                 value={reporterPhone}
                 onChange={(e) => setReporterPhone(e.target.value)}
                 placeholder="0788123456"
-                className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 px-3 text-sm"
+                className="mt-1.5 h-11 w-full rounded-xl border border-[#E5E7EB] px-3 text-sm"
               />
             </div>
+
+            <label className="flex min-h-[44px] items-center gap-3 rounded-xl border border-[#E5E7EB] bg-[#F1F6F3] px-3.5 py-2 text-sm cursor-pointer">
+              <input
+                type="checkbox"
+                checked={turnstileOk}
+                onChange={(e) => setTurnstileOk(e.target.checked)}
+                className="h-4 w-4 accent-[#0B6E4F]"
+              />
+              <ShieldCheck className="h-4 w-4 text-[#0B6E4F] shrink-0" aria-hidden="true" />
+              <span>Ndi umuntu (kurinda ibisubirwamo)</span>
+            </label>
 
             {error && (
               <p role="alert" className="text-sm font-medium text-[#C0392B]">

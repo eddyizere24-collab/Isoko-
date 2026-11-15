@@ -10,7 +10,6 @@ import {
   Search,
   Share2,
   Truck,
-  Store,
 } from 'lucide-react';
 import { IsokoVerifiedSeal, RwandanGeometricPattern } from '../components/IsokoLogo';
 import { ProductCard } from '../components/ProductCard';
@@ -21,12 +20,13 @@ import { RW } from '../i18n/rw';
 import { fetchShopDetail, subscribeUpdates } from '../lib/api';
 import { trackEvent } from '../lib/track';
 import { buildWhatsAppLink } from '../lib/whatsapp';
-import { getSubscriberId } from '../lib/storage';
 import type { Product, Shop } from '../types/marketplace';
 
 interface ShopPageProps {
   slug: string;
 }
+
+const DEFAULT_COVER = '/src/assets/images/promo_kigali_market_1794567241262.jpg';
 
 export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
   const { navigate, followedShops, toggleFollowShop } = useMarketplace();
@@ -79,7 +79,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
   if (loading) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 space-y-6">
-        <div className="h-56 animate-pulse rounded-2xl bg-[#F1F6F3]" />
+        <div className="h-56 animate-pulse rounded-lg bg-[#F1F6F3]" />
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="aspect-square animate-pulse rounded-xl bg-[#F1F6F3]" />
@@ -130,7 +130,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
     toggleFollowShop(shop.id);
     subscribeUpdates({
       kind: 'shop_follow',
-      externalId: getSubscriberId(),
+      externalId: `shop_follow_${shop.id}`,
       shopId: shop.id,
       unsubscribe: isFollowing,
     }).catch(() => undefined);
@@ -148,31 +148,22 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 space-y-8">
       {/* Storefront Hero Banner + Verified Merchant Profile */}
-      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
-        {shop.cover_path ? (
-          <div className="relative h-40 w-full bg-[#0F1E18] sm:h-52">
-            <img
-              src={shop.cover_path}
-              alt={`Ifoto y'iduka ${shop.name}`}
-              referrerPolicy="no-referrer"
-              className="h-full w-full object-cover"
-            />
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent"
-            />
-            <div className="absolute bottom-3 hidden text-xs font-medium text-white/95 sm:left-[120px] sm:block">
-              Iduka riri kuri ISOKO · {shop.district_name}
-            </div>
+      <section className="overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-xs">
+        <div className="relative h-40 sm:h-52 w-full bg-[#0F1E18]">
+          <img
+            src={shop.cover_path || DEFAULT_COVER}
+            alt={`Ifoto y'iduka ${shop.name}`}
+            referrerPolicy="no-referrer"
+            className="h-full w-full object-cover"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent"
+          />
+          <div className="absolute bottom-3 sm:left-[120px] hidden sm:block text-xs font-medium text-white/95">
+            Iduka ryemewe ku Isoko · {shop.district_name}
           </div>
-        ) : (
-          <div className="imigongo-surface relative flex h-40 w-full items-center justify-center sm:h-52">
-            <div className="flex items-center gap-3 rounded-2xl border border-white/80 bg-white/85 px-5 py-3 shadow-sm">
-              <Store className="h-8 w-8 text-[#0B6E4F]" aria-hidden="true" />
-              <span className="font-display text-sm font-bold text-[#0B6E4F]">Iduka riri kuri ISOKO</span>
-            </div>
-          </div>
-        )}
+        </div>
         <RwandanGeometricPattern className="h-2 w-full text-[#0B6E4F]/20 bg-[#F1F6F3]" />
 
         <div className="p-5 sm:p-6">
@@ -182,25 +173,21 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                 <img
                   src={shop.logo_path}
                   alt={shop.name}
-                  className="-mt-12 sm:-mt-14 relative z-10 h-20 w-20 shrink-0 rounded-2xl border-4 border-white bg-white object-cover shadow-md"
+                  className="-mt-12 sm:-mt-14 relative z-10 h-20 w-20 shrink-0 rounded-lg border-4 border-white bg-white object-cover shadow-md"
                 />
               ) : (
-                <div className="-mt-12 sm:-mt-14 relative z-10 flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border-4 border-white bg-[#0B6E4F] text-xl font-bold text-white shadow-md">
+                <div className="-mt-12 sm:-mt-14 relative z-10 flex h-20 w-20 shrink-0 items-center justify-center rounded-lg border-4 border-white bg-[#0B6E4F] text-xl font-bold text-white shadow-md">
                   {shop.name.slice(0, 2).toUpperCase()}
                 </div>
               )}
 
               <div>
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <h1 className="font-display text-2xl font-extrabold text-[#1B1F23]">{shop.name}</h1>
-                  {shop.identity_status === 'verified' ? (
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0B6E4F]">
-                      <IsokoVerifiedSeal className="h-4 w-4" />
-                      <span>{RW.verified}</span>
-                    </span>
-                  ) : (
-                    <span className="text-xs font-medium text-slate-500">Konti ntiragenzurwa mu byangombwa</span>
-                  )}
+                  <h1 className="font-display text-2xl font-bold text-[#1B1F23]">{shop.name}</h1>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#0B6E4F]">
+                    <IsokoVerifiedSeal className="h-4 w-4" />
+                    <span>{RW.verified}</span>
+                  </span>
                 </div>
 
                 <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-600">
@@ -216,11 +203,6 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                 </div>
 
                 {shop.about && <p className="mt-2.5 text-sm text-slate-700 max-w-xl">{shop.about}</p>}
-                <div className="mt-4 flex flex-col gap-3 rounded-2xl bg-[#F7FAF8] p-4 sm:flex-row sm:items-start">
-                  {shop.seller_avatar_path?<img src={shop.seller_avatar_path} alt={shop.seller_name||'Umucuruzi'} className="h-16 w-16 shrink-0 rounded-full border-2 border-white object-cover shadow-sm"/>:<div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-white text-xl font-bold text-[#0B6E4F]">{(shop.seller_name||shop.name).slice(0,1).toUpperCase()}</div>}
-                  <div className="min-w-0 flex-1"><p className="text-xs font-semibold uppercase tracking-wide text-[#0B6E4F]">Uwo mu mucuruzi</p><p className="mt-0.5 text-sm font-bold text-[#1B1F23]">{shop.seller_name||shop.name}</p>{shop.seller_bio&&<p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-slate-700">{shop.seller_bio}</p>}
-                  {Object.entries(shop.social_links??{}).filter(([,url])=>/^https:\/\//i.test(url)).length>0&&<div className="mt-2 flex flex-wrap gap-2">{Object.entries(shop.social_links??{}).filter(([,url])=>/^https:\/\//i.test(url)).map(([key,url])=><a key={key} href={url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-9 items-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold capitalize text-[#0B6E4F] hover:bg-[#F1F6F3]">{key}</a>)}</div>}</div>
-                </div>
 
                 <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-slate-600">
                   {shop.delivery_text && (
@@ -246,7 +228,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackEvent('wa_click', null, shop.id)}
-                className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#25D366] px-4 text-sm font-semibold text-white hover:bg-[#1FB858]"
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#1A7F43] px-4 text-sm font-semibold text-white hover:bg-[#146635]"
               >
                 <MessageCircle className="h-4 w-4" aria-hidden="true" />
                 <span>WhatsApp</span>
@@ -331,7 +313,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
               onChange={(e) => setShopSearch(e.target.value)}
               placeholder="Shakisha muri iri duka..."
               aria-label="Shakisha muri iri duka"
-              className="min-h-[44px] w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
+              className="min-h-[44px] w-full rounded-xl border border-[#E5E7EB] bg-white pl-9 pr-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
             />
           </div>
 
@@ -348,7 +330,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
 
       {/* Product Grid */}
       {filteredProducts.length === 0 ? (
-        <div className="rounded-2xl bg-[#F1F6F3] p-8 text-center">
+        <div className="rounded-lg bg-[#F1F6F3] p-8 text-center">
           <p className="text-sm font-medium text-slate-700">
             Nta bicuruzwa bihuye n'ibyo wasabye muri iri duka.
           </p>

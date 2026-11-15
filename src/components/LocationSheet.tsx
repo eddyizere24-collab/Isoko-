@@ -66,8 +66,8 @@ export const LocationSheet: React.FC = () => {
       aria-labelledby="location-modal-title"
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4"
     >
-      <div className="w-full max-w-md rounded-t-3xl bg-white p-6 shadow-xl sm:rounded-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+      <div className="w-full max-w-md rounded-t-xl bg-white p-6 shadow-xl sm:rounded-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
           <div className="flex items-center gap-2">
             <MapPin className="h-5 w-5 text-[#0B6E4F]" aria-hidden="true" />
             <h2 id="location-modal-title" className="text-lg font-bold text-[#1B1F23]">
@@ -101,7 +101,7 @@ export const LocationSheet: React.FC = () => {
                 setDistrictId(Number(e.target.value));
                 setSectorId('');
               }}
-              className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none"
+              className="mt-1.5 h-11 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none"
             >
               {RWANDA_DISTRICTS.map((d) => (
                 <option key={d.id} value={d.id}>
@@ -120,7 +120,7 @@ export const LocationSheet: React.FC = () => {
                 id="loc-sector"
                 value={sectorId}
                 onChange={(e) => setSectorId(e.target.value ? Number(e.target.value) : '')}
-                className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none"
+                className="mt-1.5 h-11 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 text-sm text-[#1B1F23] focus:border-[#0B6E4F] focus:outline-none"
               >
                 <option value="">Hitamo umurenge (si itegeko)</option>
                 {sectors.map((s) => (
@@ -143,7 +143,7 @@ export const LocationSheet: React.FC = () => {
               value={landmark}
               onChange={(e) => setLandmark(e.target.value)}
               placeholder="Urugero: Hafi ya Gare ya Kimironko"
-              className="mt-1.5 h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
+              className="mt-1.5 h-11 w-full rounded-xl border border-[#E5E7EB] bg-white px-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
             />
           </div>
 
@@ -169,7 +169,7 @@ export const LocationSheet: React.FC = () => {
               <button
                 type="button"
                 onClick={handleClear}
-                className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-slate-200 px-3 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-[#E5E7EB] px-3 text-sm font-medium text-slate-600 hover:bg-slate-50"
               >
                 <Trash2 className="h-4 w-4" aria-hidden="true" />
                 <span>Siba</span>

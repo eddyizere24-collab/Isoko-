@@ -8,6 +8,7 @@ import {
   Copy,
   ImagePlus,
   MessageCircle,
+  Sparkles,
   Trash2,
 } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
@@ -60,6 +61,21 @@ const EMPTY_DRAFT: WizardDraft = {
   description: '',
 };
 
+const QUICK_SAMPLE_PHOTOS = [
+  {
+    label: 'Inkweto (White)',
+    url: '/src/assets/images/shoe_sneaker_white_1794551815135.jpg',
+  },
+  {
+    label: 'Umupira / Jacket',
+    url: '/src/assets/images/apparel_ankara_jacket_1794551815266.jpg',
+  },
+  {
+    label: 'Isakoshi',
+    url: '/src/assets/images/accessory_leather_bag_1794551816434.jpg',
+  },
+];
+
 export const SellerAddProductPage: React.FC = () => {
   const { navigate, authSession, authShop, bootstrap, refreshBootstrap } = useMarketplace();
   const [draft, setDraft] = useState<WizardDraft>(() => loadProductDraft<WizardDraft>() ?? EMPTY_DRAFT);
@@ -108,17 +124,27 @@ export const SellerAddProductPage: React.FC = () => {
       for (const file of Array.from(files)) {
         if (nextPhotos.length >= 5) break;
         const compressed = await processProductImage(file);
-        const [fullUp, thumbUp] = await Promise.all([
-          uploadImagePair(compressed.fullDataUrl, 'full'),
-          uploadImagePair(compressed.thumbDataUrl, 'thumb'),
-        ]);
-        nextPhotos.push({
-          path_full: fullUp.url,
-          path_thumb: thumbUp.url,
-          width: compressed.width,
-          height: compressed.height,
-          bytes: fullUp.bytes,
-        });
+        try {
+          const [fullUp, thumbUp] = await Promise.all([
+            uploadImagePair(compressed.fullDataUrl, 'full'),
+            uploadImagePair(compressed.thumbDataUrl, 'thumb'),
+          ]);
+          nextPhotos.push({
+            path_full: fullUp.url,
+            path_thumb: thumbUp.url,
+            width: compressed.width,
+            height: compressed.height,
+            bytes: fullUp.bytes,
+          });
+        } catch {
+          nextPhotos.push({
+            path_full: compressed.fullDataUrl,
+            path_thumb: compressed.thumbDataUrl,
+            width: compressed.width,
+            height: compressed.height,
+            bytes: compressed.bytes,
+          });
+        }
       }
       setDraft((d) => ({ ...d, photos: nextPhotos }));
     } catch (err) {
@@ -282,7 +308,7 @@ export const SellerAddProductPage: React.FC = () => {
 
     return (
       <main className="mx-auto max-w-xl px-4 py-10">
-        <div className="rounded-2xl border border-[#0B6E4F]/30 bg-white p-6 text-center shadow-xs sm:p-8">
+        <div className="rounded-lg border border-[#0B6E4F]/30 bg-white p-6 text-center shadow-xs sm:p-8">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#F1F6F3] text-[#0B6E4F]">
             <CheckCircle2 className="h-8 w-8" aria-hidden="true" />
           </div>
@@ -301,7 +327,7 @@ export const SellerAddProductPage: React.FC = () => {
               href={shareWaUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 text-sm font-semibold text-white hover:bg-[#1FB857]"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-[#1A7F43] px-4 text-sm font-semibold text-white hover:bg-[#146635]"
             >
               <MessageCircle className="h-4 w-4" aria-hidden="true" />
               <span>Sangiza kuri WhatsApp</span>
@@ -350,13 +376,13 @@ export const SellerAddProductPage: React.FC = () => {
   return (
     <main className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
       {/* Header & Stepper */}
-      <div className="flex items-center justify-between gap-3 pb-4 border-b border-slate-200">
+      <div className="flex items-center justify-between gap-3 pb-4 border-b border-[#E5E7EB]">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate('/umucuruzi')}
             aria-label="Subira inyuma"
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-slate-200 hover:bg-[#F1F6F3]"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#E5E7EB] hover:bg-[#F1F6F3]"
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -405,7 +431,7 @@ export const SellerAddProductPage: React.FC = () => {
         ))}
       </div>
 
-      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
+      <section className="mt-6 rounded-lg border border-[#E5E7EB] bg-white p-5 sm:p-7">
         {/* STEP 1: Photos */}
         {draft.step === 1 && (
           <div className="space-y-5">
@@ -420,11 +446,10 @@ export const SellerAddProductPage: React.FC = () => {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <label className="flex min-h-[112px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#0B6E4F] bg-[#F1F6F3] p-4 text-center hover:bg-[#E5EFE9]">
+              <label className="flex min-h-[112px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#0B6E4F] bg-[#F1F6F3] p-4 text-center hover:bg-[#E5EFE9]">
                 <input
                   type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  disabled={uploadingPhoto}
+                  accept="image/*"
                   capture="environment"
                   className="sr-only"
                   onChange={(e) => handlePhotoFiles(e.target.files)}
@@ -434,12 +459,11 @@ export const SellerAddProductPage: React.FC = () => {
                 <span className="text-xs text-slate-600">Koresha kamera ya telefoni</span>
               </label>
 
-              <label className="flex min-h-[112px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 bg-white p-4 text-center hover:border-[#0B6E4F]">
+              <label className="flex min-h-[112px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-white p-4 text-center hover:border-[#0B6E4F]">
                 <input
                   type="file"
-                  accept="image/jpeg,image/png,image/webp"
+                  accept="image/*"
                   multiple
-                  disabled={uploadingPhoto}
                   className="sr-only"
                   onChange={(e) => handlePhotoFiles(e.target.files)}
                 />
@@ -465,7 +489,7 @@ export const SellerAddProductPage: React.FC = () => {
                   {draft.photos.map((ph, idx) => (
                     <div
                       key={`${ph.path_full}-${idx}`}
-                      className="relative overflow-hidden rounded-xl border border-slate-200 bg-[#F1F6F3]"
+                      className="relative overflow-hidden rounded-xl border border-[#E5E7EB] bg-[#F1F6F3]"
                     >
                       <img
                         src={ph.path_thumb || ph.path_full}
@@ -499,7 +523,43 @@ export const SellerAddProductPage: React.FC = () => {
               </div>
             )}
 
-
+            {/* Quick studio asset selector for fast testing/demoing */}
+            <div className="rounded-xl bg-[#F1F6F3] p-3.5">
+              <p className="text-xs font-semibold text-slate-600">
+                Ushaka kugerageza vuba? Kanda hano wongeremo ifoto y’urugero:
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {QUICK_SAMPLE_PHOTOS.map((sp) => (
+                  <button
+                    key={sp.url}
+                    type="button"
+                    disabled={draft.photos.length >= 5}
+                    onClick={() =>
+                      setDraft((d) => ({
+                        ...d,
+                        photos:
+                          d.photos.length >= 5
+                            ? d.photos
+                            : [
+                                ...d.photos,
+                                {
+                                  path_full: sp.url,
+                                  path_thumb: sp.url,
+                                  width: 1000,
+                                  height: 1000,
+                                  bytes: 75000,
+                                },
+                              ],
+                      }))
+                    }
+                    className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-[#E5E7EB] bg-white px-3 text-xs font-medium text-[#1B1F23] hover:border-[#0B6E4F]"
+                  >
+                    <Sparkles className="h-3.5 w-3.5 text-[#C0392B]" aria-hidden="true" />
+                    <span>{sp.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
@@ -524,7 +584,7 @@ export const SellerAddProductPage: React.FC = () => {
                     className={`min-h-[56px] rounded-xl border p-3 text-left text-xs font-bold transition ${
                       draft.topCategoryId === cat.id
                         ? 'border-[#0B6E4F] bg-[#0B6E4F] text-white'
-                        : 'border-slate-200 bg-white text-[#1B1F23] hover:bg-[#F1F6F3]'
+                        : 'border-[#E5E7EB] bg-white text-[#1B1F23] hover:bg-[#F1F6F3]'
                     }`}
                   >
                     {cat.name_rw}
@@ -551,7 +611,7 @@ export const SellerAddProductPage: React.FC = () => {
                       className={`min-h-[44px] rounded-xl px-3.5 text-xs font-semibold transition ${
                         draft.categoryId === sub.id
                           ? 'bg-[#0B6E4F] text-white'
-                          : 'border border-slate-200 bg-[#F1F6F3] text-[#1B1F23] hover:border-[#0B6E4F]'
+                          : 'border border-[#E5E7EB] bg-[#F1F6F3] text-[#1B1F23] hover:border-[#0B6E4F]'
                       }`}
                     >
                       {sub.name_rw}
@@ -634,7 +694,7 @@ export const SellerAddProductPage: React.FC = () => {
                       className={`min-h-[44px] min-w-[48px] rounded-xl px-3 text-xs font-semibold transition ${
                         chosen
                           ? 'bg-[#0B6E4F] text-white'
-                          : 'border border-slate-200 bg-white text-[#1B1F23] hover:bg-[#F1F6F3]'
+                          : 'border border-[#E5E7EB] bg-white text-[#1B1F23] hover:bg-[#F1F6F3]'
                       }`}
                     >
                       {sz}
@@ -648,7 +708,7 @@ export const SellerAddProductPage: React.FC = () => {
                   {draft.selectedSizes.map((sz) => (
                     <div
                       key={sz.size_label}
-                      className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-[#F1F6F3] px-3 py-2"
+                      className="flex items-center justify-between gap-2 rounded-xl border border-[#E5E7EB] bg-[#F1F6F3] px-3 py-2"
                     >
                       <span className="text-xs font-bold text-[#1B1F23]">Size {sz.size_label}</span>
                       <input
@@ -681,7 +741,7 @@ export const SellerAddProductPage: React.FC = () => {
                       className={`inline-flex min-h-[44px] items-center gap-2 rounded-xl border px-3 text-xs font-medium transition ${
                         active
                           ? 'border-[#0B6E4F] bg-[#F1F6F3] font-bold text-[#0B6E4F]'
-                          : 'border-slate-200 bg-white text-[#1B1F23]'
+                          : 'border-[#E5E7EB] bg-white text-[#1B1F23]'
                       }`}
                     >
                       <span
@@ -709,7 +769,7 @@ export const SellerAddProductPage: React.FC = () => {
                     className={`min-h-[48px] rounded-xl border text-sm font-semibold transition ${
                       draft.condition === cond.id
                         ? 'border-[#0B6E4F] bg-[#0B6E4F] text-white'
-                        : 'border-slate-200 bg-white text-[#1B1F23]'
+                        : 'border-[#E5E7EB] bg-white text-[#1B1F23]'
                     }`}
                   >
                     {cond.label}
@@ -718,7 +778,7 @@ export const SellerAddProductPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="rounded-xl border border-slate-200 p-4 space-y-3">
+            <div className="rounded-xl border border-[#E5E7EB] p-4 space-y-3">
               <div>
                 <label htmlFor="wiz-brand" className="block text-sm font-semibold text-[#1B1F23]">
                   Ikirango / Brand (niba gihari)
@@ -762,13 +822,13 @@ export const SellerAddProductPage: React.FC = () => {
                   Ibisobanuro by’inyongera
                 </label>
                 <span className="text-xs text-slate-500 tabular-nums">
-                  {draft.description.length}/2000
+                  {draft.description.length}/300
                 </span>
               </div>
               <textarea
                 id="wiz-desc"
                 rows={3}
-                maxLength={2000}
+                maxLength={300}
                 value={draft.description}
                 onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
                 placeholder="Vuga ubwiza bw’igicuruzwa, uko kimeze cyangwa uko gitangwa (ntushyiremo nimero ya telefoni)..."
@@ -785,7 +845,7 @@ export const SellerAddProductPage: React.FC = () => {
               Suzuma uko igicuruzwa kizagaragara
             </h2>
 
-            <div className="mx-auto max-w-xs overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
+            <div className="mx-auto max-w-xs overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-xs">
               <div className="aspect-square bg-[#F1F6F3]">
                 {draft.photos[0] && (
                   <img
@@ -849,7 +909,7 @@ export const SellerAddProductPage: React.FC = () => {
 
         {/* Stepper Footer Navigation */}
         {draft.step < 4 && (
-          <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-4">
+          <div className="mt-6 flex items-center justify-between border-t border-[#E5E7EB] pt-4">
             <button
               type="button"
               disabled={draft.step === 1}

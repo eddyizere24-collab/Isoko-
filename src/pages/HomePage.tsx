@@ -1,42 +1,34 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowRight, Footprints, MapPin, Package, Shirt, ShoppingBag, Smartphone, Store } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-import { IsokoMark, IsokoVerifiedSeal, RwandanGeometricPattern } from '../components/IsokoLogo';
+import { ArrowRight, LayoutGrid, MapPin, ShieldCheck, Store, Tag } from 'lucide-react';
+import { IsokoVerifiedSeal } from '../components/IsokoLogo';
 import { ProductCard } from '../components/ProductCard';
 import { PromoCarousel } from '../components/PromoCarousel';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { RW } from '../i18n/rw';
-import { INITIAL_CATEGORIES } from '../data/categories';
 import { buildHomeShelves, interleaveBySeller } from '../lib/algorithm';
 import { loadInterest } from '../lib/storage';
 
-const CATEGORY_ARTWORK: Record<string, { icon: LucideIcon; caption: string }> = {
-  inkweto: { icon: Footprints, caption: 'Siporo, gusohokana & inkweto za buri munsi' },
-  imyenda: { icon: Shirt, caption: 'Imyenda y’abagabo, abagore n’abana' },
-  amasogisi: { icon: Package, caption: 'Amasogisi n’ibyo kwambarwa imbere' },
-  ibindi: { icon: ShoppingBag, caption: 'Amasakoshi n’ibindi bikoresho' },
-  amatelefoni: { icon: Smartphone, caption: 'Ibikoresho by’amatelefoni' },
-};
+interface HomePageProps {
+  onOpenCategories?: () => void;
+}
 
-export const HomePage: React.FC = () => {
-  const { bootstrap, loading, error, refreshBootstrap, navigate, location, recents } = useMarketplace();
+export const HomePage: React.FC<HomePageProps> = ({ onOpenCategories }) => {
+  const {
+    bootstrap,
+    loading,
+    error,
+    refreshBootstrap,
+    navigate,
+    location,
+    setLocationModalOpen,
+    recents,
+  } = useMarketplace();
   const [visibleCount, setVisibleCount] = useState(20);
 
   const products = bootstrap?.products ?? [];
-  const categories = bootstrap?.categories ?? INITIAL_CATEGORIES;
+  const categories = bootstrap?.categories ?? [];
   const shops = bootstrap?.shops ?? [];
   const campaigns = bootstrap?.campaigns ?? [];
-  const topCategories = categories.filter((c) => c.parent_id === null && c.active);
-
-  const categoryCounts = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const p of products) {
-      if (p.status !== 'active') continue;
-      const slug = p.parent_category?.slug ?? p.category?.slug;
-      if (slug) counts.set(slug, (counts.get(slug) ?? 0) + 1);
-    }
-    return counts;
-  }, [products]);
 
   const shelves = useMemo(
     () => buildHomeShelves(products, { buyerDistrictId: location?.districtId }),
@@ -67,266 +59,199 @@ export const HomePage: React.FC = () => {
     return interleaveBySeller(visible, { maxConsecutiveSameShop: 1 });
   }, [products]);
 
+  if (loading) {
+    return (
+      <main className="mx-auto max-w-7xl px-3 py-3 sm:px-6 space-y-4">
+        <div className="grid grid-cols-3 gap-2">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-[52px] animate-pulse rounded-lg bg-[#E8F3EE]/60" />
+          ))}
+        </div>
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="aspect-square animate-pulse rounded-lg bg-white" />
+          ))}
+        </div>
+        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:grid-cols-5">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div key={i} className="aspect-[3/4] animate-pulse rounded-lg bg-white" />
+          ))}
+        </div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="mx-auto max-w-xl px-4 py-14 text-center">
+        <p className="text-sm font-semibold text-[#C0392B]">{error}</p>
+        <button
+          type="button"
+          onClick={refreshBootstrap}
+          className="mt-4 min-h-[44px] rounded-lg bg-[#0B6E4F] px-5 text-sm font-semibold text-white"
+        >
+          Ongera ugerageze
+        </button>
+      </main>
+    );
+  }
+
   const activeCampaigns = campaigns.filter((c) => c.active);
+  const locationLabel = location?.districtName || 'Kigali';
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 space-y-12">
-      {/* Truthful marketplace hero: no sample shop or product photography */}
-      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-        <div className="grid items-stretch lg:grid-cols-12">
-          <div className="imigongo-surface flex flex-col justify-center p-6 sm:p-10 lg:col-span-6">
-            <p className="text-xs font-semibold text-[#0B6E4F]">
-              Abacuruzi bo mu Rwanda · Nta komisiyo
-            </p>
-            <h1 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-[#1B1F23] sm:text-4xl text-balance">
-              Imyambaro, inkweto n'ibyo kwambara byo mu Rwanda.
-            </h1>
-            <p className="mt-3 max-w-lg text-sm leading-relaxed text-slate-600 sm:text-base">
-              Shakisha ibicuruzwa byashyizweho n’abacuruzi nyirizina, urebe ibiciro n’amafoto
-              yabo, hanyuma muvugane kuri WhatsApp.
-            </p>
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-              <button
-                type="button"
-                onClick={() => navigate('/shakisha')}
-                className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#08553D]"
-              >
-                <span>Reba ibicuruzwa byose</span>
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </button>
-              <a
-                href="/abacuruzi"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate('/abacuruzi');
-                }}
-                className="inline-flex min-h-[44px] items-center rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-[#1B1F23] transition-colors hover:border-[#0B6E4F]"
-              >
-                {RW.sell_on_platform}
-              </a>
-            </div>
-          </div>
-          <div className="imigongo-surface relative flex min-h-[240px] items-center justify-center p-8 lg:col-span-6">
-            <div className="flex max-w-sm flex-col items-center text-center">
-              <IsokoMark className="h-24 w-24" />
-              <h2 className="mt-4 font-display text-lg font-bold text-[#0B6E4F]">
-                Ibicuruzwa by’ukuri. Amaduka nyakuri.
-              </h2>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                Nta bicuruzwa bya demo. Amafoto y’ibicuruzwa ni ayashyizweho n’abacuruzi.
-              </p>
-              <RwandanGeometricPattern className="mt-5 h-3 w-full opacity-75" />
-            </div>
-          </div>
-        </div>
-        <RwandanGeometricPattern className="h-2.5 w-full bg-white opacity-70" />
-      </section>
+    <main className="mx-auto max-w-7xl space-y-4 pb-6">
+      {/* Screen-reader / accessible page title while keeping above-the-fold compact like reference */}
+      <h1 className="sr-only">
+        Imyambaro, inkweto n&apos;ibyo kwambara byo mu Rwanda.
+      </h1>
 
-      {/* Category cards use icons and Imigongo, not illustrative product photos */}
-      <section aria-labelledby="cat-heading">
-        <div className="flex items-baseline justify-between gap-4">
-          <h2 id="cat-heading" className="font-display text-lg font-bold text-[#1B1F23]">
-            Hitamo icyiciro
-          </h2>
+      {/* Strip 1: Compact 3-Card Quick Action Strip (matches screenshot horizontal quick cards) */}
+      <section aria-label="Ibikorwa byihuse" className="px-3 pt-2.5 sm:px-6">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar sm:grid sm:grid-cols-3 sm:gap-3">
           <button
             type="button"
-            onClick={() => navigate('/shakisha')}
-            className="text-xs font-semibold text-[#0B6E4F] hover:underline"
+            onClick={() => (onOpenCategories ? onOpenCategories() : navigate('/shakisha'))}
+            className="flex h-[54px] min-w-[138px] flex-1 shrink-0 items-center gap-2.5 rounded-xl border border-[#E5E7EB] bg-white px-2.5 text-left transition-colors hover:border-[#0B6E4F]/50"
           >
-            Byose hamwe
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#E8F3EE] text-[#0B6E4F]">
+              <LayoutGrid className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+            </span>
+            <span className="text-[11.5px] font-medium leading-tight text-[#1B1F23]">
+              Hitamo<br />icyiciro
+            </span>
           </button>
-        </div>
-        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
-          {topCategories.map((cat) => {
-            const art = CATEGORY_ARTWORK[cat.slug] ?? {
-              icon: Package,
-              caption: 'Ibicuruzwa byo muri iki cyiciro',
-            };
-            const CategoryIcon = art.icon;
-            const itemCount = categoryCounts.get(cat.slug) ?? 0;
-            return (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => navigate(`/c/${cat.slug}`)}
-                className="group overflow-hidden rounded-2xl border border-slate-200 bg-white text-left transition-all hover:-translate-y-0.5 hover:border-[#0B6E4F] hover:shadow-md"
-              >
-                <div className="imigongo-surface relative flex aspect-[16/10] w-full items-center justify-center overflow-hidden">
-                  <CategoryIcon
-                    className="h-12 w-12 text-[#0B6E4F] transition-transform duration-300 group-hover:scale-110"
-                    aria-hidden="true"
-                  />
-                  <RwandanGeometricPattern className="absolute bottom-0 left-0 h-2 w-full opacity-60" />
-                </div>
-                <div className="p-3.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-display text-sm font-bold leading-snug text-[#1B1F23]">
-                      {cat.name_rw}
-                    </span>
-                    <ArrowRight
-                      className="h-4 w-4 shrink-0 text-[#0B6E4F] opacity-70 transition-transform group-hover:translate-x-0.5 group-hover:opacity-100"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <p className="mt-1 text-xs text-slate-600">
-                    {loading ? 'Amakuru arimo kuzanwa' : `${itemCount} bibonetse`} · {art.caption}
-                  </p>
-                </div>
-              </button>
-            );
-          })}
+
+          <button
+            type="button"
+            onClick={() => setLocationModalOpen(true)}
+            className="flex h-[54px] min-w-[144px] flex-1 shrink-0 items-center gap-2.5 rounded-xl border border-[#E5E7EB] bg-white px-2.5 text-left transition-colors hover:border-[#0B6E4F]/50"
+          >
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#E8F3EE] text-[#0B6E4F]">
+              <MapPin className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+            </span>
+            <span className="text-[11.5px] font-medium leading-tight text-[#1B1F23]">
+              Aho uri:<br />
+              <span className="font-semibold text-[#0B6E4F]">{locationLabel}</span>
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate('/abacuruzi')}
+            className="flex h-[54px] min-w-[138px] flex-1 shrink-0 items-center gap-2.5 rounded-xl border border-[#E5E7EB] bg-white px-2.5 text-left transition-colors hover:border-[#C0392B]/50"
+          >
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#FBEAE8] text-[#C0392B]">
+              <Store className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+            </span>
+            <span className="text-[11.5px] font-medium leading-tight text-[#1B1F23]">
+              Fungura<br />iduka ryawe
+            </span>
+          </button>
         </div>
       </section>
 
-      {/* Rotating Promotional Carousel */}
-      {activeCampaigns.length > 0 && <PromoCarousel campaigns={activeCampaigns} />}
-
-      {/* A-03: Wari warabirebye (if non-empty) */}
-      {recentProducts.length > 0 && (
-        <ShelfSection
-          title={RW.recent}
-          products={recentProducts}
-          onSeeAll={() => navigate('/shakisha')}
-        />
-      )}
-
-      {/* A-03: Bishya (fairly rotated across sellers) */}
+      {/* Strip 2: First Product Shelf immediately above the fold — 3-across compact cards like reference */}
       {shelves.newest.length > 0 && (
         <ShelfSection
           title={RW.new_arrivals}
+          subtitle="Abacuruzi bagenzuwe · Kigali n'ahandi"
           products={shelves.newest}
           onSeeAll={() => navigate('/shakisha?sort=newest')}
         />
       )}
 
-      {/* A-03: Bikunzwe cyane */}
+      {/* Strip 3: Compact 2-Up Side-by-Side Promo / Discovery Cards (just like screenshot bottom preview) */}
+      <section className="px-3 sm:px-6" aria-label="Ibishya byatoranyijwe">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+          <button
+            type="button"
+            onClick={() => navigate('/shakisha?discounted=1')}
+            className="flex items-center justify-between gap-2 rounded-xl border border-[#C0392B]/25 bg-[#FBEAE8] p-2.5 sm:p-3 text-left transition-colors hover:border-[#C0392B]"
+          >
+            <div className="min-w-0">
+              <span className="inline-block rounded bg-[#C0392B] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                Igabanywa
+              </span>
+              <p className="mt-1 text-[12px] font-semibold leading-snug text-[#1B1F23]">
+                Byagabanyijwe
+              </p>
+              <p className="mt-0.5 text-[11px] text-[#8E2A20] tabular-nums">
+                {shelves.discounted.length} bibonetse
+              </p>
+            </div>
+            <Tag className="h-4 w-4 sm:h-5 sm:w-5 shrink-0 text-[#C0392B]" strokeWidth={1.6} aria-hidden="true" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate('/shakisha?sort=popular')}
+            className="flex items-center justify-between gap-2 rounded-xl border border-[#0B6E4F]/25 bg-[#E8F3EE] p-2.5 sm:p-3 text-left transition-colors hover:border-[#0B6E4F]"
+          >
+            <div className="min-w-0">
+              <span className="inline-block rounded bg-[#0B6E4F] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                Byemejwe
+              </span>
+              <p className="mt-1 text-[12px] font-semibold leading-snug text-[#1B1F23]">
+                Amaduka yemejwe
+              </p>
+              <p className="mt-0.5 text-[11px] text-[#064E3B] tabular-nums">
+                {shops.length} i Kigali
+              </p>
+            </div>
+            <ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5 shrink-0 text-[#0B6E4F]" strokeWidth={1.6} aria-hidden="true" />
+          </button>
+        </div>
+      </section>
+
+      {/* Strip 4: Recently viewed (if any) */}
+      {recentProducts.length > 0 && (
+        <ShelfSection
+          title={RW.recent}
+          subtitle="Ibyo uherutse gusura"
+          products={recentProducts}
+          onSeeAll={() => navigate('/shakisha')}
+        />
+      )}
+
+      {/* Strip 5: Popular shelf */}
       {shelves.popular.length > 0 && (
         <ShelfSection
           title={RW.popular}
+          subtitle="Ibikunzwe n'abaguzi ubu"
           products={shelves.popular}
           onSeeAll={() => navigate('/shakisha?sort=popular')}
         />
       )}
 
-      {/* A-03: Byagabanyijwe */}
+      {/* Strip 6: Discounted shelf */}
       {shelves.discounted.length > 0 && (
         <ShelfSection
           title={RW.discounted}
+          subtitle="Ibiciro byagabanyijwe >= 10%"
           products={shelves.discounted}
           onSeeAll={() => navigate('/shakisha?discounted=1')}
         />
       )}
 
-      {/* G-04: Ushobora gukunda */}
+      {/* Strip 7: Rotating Promotional Carousel */}
+      {activeCampaigns.length > 0 && (
+        <div className="px-3 sm:px-6">
+          <PromoCarousel campaigns={activeCampaigns} />
+        </div>
+      )}
+
+      {/* Strip 8: You might like */}
       {youMightLike.length > 0 && (
         <ShelfSection
           title="Ushobora gukunda"
+          subtitle="Bihuye n'ibyo ukunze kureba"
           products={youMightLike}
           onSeeAll={() => navigate('/shakisha')}
         />
       )}
 
-      {/* Verified Seller Storefronts Showcase */}
-      {shops.length > 0 && (
-        <section aria-labelledby="shops-heading">
-          <div className="flex items-baseline justify-between gap-4">
-            <div>
-              <h2 id="shops-heading" className="font-display text-lg font-bold text-[#1B1F23]">
-                Amaduka ari kuri ISOKO
-              </h2>
-              <p className="mt-0.5 text-xs text-slate-600">
-                Sura iduka ry’umucuruzi urebe ibicuruzwa bye byose n’aho akorera
-              </p>
-            </div>
-          </div>
-          <div className="mt-3 grid gap-4 sm:grid-cols-3">
-            {shops.slice(0, 3).map((shop) => (
-              <a
-                key={shop.id}
-                href={`/i/${shop.slug}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate(`/i/${shop.slug}`);
-                }}
-                className="group overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all hover:-translate-y-0.5 hover:border-[#0B6E4F] hover:shadow-md"
-              >
-                <div className="relative h-24 w-full overflow-hidden bg-[#F1F6F3]">
-                  {shop.cover_path ? (
-                    <>
-                      <img
-                        src={shop.cover_path}
-                        alt={shop.name}
-                        loading="lazy"
-                        referrerPolicy="no-referrer"
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                      <div
-                        aria-hidden="true"
-                        className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent"
-                      />
-                    </>
-                  ) : (
-                    <div className="imigongo-surface flex h-full w-full items-center justify-center">
-                      <Store className="h-9 w-9 text-[#0B6E4F]" aria-hidden="true" />
-                    </div>
-                  )}
-                </div>
-                <div className="relative px-4 pb-4 pt-0">
-                  <div className="-mt-6 flex items-end justify-between gap-3">
-                    {shop.logo_path ? (
-                      <img
-                        src={shop.logo_path}
-                        alt={shop.name}
-                        className="h-12 w-12 rounded-xl border-2 border-white bg-white object-cover shadow-sm"
-                      />
-                    ) : (
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-white bg-[#0B6E4F] text-white shadow-sm">
-                        <Store className="h-5 w-5" aria-hidden="true" />
-                      </div>
-                    )}
-                    {shop.identity_status === 'verified' ? (
-                      <span className="inline-flex items-center gap-1 rounded-md bg-white/95 px-2 py-0.5 text-xs font-semibold text-[#0B6E4F]">
-                        <IsokoVerifiedSeal className="h-3.5 w-3.5" />
-                        <span>{RW.verified}</span>
-                      </span>
-                    ) : shop.identity_status === 'pending' ? (
-                      <span className="rounded-md bg-white/95 px-2 py-0.5 text-xs font-medium text-amber-800">
-                        Irimo kugenzurwa
-                      </span>
-                    ) : shop.identity_status === 'rejected' ? (
-                      <span className="rounded-md bg-white/95 px-2 py-0.5 text-xs font-medium text-[#C0392B]">
-                        Imyirondoro ntiyemejwe
-                      </span>
-                    ) : (
-                      <span className="rounded-md bg-white/95 px-2 py-0.5 text-xs font-medium text-slate-600">
-                        Ntiragenzurwa
-                      </span>
-                    )}
-                  </div>
-
-                  <h3 className="mt-2 font-display text-base font-bold text-[#1B1F23] group-hover:text-[#0B6E4F]">
-                    {shop.name}
-                  </h3>
-                  <p className="mt-0.5 flex items-center gap-1 text-xs text-slate-600 tabular-nums">
-                    <MapPin className="h-3.5 w-3.5 text-[#0B6E4F] shrink-0" aria-hidden="true" />
-                    <span>
-                      {shop.district_name}
-                      {shop.sector_name ? `, ${shop.sector_name}` : ''}
-                    </span>
-                    <span aria-hidden="true">·</span>
-                    <span>{shop.active_product_count ?? 0} ibicuruzwa</span>
-                  </p>
-                  {shop.about && (
-                    <p className="mt-1.5 text-xs text-slate-600 line-clamp-2">{shop.about}</p>
-                  )}
-                </div>
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* A-03: Amaduka hafi yawe */}
+      {/* Strip 9: Nearby shelf */}
       {shelves.nearby.length > 0 && (
         <ShelfSection
           title={
@@ -334,6 +259,7 @@ export const HomePage: React.FC = () => {
               ? `${RW.nearby_shops} (${location.districtName})`
               : RW.nearby_shops
           }
+          subtitle="Hafi y'aho wahisemo"
           products={shelves.nearby}
           onSeeAll={() =>
             navigate(
@@ -345,98 +271,129 @@ export const HomePage: React.FC = () => {
         />
       )}
 
-      {/* A-04: Progressive 20-item catalog grid with seller interleaving & 'Reba byinshi' */}
-      <section aria-labelledby="all-products-heading">
-        <div className="flex items-baseline justify-between gap-4">
-          <h2 id="all-products-heading" className="font-display text-lg font-bold text-[#1B1F23]">
+      {/* Strip 10: Compact Verified Storefronts Row */}
+      {shops.length > 0 && (
+        <section
+          id="shops-heading-section"
+          aria-labelledby="shops-heading"
+          className="bg-white border-y border-[#E5E7EB] py-3.5 px-3 sm:px-6"
+        >
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <h2 id="shops-heading" className="text-[15px] font-bold text-[#1B1F23]">
+                Amaduka yagenzuwe ku Isoko
+              </h2>
+              <p className="text-[11.5px] text-[#6B7280]">
+                Sura iduka ry’umucuruzi uvugane na we kuri WhatsApp
+              </p>
+            </div>
+          </div>
+          <div className="mt-2.5 flex gap-2.5 overflow-x-auto no-scrollbar sm:grid sm:grid-cols-3 lg:grid-cols-4">
+            {shops.map((shop) => (
+              <a
+                key={shop.id}
+                href={`/i/${shop.slug}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate(`/i/${shop.slug}`);
+                }}
+                className="flex w-[164px] shrink-0 flex-col rounded-lg border border-[#E5E7EB] bg-[#F7F8FA] p-2.5 transition-colors hover:border-[#0B6E4F] sm:w-auto"
+              >
+                <div className="flex items-center gap-2.5">
+                  {shop.logo_path ? (
+                    <img
+                      src={shop.logo_path}
+                      alt={shop.name}
+                      className="h-10 w-10 shrink-0 rounded-full border border-[#E5E7EB] bg-white object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0B6E4F] text-white">
+                      <Store className="h-4 w-4" aria-hidden="true" />
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1">
+                      <h3 className="truncate text-[12.5px] font-semibold text-[#1B1F23]">
+                        {shop.name}
+                      </h3>
+                      {shop.status === 'approved' && (
+                        <IsokoVerifiedSeal className="h-3.5 w-3.5 shrink-0" />
+                      )}
+                    </div>
+                    <p className="truncate text-[11px] text-[#6B7280] tabular-nums">
+                      {shop.district_name} · {shop.active_product_count ?? 0} ibicuruzwa
+                    </p>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Strip 11: Dense Catalog Grid */}
+      <section aria-labelledby="all-products-heading" className="px-3 sm:px-6">
+        <div className="flex items-baseline justify-between gap-2">
+          <h2 id="all-products-heading" className="text-[15px] font-bold text-[#1B1F23]">
             Ibicuruzwa byose biriho
           </h2>
-          <span className="text-xs text-slate-600 tabular-nums">
-            {loading ? 'Birimo kuzanwa' : `${activeCatalog.length} bibonetse`}
+          <span className="text-[11.5px] text-[#6B7280] tabular-nums">
+            {activeCatalog.length} bibonetse
           </span>
         </div>
 
-        {error ? (
-          <div role="alert" className="imigongo-surface mt-4 rounded-2xl border border-[#C0392B]/25 p-6 text-center">
-            <p className="text-sm font-semibold text-[#C0392B]">{error}</p>
-            <button
-              type="button"
-              onClick={refreshBootstrap}
-              className="mt-4 inline-flex min-h-[44px] items-center rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white hover:bg-[#08553D]"
-            >
-              Ongera ugerageze
-            </button>
-          </div>
-        ) : loading ? (
-          <div role="status" aria-live="polite" className="imigongo-surface mt-4 rounded-2xl border border-slate-200 p-6 text-center">
-            <Package className="mx-auto h-8 w-8 text-[#0B6E4F]" aria-hidden="true" />
-            <p className="mt-3 text-sm font-semibold text-[#1B1F23]">Turimo kuzana ibicuruzwa byashyizweho n’abacuruzi.</p>
-          </div>
-        ) : activeCatalog.length > 0 ? (
-          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:gap-5">
-            {activeCatalog.slice(0, visibleCount).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        ) : (
-          <div className="imigongo-surface mt-4 rounded-2xl border border-slate-200 p-7 text-center sm:p-10">
-            <Package className="mx-auto h-10 w-10 text-[#0B6E4F]" aria-hidden="true" />
-            <h3 className="mt-3 font-display text-base font-bold text-[#1B1F23]">
-              Nta bicuruzwa birashyirwaho.
-            </h3>
-            <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-slate-600">
-              Isoko ntigaragaza ibicuruzwa by’igerageza. Abacuruzi bazashyiraho ibicuruzwa
-              byabo n’amafoto babifitiye uburenganzira.
-            </p>
-            <button
-              type="button"
-              onClick={() => navigate('/abacuruzi')}
-              className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white hover:bg-[#08553D]"
-            >
-              <Store className="h-4 w-4" aria-hidden="true" />
-              Fungura iduka ryawe
-            </button>
-          </div>
-        )}
+        <div className="mt-2.5 grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 lg:gap-3">
+          {activeCatalog.slice(0, visibleCount).map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
 
         {visibleCount < activeCatalog.length && (
-          <div className="mt-8 text-center">
+          <div className="mt-5 text-center">
             <button
               type="button"
               onClick={() => setVisibleCount((c) => c + 20)}
-              className="min-h-[44px] rounded-xl border border-[#0B6E4F] bg-white px-6 text-sm font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3] transition-colors"
+              className="min-h-[42px] rounded-lg border border-[#0B6E4F] bg-white px-5 text-[13px] font-semibold text-[#0B6E4F] hover:bg-[#E8F3EE] transition-colors"
             >
               {RW.load_more}
             </button>
           </div>
         )}
       </section>
-    </div>
+    </main>
   );
 };
 
 interface ShelfSectionProps {
   title: string;
+  subtitle?: string;
   products: ReturnType<typeof buildHomeShelves>['newest'];
   onSeeAll: () => void;
 }
 
-const ShelfSection: React.FC<ShelfSectionProps> = ({ title, products, onSeeAll }) => (
-  <section>
-    <div className="flex items-center justify-between gap-4">
-      <h2 className="font-display text-lg font-bold text-[#1B1F23]">{title}</h2>
+const ShelfSection: React.FC<ShelfSectionProps> = ({ title, subtitle, products, onSeeAll }) => (
+  <section className="bg-white border-y border-[#E5E7EB] py-3 px-3 sm:px-6">
+    <div className="flex items-center justify-between gap-3">
+      <div className="min-w-0">
+        <h2 className="text-[15px] font-bold leading-tight text-[#1B1F23] truncate">{title}</h2>
+        {subtitle && (
+          <p className="mt-0.5 text-[11.5px] leading-tight text-[#6B7280] truncate">{subtitle}</p>
+        )}
+      </div>
       <button
         type="button"
         onClick={onSeeAll}
-        className="inline-flex min-h-[40px] items-center gap-1 text-sm font-semibold text-[#0B6E4F] hover:underline whitespace-nowrap shrink-0"
+        aria-label={`${RW.see_all} — ${title}`}
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[#1B1F23] hover:bg-[#F7F8FA] hover:text-[#0B6E4F] transition-colors"
       >
-        <span>{RW.see_all}</span>
-        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+        <ArrowRight className="h-4 w-4" strokeWidth={1.9} aria-hidden="true" />
       </button>
     </div>
-    <div className="mt-3 flex gap-3 overflow-x-auto pb-2 no-scrollbar lg:grid lg:grid-cols-4 lg:gap-5 lg:overflow-visible">
-      {products.slice(0, 8).map((product) => (
-        <div key={product.id} className="shrink-0 lg:shrink">
+
+    {/* 3-across compact horizontal shelf on mobile just like screenshot, 6-across on desktop */}
+    <div className="mt-2.5 flex gap-2 overflow-x-auto no-scrollbar sm:grid sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 sm:gap-3">
+      {products.slice(0, 6).map((product) => (
+        <div key={product.id} className="w-[31%] min-w-[104px] shrink-0 sm:w-auto sm:min-w-0">
           <ProductCard product={product} compact />
         </div>
       ))}
