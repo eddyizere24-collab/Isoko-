@@ -1,38 +1,30 @@
 import React from 'react';
 import { MessageCircle, ShieldCheck, Store } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
-import { RW } from '../i18n/rw';
+import { useT } from '../context/LangContext';
+import { STATIC_PAGE_COPY } from '../i18n/staticPages';
 import { buildWhatsAppLink } from '../lib/whatsapp';
 
 export const StaticPage: React.FC = () => {
   const { pathname, navigate, bootstrap } = useMarketplace();
+  const { lang, t } = useT();
+  const copy = STATIC_PAGE_COPY[lang] ?? STATIC_PAGE_COPY.rw;
   const supportWa = bootstrap?.settings.SUPPORT_WHATSAPP ?? '250788000000';
   const supportHours = bootstrap?.settings.SUPPORT_HOURS ?? '08:00 – 20:00';
 
   if (pathname === '/ibyerekeye') {
     return (
       <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 space-y-6">
-        <h1 className="text-2xl font-bold text-[#1B1F23]">Ibyerekeye Isoko</h1>
-        <p className="text-sm leading-relaxed text-slate-700">
-          Isoko ni urubuga rw’ubucuruzi rwo mu Rwanda ruhuza abacuruzi b’imyenda, inkweto,
-          amasogisi n’ibindi byo kwambara n’abaguzi mu turere twose 30 tw’igihugu.
-        </p>
+        <h1 className="text-2xl font-bold text-[#1B1F23]">{copy.about.title}</h1>
+        <p className="text-sm leading-relaxed text-slate-700">{copy.about.intro}</p>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-lg border border-[#E5E7EB] bg-white p-5">
-            <h2 className="text-base font-bold text-[#0B6E4F]">Uko ikora ku muguzi</h2>
-            <p className="mt-2 text-xs leading-relaxed text-slate-600">
-              Shakisha igicuruzwa ukoresheje izina, size cyangwa akarere, ugishyire mu gare,
-              maze wohereze urutonde rwawe kuri WhatsApp y’umucuruzi cyangwa umuhamagare.
-              Ntibisaba gufungura konti.
-            </p>
+            <h2 className="text-base font-bold text-[#0B6E4F]">{copy.about.buyerTitle}</h2>
+            <p className="mt-2 text-xs leading-relaxed text-slate-600">{copy.about.buyerBody}</p>
           </div>
           <div className="rounded-lg border border-[#E5E7EB] bg-white p-5">
-            <h2 className="text-base font-bold text-[#0B6E4F]">Icyo urubuga rudakora</h2>
-            <p className="mt-2 text-xs leading-relaxed text-slate-600">
-              Urubuga ntirwakira amafaranga (nta MoMo cyangwa ikarita iri ku rubuga) kandi
-              ntirutanga serivisi yo kugeza ibicuruzwa ku muguzi. Kwishyura no gutanga bikorwa
-              hagati y’umuguzi n’umucuruzi.
-            </p>
+            <h2 className="text-base font-bold text-[#0B6E4F]">{copy.about.platformTitle}</h2>
+            <p className="mt-2 text-xs leading-relaxed text-slate-600">{copy.about.platformBody}</p>
           </div>
         </div>
       </main>
@@ -40,18 +32,13 @@ export const StaticPage: React.FC = () => {
   }
 
   if (pathname === '/ubufasha') {
-    const waHref = buildWhatsAppLink(
-      supportWa,
-      'Muraho Ubufasha bwa Isoko, mfite ikibazo nashakaga kubaza.'
-    );
+    const waHref = buildWhatsAppLink(supportWa, copy.help.whatsappMessage);
     return (
       <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 space-y-6">
-        <h1 className="text-2xl font-bold text-[#1B1F23]">Ubufasha & Ibibazo bikunze kubazwa</h1>
+        <h1 className="text-2xl font-bold text-[#1B1F23]">{copy.help.title}</h1>
         <div className="rounded-lg border border-[#E5E7EB] bg-[#E8F3EE]/50 p-6">
-          <p className="text-sm font-bold text-[#1B1F23]">Vugana natwe kuri WhatsApp</p>
-          <p className="mt-1 text-xs text-slate-600">
-            Amasaha y’ubufasha buri munsi: {supportHours}
-          </p>
+          <p className="text-sm font-bold text-[#1B1F23]">{copy.help.whatsappTitle}</p>
+          <p className="mt-1 text-xs text-slate-600">{copy.help.hoursPrefix} {supportHours}</p>
           <a
             href={waHref}
             target="_blank"
@@ -59,28 +46,15 @@ export const StaticPage: React.FC = () => {
             className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#1A7F43] px-5 text-sm font-semibold text-white hover:bg-[#146635]"
           >
             <MessageCircle className="h-4 w-4" aria-hidden="true" />
-            <span>{RW.help_whatsapp}</span>
+            <span>{t('help_whatsapp')}</span>
           </a>
         </div>
 
         <div className="space-y-3">
-          {[
-            {
-              q: 'Nshobora kwishyurira kuri uru rubuga?',
-              a: 'Oya. Uwishyura n’umucuruzi bumvikana uko bishyura (Mobile Money cyangwa amafaranga mu ntoki) bamaze kuvugana kuri WhatsApp cyangwa kuri telefoni.',
-            },
-            {
-              q: 'Mbese mbere yo kwishyura nshobora kubanza kureba igicuruzwa?',
-              a: 'Yego, turabigira inama cyane cyane i Kigali. Banza urebe igicuruzwa cyangwa uhure n’umucuruzi ahantu hazwi mbere yo kohereza amafaranga.',
-            },
-            {
-              q: 'Nabona nte iduka ryemewe?',
-              a: 'Amaduka yose agaragara ku rubuga yabanje kugenzurwa na Admin (indangamuntu, aho akorera na telefoni) agahabwa ikimenyetso cy’uko yagenzuwe.',
-            },
-          ].map((faq) => (
-            <div key={faq.q} className="rounded-lg border border-[#E5E7EB] bg-white p-4">
-              <p className="text-sm font-bold text-[#1B1F23]">{faq.q}</p>
-              <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{faq.a}</p>
+          {copy.help.faqs.map((faq) => (
+            <div key={faq.question} className="rounded-lg border border-[#E5E7EB] bg-white p-4">
+              <p className="text-sm font-bold text-[#1B1F23]">{faq.question}</p>
+              <p className="mt-1.5 text-xs leading-relaxed text-slate-600">{faq.answer}</p>
             </div>
           ))}
         </div>
@@ -91,23 +65,15 @@ export const StaticPage: React.FC = () => {
   if (pathname === '/amategeko') {
     return (
       <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 space-y-5">
-        <h1 className="text-2xl font-bold text-[#1B1F23]">Amategeko y’Urubuga (Terms of Service)</h1>
-        <p className="text-xs text-slate-500">Verisiyo: v1 · Urubuga rw’ubucuruzi rwa Isoko (Rwanda)</p>
+        <h1 className="text-2xl font-bold text-[#1B1F23]">{copy.terms.title}</h1>
+        <p className="text-xs text-slate-500">{copy.terms.version}</p>
+        <p className="rounded-md bg-[#F7F8FA] px-3 py-2 text-xs leading-relaxed text-[#4B544F]">{copy.terms.sourceNote}</p>
         <div className="space-y-4 text-sm leading-relaxed text-slate-700">
-          <p>
-            1. <strong>Uruhare rw’Urubuga:</strong> Isoko ni urubuga ruhuza abacuruzi bemejwe
-            n’abaguzi. Urubuga ntirugurisha ibicuruzwa byarwo, ntirwakira ubwishyu, kandi ntirutanga
-            serivisi yo gutwara ibicuruzwa.
-          </p>
-          <p>
-            2. <strong>Inshingano z’Umucuruzi:</strong> Umucuruzi agomba gutanga amakuru y’ukuri,
-            igiciro nyacyo mu mafaranga y’u Rwanda (RWF), n’amafoto y’igicuruzwa afite koko.
-          </p>
-          <p>
-            3. <strong>Guhagarika konti:</strong> Uburiganya, kugurisha impimbano nka Original,
-            cyangwa gukoresha ibicuruzwa bibujijwe bivamo guhagarikwa burundu no gushyikirizwa
-            inzego zibishinzwe bibaye ngombwa.
-          </p>
+          {copy.terms.points.map((point, index) => (
+            <p key={point.heading}>
+              {index + 1}. <strong>{point.heading}:</strong> {point.body}
+            </p>
+          ))}
         </div>
       </main>
     );
@@ -118,32 +84,17 @@ export const StaticPage: React.FC = () => {
       <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 space-y-5">
         <div className="flex items-center gap-2 text-[#0B6E4F]">
           <ShieldCheck className="h-6 w-6" aria-hidden="true" />
-          <h1 className="text-2xl font-bold text-[#1B1F23]">
-            Politiki y’Ibanga (Privacy Policy — Itegeko N° 058/2021)
-          </h1>
+          <h1 className="text-2xl font-bold text-[#1B1F23]">{copy.privacy.title}</h1>
         </div>
+        <p className="rounded-md bg-[#F7F8FA] px-3 py-2 text-xs leading-relaxed text-[#4B544F]">{copy.privacy.sourceNote}</p>
         <div className="space-y-4 text-sm leading-relaxed text-slate-700">
+          {copy.privacy.sections.map((section, index) => (
+            <p key={section.heading}>
+              <strong>{index + 1}. {section.heading}:</strong> {section.body}
+            </p>
+          ))}
           <p>
-            <strong>1. Abaguzi (ntibakenera konti):</strong> Amakuru y’igare ryawe, ibicuruzwa
-            waherukaga kureba, size yawe n’aho uherereye bibikwa muri{' '}
-            <code className="rounded bg-slate-100 px-1 py-0.5 text-xs">localStorage</code> ya
-            telefoni cyangwa mudasobwa yawe gusa. Ntibibikwa ku mazina yawe.
-          </p>
-          <p>
-            <strong>2. Ibyangombwa by’Abacuruzi (KYC):</strong> Indangamuntu n’amafoto yo kugenzura
-            abacuruzi bibikwa ahantu harinzwe, bikarebwa n’Ubuyobozi (Admin) gusa kandi buri gihe
-            bikandikwa muri Audit Log. Amafoto yose akurwaho amakuru ya GPS (EXIF) mbere yo
-            kubikwa.
-          </p>
-          <p>
-            <strong>3. Uburenganzira bwawe (Itegeko N° 058/2021):</strong> Ufite uburenganzira bwo
-            kubona, gukosora cyangwa gusaba ko amakuru yawe asibwa. Mu gihe habaho ikibazo ku
-            mutekano w’amakuru, ubuyobozi bumenyesha inzego zibishinzwe (NCSA) n’abo bireba mu
-            masaha atarenze 48.
-          </p>
-          <p>
-            <strong>DPO / Ubufasha ku mabanga:</strong> Twandikire kuri WhatsApp y’ubufasha cyangwa
-            imeri ya <span className="font-semibold">privacy@isoko.rw</span>.
+            <strong>{copy.privacy.contactHeading}:</strong> {copy.privacy.contactBody}
           </p>
         </div>
       </main>
@@ -153,17 +104,14 @@ export const StaticPage: React.FC = () => {
   if (pathname === '/amabwiriza-y-abacuruzi') {
     return (
       <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 space-y-5">
-        <h1 className="text-2xl font-bold text-[#1B1F23]">
-          Amabwiriza y’Abacuruzi & Ibicuruzwa Bibujijwe
-        </h1>
+        <h1 className="text-2xl font-bold text-[#1B1F23]">{copy.sellerRules.title}</h1>
+        <p className="rounded-md bg-[#F7F8FA] px-3 py-2 text-xs leading-relaxed text-[#4B544F]">
+          {lang === 'rw' ? copy.terms.sourceNote : copy.terms.sourceNote}
+        </p>
         <div className="rounded-lg border border-[#C0392B]/30 bg-[#C0392B]/5 p-5 text-sm text-slate-700 space-y-2">
-          <p className="font-bold text-[#C0392B]">Ibicuruzwa bibujijwe burundu (§10.5):</p>
+          <p className="font-bold text-[#C0392B]">{copy.sellerRules.prohibitedTitle}</p>
           <ul className="list-disc pl-5 space-y-1 text-xs">
-            <li>Impimbano zigurishwa nka “Original” cyangwa “Authentic”.</li>
-            <li>Imiti n’ibindi bikoresho byo kwa muganga bisaba uruhushya rwa Rwanda FDA.</li>
-            <li>Intwaro, ibiyobyabwenge, amafaranga y’amiganano cyangwa ibikoresho byibwe.</li>
-            <li>Ibikoresho by’urukozasoni cyangwa ibinyuranyije n’amategeko y’u Rwanda.</li>
-            <li>Amafoto afite nimero ya telefoni yanditseho cyangwa amafoto yakuwe ahandi atari ayawe.</li>
+            {copy.sellerRules.prohibitedItems.map((item) => <li key={item}>{item}</li>)}
           </ul>
         </div>
         <button
@@ -172,25 +120,22 @@ export const StaticPage: React.FC = () => {
           className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white"
         >
           <Store className="h-4 w-4" aria-hidden="true" />
-          <span>Iyandikishe nk’umucuruzi</span>
+          <span>{copy.sellerRules.signup}</span>
         </button>
       </main>
     );
   }
 
-  // 404 Fallback
   return (
     <main className="mx-auto max-w-lg px-4 py-16 text-center">
-      <h1 className="text-2xl font-bold text-[#1B1F23]">Uru rupapuro ntirubonetse (404)</h1>
-      <p className="mt-2 text-sm text-slate-600">
-        Aho wagiye ntihabaho cyangwa hahinduwe. Subira ku isoko urebe ibicuruzwa biboneka.
-      </p>
+      <h1 className="text-2xl font-bold text-[#1B1F23]">{copy.notFound.title}</h1>
+      <p className="mt-2 text-sm text-slate-600">{copy.notFound.body}</p>
       <button
         type="button"
         onClick={() => navigate('/')}
         className="mt-6 inline-flex min-h-[44px] items-center rounded-xl bg-[#0B6E4F] px-6 text-sm font-semibold text-white hover:bg-[#08553D]"
       >
-        Subira ahabanza
+        {copy.notFound.home}
       </button>
     </main>
   );
