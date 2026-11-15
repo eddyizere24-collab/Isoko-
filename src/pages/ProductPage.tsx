@@ -262,7 +262,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
     productUrl,
     location,
   });
-  const waUrl = buildWhatsAppLink(shop?.whatsapp ?? '250788000000', waMsg);
+  const waUrl = shop?.whatsapp ? buildWhatsAppLink(shop.whatsapp, waMsg) : null;
 
   const performAddToCart = (goToCart = false) => {
     if (isSoldOut) return;
@@ -643,19 +643,20 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
 
           {/* Desktop Primary Actions */}
           <div className="hidden lg:flex gap-2.5 pt-1">
-            <a
-              href={waUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              disabled={!waUrl}
               onClick={() => {
+                if (!waUrl) return;
                 recordCategoryInterest(product.category_id, 5);
                 trackEvent('wa_click', product.id, product.shop_id);
+                window.open(waUrl, '_blank', 'noopener,noreferrer');
               }}
-              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-md border border-[#1A7F43] bg-white px-4 text-sm font-semibold text-[#1A7F43] hover:bg-[#E9F0EB] transition-colors"
+              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-md border border-[#0B6E4F] bg-white px-4 text-sm font-semibold text-[#0B6E4F] hover:bg-[#EFF6F2] disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
             >
               <MessageCircle className="h-4 w-4" aria-hidden="true" />
-              <span>{t('chat_seller')} (WhatsApp)</span>
-            </a>
+              <span>{waUrl ? t('chat_seller') : 'WhatsApp ntiyashyizweho'}</span>
+            </button>
             <button
               type="button"
               disabled={isSoldOut}
@@ -714,7 +715,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                   <span>{t('delivery_label')}</span>
                 </dt>
                 <dd className="font-medium text-[#202724] text-right max-w-[60%]">
-                  {shop?.delivery_text || 'Kigali & Intara · Kuri WhatsApp'}
+                  {shop?.delivery_text || 'Ntibyatangajwe'}
                 </dd>
               </div>
               <div className="flex justify-between gap-2 py-1.5">
@@ -849,26 +850,27 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
 
       {/* 52px Sticky Bottom Bar: [Vugana | Igare (icon) | Gura] (§8) */}
       <div className="fixed bottom-0 inset-x-0 z-40 h-[52px] border-t border-[#E3E0D8] bg-white px-2.5 flex items-center gap-2 lg:hidden">
-        <a
-          href={waUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
+          disabled={!waUrl}
           onClick={() => {
+            if (!waUrl) return;
             recordCategoryInterest(product.category_id, 5);
             trackEvent('wa_click', product.id, product.shop_id);
+            window.open(waUrl, '_blank', 'noopener,noreferrer');
           }}
-          className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-md border border-[#1A7F43] bg-white px-3 text-xs font-semibold text-[#1A7F43]"
+          className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-md border border-[#0B6E4F] bg-white px-3 text-xs font-semibold text-[#0B6E4F] disabled:cursor-not-allowed disabled:opacity-50"
         >
           <MessageCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
-          <span>{t('chat_seller')}</span>
-        </a>
+          <span>{waUrl ? t('chat_seller') : 'WhatsApp ntiyashyizweho'}</span>
+        </button>
 
         <button
           type="button"
-          disabled={isSoldOut}
-          onClick={() => performAddToCart(false)}
-          aria-label={t('add_to_cart')}
-          className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-[#C9CEC7] bg-white text-[#202724] disabled:opacity-40"
+          onClick={() => navigate('/igare')}
+          aria-label={t('cart')}
+          title={t('cart')}
+          className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-[#E3E7EB] bg-white text-[#0B6E4F]"
         >
           <ShoppingCart className="h-4 w-4" aria-hidden="true" />
           {cartCount > 0 && (
