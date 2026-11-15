@@ -6,7 +6,7 @@
  */
 let privateRequestController = new AbortController();
 
-const AUTH_STORAGE_KEY_PATTERN = /(neon|better-auth|auth|session|token|private|seller|admin|profile|wishlist|saved)/i;
+const AUTH_STORAGE_KEY_PATTERN = /(neon|better-auth|auth|session|token|private|seller|admin|profile|wishlist|saved|product_draft)/i;
 
 export function getPrivateRequestSignal(): AbortSignal {
   return privateRequestController.signal;
