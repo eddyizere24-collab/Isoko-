@@ -21,10 +21,7 @@ const LangContext = createContext<LangContextValue | null>(null);
 export const LangProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [lang, setLangState] = useState<LangCode>(() => {
     try {
-      return detectInitialLang(
-        window.localStorage.getItem(LANG_STORAGE_KEY),
-        window.navigator.language
-      );
+      return detectInitialLang(window.localStorage.getItem(LANG_STORAGE_KEY));
     } catch {
       return 'rw';
     }
@@ -32,15 +29,15 @@ export const LangProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     document.documentElement.lang = lang;
-    try {
-      window.localStorage.setItem(LANG_STORAGE_KEY, lang);
-    } catch {
-      // ignore storage errors in private frames
-    }
   }, [lang]);
 
   const setLang = useCallback((next: LangCode) => {
     setLangState(next);
+    try {
+      window.localStorage.setItem(LANG_STORAGE_KEY, next);
+    } catch {
+      // Keep the in-memory language selection when storage is unavailable.
+    }
   }, []);
 
   const t = useCallback(

@@ -32,17 +32,16 @@ export const DICTIONARIES: Record<LangCode, Record<TranslationKey, string>> = {
   ln,
 };
 
-export const LANG_STORAGE_KEY = 'isoko.lang';
+// Only an explicit choice made in the language switcher is stored.
+// The v2 key intentionally avoids treating old browser-detected values as user preferences.
+export const LANG_STORAGE_KEY = 'isoko.lang.preference.v2';
 
 export function isSupportedLang(value: string | null | undefined): value is LangCode {
   return value === 'rw' || value === 'en' || value === 'fr' || value === 'sw' || value === 'rn' || value === 'ln';
 }
 
-export function detectInitialLang(stored?: string | null, browserLang?: string | null): LangCode {
-  if (isSupportedLang(stored)) return stored;
-  const prefix = String(browserLang ?? '').toLowerCase().split(/[-_]/)[0];
-  if (isSupportedLang(prefix)) return prefix;
-  return 'rw';
+export function detectInitialLang(storedPreference?: string | null): LangCode {
+  return isSupportedLang(storedPreference) ? storedPreference : 'rw';
 }
 
 export function translate(
