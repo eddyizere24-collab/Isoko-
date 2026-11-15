@@ -1,0 +1,85 @@
+name: Save Playwright screenshot evidence
+
+on:
+  workflow_run:
+    workflows: ["ISOKO checks"]
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  save-screenshots:
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.repository.full_name == github.repository &&
+      github.event.workflow_run.head_repository.full_name == github.repository &&
+      (startsWith(github.event.workflow_run.head_branch, 'fix/') ||
+       startsWith(github.event.workflow_run.head_branch, 'design/'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the originating PR branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Download validated screenshot artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          artifact_name="isoko-mobile-qa-${SOURCE_RUN_ID}"
+          api_url="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs/${SOURCE_RUN_ID}/artifacts"
+          artifact_url="$(curl -fsSL \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "${api_url}" | jq -r --arg name "${artifact_name}" \
+            '.artifacts[] | select(.name == $name and .expired == false) | .archive_download_url' | head -n 1)"
+
+          if [[ -z "${artifact_url}" || "${artifact_url}" == "null" ]]; then
+            echo "This successful run did not publish the screenshot artifact; no files were copied." >> "${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
+
+          zip_path="${RUNNER_TEMP}/isoko-mobile-qa.zip"
+          extract_dir="${RUNNER_TEMP}/isoko-mobile-qa"
+          curl -fsSL -L \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "${artifact_url}" -o "${zip_path}"
+          mkdir -p "${extract_dir}"
+          unzip -q "${zip_path}" -d "${extract_dir}"
+
+          mapfile -t pngs < <(find "${extract_dir}" -type f -name '*.png' | sort)
+          if [[ "${#pngs[@]}" -ne 21 ]]; then
+            echo "Expected 21 Playwright PNGs, found ${#pngs[@]}." >&2
+            exit 1
+          fi
+          for file in "${pngs[@]}"; do
+            bytes="$(stat -c '%s' "${file}")"
+            if [[ "${bytes}" -gt 409600 ]]; then
+              echo "PNG exceeds 400 KB: ${file} (${bytes} bytes)" >&2
+              exit 1
+            fi
+          done
+
+          qa_dir="docs/design/qa/2026-11-16"
+          mkdir -p "${qa_dir}"
+          cp "${pngs[@]}" "${qa_dir}/"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${qa_dir}"/*.png
+          if git diff --cached --quiet; then
+            echo "The current Playwright PNGs already match the committed evidence." >> "${GITHUB_STEP_SUMMARY}"
+            exit 0
+          fi
+          git commit -m "test(qa): add mobile screenshots from run ${SOURCE_RUN_ID}"
+          git push origin "HEAD:${{ github.event.workflow_run.head_branch }}"
+
+          echo "Committed ${#pngs[@]} Playwright PNGs under ${qa_dir}/." >> "${GITHUB_STEP_SUMMARY}"
