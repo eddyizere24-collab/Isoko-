@@ -235,18 +235,18 @@ export const SellerProductsPage: React.FC = () => {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-[#E5E7EB]">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-[#E3E0D8]">
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate('/umucuruzi')}
             aria-label="Subira inyuma"
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#E5E7EB] hover:bg-[#F1F6F3]"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#E3E0D8] hover:bg-[#E9F0EB]"
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
           <div>
-            <h1 className="font-display text-xl font-bold text-[#1B1F23]">Ibicuruzwa byanjye</h1>
+            <h1 className="font-display text-xl font-bold text-[#202724]">Ibicuruzwa byanjye</h1>
             <p className="text-xs text-slate-500 tabular-nums">
               Byose hamwe: {products.length}
             </p>
@@ -257,7 +257,7 @@ export const SellerProductsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => navigate('/umucuruzi/ongeraho-byinshi')}
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-[#0B6E4F] px-4 text-sm font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3]"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-[#214E43] px-4 text-sm font-semibold text-[#214E43] hover:bg-[#E9F0EB]"
           >
             <ImagePlus className="h-4 w-4" aria-hidden="true" />
             <span>Ongeraho byinshi</span>
@@ -265,7 +265,7 @@ export const SellerProductsPage: React.FC = () => {
           <button
             type="button"
             onClick={() => navigate('/umucuruzi/ongeraho')}
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-4 text-sm font-semibold text-white hover:bg-[#08553D]"
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#214E43] px-4 text-sm font-semibold text-white hover:bg-[#183B33]"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />
             <span>Ongeraho kimwe</span>
@@ -285,7 +285,7 @@ export const SellerProductsPage: React.FC = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Shakisha mu bicuruzwa byawe..."
-            className="min-h-[44px] w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm focus:border-[#0B6E4F] focus:outline-none"
+            className="min-h-[44px] w-full rounded-xl border border-slate-300 bg-white pl-10 pr-4 text-sm focus:border-[#214E43] focus:outline-none"
           />
         </div>
 
@@ -305,8 +305,8 @@ export const SellerProductsPage: React.FC = () => {
               onClick={() => setStatusFilter(tab.id)}
               className={`min-h-[44px] rounded-xl px-3.5 text-xs font-semibold transition ${
                 statusFilter === tab.id
-                  ? 'bg-[#0B6E4F] text-white'
-                  : 'border border-[#E5E7EB] bg-white text-[#1B1F23] hover:bg-[#F1F6F3]'
+                  ? 'bg-[#214E43] text-white'
+                  : 'border border-[#E3E0D8] bg-white text-[#202724] hover:bg-[#E9F0EB]'
               }`}
             >
               {tab.label}
@@ -318,7 +318,7 @@ export const SellerProductsPage: React.FC = () => {
       {feedback && (
         <div
           role="status"
-          className="mt-4 rounded-xl border border-[#0B6E4F]/30 bg-[#F1F6F3] px-4 py-2.5 text-sm font-medium text-[#0B6E4F]"
+          className="mt-4 rounded-xl border border-[#214E43]/30 bg-[#E9F0EB] px-4 py-2.5 text-sm font-medium text-[#214E43]"
         >
           {feedback}
         </div>
@@ -327,7 +327,7 @@ export const SellerProductsPage: React.FC = () => {
       {loading ? (
         <div className="mt-6 space-y-3">
           {[1, 2, 3].map((n) => (
-            <div key={n} className="h-24 animate-pulse rounded-lg bg-[#F1F6F3]" />
+            <div key={n} className="h-24 animate-pulse rounded-lg bg-[#E9F0EB]" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
@@ -339,17 +339,17 @@ export const SellerProductsPage: React.FC = () => {
           {filtered.map((p) => (
             <article
               key={p.id}
-              className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-[#E5E7EB] bg-white p-4"
+              className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-[#E3E0D8] bg-white p-4"
             >
               <div className="flex items-center gap-3.5 min-w-0 flex-1">
                 <img
                   src={p.images[0]?.path_thumb || p.images[0]?.path_full}
                   alt={p.name}
-                  className="h-18 w-18 rounded-xl object-cover shrink-0 bg-[#F1F6F3]"
+                  className="h-18 w-18 rounded-xl object-cover shrink-0 bg-[#E9F0EB]"
                 />
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-[#1B1F23]">{p.name}</p>
-                  <p className="mt-0.5 text-sm font-bold text-[#0B6E4F] tabular-nums">
+                  <p className="truncate text-sm font-bold text-[#202724]">{p.name}</p>
+                  <p className="mt-0.5 text-sm font-bold text-[#214E43] tabular-nums">
                     {formatRwfCurrency(p.price)}{' '}
                     {p.old_price && p.old_price > p.price && (
                       <span className="ml-1 text-xs font-normal text-slate-400 line-through">
@@ -382,7 +382,7 @@ export const SellerProductsPage: React.FC = () => {
                         'Igicuruzwa cyashyizwe nka cyashize.'
                       ).finally(() => setBusyId(null));
                     }}
-                    className="min-h-[44px] rounded-xl border border-slate-300 px-3 text-xs font-semibold text-[#1B1F23] hover:bg-slate-100"
+                    className="min-h-[44px] rounded-xl border border-slate-300 px-3 text-xs font-semibold text-[#202724] hover:bg-slate-100"
                   >
                     {RW.mark_sold}
                   </button>
@@ -398,7 +398,7 @@ export const SellerProductsPage: React.FC = () => {
                         'Igicuruzwa cyasubijwe mu bubiko.'
                       ).finally(() => setBusyId(null));
                     }}
-                    className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-[#0B6E4F] px-3 text-xs font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3] disabled:opacity-40"
+                    className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-[#214E43] px-3 text-xs font-semibold text-[#214E43] hover:bg-[#E9F0EB] disabled:opacity-40"
                   >
                     <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>{RW.restore_stock}</span>
@@ -416,7 +416,7 @@ export const SellerProductsPage: React.FC = () => {
                         'Igicuruzwa cyahishwe. Abaguzi ntibagikibona.'
                       ).finally(() => setBusyId(null));
                     }}
-                    className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-slate-300 px-3 text-xs font-semibold text-[#1B1F23] hover:bg-slate-100 disabled:opacity-50"
+                    className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-slate-300 px-3 text-xs font-semibold text-[#202724] hover:bg-slate-100 disabled:opacity-50"
                   >
                     <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>Hisha</span>
@@ -433,7 +433,7 @@ export const SellerProductsPage: React.FC = () => {
                         'Igicuruzwa cyongeye kugaragara ku isoko.'
                       ).finally(() => setBusyId(null));
                     }}
-                    className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-[#0B6E4F] px-3 text-xs font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3] disabled:opacity-50"
+                    className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-[#214E43] px-3 text-xs font-semibold text-[#214E43] hover:bg-[#E9F0EB] disabled:opacity-50"
                   >
                     <Eye className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>Garagaza</span>
@@ -452,7 +452,7 @@ export const SellerProductsPage: React.FC = () => {
                     setNewPrice(String(p.price));
                     setUseOldPrice(true);
                   }}
-                  className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-slate-300 px-3 text-xs font-semibold text-[#1B1F23] hover:bg-[#F1F6F3]"
+                  className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-slate-300 px-3 text-xs font-semibold text-[#202724] hover:bg-[#E9F0EB]"
                 >
                   <Edit3 className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{RW.edit_price}</span>
@@ -461,7 +461,7 @@ export const SellerProductsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => openFullEdit(p)}
-                  className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-[#0B6E4F]/40 bg-[#F1F6F3] px-3 text-xs font-semibold text-[#0B6E4F] hover:bg-[#0B6E4F] hover:text-white transition-colors"
+                  className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-[#214E43]/40 bg-[#E9F0EB] px-3 text-xs font-semibold text-[#214E43] hover:bg-[#214E43] hover:text-white transition-colors"
                 >
                   <FileEdit className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>Hindura</span>
@@ -488,7 +488,7 @@ export const SellerProductsPage: React.FC = () => {
                       'Kopi y’igicuruzwa yongeweho.'
                     ).finally(() => setBusyId(null));
                   }}
-                  className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-slate-300 px-3 text-xs font-semibold text-[#1B1F23] hover:bg-[#F1F6F3]"
+                  className="inline-flex min-h-[44px] items-center gap-1 rounded-xl border border-slate-300 px-3 text-xs font-semibold text-[#202724] hover:bg-[#E9F0EB]"
                 >
                   <Copy className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{RW.copy_product}</span>
@@ -499,7 +499,7 @@ export const SellerProductsPage: React.FC = () => {
                   disabled={busyId === p.id}
                   onClick={() => setDeleteCandidate(p)}
                   aria-label={`Siba ${p.name}`}
-                  className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#E5E7EB] text-[#C0392B] hover:bg-[#C0392B]/10"
+                  className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#E3E0D8] text-[#BD594A] hover:bg-[#BD594A]/10"
                 >
                   <Trash2 className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -512,7 +512,7 @@ export const SellerProductsPage: React.FC = () => {
       {deleteCandidate && (
         <div role="dialog" aria-modal="true" aria-labelledby="delete-product-title" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <h2 id="delete-product-title" className="text-lg font-bold text-[#1B1F23]">Siba igicuruzwa?</h2>
+            <h2 id="delete-product-title" className="text-lg font-bold text-[#202724]">Siba igicuruzwa?</h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">
               Ugiye gusiba <strong>{deleteCandidate.name}</strong>. Iki gikorwa ntigishobora gusubizwa inyuma.
               Niba ushaka ko abaguzi batakibona gusa, koresha Hisha aho kugisiba.
@@ -530,7 +530,7 @@ export const SellerProductsPage: React.FC = () => {
                     setDeleteCandidate(null);
                   });
                 }}
-                className="min-h-[44px] flex-1 rounded-xl bg-[#C0392B] px-4 text-sm font-semibold text-white disabled:opacity-50"
+                className="min-h-[44px] flex-1 rounded-xl bg-[#BD594A] px-4 text-sm font-semibold text-white disabled:opacity-50"
               >Siba burundu</button>
             </div>
           </section>
@@ -550,14 +550,14 @@ export const SellerProductsPage: React.FC = () => {
             className="w-full max-w-sm rounded-lg bg-white p-6 shadow-xl space-y-4"
           >
             <div className="flex items-center justify-between">
-              <h2 id="edit-price-title" className="text-base font-bold text-[#1B1F23]">
+              <h2 id="edit-price-title" className="text-base font-bold text-[#202724]">
                 {RW.edit_price}
               </h2>
               <button
                 type="button"
                 onClick={() => setPriceModalProduct(null)}
                 aria-label="Funga"
-                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-slate-500 hover:bg-[#F1F6F3]"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-slate-500 hover:bg-[#E9F0EB]"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -569,7 +569,7 @@ export const SellerProductsPage: React.FC = () => {
             </p>
 
             <div>
-              <label htmlFor="modal-new-price" className="block text-xs font-semibold text-[#1B1F23]">
+              <label htmlFor="modal-new-price" className="block text-xs font-semibold text-[#202724]">
                 Igiciro gishya (RWF)
               </label>
               <input
@@ -581,7 +581,7 @@ export const SellerProductsPage: React.FC = () => {
                 required
                 value={newPrice}
                 onChange={(e) => setNewPrice(e.target.value)}
-                className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm font-semibold tabular-nums focus:border-[#0B6E4F] focus:outline-none"
+                className="mt-1.5 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm font-semibold tabular-nums focus:border-[#214E43] focus:outline-none"
               />
             </div>
 
@@ -590,7 +590,7 @@ export const SellerProductsPage: React.FC = () => {
                 type="checkbox"
                 checked={useOldPrice}
                 onChange={(e) => setUseOldPrice(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 text-[#0B6E4F]"
+                className="h-4 w-4 rounded border-slate-300 text-[#214E43]"
               />
               <span>
                 Niba igiciro gishya ari gito, garagaza igiciro cya kera giciyeho akarongo
@@ -601,13 +601,13 @@ export const SellerProductsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setPriceModalProduct(null)}
-                className="min-h-[44px] flex-1 rounded-xl border border-slate-300 text-sm font-semibold text-[#1B1F23]"
+                className="min-h-[44px] flex-1 rounded-xl border border-slate-300 text-sm font-semibold text-[#202724]"
               >
                 {RW.cancel}
               </button>
               <button
                 type="submit"
-                className="min-h-[44px] flex-1 rounded-xl bg-[#0B6E4F] text-sm font-semibold text-white hover:bg-[#08553D]"
+                className="min-h-[44px] flex-1 rounded-xl bg-[#214E43] text-sm font-semibold text-white hover:bg-[#183B33]"
               >
                 {RW.save}
               </button>
@@ -628,28 +628,28 @@ export const SellerProductsPage: React.FC = () => {
             onSubmit={handleSaveFullEdit}
             className="w-full max-w-lg rounded-lg bg-white p-6 shadow-xl space-y-4 my-8"
           >
-            <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
-              <h2 id="full-edit-title" className="font-display text-lg font-bold text-[#1B1F23]">
+            <div className="flex items-center justify-between border-b border-[#E3E0D8] pb-3">
+              <h2 id="full-edit-title" className="font-display text-lg font-bold text-[#202724]">
                 Hindura amakuru y’igicuruzwa
               </h2>
               <button
                 type="button"
                 onClick={() => setEditProduct(null)}
                 aria-label="Funga"
-                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-slate-500 hover:bg-[#F1F6F3]"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl text-slate-500 hover:bg-[#E9F0EB]"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             {editError && (
-              <p role="alert" className="rounded-xl bg-[#C0392B]/10 px-3.5 py-2 text-xs font-semibold text-[#C0392B]">
+              <p role="alert" className="rounded-xl bg-[#BD594A]/10 px-3.5 py-2 text-xs font-semibold text-[#BD594A]">
                 {editError}
               </p>
             )}
 
             <div>
-              <label htmlFor="edit-prod-name" className="block text-xs font-semibold text-[#1B1F23]">
+              <label htmlFor="edit-prod-name" className="block text-xs font-semibold text-[#202724]">
                 Izina ry’igicuruzwa (5–60)
               </label>
               <input
@@ -660,13 +660,13 @@ export const SellerProductsPage: React.FC = () => {
                 maxLength={60}
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#0B6E4F] focus:outline-none"
+                className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm focus:border-[#214E43] focus:outline-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="edit-prod-price" className="block text-xs font-semibold text-[#1B1F23]">
+                <label htmlFor="edit-prod-price" className="block text-xs font-semibold text-[#202724]">
                   Igiciro (RWF)
                 </label>
                 <input
@@ -677,11 +677,11 @@ export const SellerProductsPage: React.FC = () => {
                   required
                   value={editPrice}
                   onChange={(e) => setEditPrice(e.target.value)}
-                  className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#0B6E4F] focus:outline-none"
+                  className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#214E43] focus:outline-none"
                 />
               </div>
               <div>
-                <label htmlFor="edit-prod-old-price" className="block text-xs font-semibold text-[#1B1F23]">
+                <label htmlFor="edit-prod-old-price" className="block text-xs font-semibold text-[#202724]">
                   Igiciro cya kera (si itegeko)
                 </label>
                 <input
@@ -692,14 +692,14 @@ export const SellerProductsPage: React.FC = () => {
                   value={editOldPrice}
                   onChange={(e) => setEditOldPrice(e.target.value)}
                   placeholder="Nta na kimwe"
-                  className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#0B6E4F] focus:outline-none"
+                  className="mt-1 min-h-[44px] w-full rounded-xl border border-slate-300 px-3.5 text-sm tabular-nums focus:border-[#214E43] focus:outline-none"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="edit-prod-condition" className="block text-xs font-semibold text-[#1B1F23]">
+                <label htmlFor="edit-prod-condition" className="block text-xs font-semibold text-[#202724]">
                   Imiterere
                 </label>
                 <select
@@ -713,7 +713,7 @@ export const SellerProductsPage: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label htmlFor="edit-prod-brand" className="block text-xs font-semibold text-[#1B1F23]">
+                <label htmlFor="edit-prod-brand" className="block text-xs font-semibold text-[#202724]">
                   Ikirango (Brand)
                 </label>
                 <input
@@ -734,14 +734,14 @@ export const SellerProductsPage: React.FC = () => {
                   type="checkbox"
                   checked={editAuthentic}
                   onChange={(e) => setEditAuthentic(e.target.checked)}
-                  className="h-4 w-4 accent-[#0B6E4F]"
+                  className="h-4 w-4 accent-[#214E43]"
                 />
                 <span>Ndemeza ko iki gicuruzwa ari Original (nyacyo)</span>
               </label>
             )}
 
             <div>
-              <label htmlFor="edit-prod-desc" className="block text-xs font-semibold text-[#1B1F23]">
+              <label htmlFor="edit-prod-desc" className="block text-xs font-semibold text-[#202724]">
                 Ibisobanuro (ntibirenze inyuguti 300)
               </label>
               <textarea
@@ -750,17 +750,17 @@ export const SellerProductsPage: React.FC = () => {
                 maxLength={300}
                 value={editDesc}
                 onChange={(e) => setEditDesc(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-[#0B6E4F] focus:outline-none"
+                className="mt-1 w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-[#214E43] focus:outline-none"
               />
             </div>
 
             <section className="space-y-3 rounded-xl border border-slate-200 p-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-sm font-bold text-[#1B1F23]">Amafoto y’igicuruzwa</h3>
+                  <h3 className="text-sm font-bold text-[#202724]">Amafoto y’igicuruzwa</h3>
                   <p className="text-xs text-slate-500">Nibura 1, ntarenze 5. Ifoto ya mbere ni yo igaragara ku ikarita.</p>
                 </div>
-                <label className="inline-flex min-h-[40px] cursor-pointer items-center gap-1.5 rounded-xl border border-[#0B6E4F] px-3 text-xs font-semibold text-[#0B6E4F] hover:bg-[#F1F6F3]">
+                <label className="inline-flex min-h-[40px] cursor-pointer items-center gap-1.5 rounded-xl border border-[#214E43] px-3 text-xs font-semibold text-[#214E43] hover:bg-[#E9F0EB]">
                   <ImagePlus className="h-4 w-4" aria-hidden="true" />
                   <span>Ongeraho</span>
                   <input
@@ -776,7 +776,7 @@ export const SellerProductsPage: React.FC = () => {
                   />
                 </label>
               </div>
-              {editUploadingPhotos && <p className="text-xs font-medium text-[#0B6E4F]">Turimo gutunganya amafoto...</p>}
+              {editUploadingPhotos && <p className="text-xs font-medium text-[#214E43]">Turimo gutunganya amafoto...</p>}
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
                 {editPhotos.map((photo,index) => (
                   <div key={photo.id} className="overflow-hidden rounded-xl border border-slate-200">
@@ -786,7 +786,7 @@ export const SellerProductsPage: React.FC = () => {
                       <div className="flex gap-1">
                         <button type="button" disabled={index===0} onClick={()=>moveEditPhoto(index,-1)} aria-label="Shyira ifoto imbere" className="min-h-[30px] min-w-[30px] rounded-md border border-slate-200 text-xs disabled:opacity-30">←</button>
                         <button type="button" disabled={index===editPhotos.length-1} onClick={()=>moveEditPhoto(index,1)} aria-label="Subiza ifoto inyuma" className="min-h-[30px] min-w-[30px] rounded-md border border-slate-200 text-xs disabled:opacity-30">→</button>
-                        <button type="button" onClick={()=>removeEditPhoto(index)} aria-label="Kuraho ifoto" className="min-h-[30px] min-w-[30px] rounded-md text-[#C0392B] hover:bg-[#C0392B]/10">×</button>
+                        <button type="button" onClick={()=>removeEditPhoto(index)} aria-label="Kuraho ifoto" className="min-h-[30px] min-w-[30px] rounded-md text-[#BD594A] hover:bg-[#BD594A]/10">×</button>
                       </div>
                     </div>
                   </div>
@@ -795,14 +795,14 @@ export const SellerProductsPage: React.FC = () => {
             </section>
 
             <div>
-              <p className="text-xs font-semibold text-[#1B1F23]">Imibare / Sizes mu bubiko</p>
+              <p className="text-xs font-semibold text-[#202724]">Imibare / Sizes mu bubiko</p>
               <div className="mt-2 space-y-2 max-h-40 overflow-y-auto pr-1">
                 {editVariants.map((v, idx) => (
                   <div
                     key={v.id}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-[#E5E7EB] px-3 py-2 text-xs"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-[#E3E0D8] px-3 py-2 text-xs"
                   >
-                    <label className="inline-flex items-center gap-2 font-semibold text-[#1B1F23] cursor-pointer">
+                    <label className="inline-flex items-center gap-2 font-semibold text-[#202724] cursor-pointer">
                       <input
                         type="checkbox"
                         checked={v.in_stock}
@@ -816,7 +816,7 @@ export const SellerProductsPage: React.FC = () => {
                             )
                           );
                         }}
-                        className="h-4 w-4 accent-[#0B6E4F]"
+                        className="h-4 w-4 accent-[#214E43]"
                       />
                       <span>Size: {v.size_label}</span>
                     </label>
@@ -847,18 +847,18 @@ export const SellerProductsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex gap-2.5 pt-2 border-t border-[#E5E7EB]">
+            <div className="flex gap-2.5 pt-2 border-t border-[#E3E0D8]">
               <button
                 type="button"
                 onClick={() => setEditProduct(null)}
-                className="min-h-[44px] flex-1 rounded-xl border border-slate-300 text-sm font-semibold text-[#1B1F23]"
+                className="min-h-[44px] flex-1 rounded-xl border border-slate-300 text-sm font-semibold text-[#202724]"
               >
                 {RW.cancel}
               </button>
               <button
                 type="submit"
                 disabled={busyId === editProduct.id}
-                className="min-h-[44px] flex-1 rounded-xl bg-[#0B6E4F] text-sm font-semibold text-white hover:bg-[#08553D] disabled:opacity-50"
+                className="min-h-[44px] flex-1 rounded-xl bg-[#214E43] text-sm font-semibold text-white hover:bg-[#183B33] disabled:opacity-50"
               >
                 {RW.save}
               </button>
