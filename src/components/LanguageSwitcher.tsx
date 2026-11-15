@@ -90,11 +90,6 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ variant = 'h
                   <span className="truncate">{item.label}</span>
                 </span>
                 <span className="flex items-center gap-1.5 shrink-0">
-                  {!item.reviewed && (
-                    <span className="rounded border border-[#E5E7EB] bg-[#F7F8FA] px-1 py-0.5 text-[10px] font-medium text-[#6B7280]">
-                      {t('beta_badge')}
-                    </span>
-                  )}
                   {active && <Check className="h-3.5 w-3.5 text-[#0B6E4F]" aria-hidden="true" />}
                 </span>
               </button>
