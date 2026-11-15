@@ -28,8 +28,8 @@ export const SellerApplyPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const validateStep1 = (): boolean => {
-    if (fullName.trim().length < 2) {
-      setError('Andika amazina yawe yuzuye (nibura inyuguti 2).');
+    if (fullName.trim().length > 0 && fullName.trim().length < 2) {
+      setError('Amazina wanditse agomba kugira nibura inyuguti 2, cyangwa uyasige ubusa.');
       return false;
     }
     if (!/^[^@]+@[^@]+\.[^@]+$/.test(email.trim().toLowerCase())) {
@@ -161,7 +161,7 @@ export const SellerApplyPage: React.FC = () => {
           <div className="space-y-4">
             <div>
               <label htmlFor="reg-fullname" className="block text-[13px] font-semibold text-[#1B1F23]">
-                {t('full_name')} *
+                {t('full_name')} (ntibisabwa)
               </label>
               <div className="relative mt-1.5">
                 <User
@@ -172,7 +172,6 @@ export const SellerApplyPage: React.FC = () => {
                   id="reg-fullname"
                   type="text"
                   autoComplete="name"
-                  required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Mugisha Jean Paul"
