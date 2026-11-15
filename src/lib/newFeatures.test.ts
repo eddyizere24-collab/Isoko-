@@ -13,10 +13,10 @@ test('all 6 language dictionaries match rw keyset completely', () => {
   }
 });
 
-test('detectInitialLang resolves stored or browser prefix or defaults to rw', () => {
+test('detectInitialLang prefers stored choice and otherwise defaults to Kinyarwanda', () => {
   assert.equal(detectInitialLang('fr', 'en-US'), 'fr');
-  assert.equal(detectInitialLang(null, 'sw-TZ'), 'sw');
-  assert.equal(detectInitialLang(null, 'ln-CD'), 'ln');
+  assert.equal(detectInitialLang(null, 'sw-TZ'), 'rw');
+  assert.equal(detectInitialLang(null, 'ln-CD'), 'rw');
   assert.equal(detectInitialLang(null, 'de-DE'), 'rw');
 });
 
