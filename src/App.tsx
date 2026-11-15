@@ -6,6 +6,7 @@ import { LocationSheet } from './components/LocationSheet';
 import { OfflineAndPwaBar } from './components/OfflineAndPwaBar';
 import { LangProvider } from './context/LangContext';
 import { MarketplaceProvider, useMarketplace } from './context/MarketplaceContext';
+import { AccountPage, MyAccountPage } from './pages/AccountPage';
 import { AdminPage } from './pages/AdminPage';
 import { BrandPreviewPage } from './pages/BrandPreviewPage';
 import { CartPage } from './pages/CartPage';
@@ -24,7 +25,7 @@ import { ShopPage } from './pages/ShopPage';
 import { StaticPage } from './pages/StaticPage';
 
 const AppRouter: React.FC = () => {
-  const { pathname } = useMarketplace();
+  const { pathname, authReady, authSession, authProfile, replace } = useMarketplace();
   const [categoriesOpen, setCategoriesOpen] = useState(false);
 
   useEffect(() => {
@@ -35,7 +36,42 @@ const AppRouter: React.FC = () => {
     }
   }, []);
 
+  const isAdminRoute = pathname === '/admin' || pathname.startsWith('/admin/');
+  const isSellerRoute = pathname === '/umucuruzi' || pathname.startsWith('/umucuruzi/');
+  const isAccountSettingsRoute = pathname === '/konti/yanjye';
+  const requiresAuth = isAdminRoute || isSellerRoute || isAccountSettingsRoute;
+
+  useEffect(() => {
+    if (!authReady || !requiresAuth) return;
+    if (!authSession || !authProfile) {
+      replace('/injira');
+      return;
+    }
+    if (isAdminRoute && authProfile.role !== 'admin' && authProfile.role !== 'moderator') {
+      replace('/konti');
+      return;
+    }
+    if (isSellerRoute && authProfile.role !== 'seller') {
+      replace('/konti');
+    }
+  }, [authReady, authSession, authProfile, requiresAuth, isAdminRoute, isSellerRoute, replace]);
+
   const renderRoute = () => {
+    if (requiresAuth && (!authReady || !authSession || !authProfile)) {
+      return (
+        <main className="mx-auto max-w-xl px-4 py-12">
+          <div role="status" className="rounded-xl border border-slate-200 bg-white p-5 text-sm text-[#4B544F]">
+            {!authReady ? 'Turagenzura konti yawe...' : 'Injira kugira ngo ubone uru rupapuro.'}
+          </div>
+        </main>
+      );
+    }
+    if (isAdminRoute && authProfile && authProfile.role !== 'admin' && authProfile.role !== 'moderator') {
+      return <AccountPage />;
+    }
+    if (isSellerRoute && authProfile && authProfile.role !== 'seller') {
+      return <AccountPage />;
+    }
     if (pathname === '/' || pathname === '') {
       return <HomePage onOpenCategories={() => setCategoriesOpen(true)} />;
     }
@@ -66,6 +102,12 @@ const AppRouter: React.FC = () => {
     }
     if (pathname === '/injira') {
       return <LoginPage />;
+    }
+    if (pathname === '/konti') {
+      return <AccountPage />;
+    }
+    if (pathname === '/konti/yanjye') {
+      return <MyAccountPage />;
     }
     if (pathname === '/abacuruzi') {
       return <SellerApplyPage />;
