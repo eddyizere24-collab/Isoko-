@@ -293,7 +293,7 @@ export const ImigongoHeroCorner: React.FC<{ className?: string }> = ({ className
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     aria-hidden="true"
-    className={`h-[120px] w-[120px] pointer-events-none select-none opacity-15 ${className}`}
+    className={`h-[120px] w-[120px] pointer-events-none select-none opacity-75 ${className}`}
   >
     <defs>
       <pattern id="imigongo-hero-pattern" width="48" height="24" patternUnits="userSpaceOnUse">
@@ -320,7 +320,7 @@ export const AuthBrandHeader: React.FC<{
   title: string;
   subtitle?: string;
 }> = ({ title, subtitle }) => (
-  <div className="relative overflow-hidden rounded-xl border border-[#E3E0D8] bg-[#FFFEFB] text-[#202724]">
+  <div className="relative overflow-hidden rounded-xl border border-[#E3E0D8] bg-white text-[#202724]">
     <div className="relative z-10 flex min-h-[104px] flex-col justify-center px-5 py-4 sm:min-h-[116px] sm:px-7">
       <div className="flex items-center justify-between gap-4">
         <IsokoWordmark markClassName="h-7 w-7" wordmarkClassName="h-[18px] w-auto" />
@@ -338,9 +338,9 @@ export const AuthBrandHeader: React.FC<{
       aria-hidden="true"
       className="pointer-events-none absolute right-0 top-0 h-full w-28 opacity-25"
     >
-      <path d="M120 0 64 56 120 112" stroke="#214E43" strokeWidth="1.4" />
-      <path d="M120 18 82 56 120 94" stroke="#BD594A" strokeWidth="1.1" />
-      <path d="M120 36 100 56 120 76" stroke="#C99A4B" strokeWidth="1.1" />
+      <path d="M120 0 64 56 120 112" stroke="#0B6E4F" strokeWidth="2" />
+      <path d="M120 18 82 56 120 94" stroke="#C0392B" strokeWidth="1.8" />
+      <path d="M120 36 100 56 120 76" stroke="#B07A20" strokeWidth="1.8" />
       <path d="M88 0 32 56 88 112" stroke="#214E43" strokeWidth="1" opacity=".7" />
     </svg>
     <div aria-hidden="true" className="h-2 w-full imigongo-header-strip" />
