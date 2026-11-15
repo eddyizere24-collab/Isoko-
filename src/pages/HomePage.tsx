@@ -210,7 +210,9 @@ export const HomePage: React.FC<HomePageProps> = () => {
           </div>
         ) : error ? (
           <div className="rounded-xl border border-[#E6D3CE] bg-[#FFFEFB] px-4 py-5 text-center">
-            <p className="text-[12px] font-medium text-[#6E4038]">{error}</p>
+            <p className="text-[12px] font-medium text-[#6E4038]">
+              Ntibyashobotse gufungura ibicuruzwa ubu. Ongera ugerageze nyuma.
+            </p>
             <button
               type="button"
               onClick={refreshBootstrap}
