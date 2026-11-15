@@ -14,7 +14,9 @@ test('every supported language contains exactly the same translation keys', () =
     const dictionary = DICTIONARIES[language] as Record<string, unknown>;
     assert.deepEqual(Object.keys(dictionary).sort(), referenceKeys, `${language} translation keys differ from rw`);
     for (const [key, value] of Object.entries(dictionary)) {
-      assert.equal(typeof value, 'string', `${language}.${key} must be a string`);
+      if (typeof value !== 'string') {
+        throw new Error(`${language}.${key} must be a string`);
+      }
       assert.ok(value.trim().length > 0, `${language}.${key} must not be empty`);
     }
   }
