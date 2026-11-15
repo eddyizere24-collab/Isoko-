@@ -33,7 +33,7 @@ const VIEWPORTS = [
 ];
 
 async function configureEmptyPublicCatalogue(context) {
-  await context.route(/\\.aws\\.neon\\.tech\\//, async (route) => {
+  await context.route(/\.aws\.neon\.tech\//, async (route) => {
     const request = route.request();
     const url = new URL(request.url());
     if (url.hostname.includes('.apirest.') && url.pathname.endsWith('/v_public_bootstrap')) {
