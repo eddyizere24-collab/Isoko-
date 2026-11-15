@@ -1,10 +1,15 @@
 /**
- * Section 8.6: Client-side image processing
- * - Reads JPEG, PNG or WebP image files
- * - Redraws onto HTML5 Canvas (automatically strips EXIF/GPS metadata)
- * - Produces full (<= 1000px wide, <= 150 KB) and thumb (400px wide, ~30 KB)
- * - Rejects anything > 500 KB after compression
+ * ISOKO's universal photo intake.
+ *
+ * Photos are decoded, resized and compressed on the device before upload.
+ * The source file's MIME label and original size are never used as a rejection
+ * rule. Compresso supports browser-native formats and lazy-loads the HEIC/HEIF
+ * decoder only when an iPhone photo needs it.
+ *
+ * The upload API still receives only normalized WebP/JPEG files below 500 KB.
  */
+
+import { compress } from 'compresso.js';
 
 export interface CompressedImagePair {
   fullDataUrl: string;
@@ -14,82 +19,81 @@ export interface CompressedImagePair {
   bytes: number;
 }
 
-function loadImageElement(file: File): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      resolve(img);
-    };
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error('Ntibishobotse gusoma ifoto. Koresha JPG, PNG cyangwa WEBP.'));
-    };
-    img.src = url;
-  });
+const ACCEPTED_UPLOAD_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
+
+export function isUploadReadyImageMime(mime: string): boolean {
+  return ACCEPTED_UPLOAD_MIME.has(mime.toLowerCase());
 }
 
-function renderResized(
-  img: HTMLImageElement,
+async function compressForUpload(
+  source: File | Blob,
   maxWidth: number,
-  targetMaxBytes: number
-): { dataUrl: string; width: number; height: number; bytes: number } {
-  const ratio = img.width > maxWidth ? maxWidth / img.width : 1;
-  const width = Math.max(1, Math.round(img.width * ratio));
-  const height = Math.max(1, Math.round(img.height * ratio));
+  maxSizeMB: number
+) {
+  const options = {
+    quality: 0.84,
+    maxWidth,
+    maxHeight: maxWidth,
+    maxSizeMB,
+    maxInputPixels: 100_000_000,
+    backgroundColor: '#FFFFFF',
+  } as const;
 
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) {
-    throw new Error('Canvas ntishoboye gukora muri uyu mushakisha.');
+  // WebP is the normal output. JPEG is the compatibility fallback for older
+  // browsers; both are accepted by the secure upload Function.
+  try {
+    const webp = await compress(source, { ...options, format: 'webp' });
+    if (isUploadReadyImageMime(webp.mimeType)) return webp;
+  } catch {
+    // Retry with JPEG below. This covers browsers whose canvas cannot encode
+    // WebP even when it can decode the selected source image.
   }
 
-  // White background avoids transparent PNG turning black in JPEG fallback
-  ctx.fillStyle = '#FFFFFF';
-  ctx.fillRect(0, 0, width, height);
-  ctx.drawImage(img, 0, 0, width, height);
-
-  const mime = canvas.toDataURL('image/webp').startsWith('data:image/webp')
-    ? 'image/webp'
-    : 'image/jpeg';
-
-  let quality = 0.78;
-  let dataUrl = canvas.toDataURL(mime, quality);
-  let bytes = Math.round((dataUrl.length * 3) / 4);
-
-  while (bytes > targetMaxBytes && quality > 0.35) {
-    quality -= 0.1;
-    dataUrl = canvas.toDataURL(mime, quality);
-    bytes = Math.round((dataUrl.length * 3) / 4);
+  const jpeg = await compress(source, { ...options, format: 'jpeg' });
+  if (!isUploadReadyImageMime(jpeg.mimeType)) {
+    throw new Error('Ifoto ntiyabashije guhindurwa ngo ibikwe neza kuri ISOKO.');
   }
+  return jpeg;
+}
 
-  return { dataUrl, width, height, bytes };
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') resolve(reader.result);
+      else reject(new Error('Ifoto ntiyabashije gutegurwa ngo yoherezwe.'));
+    };
+    reader.onerror = () => reject(new Error('Ifoto ntiyabashije gutegurwa ngo yoherezwe.'));
+    reader.readAsDataURL(blob);
+  });
 }
 
 export async function processProductImage(file: File): Promise<CompressedImagePair> {
   if (!file || file.size <= 0) {
     throw new Error('Nta foto yatoranyijwe cyangwa ifite ubusa.');
   }
-  if (file.type && !['image/jpeg', 'image/png', 'image/webp'].includes(file.type.toLowerCase())) {
-    throw new Error('Koresha ifoto ya JPG, PNG cyangwa WEBP. HEIC n’izindi formats ntizemewe.');
+
+  try {
+    // The input may be JPG, PNG, WebP, AVIF, GIF, BMP, HEIC/HEIF, or another
+    // format supported by the browser/HEIC decoder. No MIME whitelist here.
+    const full = await compressForUpload(file, 1600, 0.45);
+    const thumb = await compressForUpload(full.file, 480, 0.1);
+
+    return {
+      fullDataUrl: await blobToDataUrl(full.blob),
+      thumbDataUrl: await blobToDataUrl(thumb.blob),
+      width: full.width,
+      height: full.height,
+      bytes: full.compressedSize,
+    };
+  } catch (error) {
+    const details = error instanceof Error ? error.message : '';
+    if (/HEIC|HEIF|decoder|WASM/i.test(details)) {
+      throw new Error('ISOKO ntishoboye gufungura iyi foto ya HEIC/HEIF kuri iki gikoresho. Ongera uyohereze uhereye kuri Gallery, cyangwa uhitemo JPEG/PNG.');
+    }
+    if (/pixel|resolution|memory|too large/i.test(details)) {
+      throw new Error('Ifoto ifite resolution nini cyane kuri iki gikoresho. ISOKO yagerageje kuyigabanya ariko browser ntiyayifunguye.');
+    }
+    throw new Error(details || 'Ifoto ntiyashoboye gutunganywa. Ongera uyihitemo muri Gallery.');
   }
-
-  const img = await loadImageElement(file);
-  const full = renderResized(img, 1000, 150 * 1024);
-  const thumb = renderResized(img, 400, 35 * 1024);
-
-  if (full.bytes > 500 * 1024) {
-    throw new Error('Ifoto iracyari nini cyane (> 500 KB). Gerageza indi.');
-  }
-
-  return {
-    fullDataUrl: full.dataUrl,
-    thumbDataUrl: thumb.dataUrl,
-    width: full.width,
-    height: full.height,
-    bytes: full.bytes,
-  };
 }
