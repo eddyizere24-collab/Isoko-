@@ -15,11 +15,10 @@ export const Footer: React.FC = () => {
   const [subMessage, setSubMessage] = useState<string | null>(null);
   const [subLoading, setSubLoading] = useState(false);
 
-  const supportPhone = bootstrap?.settings.SUPPORT_WHATSAPP || '250788000000';
-  const supportUrl = buildWhatsAppLink(
-    supportPhone,
-    'Muraho ikipe ya Isoko, nkeneye ubufasha ku rubuga.'
-  );
+  const supportPhone = (bootstrap?.settings.SUPPORT_WHATSAPP ?? '').trim();
+  const supportUrl = supportPhone
+    ? buildWhatsAppLink(supportPhone, 'Muraho ikipe ya Isoko, nkeneye ubufasha ku rubuga.')
+    : null;
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,43 +43,47 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="mt-8 bg-[#064E3B] text-white">
+    <footer className="mt-8 border-t border-[#E3E0D8] bg-[#F7F5F0] text-[#202724]">
       {/* 12px 100%-opacity SVG Imigongo strip above footer (§9) */}
       <RwandanGeometricPattern size="footer" />
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-10">
         <div className="grid gap-6 md:grid-cols-4 md:gap-8">
           <div>
             <IsokoWordmark
-              variant="white"
+              variant="default"
               markClassName="h-6 w-6"
               wordmarkClassName="h-[17px] w-auto"
             />
-            <p className="mt-2.5 text-[12.5px] leading-relaxed text-[#E8F3EE]/85 max-w-xs">
+            <p className="mt-2.5 max-w-xs text-[12.5px] leading-relaxed text-[#68716D]">
               {t('app_tagline')} — {t('hero_subtitle')}
             </p>
             <div className="mt-3.5 flex flex-wrap items-center gap-2.5">
-              <a
-                href={supportUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-[38px] items-center gap-2 rounded-md bg-[#1A7F43] px-3.5 py-2 text-[12px] font-semibold text-white hover:bg-[#146635] transition-colors"
-              >
-                <MessageCircle className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
-                <span>{t('help_whatsapp')}</span>
-              </a>
-              <LanguageSwitcher variant="footer" />
+              {supportUrl && (
+                <a
+                  href={supportUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-[38px] items-center gap-2 rounded-full bg-[#214E43] px-4 py-2 text-[11px] font-semibold text-white transition-colors hover:bg-[#183B33]"
+                >
+                  <MessageCircle className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+                  <span>{t('help_whatsapp')}</span>
+                </a>
+              )}
+              <LanguageSwitcher variant="header" />
             </div>
-            <p className="mt-2 text-[11px] text-[#E8F3EE]/70">
-              {bootstrap?.settings.SUPPORT_HOURS || 'Buri munsi · 08:00 – 20:00 (CAT)'}
-            </p>
+            {supportUrl && bootstrap?.settings.SUPPORT_HOURS && (
+              <p className="mt-2 text-[10.5px] text-[#68716D]">
+                {bootstrap.settings.SUPPORT_HOURS}
+              </p>
+            )}
           </div>
 
-          <details className="group border-t border-white/15 pt-3 md:border-0 md:pt-0" open>
-            <summary className="flex min-h-[36px] cursor-pointer list-none items-center justify-between text-[13px] font-semibold text-white md:cursor-default">
+          <details className="group border-t border-[#E3E0D8] pt-3 md:border-0 md:pt-0" open>
+            <summary className="flex min-h-[36px] cursor-pointer list-none items-center justify-between text-[13px] font-semibold text-[#202724] md:cursor-default">
               <span>{t('app_name')}</span>
-              <ChevronDown className="h-4 w-4 text-white/70 transition-transform group-open:rotate-180 md:hidden" />
+              <ChevronDown className="h-4 w-4 text-[#68716D] transition-transform group-open:rotate-180 md:hidden" />
             </summary>
-            <ul className="mt-2 space-y-2 text-[12.5px] text-[#E8F3EE]/85">
+            <ul className="mt-2 space-y-2 text-[12.5px] text-[#68716D]">
               <li>
                 <a
                   href="/abacuruzi"
@@ -132,12 +135,12 @@ export const Footer: React.FC = () => {
             </ul>
           </details>
 
-          <details className="group border-t border-white/15 pt-3 md:border-0 md:pt-0">
-            <summary className="flex min-h-[36px] cursor-pointer list-none items-center justify-between text-[13px] font-semibold text-white md:cursor-default">
+          <details className="group border-t border-[#E3E0D8] pt-3 md:border-0 md:pt-0">
+            <summary className="flex min-h-[36px] cursor-pointer list-none items-center justify-between text-[13px] font-semibold text-[#202724] md:cursor-default">
               <span>{t('terms')}</span>
-              <ChevronDown className="h-4 w-4 text-white/70 transition-transform group-open:rotate-180 md:hidden" />
+              <ChevronDown className="h-4 w-4 text-[#68716D] transition-transform group-open:rotate-180 md:hidden" />
             </summary>
-            <ul className="mt-2 space-y-2 text-[12.5px] text-[#E8F3EE]/85 md:block">
+            <ul className="mt-2 space-y-2 text-[12.5px] text-[#68716D] md:block">
               <li>
                 <a
                   href="/amategeko"
@@ -177,9 +180,9 @@ export const Footer: React.FC = () => {
             </ul>
           </details>
 
-          <div className="border-t border-white/15 pt-4 md:border-0 md:pt-0">
+          <div className="border-t border-[#E3E0D8] pt-4 md:border-0 md:pt-0">
             <h3 className="text-[13px] font-semibold text-white">{t('newsletter_title')}</h3>
-            <p className="mt-1 text-[12px] text-[#E8F3EE]/80">{t('newsletter_desc')}</p>
+            <p className="mt-1 text-[12px] text-[#68716D]">{t('newsletter_desc')}</p>
             <form onSubmit={handleSubscribe} className="mt-2.5 space-y-2">
               <div className="flex gap-2">
                 <label htmlFor="footer-email" className="sr-only">
@@ -191,31 +194,31 @@ export const Footer: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="imeri@urugero.rw"
-                  className="h-9 min-w-0 flex-1 rounded-md border border-white/25 bg-white/10 px-3 text-[12.5px] text-white placeholder:text-white/60 focus:border-white focus:outline-none"
+                  className="h-9 min-w-0 flex-1 rounded-md border border-[#D9D6CE] bg-white px-3 text-[12.5px] text-[#202724] placeholder:text-[#929A95] focus:border-[#214E43] focus:outline-none"
                 />
                 <button
                   type="submit"
                   disabled={subLoading}
-                  className="h-9 rounded-md bg-[#C0392B] px-3.5 text-[12.5px] font-semibold text-white hover:bg-[#A93226] disabled:opacity-60"
+                  className="h-9 rounded-md bg-[#BD594A] px-3.5 text-[12px] font-semibold text-white hover:bg-[#A94C40] disabled:opacity-60"
                 >
                   {t('confirm')}
                 </button>
               </div>
-              <label className="flex items-start gap-2 text-[11px] text-[#E8F3EE]/80 cursor-pointer">
+              <label className="flex items-start gap-2 text-[11px] text-[#68716D] cursor-pointer">
                 <input
                   type="checkbox"
                   checked={consent}
                   onChange={(e) => setConsent(e.target.checked)}
-                  className="mt-0.5 h-3.5 w-3.5 accent-[#C0392B]"
+                  className="mt-0.5 h-3.5 w-3.5 accent-[#BD594A]"
                 />
                 <span>{t('terms')} &amp; {t('privacy')}</span>
               </label>
-              {subMessage && <p className="text-[12px] font-medium text-[#E8F3EE]">{subMessage}</p>}
+              {subMessage && <p className="text-[12px] font-medium text-[#68716D]">{subMessage}</p>}
             </form>
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-1.5 border-t border-white/15 pt-5 text-[11.5px] text-[#E8F3EE]/75 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 flex flex-col gap-1.5 border-t border-[#E3E0D8] pt-5 text-[11.5px] text-[#68716D] sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} {t('app_name')} Rwanda.</p>
           <p>{t('footer_disclaimer')}</p>
         </div>
