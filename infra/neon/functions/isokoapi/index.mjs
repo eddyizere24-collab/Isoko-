@@ -195,7 +195,7 @@ async function getOwnProfile(token) {
 async function consumeSellerUploadQuota(token) {
   const dataApiUrl = process.env.NEON_DATA_API_URL;
   if (!dataApiUrl) throw new Error("UPLOAD_QUOTA_UNAVAILABLE");
-  const response = await fetch(dataApiUrl.replace(/\\/$/, "") +
+  const response = await fetch(dataApiUrl.replace(/\/$/, "") +
     "/rpc/consume_seller_upload_quota_v1", {
     method: "POST",
     headers: {
