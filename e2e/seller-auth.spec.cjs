@@ -78,3 +78,8 @@ test('a signed-out visitor cannot open seller product creation', async ({ page }
   await expect(page.locator('#login-identifier')).toBeVisible();
   await expect(page.locator('#login-pass')).toBeVisible();
 });
+
+test('footer does not advertise an unconfigured WhatsApp support number', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('a[href*="wa.me/250788000000"]')).toHaveCount(0);
+});

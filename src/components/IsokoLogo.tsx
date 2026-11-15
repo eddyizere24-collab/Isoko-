@@ -313,46 +313,36 @@ export const ImigongoHeroCorner: React.FC<{ className?: string }> = ({ className
 );
 
 /**
- * 96px-120px Green Auth Header with white/red Imigongo edge trim for /injira and /abacuruzi (§9).
+ * Quiet editorial auth header: original full-colour ISOKO sun, warm paper
+ * surface, charcoal typography and a restrained Imigongo line signature.
  */
 export const AuthBrandHeader: React.FC<{
   title: string;
   subtitle?: string;
 }> = ({ title, subtitle }) => (
-  <div className="relative overflow-hidden rounded-lg bg-[#0B6E4F] text-white">
-    <div className="relative z-10 flex min-h-[96px] sm:min-h-[112px] flex-col justify-center px-5 py-4 sm:px-7">
+  <div className="relative overflow-hidden rounded-xl border border-[#E3E0D8] bg-[#FFFEFB] text-[#202724]">
+    <div className="relative z-10 flex min-h-[104px] flex-col justify-center px-5 py-4 sm:min-h-[116px] sm:px-7">
       <div className="flex items-center justify-between gap-4">
-        <IsokoWordmark variant="white" markClassName="h-7 w-7" wordmarkClassName="h-[18px] w-auto" />
-        <span className="text-[11px] font-medium text-[#E8F3EE]/90">Rwanda Marketplace</span>
+        <IsokoWordmark markClassName="h-7 w-7" wordmarkClassName="h-[18px] w-auto" />
+        <span className="text-[10px] font-medium tracking-[0.12em] text-[#8F493F]">RWANDA MARKETPLACE</span>
       </div>
-      <h1 className="mt-2 text-[19px] font-semibold leading-tight text-white sm:text-[22px]">
+      <h1 className="mt-2 text-[18px] font-semibold leading-tight text-[#202724] sm:text-[20px]">
         {title}
       </h1>
-      {subtitle && <p className="mt-1 text-xs text-[#E8F3EE]/90">{subtitle}</p>}
+      {subtitle && <p className="mt-1 max-w-xl text-[11px] leading-relaxed text-[#68716D]">{subtitle}</p>}
     </div>
-    {/* Right-side decorative white/red Imigongo corner */}
     <svg
       viewBox="0 0 120 112"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
-      className="pointer-events-none absolute right-0 top-0 h-full w-28 opacity-20"
+      className="pointer-events-none absolute right-0 top-0 h-full w-28 opacity-25"
     >
-      <polygon points="84,8 112,36 84,64 56,36" stroke="#FFFFFF" strokeWidth="2.5" />
-      <polygon points="84,18 102,36 84,54 66,36" fill="#C0392B" />
-      <polygon points="44,52 72,80 44,108 16,80" stroke="#FFFFFF" strokeWidth="2.5" />
-      <polygon points="44,64 60,80 44,96 28,80" fill="#FFFFFF" />
+      <path d="M120 0 64 56 120 112" stroke="#214E43" strokeWidth="1.4" />
+      <path d="M120 18 82 56 120 94" stroke="#BD594A" strokeWidth="1.1" />
+      <path d="M120 36 100 56 120 76" stroke="#C99A4B" strokeWidth="1.1" />
+      <path d="M88 0 32 56 88 112" stroke="#214E43" strokeWidth="1" opacity=".7" />
     </svg>
-    {/* Crisp bottom edge trim bar */}
-    <div
-      aria-hidden="true"
-      className="h-2 w-full"
-      style={{
-        backgroundImage:
-          "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='8' viewBox='0 0 32 8'%3E%3Crect width='32' height='8' fill='%23064E3B'/%3E%3Cpolygon points='0,8 8,0 16,8' fill='%23FFFFFF'/%3E%3Cpolygon points='16,8 24,0 32,8' fill='%23C0392B'/%3E%3C/svg%3E\")",
-        backgroundRepeat: 'repeat-x',
-        backgroundSize: '32px 8px',
-      }}
-    />
+    <div aria-hidden="true" className="h-2 w-full imigongo-header-strip" />
   </div>
 );
