@@ -239,10 +239,12 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
                 type="button"
                 onClick={handleHeaderLogout}
                 disabled={logoutBusy}
-                className="hidden lg:inline-flex min-h-[44px] items-center gap-1.5 rounded-md border border-[#C0392B]/35 bg-white px-3 text-xs font-semibold text-[#C0392B] disabled:opacity-60"
+                aria-label={logoutBusy ? 'Turagusohora...' : 'Sohoka'}
+                title={logoutError || 'Sohoka muri konti yawe'}
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center gap-1.5 rounded-md border border-[#C0392B]/35 bg-white text-xs font-semibold text-[#C0392B] disabled:opacity-60 lg:h-11 lg:w-auto lg:px-3"
               >
-                <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>{logoutBusy ? 'Turagusohora...' : 'Sohoka'}</span>
+                <LogOut className="h-4 w-4" aria-hidden="true" />
+                <span className="hidden lg:inline">{logoutBusy ? 'Turagusohora...' : 'Sohoka'}</span>
               </button>
             )}
             {logoutError && <span role="alert" className="hidden lg:inline text-[11px] font-medium text-[#C0392B]">{logoutError}</span>}
