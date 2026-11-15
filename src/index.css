@@ -69,33 +69,33 @@
   text-wrap: balance;
 }
 
-/* Restrained Imigongo line signature: nested diamonds and a continuous angular path.
-   It is a crafted brand rule, not a full-page wallpaper or a coloured panel. */
+/* ISOKO Imigongo: connected diamonds and continuous zig-zag linework.
+   Each SVG tile is square and rendered at its native 1:1 ratio. */
 .imigongo-band,
 .imigongo-header-strip {
-  height: 7px;
+  height: 12px;
   width: 100%;
-  background-color: #F7F5F0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='12' viewBox='0 0 72 12'%3E%3Crect width='72' height='12' fill='%23F7F5F0'/%3E%3Cpath d='M6 1 11 6 6 11 1 6Z' fill='none' stroke='%23214E43' stroke-width='1'/%3E%3Cpath d='M6 3.5 8.5 6 6 8.5 3.5 6Z' fill='none' stroke='%23BD594A' stroke-width='.8'/%3E%3Cpath d='M17 1H27V11H20V4H24V8H22' fill='none' stroke='%23214E43' stroke-width='.85' stroke-linejoin='miter'/%3E%3Cpath d='M34 6 39 1 44 6 39 11Z' fill='none' stroke='%23C99A4B' stroke-width='.9'/%3E%3Cpath d='M50 1H60V11H53V4H57V8H55' fill='none' stroke='%23BD594A' stroke-width='.85'/%3E%3Cpath d='M66 1 71 6 66 11 61 6Z' fill='none' stroke='%23214E43' stroke-width='.9'/%3E%3C/svg%3E");
+  background-color: #FFFFFF;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M-6 6 0 0 6 6 12 0 18 6' fill='none' stroke='%230B6E4F' stroke-width='1.7' stroke-linecap='square' stroke-linejoin='miter'/%3E%3Cpath d='M-6 6 0 12 6 6 12 12 18 6' fill='none' stroke='%23C0392B' stroke-width='1.7' stroke-linecap='square' stroke-linejoin='miter'/%3E%3Cpath d='M0 6 3 3 6 6 3 9Z' fill='none' stroke='%23C0392B' stroke-width='1.5'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
-  background-size: 72px 7px;
+  background-size: 12px 12px;
 }
 
 .imigongo-footer-strip {
-  height: 11px;
+  height: 14px;
   width: 100%;
-  background-color: #F7F5F0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='12' viewBox='0 0 72 12'%3E%3Crect width='72' height='12' fill='%23F7F5F0'/%3E%3Cpath d='M6 1 11 6 6 11 1 6Z' fill='none' stroke='%23214E43' stroke-width='1.1'/%3E%3Cpath d='M6 3 9 6 6 9 3 6Z' fill='none' stroke='%23BD594A' stroke-width='.85'/%3E%3Cpath d='M17 1H27V11H20V4H24V8H22' fill='none' stroke='%23214E43' stroke-width='.95' stroke-linejoin='miter'/%3E%3Cpath d='M34 6 39 1 44 6 39 11Z' fill='none' stroke='%23C99A4B' stroke-width='1'/%3E%3Cpath d='M50 1H60V11H53V4H57V8H55' fill='none' stroke='%23BD594A' stroke-width='.95'/%3E%3Cpath d='M66 1 71 6 66 11 61 6Z' fill='none' stroke='%23214E43' stroke-width='1'/%3E%3C/svg%3E");
+  background-color: #FFFFFF;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M-7 7 0 0 7 7 14 0 21 7' fill='none' stroke='%230B6E4F' stroke-width='1.9' stroke-linecap='square'/%3E%3Cpath d='M-7 7 0 14 7 7 14 14 21 7' fill='none' stroke='%23C0392B' stroke-width='1.9' stroke-linecap='square'/%3E%3Cpath d='M0 7 3.5 3.5 7 7 3.5 10.5Z' fill='none' stroke='%23C0392B' stroke-width='1.6'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
-  background-size: 72px 11px;
+  background-size: 14px 14px;
 }
 
-/* Soft Imigongo cover placeholder. Keep the pattern subtle and the photo area calm. */
+/* Shop covers use the same geometry at low visual weight; header/footer rules remain full-opacity. */
 .imigongo-surface {
-  background-color: #EEECE6;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='36' viewBox='0 0 72 36'%3E%3Crect width='72' height='36' fill='%23EEECE6'/%3E%3Cpath d='M18 2 34 18 18 34 2 18Z' fill='none' stroke='%23214E43' stroke-opacity='.22' stroke-width='1.2'/%3E%3Cpath d='M18 9 27 18 18 27 9 18Z' fill='none' stroke='%23BD594A' stroke-opacity='.2' stroke-width='1'/%3E%3Cpath d='M40 2H68V34H47V9H61V27H53' fill='none' stroke='%23214E43' stroke-opacity='.18' stroke-width='1.2'/%3E%3C/svg%3E");
+  background-color: #F7F8FA;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M-12 12 0 0 12 12 24 0 36 12' fill='none' stroke='%230B6E4F' stroke-opacity='.18' stroke-width='1.4'/%3E%3Cpath d='M-12 12 0 24 12 12 24 24 36 12' fill='none' stroke='%23C0392B' stroke-opacity='.18' stroke-width='1.4'/%3E%3C/svg%3E");
   background-repeat: repeat;
-  background-size: 72px 36px;
+  background-size: 24px 24px;
 }
 
 @media (prefers-reduced-motion: reduce) {
