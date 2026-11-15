@@ -44,17 +44,16 @@ test.beforeEach(async ({ page }) => {
   page.on('pageerror', (error) => console.log('Browser page error:', error.message));
 });
 
-test('homepage opens and shows the current ISOKO introduction', async ({ page }) => {
+test('homepage opens and exposes buyer search before catalogue data loads', async ({ page }) => {
   const response = await page.goto('/');
   expect(response, 'homepage should return a document response').not.toBeNull();
   expect(response.status()).toBe(200);
 
-  await expect(
-    page.getByRole('heading', { level: 1, name: 'Gura mu maduka y’u Rwanda kuri WhatsApp' })
-  ).toBeVisible();
-  await expect(page.getByText('Ibyiciro byose', { exact: true }).first()).toBeVisible();
+  // Header and search are available even while a new backend request is pending.
+  await expect(page.locator('#global-search')).toBeVisible();
+  await expect(page.locator('header')).toBeVisible();
+  await expect(page.locator('a[href="/c/inkweto"]')).toBeVisible();
 });
-
 test('login route exposes the real seller sign-in form without public demo credentials', async ({ page }) => {
   const response = await page.goto('/injira');
   expect(response, 'login route should return a document response').not.toBeNull();
