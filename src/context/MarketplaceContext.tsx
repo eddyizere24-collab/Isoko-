@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { fetchBootstrap, fetchMe, type BootstrapResponse } from '../lib/api';
 import { getNeonJwt, neon } from '../lib/neon';
+import { cancelPrivateRequests, clearPrivateBrowserState } from '../lib/authLifecycle';
 import {
   addItemToCart,
   incrementVisitCount,
@@ -36,6 +37,7 @@ interface MarketplaceContextValue {
   pathname: string;
   searchParams: URLSearchParams;
   navigate: (to: string) => void;
+  replace: (to: string) => void;
   bootstrap: BootstrapResponse | null;
   loading: boolean;
   error: string | null;
@@ -57,11 +59,12 @@ interface MarketplaceContextValue {
   markProductViewed: (productId: string, shopId?: string, categoryId?: number) => void;
   followedShops: string[];
   toggleFollowShop: (shopId: string) => void;
+  authReady: boolean;
   authSession: StoredAuthSession | null;
   authProfile: Profile | null;
   authShop: Shop | null;
   setAuthData: (sess: StoredAuthSession | null, profile: Profile | null, shop: Shop | null) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   visitCount: number;
 }
 
@@ -86,6 +89,7 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [visitCount] = useState<number>(() => incrementVisitCount());
 
   const [authSession, setAuthSession] = useState<StoredAuthSession | null>(() => loadAuthSession());
+  const [authReady, setAuthReady] = useState(false);
   const [authProfile, setAuthProfile] = useState<Profile | null>(null);
   const [authShop, setAuthShop] = useState<Shop | null>(null);
 
@@ -94,6 +98,15 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (to === currentKey) return;
     scrollStore.save(currentKey, window.scrollY);
     window.history.pushState({}, '', to);
+    setUrlState({
+      pathname: window.location.pathname || '/',
+      search: window.location.search || '',
+    });
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+  }, []);
+
+  const replace = useCallback((to: string) => {
+    window.history.replaceState({}, '', to);
     setUrlState({
       pathname: window.location.pathname || '/',
       search: window.location.search || '',
@@ -165,6 +178,8 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setAuthSession(null);
         setAuthProfile(null);
         setAuthShop(null);
+      } finally {
+        if (active) setAuthReady(true);
       }
     };
     void restore();
@@ -245,18 +260,28 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setAuthSession(sess);
       setAuthProfile(profile);
       setAuthShop(shop);
+      setAuthReady(true);
     },
     []
   );
 
-  const logout = useCallback(() => {
-    void neon.auth.signOut();
+  const logout = useCallback(async () => {
+    // Do not clear local data or pretend to be signed out unless Neon confirms
+    // that the server-side session has ended successfully.
+    const result = await neon.auth.signOut() as any;
+    if (result?.error) {
+      throw new Error(result.error.message ?? 'Ntibishobotse gusohoka muri konti. Ongera ugerageze.');
+    }
+
+    cancelPrivateRequests();
+    await clearPrivateBrowserState();
     saveAuthSession(null);
     setAuthSession(null);
     setAuthProfile(null);
     setAuthShop(null);
-    navigate('/');
-  }, [navigate]);
+    setAuthReady(true);
+    replace('/');
+  }, [replace]);
 
   const cartCount = cart.reduce((sum, it) => sum + it.qty, 0);
 
@@ -266,6 +291,7 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
         pathname: urlState.pathname,
         searchParams: new URLSearchParams(urlState.search),
         navigate,
+        replace,
         bootstrap,
         loading,
         error,
@@ -287,6 +313,7 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
         markProductViewed,
         followedShops,
         toggleFollowShop,
+        authReady,
         authSession,
         authProfile,
         authShop,
