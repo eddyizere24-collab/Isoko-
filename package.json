@@ -21,7 +21,8 @@
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
     "vite": "^8.3.0",
-    "@neondatabase/neon-js": "0.9.0-beta"
+    "@neondatabase/neon-js": "0.9.0-beta",
+    "compresso.js": "1.0.3"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
