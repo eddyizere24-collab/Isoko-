@@ -4,7 +4,7 @@
 
 Implementation branch: `feat/languages-seven-20261116`  
 Base: `main`  
-PR: Pending creation; this branch has not been merged.  
+PR: [Draft PR #50](https://github.com/eddyizere24-collab/Isoko-/pull/50).  
 Production: untouched. No Production SQL, Function, Render, environment, DNS or billing changes.
 
 ## What changed
@@ -29,7 +29,6 @@ Production: untouched. No Production SQL, Function, Render, environment, DNS or 
 - `src/i18n/staticPages.ts`
 - `src/pages/StaticPage.tsx`
 - `src/lib/i18n.test.ts`
-- `docs/RULES.md`
 - `docs/reports/2026-11-16-languages.md`
 
 ## Review status (honesty)
@@ -55,7 +54,11 @@ Kinyarwanda (`rw`) is the source copy and is marked reviewed. This is a technica
 
 ## Tests and evidence
 
-### Added, pending CI
+### Passed CI
+
+- GitHub Actions run [43775456134](https://github.com/eddyizere24-collab/Isoko-/actions/runs/43775456134) passed on commit `8d2b2323348f5a409a1fa2b54989ac2f380ad37a`: TypeScript, unit tests, Neon Setup/Production smoke checks, Production CORS, Vite build, Playwright browser smoke tests and Neon Function bundling.
+
+### Tests added
 
 - `src/lib/i18n.test.ts` checks exact key parity and nonempty text for all seven dictionaries.
 - The same test checks new visitors start in `rw`, persisted user choice wins, and legal page copy exists for all seven languages with the Kinyarwanda source note.
@@ -68,7 +71,9 @@ Kinyarwanda (`rw`) is the source copy and is marked reviewed. This is a technica
 - Screenshots of each language selection.
 - Native-speaker review of `en`, `fr`, `sw`, `rn`, `ln`, `lg`.
 
-No screenshot, CI success or human linguistic review is claimed in this report.
+No screenshot or human linguistic review is claimed. CI passed, but its Playwright smoke run did not produce the full requested 320×800/360×800 screenshots for all seven language selections.
+
+The central `docs/RULES.md` is maintained in PR #48; this branch's duplicate copy was removed to avoid a merge conflict.
 
 ## Production impact
 
