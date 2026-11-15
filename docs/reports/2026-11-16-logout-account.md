@@ -4,7 +4,7 @@
 
 Implementation branch: `fix/account-logout-20261116`  
 Base: `main` at `4da491c1cb38d6622dab1a3d4bb7c63f8332e997`  
-PR: Pending Draft creation.  
+PR: [Draft PR #49](https://github.com/eddyizere24-collab/Isoko-/pull/49).  
 Production: untouched. No Production SQL, Function deployment, env-var, Render, DNS or billing changes.
 
 ## What changed
@@ -33,7 +33,6 @@ Production: untouched. No Production SQL, Function deployment, env-var, Render, 
 - `src/pages/SellerDashboardPage.tsx`
 - `src/pages/AdminPage.tsx`
 - `e2e/seller-auth.spec.cjs`
-- `docs/RULES.md`
 - `docs/reports/2026-11-16-logout-account.md`
 
 ## API support and assumptions
@@ -65,7 +64,9 @@ Production: untouched. No Production SQL, Function deployment, env-var, Render, 
 - Whether Neon Auth uses IndexedDB or Cache Storage for any extra private state not named with an auth-related key. The SDK's signOut handles its managed session, but no undocumented storage key names are assumed.
 - Internal Data API requests issued by the Neon SDK do not currently accept this app-level AbortSignal through the existing client abstraction. Direct upload and Admin CSV fetches are cancellable; the private route guard and cleared Neon session prevent rendering private pages after logout.
 
-No real account or mobile screenshot result is claimed. The existing CI Playwright smoke suite does not produce the required 320×800/360×800 screenshot matrix.
+No real account or mobile screenshot result is claimed. The CI Playwright smoke suite does not generate the required 320×800/360×800 screenshot matrix. The existing CI Playwright smoke suite does not produce the required 320×800/360×800 screenshot matrix.
+
+The consolidated `docs/RULES.md` is maintained in the first implementation PR (#48) to avoid overlapping additions of the same new file across parallel branches.
 
 ## Production impact
 
