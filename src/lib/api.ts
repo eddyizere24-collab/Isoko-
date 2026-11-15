@@ -309,6 +309,38 @@ export async function loginAccount(identifier:string,password:string):Promise<{t
   return {...storedSession(current.profile),profile:current.profile,shop:current.shop};
 }
 
+export function supportsAccountPasswordChange(): boolean {
+  return typeof (neon.auth as any).changePassword === 'function';
+}
+
+export async function changeAccountPassword(currentPassword:string,newPassword:string):Promise<void> {
+  if (currentPassword.length < 1) throw new Error('Andika ijambo ry’ibanga ukoresha ubu.');
+  if (newPassword.length < 8) throw new Error('Ijambo ry’ibanga rishya rigomba kugira nibura inyuguti 8.');
+  const changePassword = (neon.auth as any).changePassword;
+  if (typeof changePassword !== 'function') {
+    throw new Error('Guhindura password ako kanya ntibirashyigikirwa n’iyi verisiyo ya Neon Auth. Koresha uburyo bwo koherezwa link yo kuyihindura.');
+  }
+  const result = await changePassword.call(neon.auth, {
+    currentPassword,
+    newPassword,
+    revokeOtherSessions: false,
+  });
+  if (result?.error) fail(result.error, 'Ntibishobotse guhindura password. Reba password yawe usanzwe ukoresha.');
+}
+
+export function supportsSignOutOtherDevices(): boolean {
+  return typeof (neon.auth as any).revokeOtherSessions === 'function';
+}
+
+export async function signOutOtherDevices(): Promise<void> {
+  const revokeOtherSessions = (neon.auth as any).revokeOtherSessions;
+  if (typeof revokeOtherSessions !== 'function') {
+    throw new Error('Neon Auth iri muri iyi verisiyo ntigaragaza uburyo bwo gusohora izindi devices.');
+  }
+  const result = await revokeOtherSessions.call(neon.auth);
+  if (result?.error) fail(result.error, 'Ntibishobotse gusohora izindi devices.');
+}
+
 export async function requestAccountPasswordReset(email:string,redirectTo:string):Promise<void> {
   const normalized=String(email??'').trim().toLowerCase();
   if(!/^[^@]+@[^@]+\.[^@]+$/.test(normalized)) {
