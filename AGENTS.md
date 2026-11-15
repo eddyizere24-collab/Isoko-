@@ -5,6 +5,8 @@ Soma mbere: [docs/audit/AUDIT.md](docs/audit/AUDIT.md) (ibibazo 25 n'urutonde rw
 ## Design
 Imiterere n'ubwiza (ibara, inyuguti, logo, header, imigongo, amakarita): **[docs/design/DESIGN_BRIEF.md](docs/design/DESIGN_BRIEF.md)** ni yo itegeko. Design ikorwa na AI Studio; ChatGPT akora ku mutekano/database. Ntihindurwe logic mu PR za design.
 
+**Amategeko adanangiye (imibare, indimi 6, kwiyandikisha, imigongo): [docs/design/RULEBOOK_2026-11-15.md](docs/design/RULEBOOK_2026-11-15.md)** — ni itegeko rirenze DESIGN_BRIEF aho bivuguruzanya. AI Studio ikorera ku branch ya PR gusa, ntiyandika kuri main.
+
 ## Iki ni iki
 Isoko: catalogue y'amaduka yo mu Rwanda ihuza abaguzi n'abacuruzi kuri WhatsApp. Vite + React 19 + Tailwind 4 + TypeScript; Neon (Postgres, Data API, Auth, Function `isokoapi`, Object Storage); Render static site. Ikinyarwanda ni rwo rurimi rw'ibanze rwa UI.
 
