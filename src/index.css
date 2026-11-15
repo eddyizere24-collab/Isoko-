@@ -9,21 +9,21 @@
 }
 
 :root {
-  --isoko-green: #214E43;
-  --isoko-green-dark: #183B33;
-  --isoko-green-hover: #28584B;
-  --isoko-green-soft: #E9F0EB;
-  --isoko-red: #BD594A;
-  --isoko-red-dark: #8F493F;
-  --isoko-red-soft: #FAF0ED;
-  --isoko-wa: #1A7F43;
-  --isoko-wa-hover: #146635;
+  --isoko-green: #0B6E4F;
+  --isoko-green-dark: #084F3A;
+  --isoko-green-hover: #095A42;
+  --isoko-green-soft: #EFF6F2;
+  --isoko-red: #C0392B;
+  --isoko-red-dark: #962D22;
+  --isoko-red-soft: #FBEAE8;
+  --isoko-wa: #0B6E4F;
+  --isoko-wa-hover: #08593F;
   --isoko-ink: #202724;
   --isoko-muted: #68716D;
-  --isoko-bg: #F7F5F0;
+  --isoko-bg: #F7F8FA;
   --isoko-surface: #FFFFFF;
-  --isoko-border: #E3E0D8;
-  --isoko-border-strong: #C9CEC7;
+  --isoko-border: #E3E7EB;
+  --isoko-border-strong: #CBD3DC;
   --font-sans: 'IsokoSans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -104,3 +104,29 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Compatibility bridge for existing Tailwind colour utilities.
+   It keeps the product UI consistent while individual views are migrated to tokens. */
+[class~="bg-[#214E43]"] { background-color: var(--isoko-green) !important; }
+[class~="hover:bg-[#183B33]"]:hover { background-color: var(--isoko-green-dark) !important; }
+[class~="hover:bg-[#28584B]"]:hover { background-color: var(--isoko-green-hover) !important; }
+[class~="text-[#214E43]"] { color: var(--isoko-green) !important; }
+[class~="border-[#214E43]"] { border-color: var(--isoko-green) !important; }
+[class~="border-[#214E43]/60"] { border-color: color-mix(in srgb, var(--isoko-green) 60%, transparent) !important; }
+
+[class~="bg-[#BD594A]"] { background-color: var(--isoko-red) !important; }
+[class~="text-[#BD594A]"] { color: var(--isoko-red) !important; }
+[class~="border-[#BD594A]"] { border-color: var(--isoko-red) !important; }
+[class~="hover:bg-[#A94C40]"]:hover { background-color: var(--isoko-red-dark) !important; }
+
+[class~="bg-[#F7F5F0]"] { background-color: var(--isoko-bg) !important; }
+[class~="hover:bg-[#F7F5F0]"]:hover { background-color: var(--isoko-bg) !important; }
+[class~="bg-[#FFFEFB]"] { background-color: var(--isoko-surface) !important; }
+[class~="bg-[#EEECE6]"] { background-color: #F1F3F5 !important; }
+[class~="bg-[#E9F0EB]"] { background-color: var(--isoko-green-soft) !important; }
+[class~="bg-[#F7FAF8]"] { background-color: var(--isoko-bg) !important; }
+
+[class~="border-[#E3E0D8]"] { border-color: var(--isoko-border) !important; }
+[class~="border-[#D9D6CE]"] { border-color: var(--isoko-border) !important; }
+[class~="border-[#C9CEC7]"] { border-color: var(--isoko-border-strong) !important; }
+[class~="text-[#8F493F]"] { color: var(--isoko-red) !important; }
