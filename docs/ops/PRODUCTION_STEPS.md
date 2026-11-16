@@ -89,7 +89,7 @@ For future releases:
 
 - Real authenticated QA seller signup, avatar/logo/cover persistence, three-photo product publish and 10×3 bulk upload remain unverified.
 - QA currently has zero populated KYC rows; owner/admin KYC access behavior has not been demonstrated end-to-end.
-- Current 300/day and 30/minute limits were read from migration 025 and Function code, but a post-025 300/301 and 30/31 boundary stress test is still outstanding.
+- Migration 025's current 300/day and 30/minute limits were tested against a disposable clone of QA with the 025 function installed: 300th allowed, 301st denied as daily; 30th in 60s allowed, 31st denied as rate with retry_after_seconds=60. Both test sections were rolled back and the clone quota table read back 0 rows. The clone compute was suspended. Actual image uploads and the full Function `thumb` path still require the authenticated seller E2E.
 - Email verification is disabled; delivery has not been verified. A publish-only verified-email gate must not be enabled until a real QA email journey is proven.
 - Multi-device session revocation and admin recovery are not proven. Production has no Admin profile in the current read-back.
 - GitHub main branch protection is not confirmed. The connected GitHub app could read repository rulesets (none were returned) but classic protection access returned 403; set/verify it in GitHub repository Settings with a required CI check.
