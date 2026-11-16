@@ -176,6 +176,25 @@ async function presignGet(bucket, key, expiresSeconds = 300) {
     "&X-Amz-Signature=" + signature;
 }
 
+async function enforceSellerUploadQuota(token) {
+  const dataApiUrl = process.env.NEON_DATA_API_URL;
+  if (!dataApiUrl) throw new Error("DATA_API_NOT_CONFIGURED");
+  const response = await fetch(dataApiUrl.replace(/\/$/, "") +
+    "/rpc/consume_seller_upload_quota_v1", {
+    method: "POST",
+    headers: {
+      authorization: "Bearer " + token,
+      "content-type": "application/json",
+      accept: "application/json",
+    },
+    body: "{}",
+  });
+  if (!response.ok) throw new Error("UPLOAD_QUOTA_CHECK_FAILED");
+  const result = await response.json();
+  const quota = Array.isArray(result) ? result[0] : result;
+  return quota?.allowed === true;
+}
+
 async function getOwnProfile(token) {
   const dataApiUrl = process.env.NEON_DATA_API_URL;
   if (!dataApiUrl) throw new Error("DATA_API_NOT_CONFIGURED");
@@ -298,17 +317,33 @@ export default {
           ? "kyc/" + ownerKey
           : kind === "campaign"
             ? "campaigns/" + ownerKey
-            : kind === "shop"
-              ? "shops/" + ownerKey
-              : kind === "profile"
-                ? "profiles/" + ownerKey
-                : "products/" + ownerKey;
+            : kind === "logo"
+              ? "logos/" + ownerKey
+              : kind === "shop"
+                ? "shops/" + ownerKey
+                : kind === "profile"
+                  ? "profiles/" + ownerKey
+                  : "products/" + ownerKey;
         if (kind === "campaign" && profile?.role !== "admin") {
           return json({ error: "Admin gusa ni we wohereza amafoto ya campaigns." }, 403, cors);
         }
-        if (!["kyc", "campaign", "shop", "profile", "full", "thumb"].includes(kind)) {
+        if (kind === "logo" && profile?.role !== "seller") {
+          return json({ error: "Logo y’iduka ishobora koherezwa gusa n’umucuruzi." }, 403, cors);
+        }
+        if (!["kyc", "campaign", "shop", "logo", "profile", "full", "thumb"].includes(kind)) {
           return json({ error: "Ubwoko bw’ifoto ntibwemewe." }, 400, cors);
         }
+        if (profile?.role === "seller" && kind !== "kyc") {
+          const allowed = await enforceSellerUploadQuota(token);
+          if (!allowed) {
+            return json({
+              error: "UPLOAD_DAILY_QUOTA_EXCEEDED",
+              message: "Wageze ku mubare ntarengwa w’amafoto 30 ku munsi. Ongera ugerageze ejo.",
+              dailyLimit: 30,
+            }, 429, cors);
+          }
+        }
+
         const key = prefix + "/" + new Date().toISOString().slice(0, 10) +
           "/" + randomUUID() + "." + extension;
         const uploaded = await putObject(bucket, key, bytes, mime);
@@ -361,6 +396,9 @@ export default {
       }
       if (message.startsWith("IMAGE_")) {
         return json({ error: "Ifoto ntiyemewe. Koresha JPEG, PNG cyangwa WebP iri munsi ya 500 KB." }, 400, cors);
+      }
+      if (message === "UPLOAD_QUOTA_CHECK_FAILED") {
+        return json({ error: "Ntibyashobotse kugenzura umubare w’amafoto wemerewe. Ongera ugerageze." }, 503, cors);
       }
       console.error("ISOKO API request failed", { path, message });
       return json({ error: "Habaye ikibazo mu kubika amakuru. Ongera ugerageze." }, 503, cors);

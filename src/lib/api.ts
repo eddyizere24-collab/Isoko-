@@ -400,7 +400,7 @@ export async function fetchMe():Promise<{profile:Profile;shop:Shop|null}> {
   return {profile:current.profile,shop:current.shop};
 }
 
-export async function uploadImagePair(dataUrl:string,kind:'full'|'thumb'|'shop'|'profile'):Promise<{url:string;bytes:number}> {
+export async function uploadImagePair(dataUrl:string,kind:'full'|'thumb'|'shop'|'logo'|'profile'):Promise<{url:string;bytes:number}> {
   const result=await uploadThroughFunction(dataUrl,kind);
   if(!result.url) throw new Error('Ifoto rusange ntiyabonetse.');
   return {url:result.url,bytes:result.bytes};

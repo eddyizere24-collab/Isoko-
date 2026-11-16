@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, CheckCircle2, Copy, ImagePlus, MessageCircle, QrCode, Save, ShieldCheck } from 'lucide-react';
 import { QrCodeModal } from '../components/QrCodeModal';
+import { SafeImage } from '../components/SafeImage';
 import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { getSectorsForDistrict, RWANDA_DISTRICTS } from '../data/rwandaAreas';
@@ -78,16 +79,36 @@ export const SellerShopSettingsPage: React.FC = () => {
 
   const sectors = useMemo(() => getSectorsForDistrict(districtId), [districtId]);
 
-  const uploadBrandImage = async (file: File | undefined, kind: 'shop' | 'profile', setter: (value:string)=>void) => {
+  const uploadBrandImage = async (file: File | undefined, kind: 'shop' | 'profile' | 'logo', setter: (value:string)=>void) => {
     if (!file) return;
     setError(null);
+    setSavedMsg(null);
     setUploading(kind);
     try {
       const image = await processProductImage(file);
       const uploaded = await uploadImagePair(image.fullDataUrl, kind);
+      if (kind === 'profile') {
+        const saved = await updateSellerProfile({ fullName, bio: profileBio, avatarPath: uploaded.url });
+        setProfileMeta((current) => current ? { ...current, ...saved.profile } : current);
+      } else {
+        const saved = await updateSellerShop({
+          name,
+          logoPath: kind === 'logo' ? uploaded.url : logoPath,
+          coverPath: kind === 'shop' ? uploaded.url : coverPath,
+          socialLinks, about, whatsapp, phone, district_id: districtId,
+          sector_id: sectorId ? Number(sectorId) : null, landmark,
+          hours_text: hoursText, delivery_text: deliveryText,
+        });
+        setShop(saved.shop);
+      }
       setter(uploaded.url);
+      setSavedMsg('Ifoto yabitswe neza ✓');
+      await refreshBootstrap();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ifoto ntiyoherejwe. Ongera ugerageze.');
+      const message = err instanceof Error ? err.message : '';
+      setError(message === 'UPLOAD_DAILY_QUOTA_EXCEEDED'
+        ? 'Wageze ku mubare ntarengwa w’amafoto 30 ku munsi. Ongera ugerageze ejo.'
+        : message || 'Ifoto ntiyoherejwe cyangwa ngo ibikwe. Ongera ugerageze.');
     } finally {
       setUploading(null);
     }
@@ -274,12 +295,8 @@ export const SellerShopSettingsPage: React.FC = () => {
       >
         <section className="overflow-hidden rounded-xl border border-[#E3E0D8] bg-[#FFFEFB]">
           <div className="relative h-28 bg-[#EEECE6] sm:h-36">
-            {coverPath ? (
-              <img src={coverPath} alt="Ifoto yo hejuru y’iduka" className="h-full w-full object-cover" />
-            ) : (
-              <div className="imigongo-surface h-full w-full" />
-            )}
-            <label className="absolute bottom-2 right-2 inline-flex min-h-9 cursor-pointer items-center gap-2 rounded-full border border-[#E3E0D8] bg-[#FFFEFB]/95 px-3 text-[10.5px] font-semibold text-[#202724]">
+            <SafeImage src={coverPath} alt="Ifoto yo hejuru y’iduka" className="h-full w-full object-cover" fallback={<div className="imigongo-surface h-full w-full" aria-hidden="true" />} />
+            <label className="absolute bottom-2 right-2 inline-flex min-h-[44px] cursor-pointer items-center gap-2 rounded-full border border-[#E3E0D8] bg-[#FFFEFB]/95 px-3 text-[10.5px] font-semibold text-[#202724]">
               <ImagePlus className="h-3.5 w-3.5 text-[#214E43]" aria-hidden="true" />
               Hindura cover
               <input
@@ -299,14 +316,13 @@ export const SellerShopSettingsPage: React.FC = () => {
           <div className="px-3 pb-4 sm:px-4">
             <div className="-mt-7 flex flex-wrap items-end gap-3">
               <div className="relative shrink-0">
-                {avatarPath ? (
-                  <img src={avatarPath} alt="Ifoto ya profile yawe" className="h-16 w-16 rounded-full border-[3px] border-[#FFFEFB] bg-white object-cover sm:h-[72px] sm:w-[72px]" />
-                ) : (
-                  <div className="grid h-16 w-16 place-items-center rounded-full border-[3px] border-[#FFFEFB] bg-[#E9F0EB] text-xl font-semibold text-[#214E43] sm:h-[72px] sm:w-[72px]">
-                    {fullName.slice(0, 1).toUpperCase() || 'U'}
-                  </div>
-                )}
-                <label aria-label="Hindura ifoto ya profile" className="absolute bottom-0 right-0 grid h-7 w-7 cursor-pointer place-items-center rounded-full border-2 border-[#FFFEFB] bg-[#214E43] text-white">
+                <SafeImage
+                  src={avatarPath}
+                  alt="Ifoto ya profile yawe"
+                  className="h-[72px] w-[72px] rounded-full border-[3px] border-white bg-white object-cover"
+                  fallback={<div className="grid h-[72px] w-[72px] place-items-center rounded-full border-[3px] border-white bg-[#E8F3EE] text-xl font-semibold text-[#0B6E4F]">{fullName.slice(0, 1).toUpperCase() || 'U'}</div>}
+                />
+                <label aria-label="Hindura ifoto ya profile" className="absolute -bottom-1 -right-1 grid h-11 w-11 cursor-pointer place-items-center rounded-full border-2 border-white bg-[#0B6E4F] text-white shadow-sm">
                   <ImagePlus className="h-3.5 w-3.5" aria-hidden="true" />
                   <input
                     type="file"
@@ -328,14 +344,15 @@ export const SellerShopSettingsPage: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2 rounded-lg border border-[#E3E0D8] bg-[#F7F5F0] p-2">
-                {logoPath ? (
-                  <img src={logoPath} alt="Logo y’iduka" className="h-10 w-10 rounded-md border border-[#E3E0D8] bg-white object-cover" />
-                ) : (
-                  <div className="grid h-10 w-10 place-items-center rounded-md bg-white text-[9px] font-bold tracking-wide text-[#68716D]">LOGO</div>
-                )}
+                <SafeImage
+                  src={logoPath}
+                  alt="Logo y’iduka"
+                  className="h-12 w-12 rounded-md border border-[#E3E0D8] bg-white object-cover"
+                  fallback={<div className="grid h-12 w-12 place-items-center rounded-md bg-white text-[10px] font-bold tracking-wide text-[#4B544F]">LOGO</div>}
+                />
                 <div>
                   <p className="text-[10px] font-semibold text-[#202724]">Shop logo</p>
-                  <label className="mt-0.5 inline-flex min-h-7 cursor-pointer items-center text-[10px] font-semibold text-[#214E43] hover:underline">
+                  <label className="mt-0.5 inline-flex min-h-[44px] cursor-pointer items-center px-1 text-[11px] font-semibold text-[#0B6E4F] hover:underline">
                     Hindura
                     <input
                       type="file"
@@ -345,7 +362,7 @@ export const SellerShopSettingsPage: React.FC = () => {
                       onChange={(e) => {
                         const file = e.currentTarget.files?.[0];
                         e.currentTarget.value = '';
-                        void uploadBrandImage(file, 'shop', setLogoPath);
+                        void uploadBrandImage(file, 'logo', setLogoPath);
                       }}
                     />
                   </label>
@@ -367,7 +384,8 @@ export const SellerShopSettingsPage: React.FC = () => {
               </div>
             </div>
           </div>
-          {uploading && <p role="status" className="border-t border-[#E3E0D8] bg-[#F7F5F0] px-3 py-2 text-[10.5px] font-medium text-[#214E43]">Turimo gutunganya no kohereza ifoto...</p>}
+          {uploading && <p role="status" className="border-t border-[#E3E0D8] bg-white px-3 py-2 text-[11px] font-semibold text-[#0B6E4F]">Turimo gutunganya, kohereza no kubika ifoto...</p>}
+          {savedMsg && <p role="status" className="border-t border-[#0B6E4F]/20 bg-[#E8F3EE] px-3 py-2 text-[11px] font-semibold text-[#0B6E4F]">{savedMsg}</p>}
         </section>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>

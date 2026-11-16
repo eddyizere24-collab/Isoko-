@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { IsokoVerifiedSeal, RwandanGeometricPattern } from '../components/IsokoLogo';
 import { ProductCard } from '../components/ProductCard';
+import { SafeImage } from '../components/SafeImage';
 import { QrCodeModal } from '../components/QrCodeModal';
 import { ReportModal } from '../components/ReportModal';
 import { useT } from '../context/LangContext';
@@ -169,12 +170,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
         <div className="relative h-32 sm:h-44 w-full bg-[#EEECE6]">
           {shop.cover_path ? (
             <>
-              <img
-                src={shop.cover_path}
-                alt={shop.name}
-                referrerPolicy="no-referrer"
-                className="h-full w-full object-cover"
-              />
+              <SafeImage src={shop.cover_path} alt={shop.name} className="h-full w-full object-cover" fallback={<div className="imigongo-surface h-full w-full" aria-hidden="true" />} />
               <div
                 aria-hidden="true"
                 className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent"
@@ -192,31 +188,21 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
         <div className="p-4 sm:p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-              <div className="-mt-8 sm:-mt-10 relative z-10 flex shrink-0 flex-col items-center gap-1">
-                {shop.seller_avatar_path ? (
-                  <img
-                    src={shop.seller_avatar_path}
-                    alt={shop.seller_name || 'Ifoto ya profile y’umucuruzi'}
-                    className="h-14 w-14 rounded-full border-[3px] border-[#FFFEFB] bg-white object-cover sm:h-16 sm:w-16"
-                  />
-                ) : (
-                  <div className="grid h-14 w-14 place-items-center rounded-full border-[3px] border-[#FFFEFB] bg-[#E9F0EB] text-lg font-semibold text-[#214E43] sm:h-16 sm:w-16">
-                    {(shop.seller_name || shop.name).slice(0, 1).toUpperCase()}
-                  </div>
-                )}
-                <span className="text-[9px] font-medium text-[#68716D]">Umucuruzi</span>
-              </div>
-              {shop.logo_path ? (
-                <img
-                  src={shop.logo_path}
-                  alt={shop.name}
-                  className="-mt-10 sm:-mt-12 relative z-10 h-16 w-16 sm:h-20 sm:w-20 shrink-0 rounded-lg border-4 border-white bg-white object-cover"
+              <div className="relative z-10 flex shrink-0 flex-col items-center gap-1">
+                <SafeImage
+                  src={shop.seller_avatar_path}
+                  alt={shop.seller_name || 'Ifoto ya profile y’umucuruzi'}
+                  className="h-[72px] w-[72px] rounded-full border-[3px] border-white bg-white object-cover"
+                  fallback={<div className="grid h-[72px] w-[72px] place-items-center rounded-full border-[3px] border-white bg-[#E8F3EE] text-lg font-semibold text-[#0B6E4F]">{(shop.seller_name || shop.name).slice(0, 1).toUpperCase()}</div>}
                 />
-              ) : (
-                <div className="-mt-10 sm:-mt-12 relative z-10 flex h-16 w-16 sm:h-20 sm:w-20 shrink-0 items-center justify-center rounded-lg border-4 border-white bg-[#214E43] text-lg font-bold text-white">
-                  {shop.name.slice(0, 2).toUpperCase()}
-                </div>
-              )}
+                <span className="text-[10px] font-semibold text-[#4B544F]">Umucuruzi</span>
+              </div>
+              <SafeImage
+                src={shop.logo_path}
+                alt={'Logo ya ' + shop.name}
+                className="relative z-10 h-[72px] w-[72px] shrink-0 rounded-lg border-2 border-white bg-white object-cover"
+                fallback={<div className="relative z-10 flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-lg border-2 border-white bg-[#0B6E4F] text-lg font-bold text-white">{shop.name.slice(0, 2).toUpperCase()}</div>}
+              />
 
               <div>
                 <div className="flex flex-wrap items-center gap-2">
