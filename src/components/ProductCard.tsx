@@ -33,8 +33,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const shopName = product.shop?.name ?? 'Iduka';
   const districtName = product.shop?.district_name ?? 'Kigali';
-  const isVerified =
-    product.shop?.status === 'approved' || product.shop?.identity_status === 'verified';
+  const isVerified = isShopIdentityVerified(product.shop);
 
   return (
     <article className="group flex w-full max-h-[185px] sm:max-h-none flex-col rounded-lg border border-[#E3E0D8] bg-[#FFFEFB] overflow-hidden transition-colors hover:border-[#214E43]/60">
