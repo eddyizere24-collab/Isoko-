@@ -3,6 +3,7 @@
 - Each avatar, shop logo and cover upload must be persisted immediately after storage confirms success — an uploaded image that exists only in browser state disappears on reload.
 - Seller profile photos, shop logos and shop covers must use separate upload kinds and storage prefixes — distinct media roles must never be confused by UI or storage routing.
 - Every seller image upload must consume a server-verified daily quota before Object Storage writes — client-side limits can be bypassed.
+- Product image keys must begin with `products/<authenticated-seller-profile-id>/` for both create and update RPCs — a browser-provided object key must never attach another seller's media to a product.
 - Public storefront images must render an accessible fallback on load failure — broken image glyphs are not a usable empty state.
 - A shop receives the Isoko Verified seal only when `profiles.identity_status = 'verified'` — seller approval for listing products is not identity verification.
 - Seller avatar and logo must occupy separate, clearly labelled spaces outside the cover — overlapping brand assets cause identity confusion.
