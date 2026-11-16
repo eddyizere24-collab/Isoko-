@@ -224,8 +224,12 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                     {shop.district_name}
                     {shop.sector_name ? `, ${shop.sector_name}` : ''}
                   </span>
-                  <span aria-hidden="true">·</span>
-                  <span>{t('member_since', { n: memberDays })}</span>
+                  {memberDays !== null && (
+                    <>
+                      <span aria-hidden="true">·</span>
+                      <span>{t('member_since', { n: memberDays })}</span>
+                    </>
+                  )}
                   <span aria-hidden="true">·</span>
                   <span className="tabular-nums font-medium">{products.length} {t('products')}</span>
                 </div>
