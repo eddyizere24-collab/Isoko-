@@ -22,6 +22,7 @@ import { useMarketplace } from '../context/MarketplaceContext';
 import { fetchShopDetail, subscribeUpdates } from '../lib/api';
 import { trackEvent } from '../lib/track';
 import { buildWhatsAppLink } from '../lib/whatsapp';
+import { isShopIdentityVerified } from '../lib/shopVerification';
 import type { Product, Shop } from '../types/marketplace';
 
 interface ShopPageProps {
