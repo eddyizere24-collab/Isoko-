@@ -91,6 +91,15 @@ export const AccountPage: React.FC = () => {
                 <p className="truncate text-sm text-[#4B544F]">{authProfile.email || 'Email ntiyashyizwe kuri iyi konti.'}</p>
               </div>
             </div>
+            {(authProfile.role === 'seller' || authProfile.role === 'admin' || authProfile.role === 'moderator') && (
+              <button
+                type="button"
+                onClick={() => navigate(authProfile.role === 'seller' ? '/umucuruzi' : '/admin')}
+                className="mt-4 min-h-[48px] w-full rounded-lg bg-[#0B6E4F] px-4 text-sm font-bold text-white"
+              >
+                {authProfile.role === 'seller' ? 'Fungura iduka ryanjye' : 'Fungura Admin'}
+              </button>
+            )}
             <div className="mt-4 flex items-start gap-3 rounded-lg border border-[#DCE4DE] p-3">
               <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#0B6E4F]" />
               <div>
