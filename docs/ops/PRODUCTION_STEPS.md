@@ -1,36 +1,88 @@
 # ISOKO Production steps requiring owner approval
 
-This file documents Production-only steps. Do not run them until the owner has reviewed the matching PR and explicitly approved applying the migration.
+These are Production-only steps. Do not apply migrations, deploy the Neon Function, change Auth settings, Render variables, or publish the frontend until the owner explicitly approves the release.
 
-## Seller image quota (migration 019)
+## Verified Production baseline — 2026-11-16
 
-Reason: the upload Function calls public.consume_seller_upload_quota_v1() before accepting seller image uploads. It allows 30 successful seller uploads per calendar day. If this migration is absent, the new Function must not be deployed because quota validation fails closed.
+- Neon project: `isoko-marketplace` (`square-queen-83418379`)
+- Production branch: `isoko-production` (`br-blue-bread-ba2wywua`)
+- Database: `isoko`
+- Migration `016_seller_profile_storefront_capacity` is present.
+- Migrations `019`, `020`, and `021` are not recorded in Production.
+- Production currently has 1 seller profile, 1 shop, and 1 active public product. That product is in the `ibindi` category; current Production has no active products in Inkweto, Imyenda, or Amasogisi. Do not create demo products to disguise that.
+- Production has no valid `SUPPORT_WHATSAPP` setting. The frontend must not invent a support number.
 
-### Read-only checks before applying
+## Read-only preflight checks
 
-In Neon Console on project isoko-marketplace, select branch isoko-production and database isoko, then run:
+Run only after confirming project, branch, and database at the top of the Neon SQL Editor:
 
 ```sql
-SELECT version FROM public.schema_migrations WHERE version = '019_seller_upload_daily_quota';
-SELECT to_regclass('public.seller_upload_daily_usage') AS quota_table,
-       to_regprocedure('public.consume_seller_upload_quota_v1()') AS quota_function;
+SELECT version
+FROM public.schema_migrations
+WHERE version IN (
+  '016_seller_profile_storefront_capacity',
+  '019_seller_upload_daily_quota',
+  '020_seller_upload_quota_cap_alignment',
+  '021_public_product_identity_status'
+)
+ORDER BY version;
+
+SELECT
+  to_regclass('public.seller_upload_daily_usage') AS quota_table,
+  to_regprocedure('public.consume_seller_upload_quota_v1()') AS quota_function;
+
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name = 'profiles'
+  AND column_name IN ('id', 'auth_user_id', 'identity_status');
 ```
 
-Expected before applying: no migration row, and both quota_table and quota_function are null.
+Expected current state: migration 016 is present, migrations 019–021 are absent, and the quota table/function are absent. The profile IDs and auth user IDs are text in this project. If the read-back differs, stop and re-inspect rather than replaying a migration.
+
+## Ordered release migrations
+
+### 019 — seller upload daily quota
+
+File: `infra/neon/migrations/019_seller_upload_daily_quota.sql`
+
+Creates the text-keyed quota table and an RPC that derives seller identity from Neon Auth `auth.user_id()`. It limits authenticated seller image upload attempts to 30 per seller per UTC calendar day. The browser must never supply a seller ID to this RPC.
+
+### 020 — quota cap alignment
+
+File: `infra/neon/migrations/020_seller_upload_quota_cap_alignment.sql`
+
+Replaces the quota function with the 30-attempt implementation. This is included because the isolated QA branch read-back found an earlier function definition with a cap of 50. Apply after migration 019.
+
+### 021 — public product identity status
+
+File: `infra/neon/migrations/021_public_product_identity_status.sql`
+
+Adds the seller's explicit `identity_status` to the nested shop JSON in `v_public_products`. It does not add a new public product column or expose KYC documents. It lets the frontend show the Isoko Verified seal only when identity status is actually `verified`.
 
 ### Apply only after explicit owner approval
 
-1. Open GitHub on the Android phone and open the approved Photos PR.
-2. Review infra/neon/migrations/019_seller_upload_daily_quota.sql.
-3. In Neon Console, confirm the selected branch is exactly isoko-production and database is isoko.
-4. Open SQL Editor and paste the complete contents of the migration file from the approved PR. Run it once.
-5. Re-run the read-only checks above. Confirm the migration row, table and function now exist.
-6. Do not paste database passwords, API keys or connection strings into GitHub, chat or screenshots.
+1. Open the approved GitHub PR and review all three migration files.
+2. In Neon Console, confirm project `isoko-marketplace`, branch `isoko-production`, and database `isoko`.
+3. Apply migration 019 once, then read back its table, function, and marker.
+4. Apply migration 020, then read back that `consume_seller_upload_quota_v1()` returns JSONB and uses `v_limit = 30`.
+5. Apply migration 021, then read back that `v_public_products.shop` contains `identity_status` for each row.
+6. Confirm the quota function ACL grants `authenticated` and does not grant `PUBLIC` or `anonymous`.
+7. Do not paste database passwords, API keys, connection strings, or private seller information into GitHub or chat.
 
-### Function deployment gate
+## Neon Function and frontend release gates
 
-The new isokoapi source calls the quota RPC and supports the separate logo upload kind. Deploy that Function only after migration 019 is verified in Production. The assistant must verify the branch, inspect the generated Node.js 24 bundle, and deploy it to Production only after the owner explicitly approves deployment. Do not deploy the Function from an unmerged feature branch.
+The feature Function source supports the distinct `logo` upload kind and calls the quota RPC before Object Storage writes. Deploy the matching Node.js 24 Function bundle only after migrations 019–021 have been verified in Production and the owner explicitly approves Function deployment. Deploy frontend code only from the reviewed, merged release head. Do not deploy the Function or frontend from an unmerged feature branch.
 
-### Rollback note
+The Production smoke test must then verify:
+- unauthenticated upload is rejected;
+- non-seller roles cannot use seller image upload;
+- seller avatar, logo, and cover save to their distinct paths;
+- public image URLs render and reload;
+- quota allows 30 attempts and denies the next attempt;
+- unverified shops do not receive the Verified seal;
+- a genuinely verified shop receives the seal on storefront and product cards.
 
-Do not drop the quota table or function as a casual rollback. If uploads fail after deployment, disable seller image uploads at the Function level only through a reviewed hotfix; preserve quota records for audit.
+## Rollback note
+
+Do not drop the quota table, remove quota history, or replace the public view with an earlier definition as a casual rollback. If uploads fail after release, disable seller image uploads at the Function level only through a reviewed hotfix and preserve quota records for audit.
