@@ -19,7 +19,7 @@ DECLARE
   v_auth_user_id text := auth.user_id()::text;
   v_seller_id text;
   v_now timestamptz := clock_timestamp();
-  v_upload_day date := (clock_timestamp() AT TIME ZONE 'UTC')::date;
+  v_upload_day date := (v_now AT TIME ZONE 'UTC')::date;
   v_daily_count integer;
   v_window_count integer;
   v_window_started_at timestamptz;
