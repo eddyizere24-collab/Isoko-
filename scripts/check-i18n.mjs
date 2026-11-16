@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const files = ['rw', 'en', 'fr', 'sw', 'rn', 'ln'];
+const files = ['rw', 'en', 'fr', 'sw', 'rn', 'ln', 'lg'];
 const extractKeys = (code) => {
   const raw = readFileSync(resolve(process.cwd(), `src/i18n/${code}.ts`), 'utf8');
   const start = raw.indexOf(`export const ${code}`);
@@ -36,4 +36,4 @@ for (const lang of files) {
 }
 
 if (hasError) process.exit(1);
-console.log(`All 6 language files match ${baseKeys.length} keys.`);
+console.log(`All 7 language files match ${baseKeys.length} keys.`);

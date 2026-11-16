@@ -10,3 +10,8 @@
 - Logout must preserve anonymous buyer cart, language and location preferences while removing account caches — buyer browsing must not be lost when a seller signs out.
 - Logout must replace the current private history entry with Home — the Back button must not restore a signed-in private route after logout.
 - Expose other-device session revocation only when the configured Neon Auth client actually provides it — do not invent unsupported account controls.
+
+- A first-time visitor always starts in Kinyarwanda, while an explicitly saved language choice wins — browser language must not override the marketplace's primary language.
+- Every supported language dictionary must contain exactly the Kinyarwanda key set and be checked in CI — missing translations must be caught before merge.
+- Translation review status stays in code and never appears as a beta badge to users — unreviewed translations must not be presented as beta or as human-reviewed.
+- Every translated legal page must state that Kinyarwanda is the reference text — legal translations must not replace the authoritative source language.

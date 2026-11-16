@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main, "infra/**", "feature/**", "docs/**", "fix/**"]
+    branches: [main, "infra/**", "feature/**", "feat/**", "docs/**", "fix/**"]
 
 permissions:
   contents: read
@@ -30,6 +30,9 @@ jobs:
 
       - name: Unit tests
         run: bun test src/lib/*.test.ts
+
+      - name: Verify all seven translation dictionaries
+        run: bun run check:i18n
 
       - name: Verify isolated Neon setup branch
         run: bun infra/neon/smoke-test.mjs

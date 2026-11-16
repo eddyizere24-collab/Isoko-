@@ -5,7 +5,7 @@ import { rw } from '../i18n/rw';
 import { calculateProfileCompletion } from './profileCompletion';
 import { ScrollPositionStore } from './scrollRestoration';
 
-test('all 6 language dictionaries match rw keyset completely', () => {
+test('all 7 language dictionaries match rw keyset completely', () => {
   const baseKeys = Object.keys(rw).sort();
   for (const [lang, dict] of Object.entries(DICTIONARIES)) {
     const keys = Object.keys(dict).sort();
@@ -13,11 +13,12 @@ test('all 6 language dictionaries match rw keyset completely', () => {
   }
 });
 
-test('detectInitialLang resolves stored or browser prefix or defaults to rw', () => {
-  assert.equal(detectInitialLang('fr', 'en-US'), 'fr');
-  assert.equal(detectInitialLang(null, 'sw-TZ'), 'sw');
-  assert.equal(detectInitialLang(null, 'ln-CD'), 'ln');
-  assert.equal(detectInitialLang(null, 'de-DE'), 'rw');
+test('Kinyarwanda is the first-visit default and saved choices persist', () => {
+  assert.deepEqual(Object.keys(DICTIONARIES).sort(), ['en', 'fr', 'lg', 'ln', 'rn', 'rw', 'sw']);
+  assert.equal(detectInitialLang('fr'), 'fr');
+  assert.equal(detectInitialLang('lg'), 'lg');
+  assert.equal(detectInitialLang(null), 'rw');
+  assert.equal(detectInitialLang(undefined), 'rw');
 });
 
 test('translate substitutes parameters cleanly', () => {

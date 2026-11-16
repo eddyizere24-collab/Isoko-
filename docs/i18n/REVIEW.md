@@ -1,10 +1,13 @@
 # ISOKO i18n Review Status
 
-| Code | Language | Native Label | Status | Reviewer Notes |
+| Code | Language | Native label | Review status | Notes |
 |---|---|---|---|---|
-| `rw` | Kinyarwanda | Ikinyarwanda | Reviewed | Primary default UI & WhatsApp message language |
-| `en` | English | English | Reviewed | Verified against glossary & product UX strings |
-| `fr` | French | Français | `beta` | Automated parity complete; awaiting native speaker copy pass |
-| `sw` | Swahili | Kiswahili | `beta` | Automated parity complete; awaiting native speaker copy pass |
-| `rn` | Kirundi | Ikirundi | `beta` | Automated parity complete; awaiting native speaker copy pass |
-| `ln` | Lingala | Lingála | `beta` | Automated parity complete; awaiting native speaker copy pass |
+| `rw` | Kinyarwanda | Ikinyarwanda | `reviewed: true` | Primary language and legal reference |
+| `en` | English | English | `reviewed: true` | Existing English dictionary |
+| `fr` | French | Français | `reviewed: false` | Native-speaker review required |
+| `sw` | Swahili | Kiswahili | `reviewed: false` | Native-speaker review required |
+| `rn` | Kirundi | Ikirundi | `reviewed: false` | Native-speaker review required |
+| `ln` | Lingala | Lingála | `reviewed: false` | Native-speaker review required |
+| `lg` | Luganda | Luganda | `reviewed: false` | AI-assisted draft; native-speaker review required |
+
+The product UI does not show beta or unreviewed badges. The internal review flag must remain accurate until a native-speaker review is recorded.
