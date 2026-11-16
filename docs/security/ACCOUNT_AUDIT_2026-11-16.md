@@ -4,9 +4,10 @@ Scope: production configuration, source-code review and CI workflow review for t
 
 | Control | Status | Evidence / reason |
 |---|---|---|
-| Seller A/B cannot read or modify each other's shop | **Not proven** | Source contains owner-scoped RPC/RLS patterns, but no automated two-seller isolation test was found in the current CI. |
-| Seller A/B product and product-image isolation | **Not proven** | No QA test creates two sellers and attempts cross-owner product/image reads and writes. |
-| Seller A/B profile and KYC isolation | **Not proven** | Admin-only KYC RPC and ownership guards exist in source, but cross-owner denial has not been demonstrated by a repeatable QA test. |
+| Seller A/B cannot read or modify each other's shop | **QA transaction tests passed; automated CI test remains absent** | As Seller A in the isolated QA branch, own shop read/update succeeded; Seller B shop read returned 0 and the cross-owner UPDATE returned no row. All writes were rolled back. |
+| Seller A/B product update/delete/status isolation | **QA transaction tests passed; automated CI test remains absent** | As Seller A, update, delete and mark-sold succeeded against Seller A's product (each rolled back); the same RPCs targeting Seller B's product returned `PRODUCT_NOT_FOUND_OR_FORBIDDEN`. |
+| Seller A/B product image ownership | **QA transaction tests passed; Production pending** | Migration 022 binds `create_seller_product_v1` and `update_seller_product_v1` image keys to `products/<seller-profile-id>/`. Cross-seller image keys returned `PRODUCT_IMAGE_OWNERSHIP_INVALID`; the seller's own prefix was accepted. Test writes were rolled back. |
+| Seller A/B profile and KYC isolation | **Partially proven in QA** | Own profile visible and foreign profile invisible under authenticated RLS. KYC document reads were not tested because QA has no populated KYC rows; private bucket remains private and metadata grants are restricted. |
 | Upload Function checks authentication and seller role | **Proven by code review only** | `infra/neon/functions/isokoapi/index.mjs` requires a bearer token, reads the authenticated profile and rejects disallowed roles/statuses. This is not an end-to-end security test. |
 | Upload content validation | **Proven by code review only** | The Function checks JPEG/PNG/WebP magic bytes and enforces a 500 KB limit. |
 | Daily per-seller upload quota | **QA schema present; exhaustion not tested; Production pending** | QA branch has migration marker 019 and `consume_seller_upload_quota_v1()`, but read-back found its stored cap was 50 while the intended policy is 30. Migration 020 aligns QA/Production source to 30. Production has no 019 marker and remains unchanged until release approval. |
