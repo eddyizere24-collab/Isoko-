@@ -12,7 +12,7 @@ Scope: current Production read-backs, isolated QA transaction checks, frontend/F
 - Production email verification remains disabled. Neon Auth reports `verify_email_on_sign_up=false`, `verify_email_on_sign_in=false`, and `require_email_verification=false`.
 - Production Google provider has no Client ID/Secret. Google sign-in remains disabled.
 - Production uses the shared Neon Auth sender `auth@mail.myneon.app`; no real mailbox delivery or custom SMTP test is evidenced.
-- Backup branch `isoko-production-backup-before-release-20261116` exists. It has no compute endpoint; no SQL restore/parity test or public/private Object Storage restore drill has been completed.
+- Backup branch `isoko-production-backup-before-release-20261116` exists. A child restore clone (`br-broad-feather-ba73vmad`) was created from it and SQL read-back matched the snapshot's 1 profile, 1 shop and 1 product, with migration history through 016 only. Public Storage had 11 objects in Production/backup/clone with matching ETag+size metadata; private KYC Storage had 0 in all three. The clone's compute was suspended after the test. Neon Auth was not enabled on the clone, so identity/session restore is unproven.
 
 ## Control evidence
 
@@ -33,7 +33,7 @@ Scope: current Production read-backs, isolated QA transaction checks, frontend/F
 | Other-device session revocation | **Not proven** | The UI exposes a revocation action only if the SDK provides one; no real multi-device session test has been run. |
 | Session expiry | **Not proven** | The previous client-side 30-day marker was not authoritative. Do not claim an exact server session lifetime until Neon Auth confirms it. |
 | Admin recovery | **Missing / not rehearsed** | No Admin role appeared in Production. A recovery runbook and real owner-controlled Admin recovery drill remain outstanding. |
-| Backup and restore | **Snapshot exists; restore drill incomplete** | The Neon backup branch exists and is preserved. It currently has no compute endpoint, and no PostgreSQL plus public/private Object Storage restore rehearsal is evidenced. |
+| Backup and restore | **PostgreSQL and Storage clone check passed; Auth restore incomplete** | A child restore clone from the preserved backup returned the same 1/1/1 records and 016-only migration history. Public Storage metadata matched across Production, backup and clone (11 objects); private bucket was empty in all three. Neon Auth was not enabled on the clone, so account/session recovery was not tested. |
 | GitHub main protection | **Not confirmed** | Repository rulesets read returned an empty list. The connected GitHub app could not read classic branch protection (403), so this audit does not assert whether classic protection is active. Require a PR and CI status check in repository settings. |
 | Authenticated seller journey | **Not proven** | No QA signup → avatar/logo/cover → publish three-photo product → storefront reload → 10×3 bulk upload workflow has been completed. Do not use the Production owner's account for this test. |
 
@@ -54,7 +54,7 @@ This was signed-out public-page testing only. It does not prove signed-in Accoun
 4. Verify reliable email delivery using a trusted sender in QA, then gate publishing (not login) on `email_verified`. Do not enable this while email delivery is uncertain.
 5. Test logout/Back-button and supported other-device revocation with two controlled QA devices/sessions.
 6. Write and rehearse the Admin bootstrap/recovery runbook without exposing codes or passwords in GitHub.
-7. Rehearse backup branch restore for PostgreSQL and separately verify whether public/private Object Storage objects are covered.
+7. Complete an end-to-end restore procedure that also enables/configures Neon Auth on a separate clone and proves account access and rollback. The PostgreSQL clone and Storage object metadata parity test has passed, but identity/session restore has not.
 8. Set/verify GitHub branch protection for `main` with required PR review and CI.
 
 No Production seller data was changed during this audit.
