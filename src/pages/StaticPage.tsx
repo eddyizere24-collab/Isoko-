@@ -22,7 +22,7 @@ export const StaticPage: React.FC = () => {
         <h1 className="text-2xl font-bold text-[#1B1F23]">Ibyerekeye Isoko</h1>
         <p className="text-sm leading-relaxed text-slate-700">
           Isoko ni urubuga rw’ubucuruzi rwo mu Rwanda ruhuza abacuruzi b’imyenda, inkweto,
-          amasogisi n’ibindi byo kwambara n’abaguzi mu turere twose 30 tw’igihugu.
+          amasogisi n’ibindi byo kwambara n’abaguzi bo mu Rwanda.
         </p>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-lg border border-[#E5E7EB] bg-white p-5">
