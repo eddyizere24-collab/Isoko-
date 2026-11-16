@@ -84,7 +84,7 @@ Adds a rolling 60-second per-seller upload window with a 15-attempt limit. The s
 6. Apply migration 022, then read back the create/update seller product RPCs and verify the `PRODUCT_IMAGE_OWNERSHIP_INVALID` guard is present.
 7. Apply migration 023, then verify the counter columns, `window_limit = 15`, and the `reason = 'rate'` response after the 16th attempt within 60 seconds.
 8. Confirm the quota function ACL grants `authenticated` and does not grant `PUBLIC` or `anonymous`.
-8. Do not paste database passwords, API keys, connection strings, or private seller information into GitHub or chat.
+9. Do not paste database passwords, API keys, connection strings, or private seller information into GitHub or chat.
 
 ## Neon Function and frontend release gates
 
