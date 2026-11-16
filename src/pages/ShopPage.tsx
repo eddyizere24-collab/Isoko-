@@ -108,7 +108,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
 
   const shopUrl = `${window.location.origin}/i/${shop.slug}`;
   const isFollowing = followedShops.includes(shop.id);
-  const isVerified = shop.status === 'approved' || shop.identity_status === 'verified';
+  const isVerified = isShopIdentityVerified(shop);
   const memberDays = shop.approved_at
     ? Math.max(1, Math.floor((Date.now() - new Date(shop.approved_at).getTime()) / (1000 * 60 * 60 * 24)))
     : 30;
