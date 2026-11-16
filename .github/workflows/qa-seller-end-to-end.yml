@@ -1,0 +1,55 @@
+name: ISOKO QA seller end-to-end
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/qa-seller-end-to-end.yml'
+      - 'playwright.qa-seller.config.cjs'
+      - 'e2e/qa-seller-end-to-end.spec.cjs'
+      - 'src/pages/SellerApplyPage.tsx'
+      - 'src/pages/SellerShopSettingsPage.tsx'
+      - 'src/pages/SellerAddProductPage.tsx'
+      - 'src/lib/api.ts'
+      - 'src/lib/image.ts'
+      - 'infra/neon/functions/isokoapi/index.mjs'
+permissions:
+  contents: read
+jobs:
+  seller-full-flow:
+    name: QA seller signup, photos and 10×3 product publishing
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Install Bun
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2
+      - name: Install project dependencies
+        run: bun install --frozen-lockfile
+      - name: Build frontend against isolated Neon QA endpoints only
+        run: bun run build
+        env:
+          VITE_ISOKO_PREVIEW: "false"
+          VITE_NEON_AUTH_URL: https://ep-jolly-poetry-ba3o1jwc.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth
+          VITE_NEON_DATA_API_URL: https://ep-jolly-poetry-ba3o1jwc.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
+          VITE_NEON_FUNCTION_URL: https://br-cold-forest-badn9wlr-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
+          VITE_NEON_PUBLIC_STORAGE_URL: https://br-cold-forest-badn9wlr.storage.c-8.eu-central-1.aws.neon.tech/isoko-public-assets/
+      - name: Install Playwright
+        run: |
+          mkdir -p "$RUNNER_TEMP/isoko-qa-seller-playwright"
+          npm install --prefix "$RUNNER_TEMP/isoko-qa-seller-playwright" --no-save --no-package-lock --ignore-scripts --no-audit --no-fund @playwright/test@1.65.0
+      - name: Install Chromium
+        run: '"$RUNNER_TEMP/isoko-qa-seller-playwright/node_modules/.bin/playwright" install --with-deps chromium'
+      - name: Run authenticated QA seller journey
+        env:
+          NODE_PATH: ${{ runner.temp }}/isoko-qa-seller-playwright/node_modules
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: '"$RUNNER_TEMP/isoko-qa-seller-playwright/node_modules/.bin/playwright" test --config=playwright.qa-seller.config.cjs'
+      - name: Upload QA seller evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: isoko-qa-seller-e2e
+          path: test-results/qa-seller-e2e/
+          if-no-files-found: warn
+          retention-days: 30
