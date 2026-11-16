@@ -117,7 +117,7 @@ export const LoginPage: React.FC = () => {
                   type="password"
                   autoComplete="current-password"
                   required
-                  minLength={6}
+                  minLength={8}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Nibura inyuguti cyangwa imibare 8"
