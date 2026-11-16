@@ -39,7 +39,7 @@ Do not replay any of migrations 017–025.
 
 ## Backup, identity and account safety
 
-A Neon branch snapshot named `isoko-production-backup-before-release-20261116` exists (`br-falling-darkness-ba6qwviu`). It is based on Production and was created before the release migrations. It has no compute endpoint, so SQL parity testing against the snapshot was not completed. It is not proof of a complete restore drill or a backup of public/private Object Storage. Keep it preserved.
+A Neon branch snapshot named `isoko-production-backup-before-release-20261116` exists (`br-falling-darkness-ba6qwviu`). A temporary child clone (`isoko-restore-drill-20261116`, `br-broad-feather-ba73vmad`) was cloned from it and SQL read-back confirmed 1 seller, 1 shop and 1 active product, with migration history through 016 only. Production, backup and clone each expose 11 public-assets objects with matching ETag+size metadata; private KYC bucket has 0 objects in each. The test clone's 0.25 CU compute was suspended after testing. Neon Auth was not enabled on the clone, so account/session restore remains unproven. Preserve the original backup branch.
 
 Production email/password sign-in is enabled, but email verification is not enforced. The current Google provider has no Client ID or Client Secret. KYC bucket is private; QA KYC currently has no rows, so owner/admin access control has not been proven end-to-end. No Admin profile appeared in the latest Production role/status read-back.
 
@@ -55,7 +55,7 @@ GitHub Actions run [43815618048](https://github.com/eddyizere24-collab/Isoko-/ac
 - Trusted email sender and real QA delivery; only then add verified-email publishing gate, never block existing login.
 - Multi-device session revocation and logout/back-button browser test.
 - Admin bootstrap/recovery runbook and controlled recovery rehearsal.
-- PostgreSQL plus Object Storage restore rehearsal from a backup.
+- Neon Auth/account-session restore rehearsal from a backup; PostgreSQL clone and Storage metadata parity have already been checked, but Neon Auth was not enabled on the restore clone.
 - Confirm GitHub main branch protection and required CI. The repository rulesets read returned none; classic protection read was unavailable (403), so branch protection is not declared enabled.
 - Google OAuth credentials and QA OAuth round trip; keep the feature flag off until both are proven.
 
