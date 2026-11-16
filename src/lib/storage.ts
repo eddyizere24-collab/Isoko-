@@ -284,11 +284,11 @@ function deleteIndexedDatabase(factory: IDBFactory, name: string): Promise<void>
 }
 
 export async function clearAccountScopedStorage(): Promise<void> {
-  try { clearMatchingStorage(window.localStorage); } catch { /* storage may be blocked */ }
-  try { clearMatchingStorage(window.sessionStorage); } catch { /* storage may be blocked */ }
+  try { clearMatchingStorage(globalThis.localStorage); } catch { /* storage may be blocked */ }
+  try { clearMatchingStorage(globalThis.sessionStorage); } catch { /* storage may be blocked */ }
 
   try {
-    const factory = window.indexedDB;
+    const factory = globalThis.indexedDB;
     if (factory && typeof factory.databases === 'function') {
       const databases = await factory.databases();
       const accountDatabases = databases
