@@ -39,7 +39,7 @@ WHERE table_schema = 'public'
   AND column_name IN ('id', 'auth_user_id', 'identity_status');
 ```
 
-Expected current state: migration 016 is present, migrations 019–021 are absent, and the quota table/function are absent. The profile IDs and auth user IDs are text in this project. If the read-back differs, stop and re-inspect rather than replaying a migration.
+Expected current state: migration 016 is present, migrations 019–022 are absent, and the quota table/function are absent. The profile IDs and auth user IDs are text in this project. If the read-back differs, stop and re-inspect rather than replaying a migration.
 
 ## Ordered release migrations
 
