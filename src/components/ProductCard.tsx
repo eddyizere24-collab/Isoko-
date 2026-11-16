@@ -3,6 +3,7 @@ import { Package } from 'lucide-react';
 import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { calculateDiscountPercent } from '../lib/algorithm';
+import { isShopIdentityVerified } from '../lib/shopVerification';
 import { formatRwfCurrency } from '../lib/whatsapp';
 import type { Product } from '../types/marketplace';
 import { IsokoVerifiedSeal } from './IsokoLogo';
