@@ -335,7 +335,7 @@ export const HomePage: React.FC<HomePageProps> = () => {
         >
           <div className="mb-2 flex items-center justify-between gap-2">
             <h2 id="shops-heading" className="text-[14px] font-semibold text-[#202724]">
-              {t('verified_shops_title')}
+              {t('shops')}
             </h2>
           </div>
           <div className="flex gap-2 overflow-x-auto no-scrollbar sm:grid sm:grid-cols-3 lg:grid-cols-4">
