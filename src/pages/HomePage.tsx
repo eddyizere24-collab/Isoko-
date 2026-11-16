@@ -339,7 +339,7 @@ export const HomePage: React.FC<HomePageProps> = () => {
           </div>
           <div className="flex gap-2 overflow-x-auto no-scrollbar sm:grid sm:grid-cols-3 lg:grid-cols-4">
             {shops.map((shop) => {
-              const verified = shop.status === 'approved' || shop.identity_status === 'verified';
+              const verified = isShopIdentityVerified(shop);
               return (
                 <a
                   key={shop.id}
