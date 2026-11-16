@@ -90,7 +90,7 @@ export function buildCartWhatsAppMessages(params: {
   baseUrl?: string;
 }): CartWhatsAppBatch[] {
   const activeItems = params.items.filter((it) => it.status !== 'sold_out' && it.sizeInStock !== false);
-  if (activeItems.length === 0) return [];
+  if (activeItems.length === 0 || !isUsableSellerWhatsAppPhone(params.shopWhatsapp)) return [];
 
   // Appendix A.3: Cart exceeding 10 items for one seller is split into batches of up to 10
   const chunks: CartItem[][] = [];
@@ -166,4 +166,23 @@ export function buildCartWhatsAppMessages(params: {
 export function buildWhatsAppLink(phone: string, message: string): string {
   const normalized = normalizeRwandaPhone(phone);
   return `https://wa.me/${normalized}?text=${encodeURIComponent(message)}`;
+}
+
+
+/**
+ * Seller contact buttons must use a configured, valid Rwanda WhatsApp number.
+ * The old 250788000000 placeholder must never become a public wa.me link.
+ */
+export function isUsableSellerWhatsAppPhone(phone: string | null | undefined): boolean {
+  if (!phone) return false;
+  const normalized = normalizeRwandaPhone(phone);
+  return normalized !== '250788000000' && isValidRwandaPhone(normalized);
+}
+
+export function buildSellerWhatsAppLink(
+  phone: string | null | undefined,
+  message: string
+): string | null {
+  if (!isUsableSellerWhatsAppPhone(phone)) return null;
+  return buildWhatsAppLink(phone as string, message);
 }
