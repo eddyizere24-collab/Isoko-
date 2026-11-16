@@ -51,7 +51,7 @@ for (const viewport of [
         timeout: 60_000,
       });
       await page.locator('body').waitFor({ state: 'visible' });
-      await page.evaluate(() => document.fonts.ready);
+      await page.evaluate(() => document.fonts.ready.then(() => true));
       await page.waitForTimeout(450);
 
       const observations = await page.evaluate(() => {
