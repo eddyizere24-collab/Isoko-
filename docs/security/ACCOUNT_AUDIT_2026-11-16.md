@@ -17,7 +17,7 @@ Scope: production configuration, source-code review and CI workflow review for t
 | Email verification before product publishing | **Missing** | Production Neon Auth config read-back shows `require_email_verification=false`, verification on sign-up/sign-in false. No publish-time verified-email gate is proven. |
 | Password reset revokes sessions | **Proven by provider configuration read-back** | Production Neon Auth reports `revoke_sessions_on_password_reset=true`. Actual email delivery and account-recovery journey remain untested with a real mailbox. |
 | Password strength policy enforced server-side | **Not proven** | UI and reset helper require at least 8 characters, but no provider-side password policy read-back/test proving the server rule was found. |
-| Session expiry | **Not proven** | Client caches a 30-day display/session marker; this is not proof of Neon Auth's actual server-session expiry. |
+| Session expiry | **Not proven** | The old login screen's 30-day statement was a client-side marker, not server evidence. The claim has been removed; actual Neon Auth session lifetime still requires provider read-back. |
 | Token storage / logout purge | **Partially implemented; not fully proven** | PR #53 awaits Neon Auth sign-out before clearing account-scoped local/session/IndexedDB keys where browser APIs allow. Full SDK-token inventory and browser-level Back-button testing remain outstanding. |
 | Other-device session revocation | **Not proven** | Account page feature-detects a client method. No supported action or multi-device QA test has been verified. |
 | Admin account recovery | **Missing / not proven** | Production has no Admin account according to the reviewed Production gate; no real Admin recovery drill has been performed. |
