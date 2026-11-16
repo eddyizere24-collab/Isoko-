@@ -1,35 +1,71 @@
 # ISOKO Production steps requiring owner approval
 
-This file documents Production-only steps. Do not run them until the owner has reviewed the matching PR and explicitly approved applying the migration.
+This file records read-only Production verification and the exact Production-only change steps. Do not apply migration 019, deploy the Function, or change Render settings until the owner has reviewed the matching PR and explicitly approved the release.
 
-## Seller image quota (migration 019)
+## Verified Production state — 2026-11-16
 
-Reason: the upload Function calls public.consume_seller_upload_quota_v1() before accepting seller image uploads. It allows 30 successful seller uploads per calendar day. If this migration is absent, the new Function must not be deployed because quota validation fails closed.
+- Neon project: `isoko-marketplace` (`square-queen-83418379`)
+- Production branch: `isoko-production` (`br-blue-bread-ba2wywua`)
+- Database: `isoko`
+- Migration `016_seller_profile_storefront_capacity` is already applied.
+- `profiles.avatar_key` and `profiles.bio` exist.
+- `shops.social_links` exists. Social links are a shop field, not a profile field.
+- `v_public_shops.seller_avatar_path` exists. The actual public view is `v_public_shops`, not a physical `v_public_bootstrap.seller_avatar_path` column.
+- `public.seller_upload_daily_usage` and `public.consume_seller_upload_quota_v1()` are absent in Production.
+- Migration `019_seller_upload_daily_quota` is not recorded in Production.
 
-### Read-only checks before applying
+### Read-only checks for migration 016
 
-In Neon Console on project isoko-marketplace, select branch isoko-production and database isoko, then run:
+Run in Neon SQL Editor with project `isoko-marketplace`, branch `isoko-production`, database `isoko`:
 
 ```sql
-SELECT version FROM public.schema_migrations WHERE version = '019_seller_upload_daily_quota';
-SELECT to_regclass('public.seller_upload_daily_usage') AS quota_table,
-       to_regprocedure('public.consume_seller_upload_quota_v1()') AS quota_function;
+SELECT version
+FROM public.schema_migrations
+WHERE version = '016_seller_profile_storefront_capacity';
+
+SELECT table_name, column_name, data_type
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND (
+    (table_name = 'profiles' AND column_name IN ('avatar_key', 'bio'))
+    OR (table_name = 'shops' AND column_name = 'social_links')
+    OR (table_name = 'v_public_shops' AND column_name = 'seller_avatar_path')
+  )
+ORDER BY table_name, column_name;
 ```
 
-Expected before applying: no migration row, and both quota_table and quota_function are null.
+Expected: the migration marker is present and the four columns listed above are present. Do not apply migration 016 again.
+
+### Read-only checks for migration 019
+
+```sql
+SELECT version
+FROM public.schema_migrations
+WHERE version = '019_seller_upload_daily_quota';
+
+SELECT
+  to_regclass('public.seller_upload_daily_usage') AS quota_table,
+  to_regprocedure('public.consume_seller_upload_quota_v1()') AS quota_function;
+```
+
+Expected before applying: no migration row and both returned object names are null.
+
+## Seller image quota — migration 019
+
+The quota is 30 authenticated upload attempts per seller per UTC calendar day. Each authenticated attempt consumes one count before the Object Storage write. A later storage error does not refund the attempt; this keeps retries from bypassing the server-side abuse limit. The RPC derives the seller from `auth.user_id()`; it does not accept a seller ID from the browser.
 
 ### Apply only after explicit owner approval
 
 1. Open GitHub on the Android phone and open the approved Photos PR.
-2. Review infra/neon/migrations/019_seller_upload_daily_quota.sql.
-3. In Neon Console, confirm the selected branch is exactly isoko-production and database is isoko.
-4. Open SQL Editor and paste the complete contents of the migration file from the approved PR. Run it once.
-5. Re-run the read-only checks above. Confirm the migration row, table and function now exist.
+2. Review `infra/neon/migrations/019_seller_upload_daily_quota.sql`.
+3. In Neon Console, confirm the selected project is `isoko-marketplace`, branch is exactly `isoko-production`, and database is `isoko`.
+4. Open SQL Editor and paste the complete migration file from the approved PR. Run it once.
+5. Re-run the read-only checks above. Confirm the migration marker, table and function now exist.
 6. Do not paste database passwords, API keys or connection strings into GitHub, chat or screenshots.
 
 ### Function deployment gate
 
-The new isokoapi source calls the quota RPC and supports the separate logo upload kind. Deploy that Function only after migration 019 is verified in Production. The assistant must verify the branch, inspect the generated Node.js 24 bundle, and deploy it to Production only after the owner explicitly approves deployment. Do not deploy the Function from an unmerged feature branch.
+The new `isokoapi` source calls the quota RPC and supports the separate `logo` upload kind. Deploy the matching Node.js 24 Function bundle only after migration 019 is verified in Production and the owner explicitly approves that deployment. Do not deploy the Function from an unmerged feature branch.
 
 ### Rollback note
 
