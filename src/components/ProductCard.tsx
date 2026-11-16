@@ -33,7 +33,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const isSoldOut = product.status === 'sold_out';
 
   const shopName = product.shop?.name ?? 'Iduka';
-  const districtName = product.shop?.district_name ?? 'Kigali';
+  const districtName = product.shop?.district_name ?? '';
   const isVerified = isShopIdentityVerified(product.shop);
 
   return (
