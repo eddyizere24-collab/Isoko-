@@ -1,0 +1,66 @@
+name: ISOKO live public visual QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/live-public-visual-qa.yml'
+      - 'playwright.live.config.cjs'
+      - 'e2e/live-public-visual-qa.spec.cjs'
+
+permissions:
+  contents: write
+
+jobs:
+  live-public-visual:
+    name: Live public pages at 360x800 and 320x800
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Install Playwright
+        run: |
+          mkdir -p "$RUNNER_TEMP/isoko-live-playwright"
+          npm install --prefix "$RUNNER_TEMP/isoko-live-playwright" --no-save --no-package-lock --ignore-scripts --no-audit --no-fund @playwright/test@1.65.0
+
+      - name: Install Chromium
+        run: '"$RUNNER_TEMP/isoko-live-playwright/node_modules/.bin/playwright" install --with-deps chromium'
+
+      - name: Capture live pages and all seven languages
+        id: capture
+        continue-on-error: true
+        env:
+          NODE_PATH: ${{ runner.temp }}/isoko-live-playwright/node_modules
+        run: '"$RUNNER_TEMP/isoko-live-playwright/node_modules/.bin/playwright" test --config=playwright.live.config.cjs'
+
+      - name: Save screenshots and observations to the PR branch
+        if: always()
+        env:
+          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          qa_dir="docs/design/qa/2026-11-16-live"
+          if [[ ! -d "$qa_dir" ]]; then
+            echo "No live QA output directory was created."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$qa_dir"
+          if git diff --cached --quiet; then
+            echo "No new screenshot evidence to commit."
+            exit 0
+          fi
+          git commit -m "test(qa): save live mobile screenshots and observations"
+          git push origin "HEAD:$HEAD_BRANCH"
+
+      - name: Preserve visual QA result
+        if: steps.capture.outcome == 'failure'
+        run: |
+          echo "Live visual QA captured any available evidence, but one or more checks need review." >> "$GITHUB_STEP_SUMMARY"
+          exit 1
