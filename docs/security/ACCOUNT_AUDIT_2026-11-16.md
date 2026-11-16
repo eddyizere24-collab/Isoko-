@@ -53,7 +53,7 @@ Scope: production configuration, source-code review and CI workflow review for t
 The overall security gate is not passed until repeatable CI/E2E tests and the remaining controls are complete:
 1. Real authenticated seller signup → upload → publish → storefront workflow on Android/Chrome.
 2. KYC document reads with populated QA KYC rows, plus upload Function ownership and role checks through a real token.
-3. Login/signup and separate per-minute/IP upload/public RPC throttling at trusted server enforcement points.
+3. Login/signup provider rate-limit defaults are documented but not stress-tested; public RPC trusted-identity/IP abuse resistance is still open. Seller uploads have a tested per-authenticated-seller 15-per-minute cap plus 30-per-day quota.
 4. Verified-email publish gating after a trusted sender is configured and the real verification email is delivered.
 5. Admin recovery, multi-device revocation and backup/restore drills.
 6. Production release only after explicit owner approval and successful post-deploy smoke tests.
