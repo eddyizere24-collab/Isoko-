@@ -3,9 +3,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 
-const RUN_ID = process.env.GITHUB_RUN_ID || \`local-\${Date.now()}\`;
-const EMAIL = \`isoko-qa-e2e-\${RUN_ID}@example.com\`;
-const PASSWORD = \`Qa!\${crypto.randomBytes(24).toString('base64url')}\`;
+const RUN_ID = process.env.GITHUB_RUN_ID || `local-${Date.now()}`;
+const EMAIL = `isoko-qa-e2e-${RUN_ID}@example.com`;
+const PASSWORD = `Qa!${crypto.randomBytes(24).toString('base64url')}`;
 const RESULTS_DIR = path.join(process.cwd(), 'test-results', 'qa-seller-e2e');
 fs.mkdirSync(RESULTS_DIR, { recursive: true });
 
@@ -26,12 +26,12 @@ async function makeImageFiles(page, label) {
       ctx.fillStyle = palette[0];
       ctx.font = 'bold 28px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(\`\${seed}-\${index + 1}\`, 160, 168);
+      ctx.fillText(`${seed}-${index + 1}`, 160, 168);
       return canvas.toDataURL('image/png').split(',')[1];
     });
   }, label);
   return images.map((base64, index) => ({
-    name: \`\${label}-\${index + 1}.png\`,
+    name: `${label}-${index + 1}.png`,
     mimeType: 'image/png',
     buffer: Buffer.from(base64, 'base64'),
   }));
@@ -41,10 +41,10 @@ async function uploadBrandPhoto(page, input, file, alt, prefix) {
   await input.setInputFiles(file);
   await expect(page.getByText('Ifoto yabitswe neza ✓').last()).toBeVisible({ timeout: 90_000 });
   const image = page.locator('img').filter({ has: page.locator('source') }).first();
-  const target = page.locator(\`img[alt="\${alt}"]\`);
+  const target = page.locator(`img[alt="${alt}"]`);
   await expect(target).toHaveAttribute('src', new RegExp(prefix), { timeout: 30_000 });
   const source = await target.getAttribute('src');
-  if (!source || !source.includes(prefix)) throw new Error(\`Expected \${prefix}; got \${source}\`);
+  if (!source || !source.includes(prefix)) throw new Error(`Expected ${prefix}; got ${source}`);
   return source;
 }
 
@@ -56,7 +56,7 @@ async function createPublishedProduct(page, imageFiles, index) {
   await page.getByRole('button', { name: 'Komeza', exact: true }).click();
   await page.locator('main').getByRole('button', { name: 'Inkweto', exact: true }).click();
   await page.locator('main').getByRole('button', { name: "Z'abagabo", exact: true }).click();
-  const name = \`ISOKO QA Inkweto \${String(index).padStart(2, '0')} \${RUN_ID}\`;
+  const name = `ISOKO QA Inkweto ${String(index).padStart(2, '0')} ${RUN_ID}`;
   await page.locator('#wiz-name').fill(name);
   await page.locator('#wiz-price').fill(String(25000 + index * 1000));
 
@@ -81,16 +81,16 @@ test('QA seller registration, separate brand photos, 3-photo publish and 10×3 b
     }
   });
 
-  const brandFiles = await makeImageFiles(page, \`brand-\${RUN_ID}\`);
-  const productFiles = await makeImageFiles(page, \`product-\${RUN_ID}\`);
+  const brandFiles = await makeImageFiles(page, `brand-${RUN_ID}`);
+  const productFiles = await makeImageFiles(page, `product-${RUN_ID}`);
 
   await page.goto('/abacuruzi');
-  await page.locator('#reg-fullname').fill(\`ISOKO QA \${RUN_ID}\`);
+  await page.locator('#reg-fullname').fill(`ISOKO QA ${RUN_ID}`);
   await page.locator('#reg-email').fill(EMAIL);
   await page.locator('#reg-pass').fill(PASSWORD);
   await page.getByRole('button', { name: 'Komeza', exact: true }).click();
 
-  await page.locator('#reg-shopname').fill(\`ISOKO QA \${RUN_ID}\`);
+  await page.locator('#reg-shopname').fill(`ISOKO QA ${RUN_ID}`);
   await page.locator('#reg-wa').fill('0788123456');
   await page.locator('input[type="checkbox"]').check();
   await page.locator('button[type="submit"]').click();
@@ -146,7 +146,7 @@ test('QA seller registration, separate brand photos, 3-photo publish and 10×3 b
   const evidence = {
     runId: RUN_ID,
     email: EMAIL,
-    shopName: \`ISOKO QA \${RUN_ID}\`,
+    shopName: `ISOKO QA ${RUN_ID}`,
     avatarPrefix: avatarSource.split('/profiles/')[1]?.split('/')[0] || null,
     coverPrefix: coverSource.split('/shops/')[1]?.split('/')[0] || null,
     logoPrefix: logoSource.split('/logos/')[1]?.split('/')[0] || null,
