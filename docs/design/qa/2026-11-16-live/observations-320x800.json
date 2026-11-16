@@ -46,12 +46,14 @@
       "status": 200,
       "lang": "rw",
       "viewportWidth": 320,
-      "documentWidth": 320,
-      "bodyWidth": 320,
-      "horizontalOverflow": false,
+      "documentWidth": 336,
+      "bodyWidth": 336,
+      "horizontalOverflow": true,
       "brokenVisibleImages": [],
       "placeholderWhatsAppLinks": [],
-      "visibleVerifiedText": []
+      "visibleVerifiedText": [
+        "Yagenzuwe"
+      ]
     },
     {
       "route": "/i/muhire-rwanda",
