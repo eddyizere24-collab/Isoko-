@@ -26,3 +26,9 @@
 - Production email verification remains disabled until the owner configures and tests a trusted sender plus the verification journey — an enabled checkbox without deliverable email would lock out sellers.
 - Server-side rate limits must use a trusted server identity or provider controls, never only a client-supplied session id — clients can change their own identifiers.
 - Security audit status must distinguish tested, unproven and missing controls — absence of test evidence must not be reported as secure.
+
+- ISOKO's shared visual tokens are `#FAFAF7` background, `#FFFFFF` surface, `#1A1F1C` primary text, `#4B544F` secondary text, `#0B6E4F` primary action, and `#C0392B` accent — one central palette prevents pages from drifting into washed-out cream and grey.
+- Secondary body text must keep at least 4.5:1 contrast against the page background — small mobile text must remain readable in daylight.
+- Imigongo bands use a 12×12 square repeating tile with green/red/ochre strokes at least 1.5px — background-size must preserve a 1:1 ratio, never stretch the pattern.
+- Mobile category tiles provide at least 44px touch targets and readable labels; product listings keep three columns while price and name typography scale up — dense commerce layouts must remain tappable and legible.
+- The multicolour sun mark keeps a hollow centre and clearly visible beads at 24px — the primary brand mark must not turn into a tiny indistinct ring.
