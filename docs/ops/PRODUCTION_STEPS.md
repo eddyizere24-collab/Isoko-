@@ -89,7 +89,8 @@ The Production smoke test must then verify:
 - public image URLs render and reload;
 - quota allows 30 attempts and denies the next attempt;
 - unverified shops do not receive the Verified seal;
-- a genuinely verified shop receives the seal on storefront and product cards.
+- a genuinely verified shop receives the seal on storefront and product cards;
+- a seller cannot create or update a product using another seller's `products/<profile-id>/` image keys.
 
 ## Rollback note
 
