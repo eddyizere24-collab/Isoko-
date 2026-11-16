@@ -51,7 +51,7 @@ test('Imigongo band uses a square 12px tile and at least 1.5px strokes', () => {
 });
 
 test('legacy utility aliases map old washed-out colours to the central tokens', () => {
-  assert.match(css, /\[class~="bg\[#F7F5F0\]"\].*var\(--isoko-bg\)/);
-  assert.match(css, /\[class~="text\[#68716D\]"\].*var\(--isoko-muted\)/);
-  assert.match(css, /\[class~="bg\[#214E43\]"\].*var\(--isoko-green\)/);
+  assert.ok(css.includes('[class~="bg-[#F7F5F0]"], [class~="bg-[#F7F8FA]"], [class~="bg-[#EEECE6]"] { background-color: var(--isoko-bg)'));
+  assert.ok(css.includes('[class~="text-[#68716D]"], [class~="text-[#49524D]"], [class~="text-[#505A55]"], [class~="text-[#929A95]"], [class~="text-[#767D78]"] { color: var(--isoko-muted)'));
+  assert.ok(css.includes('[class~="bg-[#214E43]"], [class~="bg-[#1A7F43]"] { background-color: var(--isoko-green)'));
 });
