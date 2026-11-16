@@ -51,8 +51,13 @@ for (const viewport of [
         timeout: 60_000,
       });
       await page.locator('body').waitFor({ state: 'visible' });
+      // Wait briefly for client-rendered route data before making a visual record.
+      await page.waitForFunction(() => {
+        const heading = document.querySelector('h1');
+        return Boolean(heading?.textContent?.trim());
+      }, null, { timeout: 12_000 }).catch(() => undefined);
       await page.evaluate(() => document.fonts.ready.then(() => true));
-      await page.waitForTimeout(450);
+      await page.waitForTimeout(800);
 
       const observations = await page.evaluate(() => {
         const html = document.documentElement;
