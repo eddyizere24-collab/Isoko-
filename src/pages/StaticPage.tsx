@@ -1,11 +1,15 @@
 import React from 'react';
 import { MessageCircle, ShieldCheck, Store } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
+import { useT } from '../context/LangContext';
+import { LEGAL_TEXTS } from '../i18n/legal';
 import { RW } from '../i18n/rw';
 import { buildWhatsAppLink } from '../lib/whatsapp';
 
 export const StaticPage: React.FC = () => {
   const { pathname, navigate, bootstrap } = useMarketplace();
+  const { lang } = useT();
+  const legal = LEGAL_TEXTS[lang];
   const supportWa = bootstrap?.settings.SUPPORT_WHATSAPP ?? '250788000000';
   const supportHours = bootstrap?.settings.SUPPORT_HOURS ?? '08:00 – 20:00';
 
@@ -89,95 +93,14 @@ export const StaticPage: React.FC = () => {
   }
 
   if (pathname === '/amategeko') {
-    return (
-      <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 space-y-5">
-        <h1 className="text-2xl font-bold text-[#1B1F23]">Amategeko y’Urubuga (Terms of Service)</h1>
-        <p className="text-xs text-slate-500">Verisiyo: v1 · Urubuga rw’ubucuruzi rwa Isoko (Rwanda)</p>
-        <div className="space-y-4 text-sm leading-relaxed text-slate-700">
-          <p>
-            1. <strong>Uruhare rw’Urubuga:</strong> Isoko ni urubuga ruhuza abacuruzi bemejwe
-            n’abaguzi. Urubuga ntirugurisha ibicuruzwa byarwo, ntirwakira ubwishyu, kandi ntirutanga
-            serivisi yo gutwara ibicuruzwa.
-          </p>
-          <p>
-            2. <strong>Inshingano z’Umucuruzi:</strong> Umucuruzi agomba gutanga amakuru y’ukuri,
-            igiciro nyacyo mu mafaranga y’u Rwanda (RWF), n’amafoto y’igicuruzwa afite koko.
-          </p>
-          <p>
-            3. <strong>Guhagarika konti:</strong> Uburiganya, kugurisha impimbano nka Original,
-            cyangwa gukoresha ibicuruzwa bibujijwe bivamo guhagarikwa burundu no gushyikirizwa
-            inzego zibishinzwe bibaye ngombwa.
-          </p>
-        </div>
-      </main>
-    );
+    return <main className="mx-auto max-w-3xl space-y-5 px-4 py-10 sm:px-6"><h1 className="text-2xl font-bold text-[#1A1F1C]">{legal.termsTitle}</h1><p className="rounded-lg border border-[#DCE4DE] bg-white p-3 text-xs font-semibold text-[#0B6E4F]">{legal.notice}</p><ol className="list-decimal space-y-4 pl-5 text-sm leading-relaxed text-[#1A1F1C]">{legal.terms.map((x)=><li key={x}>{x}</li>)}</ol></main>;
   }
-
   if (pathname === '/ibanga') {
-    return (
-      <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 space-y-5">
-        <div className="flex items-center gap-2 text-[#0B6E4F]">
-          <ShieldCheck className="h-6 w-6" aria-hidden="true" />
-          <h1 className="text-2xl font-bold text-[#1B1F23]">
-            Politiki y’Ibanga (Privacy Policy — Itegeko N° 058/2021)
-          </h1>
-        </div>
-        <div className="space-y-4 text-sm leading-relaxed text-slate-700">
-          <p>
-            <strong>1. Abaguzi (ntibakenera konti):</strong> Amakuru y’igare ryawe, ibicuruzwa
-            waherukaga kureba, size yawe n’aho uherereye bibikwa muri{' '}
-            <code className="rounded bg-slate-100 px-1 py-0.5 text-xs">localStorage</code> ya
-            telefoni cyangwa mudasobwa yawe gusa. Ntibibikwa ku mazina yawe.
-          </p>
-          <p>
-            <strong>2. Ibyangombwa by’Abacuruzi (KYC):</strong> Indangamuntu n’amafoto yo kugenzura
-            abacuruzi bibikwa ahantu harinzwe, bikarebwa n’Ubuyobozi (Admin) gusa kandi buri gihe
-            bikandikwa muri Audit Log. Amafoto yose akurwaho amakuru ya GPS (EXIF) mbere yo
-            kubikwa.
-          </p>
-          <p>
-            <strong>3. Uburenganzira bwawe (Itegeko N° 058/2021):</strong> Ufite uburenganzira bwo
-            kubona, gukosora cyangwa gusaba ko amakuru yawe asibwa. Mu gihe habaho ikibazo ku
-            mutekano w’amakuru, ubuyobozi bumenyesha inzego zibishinzwe (NCSA) n’abo bireba mu
-            masaha atarenze 48.
-          </p>
-          <p>
-            <strong>DPO / Ubufasha ku mabanga:</strong> Twandikire kuri WhatsApp y’ubufasha cyangwa
-            imeri ya <span className="font-semibold">privacy@isoko.rw</span>.
-          </p>
-        </div>
-      </main>
-    );
+    return <main className="mx-auto max-w-3xl space-y-5 px-4 py-10 sm:px-6"><h1 className="text-2xl font-bold text-[#1A1F1C]">{legal.privacyTitle}</h1><p className="rounded-lg border border-[#DCE4DE] bg-white p-3 text-xs font-semibold text-[#0B6E4F]">{legal.notice}</p><ol className="list-decimal space-y-4 pl-5 text-sm leading-relaxed text-[#1A1F1C]">{legal.privacy.map((x)=><li key={x}>{x}</li>)}</ol></main>;
   }
-
   if (pathname === '/amabwiriza-y-abacuruzi') {
-    return (
-      <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 space-y-5">
-        <h1 className="text-2xl font-bold text-[#1B1F23]">
-          Amabwiriza y’Abacuruzi & Ibicuruzwa Bibujijwe
-        </h1>
-        <div className="rounded-lg border border-[#C0392B]/30 bg-[#C0392B]/5 p-5 text-sm text-slate-700 space-y-2">
-          <p className="font-bold text-[#C0392B]">Ibicuruzwa bibujijwe burundu (§10.5):</p>
-          <ul className="list-disc pl-5 space-y-1 text-xs">
-            <li>Impimbano zigurishwa nka “Original” cyangwa “Authentic”.</li>
-            <li>Imiti n’ibindi bikoresho byo kwa muganga bisaba uruhushya rwa Rwanda FDA.</li>
-            <li>Intwaro, ibiyobyabwenge, amafaranga y’amiganano cyangwa ibikoresho byibwe.</li>
-            <li>Ibikoresho by’urukozasoni cyangwa ibinyuranyije n’amategeko y’u Rwanda.</li>
-            <li>Amafoto afite nimero ya telefoni yanditseho cyangwa amafoto yakuwe ahandi atari ayawe.</li>
-          </ul>
-        </div>
-        <button
-          type="button"
-          onClick={() => navigate('/abacuruzi')}
-          className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white"
-        >
-          <Store className="h-4 w-4" aria-hidden="true" />
-          <span>Iyandikishe nk’umucuruzi</span>
-        </button>
-      </main>
-    );
+    return <main className="mx-auto max-w-3xl space-y-5 px-4 py-10 sm:px-6"><h1 className="text-2xl font-bold text-[#1A1F1C]">{legal.sellerRulesTitle}</h1><p className="rounded-lg border border-[#DCE4DE] bg-white p-3 text-xs font-semibold text-[#0B6E4F]">{legal.notice}</p><section className="space-y-2 rounded-lg border border-[#C0392B]/30 bg-white p-5"><h2 className="font-bold text-[#C0392B]">{legal.sellerRulesTitle}</h2><ul className="list-disc space-y-2 pl-5 text-sm text-[#1A1F1C]">{legal.prohibited.map((x)=><li key={x}>{x}</li>)}</ul></section><section className="rounded-lg border border-[#DCE4DE] bg-white p-5"><h2 className="font-bold text-[#1A1F1C]">{legal.sellerRulesTitle}</h2><ul className="list-disc space-y-2 pl-5 text-sm text-[#1A1F1C]">{legal.agreement.map((x)=><li key={x}>{x}</li>)}</ul></section><button type="button" onClick={()=>navigate('/abacuruzi')} className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#0B6E4F] px-5 text-sm font-semibold text-white"><Store className="h-4 w-4" aria-hidden="true" /><span>{lang === 'en' ? 'Register as a seller' : 'Iyandikishe nk’umucuruzi'}</span></button></main>;
   }
-
   // 404 Fallback
   return (
     <main className="mx-auto max-w-lg px-4 py-16 text-center">

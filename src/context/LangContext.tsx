@@ -21,10 +21,7 @@ const LangContext = createContext<LangContextValue | null>(null);
 export const LangProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [lang, setLangState] = useState<LangCode>(() => {
     try {
-      return detectInitialLang(
-        window.localStorage.getItem(LANG_STORAGE_KEY),
-        window.navigator.language
-      );
+      return detectInitialLang(window.localStorage.getItem(LANG_STORAGE_KEY));
     } catch {
       return 'rw';
     }

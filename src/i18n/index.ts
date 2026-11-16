@@ -1,11 +1,12 @@
 import { en } from './en';
 import { fr } from './fr';
 import { ln } from './ln';
+import { lg } from './lg';
 import { rn } from './rn';
 import { rw, type TranslationKey } from './rw';
 import { sw } from './sw';
 
-export type LangCode = 'rw' | 'en' | 'fr' | 'sw' | 'rn' | 'ln';
+export type LangCode = 'rw' | 'en' | 'fr' | 'sw' | 'rn' | 'ln' | 'lg';
 
 export interface LanguageMeta {
   code: LangCode;
@@ -21,6 +22,7 @@ export const SUPPORTED_LANGUAGES: LanguageMeta[] = [
   { code: 'sw', shortCode: 'SW', label: 'Kiswahili', reviewed: false },
   { code: 'rn', shortCode: 'RN', label: 'Ikirundi', reviewed: false },
   { code: 'ln', shortCode: 'LN', label: 'Lingála', reviewed: false },
+  { code: 'lg', shortCode: 'LG', label: 'Luganda', reviewed: false },
 ];
 
 export const DICTIONARIES: Record<LangCode, Record<TranslationKey, string>> = {
@@ -30,19 +32,17 @@ export const DICTIONARIES: Record<LangCode, Record<TranslationKey, string>> = {
   sw,
   rn,
   ln,
+  lg,
 };
 
 export const LANG_STORAGE_KEY = 'isoko.lang';
 
 export function isSupportedLang(value: string | null | undefined): value is LangCode {
-  return value === 'rw' || value === 'en' || value === 'fr' || value === 'sw' || value === 'rn' || value === 'ln';
+  return value === 'rw' || value === 'en' || value === 'fr' || value === 'sw' || value === 'rn' || value === 'ln' || value === 'lg';
 }
 
-export function detectInitialLang(stored?: string | null, browserLang?: string | null): LangCode {
-  if (isSupportedLang(stored)) return stored;
-  const prefix = String(browserLang ?? '').toLowerCase().split(/[-_]/)[0];
-  if (isSupportedLang(prefix)) return prefix;
-  return 'rw';
+export function detectInitialLang(stored?: string | null): LangCode {
+  return isSupportedLang(stored) ? stored : 'rw';
 }
 
 export function translate(
