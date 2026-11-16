@@ -190,7 +190,7 @@ async function uploadThroughFunction(dataUrl: string, kind: string): Promise<{ k
     body: JSON.stringify({ dataUrl, kind }),
   });
   const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.error ?? 'Ifoto ntiyoherejwe. Ongera ugerageze.');
+  if (!response.ok) throw new Error(body.message ?? body.error ?? 'Ifoto ntiyoherejwe. Ongera ugerageze.');
   if (!body.key) throw new Error('Ifoto ntiyabitswe neza.');
   return body as { key: string; url: string | null; bytes: number };
 }
