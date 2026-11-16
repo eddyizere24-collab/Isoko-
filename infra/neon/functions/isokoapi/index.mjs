@@ -192,7 +192,7 @@ async function enforceSellerUploadQuota(token) {
   if (!response.ok) throw new Error("UPLOAD_QUOTA_CHECK_FAILED");
   const result = await response.json();
   const quota = Array.isArray(result) ? result[0] : result;
-  return quota?.allowed === true;
+  return quota && typeof quota === "object" ? quota : { allowed: false, reason: "daily" };
 }
 
 async function getOwnProfile(token) {
@@ -334,12 +334,17 @@ export default {
           return json({ error: "Ubwoko bw’ifoto ntibwemewe." }, 400, cors);
         }
         if (profile?.role === "seller" && kind !== "kyc") {
-          const allowed = await enforceSellerUploadQuota(token);
-          if (!allowed) {
+          const quota = await enforceSellerUploadQuota(token);
+          if (quota?.allowed !== true) {
+            const rateLimited = quota?.reason === "rate";
             return json({
-              error: "UPLOAD_DAILY_QUOTA_EXCEEDED",
-              message: "Wageze ku mubare ntarengwa w’amafoto 30 ku munsi. Ongera ugerageze ejo.",
+              error: rateLimited ? "UPLOAD_RATE_LIMIT_EXCEEDED" : "UPLOAD_DAILY_QUOTA_EXCEEDED",
+              message: rateLimited
+                ? "Wohereje amafoto menshi mu kanya. Tegereza umunota umwe wongere ugerageze."
+                : "Wageze ku mubare ntarengwa w’amafoto 30 ku munsi. Ongera ugerageze ejo.",
               dailyLimit: 30,
+              perMinuteLimit: 15,
+              retryAfterSeconds: rateLimited ? Math.max(1, Number(quota.retry_after_seconds ?? 60)) : null,
             }, 429, cors);
           }
         }
