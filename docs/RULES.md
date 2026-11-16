@@ -15,3 +15,11 @@
 - Every supported language dictionary must contain exactly the Kinyarwanda key set and be checked in CI — missing translations must be caught before merge.
 - Translation review status stays in code and never appears as a beta badge to users — unreviewed translations must not be presented as beta or as human-reviewed.
 - Every translated legal page must state that Kinyarwanda is the reference text — legal translations must not replace the authoritative source language.
+
+- Marketplace app surfaces use #FAFAF7 and pure-white cards with #1A1F1C primary text — a clear neutral base avoids the faded grey-beige appearance.
+- Primary actions use #0B6E4F with white text and discount/error emphasis uses #C0392B — the approved Isoko brand colours must remain clear.
+- Global secondary text uses #4B544F or a darker accessible value — body copy must not fall below WCAG AA contrast.
+- Header Imigongo is at least 10px and footer Imigongo is at least 12px with visible 1.5px green/red/ochre strokes — the Rwandan motif must read clearly on mobile.
+- Category tiles have visible 44px-plus touch areas, coloured icons and wrapping names — essential category names must not be clipped.
+- Product cards use a square image, 20px/24px bold price, 15px/20px name and no fixed mobile max-height — product identity and price must remain readable.
+- The multicolour sun keeps enlarged beads while preserving its open centre and original colour identity — the mark must remain recognisable at 24px.

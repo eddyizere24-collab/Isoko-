@@ -9,21 +9,21 @@
 }
 
 :root {
-  --isoko-green: #214E43;
-  --isoko-green-dark: #183B33;
-  --isoko-green-hover: #28584B;
-  --isoko-green-soft: #E9F0EB;
-  --isoko-red: #BD594A;
-  --isoko-red-dark: #8F493F;
-  --isoko-red-soft: #FAF0ED;
-  --isoko-wa: #1A7F43;
-  --isoko-wa-hover: #146635;
-  --isoko-ink: #202724;
-  --isoko-muted: #68716D;
-  --isoko-bg: #F7F5F0;
+  --isoko-green: #0B6E4F;
+  --isoko-green-dark: #07543C;
+  --isoko-green-hover: #095F45;
+  --isoko-green-soft: #E6F3ED;
+  --isoko-red: #C0392B;
+  --isoko-red-dark: #982C22;
+  --isoko-red-soft: #FCECEA;
+  --isoko-wa: #0B6E4F;
+  --isoko-wa-hover: #07543C;
+  --isoko-ink: #1A1F1C;
+  --isoko-muted: #4B544F;
+  --isoko-bg: #FAFAF7;
   --isoko-surface: #FFFFFF;
-  --isoko-border: #E3E0D8;
-  --isoko-border-strong: #C9CEC7;
+  --isoko-border: #DCE4DE;
+  --isoko-border-strong: #AEBBB2;
   --font-sans: 'IsokoSans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -71,31 +71,31 @@
 
 /* Restrained Imigongo line signature: nested diamonds and a continuous angular path.
    It is a crafted brand rule, not a full-page wallpaper or a coloured panel. */
+/* Visible Imigongo rules: 10px header, 12px footer, and a square 1:1 tile. */
 .imigongo-band,
 .imigongo-header-strip {
-  height: 7px;
+  height: 10px;
   width: 100%;
-  background-color: #F7F5F0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='12' viewBox='0 0 72 12'%3E%3Crect width='72' height='12' fill='%23F7F5F0'/%3E%3Cpath d='M6 1 11 6 6 11 1 6Z' fill='none' stroke='%23214E43' stroke-width='1'/%3E%3Cpath d='M6 3.5 8.5 6 6 8.5 3.5 6Z' fill='none' stroke='%23BD594A' stroke-width='.8'/%3E%3Cpath d='M17 1H27V11H20V4H24V8H22' fill='none' stroke='%23214E43' stroke-width='.85' stroke-linejoin='miter'/%3E%3Cpath d='M34 6 39 1 44 6 39 11Z' fill='none' stroke='%23C99A4B' stroke-width='.9'/%3E%3Cpath d='M50 1H60V11H53V4H57V8H55' fill='none' stroke='%23BD594A' stroke-width='.85'/%3E%3Cpath d='M66 1 71 6 66 11 61 6Z' fill='none' stroke='%23214E43' stroke-width='.9'/%3E%3C/svg%3E");
+  background-color: #FAFAF7;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='12' viewBox='0 0 48 12'%3E%3Crect width='48' height='12' fill='%23FAFAF7'/%3E%3Cpath d='M6 1 11 6 6 11 1 6Z' fill='none' stroke='%230B6E4F' stroke-width='1.6'/%3E%3Cpath d='M6 3.5 8.5 6 6 8.5 3.5 6Z' fill='none' stroke='%23C0392B' stroke-width='1.5'/%3E%3Cpath d='M17 1H27V11H20V4H24V8H22' fill='none' stroke='%230B6E4F' stroke-width='1.6' stroke-linejoin='miter'/%3E%3Cpath d='M34 6 39 1 44 6 39 11Z' fill='none' stroke='%23B07A20' stroke-width='1.6'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
-  background-size: 72px 7px;
+  background-size: 48px 10px;
 }
 
 .imigongo-footer-strip {
-  height: 11px;
+  height: 12px;
   width: 100%;
-  background-color: #F7F5F0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='12' viewBox='0 0 72 12'%3E%3Crect width='72' height='12' fill='%23F7F5F0'/%3E%3Cpath d='M6 1 11 6 6 11 1 6Z' fill='none' stroke='%23214E43' stroke-width='1.1'/%3E%3Cpath d='M6 3 9 6 6 9 3 6Z' fill='none' stroke='%23BD594A' stroke-width='.85'/%3E%3Cpath d='M17 1H27V11H20V4H24V8H22' fill='none' stroke='%23214E43' stroke-width='.95' stroke-linejoin='miter'/%3E%3Cpath d='M34 6 39 1 44 6 39 11Z' fill='none' stroke='%23C99A4B' stroke-width='1'/%3E%3Cpath d='M50 1H60V11H53V4H57V8H55' fill='none' stroke='%23BD594A' stroke-width='.95'/%3E%3Cpath d='M66 1 71 6 66 11 61 6Z' fill='none' stroke='%23214E43' stroke-width='1'/%3E%3C/svg%3E");
+  background-color: #FAFAF7;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='12' viewBox='0 0 48 12'%3E%3Crect width='48' height='12' fill='%23FAFAF7'/%3E%3Cpath d='M6 1 11 6 6 11 1 6Z' fill='none' stroke='%230B6E4F' stroke-width='1.6'/%3E%3Cpath d='M6 3.5 8.5 6 6 8.5 3.5 6Z' fill='none' stroke='%23C0392B' stroke-width='1.5'/%3E%3Cpath d='M17 1H27V11H20V4H24V8H22' fill='none' stroke='%230B6E4F' stroke-width='1.6' stroke-linejoin='miter'/%3E%3Cpath d='M34 6 39 1 44 6 39 11Z' fill='none' stroke='%23B07A20' stroke-width='1.6'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
-  background-size: 72px 11px;
+  background-size: 48px 12px;
 }
 
-/* Soft Imigongo cover placeholder. Keep the pattern subtle and the photo area calm. */
 .imigongo-surface {
-  background-color: #EEECE6;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='36' viewBox='0 0 72 36'%3E%3Crect width='72' height='36' fill='%23EEECE6'/%3E%3Cpath d='M18 2 34 18 18 34 2 18Z' fill='none' stroke='%23214E43' stroke-opacity='.22' stroke-width='1.2'/%3E%3Cpath d='M18 9 27 18 18 27 9 18Z' fill='none' stroke='%23BD594A' stroke-opacity='.2' stroke-width='1'/%3E%3Cpath d='M40 2H68V34H47V9H61V27H53' fill='none' stroke='%23214E43' stroke-opacity='.18' stroke-width='1.2'/%3E%3C/svg%3E");
+  background-color: #FFFFFF;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23FFFFFF'/%3E%3Cpath d='M20 2 38 20 20 38 2 20Z' fill='none' stroke='%230B6E4F' stroke-opacity='.72' stroke-width='1.7'/%3E%3Cpath d='M20 9 31 20 20 31 9 20Z' fill='none' stroke='%23C0392B' stroke-opacity='.82' stroke-width='1.7'/%3E%3Cpath d='M20 14 26 20 20 26 14 20Z' fill='none' stroke='%23B07A20' stroke-opacity='.9' stroke-width='1.6'/%3E%3C/svg%3E");
   background-repeat: repeat;
-  background-size: 72px 36px;
+  background-size: 40px 40px;
 }
 
 @media (prefers-reduced-motion: reduce) {
