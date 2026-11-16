@@ -80,7 +80,7 @@ Replaces the seller create/update product RPCs so both full and thumbnail image 
 
 ## Neon Function and frontend release gates
 
-The feature Function source supports the distinct `logo` upload kind and calls the quota RPC before Object Storage writes. Deploy the matching Node.js 24 Function bundle only after migrations 019–021 have been verified in Production and the owner explicitly approves Function deployment. Deploy frontend code only from the reviewed, merged release head. Do not deploy the Function or frontend from an unmerged feature branch.
+The feature Function source supports the distinct `logo` upload kind and calls the quota RPC before Object Storage writes. Deploy the matching Node.js 24 Function bundle only after migrations 019–022 have been verified in Production and the owner explicitly approves Function deployment. Deploy frontend code only from the reviewed, merged release head. Do not deploy the Function or frontend from an unmerged feature branch.
 
 The Production smoke test must then verify:
 - unauthenticated upload is rejected;
