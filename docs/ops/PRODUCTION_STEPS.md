@@ -23,7 +23,8 @@ WHERE version IN (
   '016_seller_profile_storefront_capacity',
   '019_seller_upload_daily_quota',
   '020_seller_upload_quota_cap_alignment',
-  '021_public_product_identity_status'
+  '021_public_product_identity_status',
+  '022_product_image_owner_prefix'
 )
 ORDER BY version;
 
