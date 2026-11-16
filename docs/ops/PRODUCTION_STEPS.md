@@ -86,6 +86,20 @@ Adds a rolling 60-second per-seller upload window with a 15-attempt limit. The s
 8. Confirm the quota function ACL grants `authenticated` and does not grant `PUBLIC` or `anonymous`.
 9. Do not paste database passwords, API keys, connection strings, or private seller information into GitHub or chat.
 
+## Public frontend deployment — verified Render configuration
+
+- Public static site: `isoko-marketplace-9i69`
+- Render service ID: `srv-dbrn6tjbc2fs73ckgojg`
+- Public URL: `https://isoko-marketplace-9i69.onrender.com`
+- Linked repository: `eddyizere24-collab/Isoko-`
+- Production deploy branch: `main`
+- Auto-deploy: enabled on commit
+- Pull request previews: disabled
+- Last verified live deployment: `dep-dbt3g8lbedkc73cr60g0`
+- Last live commit: `4da491c1cb38d6622dab1a3d4bb7c63f8332e997`, completed at `2026-11-15T22:54:38Z`.
+
+The current release-candidate branch is not the Render Production branch. No PR preview is created automatically because previews are disabled. After PR #56 is reviewed and explicitly approved for release, merge it to `main`; Render should then auto-deploy the new `main` commit. Confirm the Render deploy is `live` and its commit SHA matches the approved merge commit before calling the public site updated. Do not change the service branch to a feature branch or manually trigger a Production deploy during review.
+
 ## Neon Function and frontend release gates
 
 The feature Function source supports the distinct `logo` upload kind and calls the quota RPC before Object Storage writes. Deploy the matching Node.js 24 Function bundle only after migrations 019–023 have been verified in Production and the owner explicitly approves Function deployment. Deploy frontend code only from the reviewed, merged release head. Do not deploy the Function or frontend from an unmerged feature branch.
