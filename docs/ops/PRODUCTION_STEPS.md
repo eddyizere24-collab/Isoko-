@@ -61,9 +61,15 @@ File: `infra/neon/migrations/021_public_product_identity_status.sql`
 
 Adds the seller's explicit `identity_status` to the nested shop JSON in `v_public_products`. It does not add a new public product column or expose KYC documents. It lets the frontend show the Isoko Verified seal only when identity status is actually `verified`.
 
+### 022 — product image owner prefix
+
+File: `infra/neon/migrations/022_product_image_owner_prefix.sql`
+
+Replaces the seller create/update product RPCs so both full and thumbnail image keys must start with `products/<seller-profile-id>/`. The authenticated seller profile ID is derived inside the security-definer RPC; the browser cannot choose another seller's prefix. This migration does not rewrite existing product images.
+
 ### Apply only after explicit owner approval
 
-1. Open the approved GitHub PR and review all three migration files.
+1. Open the approved GitHub PR and review all four migration files.
 2. In Neon Console, confirm project `isoko-marketplace`, branch `isoko-production`, and database `isoko`.
 3. Apply migration 019 once, then read back its table, function, and marker.
 4. Apply migration 020, then read back that `consume_seller_upload_quota_v1()` returns JSONB and uses `v_limit = 30`.
