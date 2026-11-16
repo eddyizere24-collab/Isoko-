@@ -46,22 +46,26 @@ Google sign-in iracyahishe inyuma ya feature flag. Ntuyifungure kugeza Google cr
 
 7. Kanda **Create**. Google izerekana **Client ID** na **Client Secret**. Uzibike mu buryo bwizewe; ntuzohereze screenshot irimo Secret.
 
-## 5. Shyira Client ID na Client Secret muri Neon Auth
+## 5. Aho Client ID na Client Secret bizashyirwa muri Neon Auth
+
+**Ntushyire credentials muri Production ubu.** Kuri ubu Production Google Client ID/Secret biracyari null; dukomeze tubigumane bityo kugeza QA login yatsinze. Uburyo bwo kubishyiramo ni ubu:
 
 1. Fungura https://console.neon.tech/ kuri telefoni.
 2. Hitamo project **isoko-marketplace**.
-3. Hitamo branch **isoko-production**.
-4. Mu ruhande rw'ibumoso, fungura **Auth**.
+3. Hitamo branch **QA** (`br-cold-forest-badn9wlr`), si Production.
+4. Mu ruhande rw'ibumoso fungura **Auth**.
 5. Hitamo **Social providers**.
 6. Hitamo **Google**.
-7. Muri **Client ID**, shyiramo agaciro Google yatanze ka Client ID.
-8. Muri **Client Secret**, shyiramo agaciro ka Client Secret.
-9. Fungura Google provider toggle niba Neon isaba kuyifungura, hanyuma ukande **Save**.
-10. Ntufungure frontend feature flag, kandi ntutangaze ko Google sign-in ikora. Credentials ziriho gusa ntizerekana ko callback na session bikora.
+7. Muri **Client ID**, shyiramo Google Web Client ID ya QA.
+8. Muri **Client Secret**, shyiramo Client Secret ya QA.
+9. Fungura Google provider toggle niba Neon isaba kuyifungura, ukande **Save**.
+10. Ibi bikorwe gusa igihe QA frontend origin nyayo imaze kuboneka kandi yemejwe. Ntukoreshe Production callback cyangwa Production credentials mu kizamini cya QA.
+
+Iyo QA round trip imaze gutsinda kandi habonetse uruhushya rwo gushyira Google kuri Production, hitamo branch **isoko-production** (`br-blue-bread-ba2wywua`) muri iyo menu nyine, ushyiremo Production Client ID na Client Secret, hanyuma ubike. Icyo ni Production configuration change, bityo ntikorerwe mbere y'uko QA yemezwa.
 
 ## 6. QA callback n'impamvu tutarayigerageza kuri Production site
 
-Neon Auth ikoresha URL itandukanye kuri buri branch. QA branch ya ISOKO ni `isoko-full-flow-qa-20261114` (`br-cold-forest-badn9wlr`). Base URL yayo ni:
+Neon Auth ikoresha URL itandukanye kuri buri branch. QA branch ya ISOKO ni `br-cold-forest-badn9wlr`. Base URL yayo ni:
 
 `https://ep-jolly-poetry-ba3o1jwc.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth`
 
