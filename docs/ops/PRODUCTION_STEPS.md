@@ -74,8 +74,9 @@ Replaces the seller create/update product RPCs so both full and thumbnail image 
 3. Apply migration 019 once, then read back its table, function, and marker.
 4. Apply migration 020, then read back that `consume_seller_upload_quota_v1()` returns JSONB and uses `v_limit = 30`.
 5. Apply migration 021, then read back that `v_public_products.shop` contains `identity_status` for each row.
-6. Confirm the quota function ACL grants `authenticated` and does not grant `PUBLIC` or `anonymous`.
-7. Do not paste database passwords, API keys, connection strings, or private seller information into GitHub or chat.
+6. Apply migration 022, then read back the create/update seller product RPCs and verify the `PRODUCT_IMAGE_OWNERSHIP_INVALID` guard is present.
+7. Confirm the quota function ACL grants `authenticated` and does not grant `PUBLIC` or `anonymous`.
+8. Do not paste database passwords, API keys, connection strings, or private seller information into GitHub or chat.
 
 ## Neon Function and frontend release gates
 
