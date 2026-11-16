@@ -42,7 +42,18 @@ for (const viewport of [
     });
     const page = await context.newPage();
     const pageErrors = [];
+    const blockedMutations = [];
     page.on('pageerror', (error) => pageErrors.push(error.message));
+    // Public read-only visual QA: never allow an unsafe HTTP request to reach Production.
+    await page.route('**/*', async (route) => {
+      const request = route.request();
+      if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method())) {
+        blockedMutations.push({ method: request.method(), url: request.url() });
+        await route.abort('blockedbyclient');
+        return;
+      }
+      await route.continue();
+    });
     const routeResults = [];
 
     for (const [name, route] of ROUTES) {
@@ -99,11 +110,11 @@ for (const viewport of [
 
     fs.writeFileSync(
       path.join(OUTPUT_DIR, `observations-${viewport.label}.json`),
-      JSON.stringify({ viewport, routes: routeResults, languages: languageResults, pageErrors }, null, 2) + '\n',
+      JSON.stringify({ viewport, routes: routeResults, languages: languageResults, pageErrors, blockedMutations }, null, 2) + '\n',
     );
     expect(pageErrors, 'browser page errors').toEqual([]);
     expect(routeResults.filter(r => r.horizontalOverflow).map(r => r.route), 'routes with horizontal overflow').toEqual([]);
-    console.log(`BRAND_PREVIEW_QA ${viewport.label}: ${JSON.stringify({ routes: routeResults, languages: languageResults, pageErrors })}`);
+    console.log(`BRAND_PREVIEW_QA ${viewport.label}: ${JSON.stringify({ routes: routeResults, languages: languageResults, pageErrors, blockedMutations })}`);
     await context.close();
   });
 }
