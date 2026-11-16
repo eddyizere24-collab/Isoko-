@@ -13,7 +13,7 @@ Scope: production configuration, source-code review and CI workflow review for t
 | Daily per-seller upload quota | **QA 30/31 boundary test passed; Production pending** | In isolated QA, count 29 + one call returned `allowed=true`, count 30; the next call returned `allowed=false`, count 31. Test counter was rolled back to zero. Migrations 019/020 are not applied in Production. |
 | Login server-side rate limit | **Provider default expected; instance not independently stress-tested** | Neon Managed Auth is built on Better Auth. Better Auth documents production rate limiting as enabled by default, with stricter rules for sensitive sign-in routes. Neon project config read-back does not expose the active per-route limits, so the actual Production behavior has not been independently verified. References: `https://neon.com/blog/neon-auth-branchable-identity-in-your-database`, `https://better-auth.com/docs/concepts/rate-limit`. |
 | Signup server-side rate limit | **Provider default expected; instance not independently stress-tested** | Better Auth's documented production defaults include stricter sign-up rules; the Neon-managed project configuration does not expose the active rule values and no controlled sign-up abuse test has been performed. Reference: `https://better-auth.com/docs/concepts/rate-limit`. |
-| Additional upload request-frequency throttling beyond the daily seller quota | **Missing / not proven** | The seller-specific 30-attempt daily quota is server-side, but a separate per-minute/IP throttle for upload requests has not been demonstrated. |
+| Seller upload burst limit | **QA 15/16 boundary test passed; Production pending** | Migration 023 adds a per-authenticated-seller rolling 60-second window. QA test allowed attempt 15 and denied attempt 16 with `reason=rate`; rollback left no test counter row. It is not an IP-based anonymous throttle. |
 | Public RPC rate limit independent of client session ID | **Missing** | Migration 018 describes a browser identifier/session-based approach for selected public subscription updates. This does not prove trusted-IP or provider-level protection for all public RPCs. |
 | Email verification before product publishing | **Missing** | Production Neon Auth config read-back shows `require_email_verification=false`, verification on sign-up/sign-in false. No publish-time verified-email gate is proven. |
 | Password reset revokes sessions | **Proven by provider configuration read-back** | Production Neon Auth reports `revoke_sessions_on_password_reset=true`. Actual email delivery and account-recovery journey remain untested with a real mailbox. |
@@ -36,7 +36,7 @@ Scope: production configuration, source-code review and CI workflow review for t
 - Public assets bucket is public-read; KYC bucket is private.
 - Migration `016_seller_profile_storefront_capacity` is present.
 - Migrations `017` and `018` were not present in the reviewed schema_migrations read-back.
-- Migrations `019`–`022` are release-candidate changes only; none is applied to Production. They remain behind explicit owner approval.
+- Migrations `019`–`023` are release-candidate changes only; none is applied to Production. They remain behind explicit owner approval.
 
 ## QA evidence completed in this work package
 
@@ -44,7 +44,8 @@ Scope: production configuration, source-code review and CI workflow review for t
 - Seller A/B shop UPDATE isolation check.
 - Seller A/B product update, delete and mark-sold RPC checks.
 - Seller A/B product-image path ownership checks for both create and update RPCs.
-- Quota boundary: attempt 30 allowed; attempt 31 denied; counter rolled back.
+- Daily quota boundary: attempt 30 allowed; attempt 31 denied; counter rolled back.
+- Upload burst boundary: attempt 15 in 60 seconds allowed; attempt 16 denied with `reason=rate`; counter rolled back.
 - All write tests were wrapped in rollback/savepoint transactions. No QA product or seller data was changed by the tests.
 
 ## Remaining security gate
