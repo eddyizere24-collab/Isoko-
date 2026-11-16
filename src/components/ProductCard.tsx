@@ -93,8 +93,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <div className="mt-0.5 flex items-center gap-1 text-[10.5px] leading-[12px] text-[#68716D] min-w-0">
             <span className="truncate">{shopName}</span>
             {isVerified && <IsokoVerifiedSeal className="h-3 w-3 shrink-0" />}
-            <span aria-hidden="true">·</span>
-            <span className="shrink-0 truncate max-w-[44%]">{districtName}</span>
+            {districtName && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span className="shrink-0 truncate max-w-[44%]">{districtName}</span>
+              </>
+            )}
           </div>
         </div>
       </a>
