@@ -36,3 +36,8 @@ No Production database, Function, Neon Auth, Object Storage, Render configuratio
 - Neon Auth was not enabled on the cloned branch, so identities/provider settings/session restoration were not tested.
 - Suspended the temporary clone's 0.25 CU compute after verification. The original backup branch and Production were not changed.
 - Conclusion: PostgreSQL branch cloning and public/private Storage metadata parity passed. This is not a complete Auth/session recovery rehearsal.
+
+
+## GitHub branch-protection instructions
+
+Added `docs/ops/GITHUB_MAIN_PROTECTION_ANDROID.md` with tap-only Android Chrome steps to create an active ruleset for `main`, require PRs and the `ISOKO checks / TypeScript and Vite build` check, and block force pushes/deletions. The connected GitHub app could not write repository administration settings; ruleset read was empty and classic protection read returned 403. The doc explicitly does not claim that protection is already enabled.
