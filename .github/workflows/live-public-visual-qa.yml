@@ -9,7 +9,7 @@ on:
       - 'e2e/live-public-visual-qa.spec.cjs'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   live-public-visual:
@@ -21,7 +21,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
-          persist-credentials: true
 
       - name: Install Playwright
         run: |
@@ -38,26 +37,14 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/isoko-live-playwright/node_modules
         run: '"$RUNNER_TEMP/isoko-live-playwright/node_modules/.bin/playwright" test --config=playwright.live.config.cjs'
 
-      - name: Save screenshots and observations to the PR branch
+      - name: Upload live screenshots and observations
         if: always()
-        env:
-          HEAD_BRANCH: ${{ github.event.pull_request.head.ref }}
-        run: |
-          set -euo pipefail
-          qa_dir="docs/design/qa/2026-11-16-live"
-          if [[ ! -d "$qa_dir" ]]; then
-            echo "No live QA output directory was created."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "$qa_dir"
-          if git diff --cached --quiet; then
-            echo "No new screenshot evidence to commit."
-            exit 0
-          fi
-          git commit -m "test(qa): save live mobile screenshots and observations"
-          git push origin "HEAD:$HEAD_BRANCH"
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: isoko-live-public-qa-360x800-320x800
+          path: docs/design/qa/2026-11-16-live/
+          if-no-files-found: warn
+          retention-days: 30
 
       - name: Preserve visual QA result
         if: steps.capture.outcome == 'failure'
