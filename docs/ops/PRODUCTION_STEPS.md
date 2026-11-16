@@ -8,7 +8,7 @@ These are Production-only steps. Do not apply migrations, deploy the Neon Functi
 - Production branch: `isoko-production` (`br-blue-bread-ba2wywua`)
 - Database: `isoko`
 - Migration `016_seller_profile_storefront_capacity` is present.
-- Migrations `019`, `020`, and `021` are not recorded in Production.
+- Migrations `019`, `020`, `021`, and `022` are not recorded in Production.
 - Production currently has 1 seller profile, 1 shop, and 1 active public product. That product is in the `ibindi` category; current Production has no active products in Inkweto, Imyenda, or Amasogisi. Do not create demo products to disguise that.
 - Production has no valid `SUPPORT_WHATSAPP` setting. The frontend must not invent a support number.
 
