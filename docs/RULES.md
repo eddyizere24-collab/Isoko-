@@ -4,6 +4,7 @@
 - Seller profile photos, shop logos and shop covers must use separate upload kinds and storage prefixes — distinct media roles must never be confused by UI or storage routing.
 - Every seller image upload must consume a server-verified daily quota before Object Storage writes — client-side limits can be bypassed.
 - Public storefront images must render an accessible fallback on load failure — broken image glyphs are not a usable empty state.
+- A shop receives the Isoko Verified seal only when `profiles.identity_status = 'verified'` — seller approval for listing products is not identity verification.
 - Seller avatar and logo must occupy separate, clearly labelled spaces outside the cover — overlapping brand assets cause identity confusion.
 - No Production migration or Function deployment is performed from a feature PR — schema and Function deployment require owner review and explicit Production steps.
 - Logout must await the Neon Auth sign-out action before clearing account-scoped local/session/IndexedDB caches — a fire-and-forget request can leave a live server session.
