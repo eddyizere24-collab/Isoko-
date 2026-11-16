@@ -24,3 +24,15 @@ Live commit documented: `1f46194c625537b0b3cbcdc72153a5695d8b2856`
 - GitHub main branch protection could not be confirmed using the connected GitHub app (rulesets read empty; classic protection read 403).
 
 No Production database, Function, Neon Auth, Object Storage, Render configuration or seller data was changed by this documentation PR.
+
+
+## PostgreSQL and Storage restore-clone drill (follow-up)
+
+- Preserved backup branch: `br-falling-darkness-ba6qwviu` (`isoko-production-backup-before-release-20261116`).
+- Created child clone from the backup: `br-broad-feather-ba73vmad` (`isoko-restore-drill-20261116`).
+- Read-only SQL on the clone returned 1 profile, 1 shop and 1 active product, matching the Production row counts; the original product id remained present.
+- The clone's migration markers ended at `016_seller_profile_storefront_capacity`; it correctly did not contain 017–025, because the backup snapshot predates those migrations.
+- Neon Storage was enabled on Production, backup and clone. The public bucket held 11 objects in each; sorted size+ETag metadata matched across all three. The private KYC bucket had 0 objects on each.
+- Neon Auth was not enabled on the cloned branch, so identities/provider settings/session restoration were not tested.
+- Suspended the temporary clone's 0.25 CU compute after verification. The original backup branch and Production were not changed.
+- Conclusion: PostgreSQL branch cloning and public/private Storage metadata parity passed. This is not a complete Auth/session recovery rehearsal.
