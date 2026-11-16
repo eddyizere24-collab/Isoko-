@@ -21,7 +21,7 @@ import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { fetchShopDetail, subscribeUpdates } from '../lib/api';
 import { trackEvent } from '../lib/track';
-import { buildWhatsAppLink } from '../lib/whatsapp';
+import { buildSellerWhatsAppLink } from '../lib/whatsapp';
 import { isShopIdentityVerified } from '../lib/shopVerification';
 import type { Product, Shop } from '../types/marketplace';
 
@@ -113,7 +113,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
   const memberDays = shop.approved_at
     ? Math.max(1, Math.floor((Date.now() - new Date(shop.approved_at).getTime()) / (1000 * 60 * 60 * 24)))
     : null;
-  const waUrl = buildWhatsAppLink(
+  const waUrl = buildSellerWhatsAppLink(
     shop.whatsapp,
     `Muraho ${shop.name}, nabonye iduka ryanyu ku Isoko.`
   );
@@ -278,6 +278,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
             </div>
 
             <div className="flex flex-wrap gap-2 shrink-0">
+              {waUrl && (
               <a
                 href={waUrl}
                 target="_blank"
@@ -288,6 +289,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ slug }) => {
                 <MessageCircle className="h-4 w-4" aria-hidden="true" />
                 <span>WhatsApp</span>
               </a>
+              )}
               <a
                 href={`tel:+${shop.phone}`}
                 onClick={() => trackEvent('call_click', null, shop.id)}
