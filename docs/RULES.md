@@ -26,3 +26,9 @@
 - Production email verification remains disabled until the owner configures and tests a trusted sender plus the verification journey — an enabled checkbox without deliverable email would lock out sellers.
 - Server-side rate limits must use a trusted server identity or provider controls, never only a client-supplied session id — clients can change their own identifiers.
 - Security audit status must distinguish tested, unproven and missing controls — absence of test evidence must not be reported as secure.
+
+- Production migration instructions must always begin with a current read-only `schema_migrations` read-back; never replay a migration that is already recorded — accidental DDL replay can break live seller workflows.
+- The current Production upload quota is 300 original seller photos per UTC day and 30 per rolling 60 seconds; a paired thumbnail does not consume a second attempt — keep docs and tests aligned to migration 025.
+- The backup branch `isoko-production-backup-before-release-20261116` must be preserved until a PostgreSQL and Object Storage restore drill has been completed and reviewed — a branch snapshot alone is not a verified media backup.
+- Do not use the owner's Production test account or product for E2E, load, upload or visual tests — isolated QA sellers protect real account and shop data.
+- Production documentation must distinguish an existing backup snapshot from a completed restore rehearsal and a live Function health check from an authenticated seller upload test — operational claims require evidence at the exact level described.
