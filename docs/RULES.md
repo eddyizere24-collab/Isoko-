@@ -18,3 +18,8 @@
 - Google social-login UI remains hidden unless the explicit VITE_ISOKO_GOOGLE_SIGNIN_ENABLED flag is true — absent credentials must never expose a broken authentication button.
 - Google OAuth credentials belong only in Neon Auth's provider secret fields and never in Git, frontend bundles or chat — client secrets must remain server-side.
 - OAuth redirect URIs must be copied from the selected Neon Auth branch configuration and verified against Google Console — branch-specific callback URLs must not be guessed.
+
+- Account ownership is proven only by isolated QA tests for two distinct sellers across RLS, RPC, storage and upload endpoints — reading policy definitions alone does not prove isolation.
+- Production email verification remains disabled until the owner configures and tests a trusted sender plus the verification journey — an enabled checkbox without deliverable email would lock out sellers.
+- Server-side rate limits must use a trusted server identity or provider controls, never only a client-supplied session id — clients can change their own identifiers.
+- Security audit status must distinguish tested, unproven and missing controls — absence of test evidence must not be reported as secure.
