@@ -4,6 +4,7 @@ import { AuthBrandHeader } from '../components/IsokoLogo';
 import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { loginAccount } from '../lib/api';
+import { GOOGLE_SIGN_IN_ENABLED, signInWithGoogle } from '../lib/neon';
 
 export const LoginPage: React.FC = () => {
   const { navigate, setAuthData, authProfile } = useMarketplace();
@@ -142,7 +143,25 @@ export const LoginPage: React.FC = () => {
               <KeyRound className="h-4 w-4" aria-hidden="true" />
               <span>{submitting ? '...' : t('login')}</span>
             </button>
-          </form>
+          
+            {GOOGLE_SIGN_IN_ENABLED && (
+              <button
+                type="button"
+                disabled={submitting}
+                onClick={() => {
+                  setError(null);
+                  setSubmitting(true);
+                  void signInWithGoogle(`${window.location.origin}/injira`)
+                    .catch((err) => setError(err instanceof Error ? err.message : 'Kwinjira ukoresheje Google byanze.'))
+                    .finally(() => setSubmitting(false));
+                }}
+                className="inline-flex min-h-[46px] w-full items-center justify-center gap-3 rounded-lg border border-[#D7E0DA] bg-white px-4 text-sm font-semibold text-[#1A1F1C] hover:border-[#0B6E4F] disabled:opacity-50"
+              >
+                <span aria-hidden="true" className="grid h-5 w-5 place-items-center rounded-full border border-[#D7E0DA] text-[12px] font-bold text-[#4285F4]">G</span>
+                Komeza na Google
+              </button>
+            )}
+</form>
 
           <p className="mt-4 text-xs text-[#64748B]">
             Iyo winjiye, ukomeza kuba uri muri konti iminsi 30 kuri iyi telefoni keretse ukanda {t('logout')}.

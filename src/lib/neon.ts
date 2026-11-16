@@ -138,3 +138,8 @@ export async function revokeOtherAccountSessions(): Promise<boolean> {
   if (result?.error) throw new Error(result.error.message ?? 'Ntibyashobotse gusohoka ku bindi bikoresho.');
   return true;
 }
+
+
+/** Google social sign-in remains disabled until OAuth credentials and QA verification are complete. */
+export const GOOGLE_SIGN_IN_ENABLED =
+  import.meta.env.VITE_ISOKO_GOOGLE_SIGNIN_ENABLED === 'true';

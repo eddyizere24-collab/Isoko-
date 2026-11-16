@@ -15,3 +15,6 @@
 - Every supported language dictionary must contain exactly the Kinyarwanda key set and be checked in CI — missing translations must be caught before merge.
 - Translation review status stays in code and never appears as a beta badge to users — unreviewed translations must not be presented as beta or as human-reviewed.
 - Every translated legal page must state that Kinyarwanda is the reference text — legal translations must not replace the authoritative source language.
+- Google social-login UI remains hidden unless the explicit VITE_ISOKO_GOOGLE_SIGNIN_ENABLED flag is true — absent credentials must never expose a broken authentication button.
+- Google OAuth credentials belong only in Neon Auth's provider secret fields and never in Git, frontend bundles or chat — client secrets must remain server-side.
+- OAuth redirect URIs must be copied from the selected Neon Auth branch configuration and verified against Google Console — branch-specific callback URLs must not be guessed.
