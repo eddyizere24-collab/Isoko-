@@ -6,7 +6,8 @@
 - Seller image uploads must also use a rolling per-seller burst limit derived from Neon Auth identity; a client-supplied seller/session ID is not a trusted rate-limit key.
 - Product image keys must begin with `products/<authenticated-seller-profile-id>/` for both create and update RPCs — a browser-provided object key must never attach another seller's media to a product.
 - Public storefront images must render an accessible fallback on load failure — broken image glyphs are not a usable empty state.
-- A shop receives the Isoko Verified seal only when `profiles.identity_status = 'verified'` — seller approval for listing products is not identity verification.
+- A shop receives the Isoko Verified seal only when `profiles.identity_status = 'verified'` on every public surface — seller approval for listing products is not identity verification.
+- Seller WhatsApp actions must use a configured, valid Rwanda number; suppress the CTA when no number is configured and never publish the placeholder `250788000000` — a fake contact link misdirects buyers.
 - Seller avatar and logo must occupy separate, clearly labelled spaces outside the cover — overlapping brand assets cause identity confusion.
 - No Production migration or Function deployment is performed from a feature PR — schema and Function deployment require owner review and explicit Production steps.
 - Logout must await the Neon Auth sign-out action before clearing account-scoped local/session/IndexedDB caches — a fire-and-forget request can leave a live server session.
