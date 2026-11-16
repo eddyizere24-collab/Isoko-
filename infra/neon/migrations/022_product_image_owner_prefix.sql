@@ -109,8 +109,7 @@ BEGIN
 
   RETURN jsonb_build_object('id',v_product_id,'status',v_status,'shop_id',v_shop.id);
 END;
-$function$
-
+$function$;
 
 CREATE OR REPLACE FUNCTION public.update_seller_product_v1(p_product_id text, p_payload jsonb)
  RETURNS jsonb
@@ -198,8 +197,7 @@ BEGIN
 
   RETURN jsonb_build_object('id',p_product_id,'status',v_product.status);
 END;
-$function$
-
+$function$;
 
 INSERT INTO public.schema_migrations(version)
 VALUES ('022_product_image_owner_prefix')
