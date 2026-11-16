@@ -2,9 +2,8 @@ name: ISOKO checks
 
 on:
   pull_request:
-    branches: [main]
   push:
-    branches: [main, "infra/**", "feature/**", "feat/**", "docs/**", "fix/**"]
+    branches: [main, "infra/**", "feature/**", "feat/**", "docs/**", "fix/**", "security/**"]
 
 permissions:
   contents: read
