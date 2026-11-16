@@ -68,8 +68,10 @@ Expected current result: markers 016–025; profiles=1, shops=1, products=1, act
 
 - The owner-created Neon branch snapshot `isoko-production-backup-before-release-20261116` exists as `br-falling-darkness-ba6qwviu`.
 - It is a child of Production `br-blue-bread-ba2wywua`, created at `2026-11-16T05:57:12Z`, with parent timestamp `2026-11-16T05:56:52Z`.
-- The backup branch currently has no compute endpoint, so a SQL parity/restore check could not be run through the SQL connector.
-- This proves the branch snapshot exists; it does **not** prove a full restore drill or a backup of public/private Object Storage files. Preserve the snapshot; do not delete it as cleanup.
+- The backup branch itself has no compute endpoint. A separate child branch `isoko-restore-drill-20261116` (`br-broad-feather-ba73vmad`) was created from that snapshot, queried successfully, and then its 0.25 CU compute was suspended.
+- The restored PostgreSQL clone read back 1 seller profile, 1 shop and 1 active product, matching Production. It contained the migration history through 016 only, as expected for a snapshot taken before 017–025. Its original product row remained the same ID and category.
+- Neon Storage was enabled on Production, backup and restore clone. The public-assets bucket had 11 objects in each; object-size/ETag metadata matched between Production, backup and clone. The private KYC bucket had 0 objects in all three.
+- Neon Auth was **not enabled on the restore clone**, so user identities, provider configuration, email settings and session restore were not tested. The drill proves PostgreSQL branch cloning and Object Storage metadata parity only, not a complete identity/auth restore. Preserve the original backup branch.
 
 ## Production deployment safety
 
@@ -91,7 +93,7 @@ For future releases:
 - Email verification is disabled; delivery has not been verified. A publish-only verified-email gate must not be enabled until a real QA email journey is proven.
 - Multi-device session revocation and admin recovery are not proven. Production has no Admin profile in the current read-back.
 - GitHub main branch protection is not confirmed. The connected GitHub app could read repository rulesets (none were returned) but classic protection access returned 403; set/verify it in GitHub repository Settings with a required CI check.
-- The branch backup is present, but PostgreSQL plus public/private Object Storage restore has not been rehearsed.
+- PostgreSQL branch clone and public/private Storage metadata parity were rehearsed from the preserved backup; Neon Auth was not enabled on the clone, so full account/session restore remains untested.
 - Google sign-in is disabled until real Google credentials exist and the QA OAuth round trip succeeds.
 
 ## Production smoke-test constraints
