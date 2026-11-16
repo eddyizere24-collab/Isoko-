@@ -18,6 +18,7 @@ import { useMarketplace } from '../context/MarketplaceContext';
 import { INITIAL_CATEGORIES } from '../data/categories';
 import { buildHomeShelves, interleaveBySeller } from '../lib/algorithm';
 import { loadInterest } from '../lib/storage';
+import { isShopIdentityVerified } from '../lib/shopVerification';
 
 interface HomePageProps {
   onOpenCategories?: () => void;
