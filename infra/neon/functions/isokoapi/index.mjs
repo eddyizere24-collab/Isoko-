@@ -333,7 +333,8 @@ export default {
         if (!["kyc", "campaign", "shop", "logo", "profile", "full", "thumb"].includes(kind)) {
           return json({ error: "Ubwoko bw’ifoto ntibwemewe." }, 400, cors);
         }
-        if (profile?.role === "seller" && kind !== "kyc") {
+        // "thumb" is always uploaded together with its "full" photo, which already consumed the quota.
+        if (profile?.role === "seller" && kind !== "kyc" && kind !== "thumb") {
           const quota = await enforceSellerUploadQuota(token);
           if (quota?.allowed !== true) {
             const rateLimited = quota?.reason === "rate";
@@ -341,9 +342,9 @@ export default {
               error: rateLimited ? "UPLOAD_RATE_LIMIT_EXCEEDED" : "UPLOAD_DAILY_QUOTA_EXCEEDED",
               message: rateLimited
                 ? "Wohereje amafoto menshi mu kanya. Tegereza umunota umwe wongere ugerageze."
-                : "Wageze ku mubare ntarengwa w’amafoto 30 ku munsi. Ongera ugerageze ejo.",
-              dailyLimit: 30,
-              perMinuteLimit: 15,
+                : "Wageze ku mubare ntarengwa w’amafoto 300 ku munsi. Ongera ugerageze ejo.",
+              dailyLimit: 300,
+              perMinuteLimit: 30,
               retryAfterSeconds: rateLimited ? Math.max(1, Number(quota.retry_after_seconds ?? 60)) : null,
             }, 429, cors);
           }

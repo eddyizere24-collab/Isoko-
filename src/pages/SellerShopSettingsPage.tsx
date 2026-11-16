@@ -107,7 +107,7 @@ export const SellerShopSettingsPage: React.FC = () => {
     } catch (err) {
       const message = err instanceof Error ? err.message : '';
       setError(message === 'UPLOAD_DAILY_QUOTA_EXCEEDED'
-        ? 'Wageze ku mubare ntarengwa w’amafoto 30 ku munsi. Ongera ugerageze ejo.'
+        ? 'Wageze ku mubare ntarengwa w’amafoto 300 ku munsi. Ongera ugerageze ejo.'
         : message || 'Ifoto ntiyoherejwe cyangwa ngo ibikwe. Ongera ugerageze.');
     } finally {
       setUploading(null);
