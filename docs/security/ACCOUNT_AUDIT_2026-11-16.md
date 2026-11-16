@@ -38,13 +38,21 @@ Scope: production configuration, source-code review and CI workflow review for t
 - Migrations `017` and `018` were not present in the reviewed schema_migrations read-back.
 - Migrations `019`–`022` are release-candidate changes only; none is applied to Production. They remain behind explicit owner approval.
 
-## QA test gate still required
+## QA evidence completed in this work package
 
-The security gate is not passed until CI has isolated, repeatable tests that:
-1. Create two fresh seller identities in a dedicated QA branch only.
-2. Create one shop and owned products/images/profile for each seller.
-3. Attempt cross-owner reads and writes through Data API/RLS, RPCs, and the upload Function.
-4. Assert every cross-owner request is denied and owner requests continue to work.
-5. Delete/rollback test data and never point the test at Production.
-6. Exercise login/signup/upload/public RPC throttles at their real server enforcement points.
-7. Test verified and unverified seller publish behavior with real test email delivery.
+- Seller A/B own-vs-foreign shop and profile read tests in the isolated QA branch.
+- Seller A/B shop UPDATE isolation check.
+- Seller A/B product update, delete and mark-sold RPC checks.
+- Seller A/B product-image path ownership checks for both create and update RPCs.
+- Quota boundary: attempt 30 allowed; attempt 31 denied; counter rolled back.
+- All write tests were wrapped in rollback/savepoint transactions. No QA product or seller data was changed by the tests.
+
+## Remaining security gate
+
+The overall security gate is not passed until repeatable CI/E2E tests and the remaining controls are complete:
+1. Real authenticated seller signup → upload → publish → storefront workflow on Android/Chrome.
+2. KYC document reads with populated QA KYC rows, plus upload Function ownership and role checks through a real token.
+3. Login/signup and separate per-minute/IP upload/public RPC throttling at trusted server enforcement points.
+4. Verified-email publish gating after a trusted sender is configured and the real verification email is delivered.
+5. Admin recovery, multi-device revocation and backup/restore drills.
+6. Production release only after explicit owner approval and successful post-deploy smoke tests.
