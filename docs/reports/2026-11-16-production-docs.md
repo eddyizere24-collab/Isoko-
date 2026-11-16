@@ -41,3 +41,16 @@ No Production database, Function, Neon Auth, Object Storage, Render configuratio
 ## GitHub branch-protection instructions
 
 Added `docs/ops/GITHUB_MAIN_PROTECTION_ANDROID.md` with tap-only Android Chrome steps to create an active ruleset for `main`, require PRs and the `ISOKO checks / TypeScript and Vite build` check, and block force pushes/deletions. The connected GitHub app could not write repository administration settings; ruleset read was empty and classic protection read returned 403. The doc explicitly does not claim that protection is already enabled.
+
+
+## Upload quota 025 boundary test (follow-up)
+
+A disposable branch `isoko-quota-025-e2e-20261116` (`br-floral-truth-ba5rekkc`) was cloned from QA (`br-cold-forest-badn9wlr`). Migration 025's exact quota function was installed on that clone and the migration marker recorded.
+
+Using an existing QA seller identity in transaction-local Neon JWT claims, both boundary tests passed:
+- Daily boundary: attempt 300 returned `allowed=true`, `count=300`, `limit=300`; attempt 301 returned `allowed=false`, `reason="daily"`.
+- Rolling window boundary: attempt 30 returned `allowed=true`, `window_count=30`, `window_limit=30`; attempt 31 returned `allowed=false`, `reason="rate"`, `retry_after_seconds=60`.
+
+Each test section was rolled back to its savepoint. A subsequent read-back returned `quota_rows=0`. The temporary clone's compute endpoint `ep-aged-shadow-ba81bpe4` was suspended after testing. The real QA branch, Production and the owner's seller data were not modified.
+
+The Function source shows `kind !== "thumb"` before quota consumption; the actual authenticated full-image + thumbnail Storage upload pair remains part of the pending seller-device E2E test.
