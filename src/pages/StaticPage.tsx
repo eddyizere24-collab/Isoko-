@@ -79,7 +79,7 @@ export const StaticPage: React.FC = () => {
             <p className="mt-3 text-xs text-slate-600">
               Nimero ya WhatsApp y’ubufasha ntirashyirwaho ubu.
             </p>
-          )
+          )}
         </div>
 
         <div className="space-y-3">
