@@ -24,7 +24,8 @@ WHERE version IN (
   '019_seller_upload_daily_quota',
   '020_seller_upload_quota_cap_alignment',
   '021_public_product_identity_status',
-  '022_product_image_owner_prefix'
+  '022_product_image_owner_prefix',
+  '023_seller_upload_burst_limit'
 )
 ORDER BY version;
 
@@ -39,7 +40,7 @@ WHERE table_schema = 'public'
   AND column_name IN ('id', 'auth_user_id', 'identity_status');
 ```
 
-Expected current state: migration 016 is present, migrations 019–022 are absent, and the quota table/function are absent. The profile IDs and auth user IDs are text in this project. If the read-back differs, stop and re-inspect rather than replaying a migration.
+Expected current state: migration 016 is present, migrations 019–023 are absent, and the quota table/function are absent. The profile IDs and auth user IDs are text in this project. If the read-back differs, stop and re-inspect rather than replaying a migration.
 
 ## Ordered release migrations
 
@@ -67,27 +68,35 @@ File: `infra/neon/migrations/022_product_image_owner_prefix.sql`
 
 Replaces the seller create/update product RPCs so both full and thumbnail image keys must start with `products/<seller-profile-id>/`. The authenticated seller profile ID is derived inside the security-definer RPC; the browser cannot choose another seller's prefix. This migration does not rewrite existing product images.
 
+### 023 — seller upload burst limit
+
+File: `infra/neon/migrations/023_seller_upload_burst_limit.sql`
+
+Adds a rolling 60-second per-seller upload window with a 15-attempt limit. The same authenticated seller identity from Neon Auth is used, not an IP address or browser-supplied session key. It complements the daily limit; it does not replace it.
+
 ### Apply only after explicit owner approval
 
-1. Open the approved GitHub PR and review all four migration files.
+1. Open the approved GitHub PR and review all five migration files.
 2. In Neon Console, confirm project `isoko-marketplace`, branch `isoko-production`, and database `isoko`.
 3. Apply migration 019 once, then read back its table, function, and marker.
 4. Apply migration 020, then read back that `consume_seller_upload_quota_v1()` returns JSONB and uses `v_limit = 30`.
 5. Apply migration 021, then read back that `v_public_products.shop` contains `identity_status` for each row.
 6. Apply migration 022, then read back the create/update seller product RPCs and verify the `PRODUCT_IMAGE_OWNERSHIP_INVALID` guard is present.
-7. Confirm the quota function ACL grants `authenticated` and does not grant `PUBLIC` or `anonymous`.
+7. Apply migration 023, then verify the counter columns, `window_limit = 15`, and the `reason = 'rate'` response after the 16th attempt within 60 seconds.
+8. Confirm the quota function ACL grants `authenticated` and does not grant `PUBLIC` or `anonymous`.
 8. Do not paste database passwords, API keys, connection strings, or private seller information into GitHub or chat.
 
 ## Neon Function and frontend release gates
 
-The feature Function source supports the distinct `logo` upload kind and calls the quota RPC before Object Storage writes. Deploy the matching Node.js 24 Function bundle only after migrations 019–022 have been verified in Production and the owner explicitly approves Function deployment. Deploy frontend code only from the reviewed, merged release head. Do not deploy the Function or frontend from an unmerged feature branch.
+The feature Function source supports the distinct `logo` upload kind and calls the quota RPC before Object Storage writes. Deploy the matching Node.js 24 Function bundle only after migrations 019–023 have been verified in Production and the owner explicitly approves Function deployment. Deploy frontend code only from the reviewed, merged release head. Do not deploy the Function or frontend from an unmerged feature branch.
 
 The Production smoke test must then verify:
 - unauthenticated upload is rejected;
 - non-seller roles cannot use seller image upload;
 - seller avatar, logo, and cover save to their distinct paths;
 - public image URLs render and reload;
-- quota allows 30 attempts and denies the next attempt;
+- quota allows 30 attempts/day and denies the 31st;
+- upload burst limiter allows 15 attempts per 60 seconds and denies the 16th;
 - unverified shops do not receive the Verified seal;
 - a genuinely verified shop receives the seal on storefront and product cards;
 - a seller cannot create or update a product using another seller's `products/<profile-id>/` image keys.
