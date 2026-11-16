@@ -1,17 +1,20 @@
 import React from 'react';
-import { MessageCircle, ShieldCheck, Store } from 'lucide-react';
+import { MessageCircle, Store } from 'lucide-react';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { useT } from '../context/LangContext';
 import { LEGAL_TEXTS } from '../i18n/legal';
 import { RW } from '../i18n/rw';
-import { buildWhatsAppLink } from '../lib/whatsapp';
+import { buildWhatsAppLink, isValidRwandaPhone, normalizeRwandaPhone } from '../lib/whatsapp';
 
 export const StaticPage: React.FC = () => {
   const { pathname, navigate, bootstrap } = useMarketplace();
   const { lang } = useT();
   const legal = LEGAL_TEXTS[lang];
-  const supportWa = bootstrap?.settings.SUPPORT_WHATSAPP ?? '250788000000';
-  const supportHours = bootstrap?.settings.SUPPORT_HOURS ?? '08:00 – 20:00';
+  const configuredSupportWa = String(bootstrap?.settings.SUPPORT_WHATSAPP ?? '').trim();
+  const supportWa = isValidRwandaPhone(configuredSupportWa)
+    ? normalizeRwandaPhone(configuredSupportWa)
+    : '';
+  const supportHours = String(bootstrap?.settings.SUPPORT_HOURS ?? '').trim();
 
   if (pathname === '/ibyerekeye') {
     return (
@@ -44,27 +47,39 @@ export const StaticPage: React.FC = () => {
   }
 
   if (pathname === '/ubufasha') {
-    const waHref = buildWhatsAppLink(
-      supportWa,
-      'Muraho Ubufasha bwa Isoko, mfite ikibazo nashakaga kubaza.'
-    );
+    const waHref = supportWa
+      ? buildWhatsAppLink(
+          supportWa,
+          'Muraho Ubufasha bwa Isoko, mfite ikibazo nashakaga kubaza.'
+        )
+      : null;
     return (
       <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 space-y-6">
         <h1 className="text-2xl font-bold text-[#1B1F23]">Ubufasha & Ibibazo bikunze kubazwa</h1>
         <div className="rounded-lg border border-[#E5E7EB] bg-[#E8F3EE]/50 p-6">
-          <p className="text-sm font-bold text-[#1B1F23]">Vugana natwe kuri WhatsApp</p>
-          <p className="mt-1 text-xs text-slate-600">
-            Amasaha y’ubufasha buri munsi: {supportHours}
+          <p className="text-sm font-bold text-[#1B1F23]">
+            {waHref ? 'Vugana natwe kuri WhatsApp' : 'Ubufasha bwa Isoko'}
           </p>
-          <a
-            href={waHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#1A7F43] px-5 text-sm font-semibold text-white hover:bg-[#146635]"
-          >
-            <MessageCircle className="h-4 w-4" aria-hidden="true" />
-            <span>{RW.help_whatsapp}</span>
-          </a>
+          {supportHours && (
+            <p className="mt-1 text-xs text-slate-600">
+              Amasaha y’ubufasha: {supportHours}
+            </p>
+          )}
+          {waHref ? (
+            <a
+              href={waHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-[#1A7F43] px-5 text-sm font-semibold text-white hover:bg-[#146635]"
+            >
+              <MessageCircle className="h-4 w-4" aria-hidden="true" />
+              <span>{RW.help_whatsapp}</span>
+            </a>
+          ) : (
+            <p className="mt-3 text-xs text-slate-600">
+              Nimero ya WhatsApp y’ubufasha ntirashyirwaho ubu.
+            </p>
+          )
         </div>
 
         <div className="space-y-3">
@@ -79,7 +94,7 @@ export const StaticPage: React.FC = () => {
             },
             {
               q: 'Nabona nte iduka ryemewe?',
-              a: 'Amaduka yose agaragara ku rubuga yabanje kugenzurwa na Admin (indangamuntu, aho akorera na telefoni) agahabwa ikimenyetso cy’uko yagenzuwe.',
+              a: 'Reba ikimenyetso cya Isoko Verified ku iduka. Amaduka ataragira icyo kimenyetso aba ataremezwa ku rwego rw’indangamuntu; kuba agaragara kuri Isoko ntibihita bivuga ko nyirayo yamaze kugenzurwa.',
             },
           ].map((faq) => (
             <div key={faq.q} className="rounded-lg border border-[#E5E7EB] bg-white p-4">
