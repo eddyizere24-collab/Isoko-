@@ -70,17 +70,8 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
     navigate(trimmed ? `/shakisha?q=${encodeURIComponent(trimmed)}` : '/shakisha');
   };
 
-  const accountHref = authProfile
-    ? authProfile.role === 'admin' || authProfile.role === 'moderator'
-      ? '/admin'
-      : '/umucuruzi'
-    : '/injira';
-
-  const accountLabel = authProfile
-    ? authProfile.role === 'admin' || authProfile.role === 'moderator'
-      ? 'Admin'
-      : t('my_shop')
-    : t('login');
+  const accountHref = authProfile ? '/konti' : '/injira';
+  const accountLabel = authProfile ? t('account') : t('login');
 
   const categories = bootstrap?.categories?.length ? bootstrap.categories : FALLBACK_CATEGORIES;
   const locationLabel = location ? location.districtName : 'Kigali';

@@ -7,6 +7,7 @@ import { OfflineAndPwaBar } from './components/OfflineAndPwaBar';
 import { LangProvider } from './context/LangContext';
 import { MarketplaceProvider, useMarketplace } from './context/MarketplaceContext';
 import { AdminPage } from './pages/AdminPage';
+import { AccountPage } from './pages/AccountPage';
 import { BrandPreviewPage } from './pages/BrandPreviewPage';
 import { CartPage } from './pages/CartPage';
 import { CategoriesPage } from './pages/CategoriesPage';
@@ -66,6 +67,9 @@ const AppRouter: React.FC = () => {
     }
     if (pathname === '/injira') {
       return <LoginPage />;
+    }
+    if (pathname === '/konti') {
+      return <AccountPage />;
     }
     if (pathname === '/abacuruzi') {
       return <SellerApplyPage />;

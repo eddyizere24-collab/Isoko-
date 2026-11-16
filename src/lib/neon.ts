@@ -110,3 +110,31 @@ export function publicAssetUrl(key: string | null | undefined): string | null {
 export function objectKeyFromPublicUrl(value: string): string {
   return readPublicAssetKey(value, publicStorageUrl);
 }
+
+/** Change the current user's password using Better Auth's supported client action. */
+export async function changeAccountPassword(currentPassword: string, newPassword: string): Promise<void> {
+  if (newPassword.length < 8) throw new Error('Ijambo ry’ibanga rishya rigomba kugira nibura inyuguti 8.');
+  const authClient = neon.auth as any;
+  if (typeof authClient.changePassword !== 'function') {
+    throw new Error('Guhindura ijambo ry’ibanga ntibishyigikiwe n’iyi verisiyo ya Neon Auth.');
+  }
+  const result = await authClient.changePassword({
+    currentPassword,
+    newPassword,
+    revokeOtherSessions: true,
+  });
+  if (result?.error) throw new Error(result.error.message ?? 'Ntibyashobotse guhindura ijambo ry’ibanga.');
+}
+
+/** Other-device session revocation is exposed only when Neon Auth provides it. */
+export function supportsOtherAccountSessionRevocation(): boolean {
+  return typeof (neon.auth as any).revokeOtherSessions === 'function';
+}
+
+export async function revokeOtherAccountSessions(): Promise<boolean> {
+  const authClient = neon.auth as any;
+  if (typeof authClient.revokeOtherSessions !== 'function') return false;
+  const result = await authClient.revokeOtherSessions();
+  if (result?.error) throw new Error(result.error.message ?? 'Ntibyashobotse gusohoka ku bindi bikoresho.');
+  return true;
+}

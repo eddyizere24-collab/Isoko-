@@ -258,3 +258,45 @@ export function isPwaDismissed(): boolean {
 export function dismissPwaBanner(): void {
   safeWrite(KEYS.PWA_DISMISSED, true);
 }
+
+/**
+ * Clear only data that belongs to a signed-in account. Guest shopping state
+ * (cart, language, location, recently viewed products) is intentionally kept.
+ */
+const ACCOUNT_STORAGE_KEY = /isoko_(?:auth|seller|profile|shop|saved|product_draft)|(?:neon|better[-_]?auth).*(?:auth|session|token)|(?:auth|session|token).*(?:neon|better[-_]?auth)/i;
+
+function clearMatchingStorage(storageArea: Storage): void {
+  const keys: string[] = [];
+  for (let index = 0; index < storageArea.length; index += 1) {
+    const key = storageArea.key(index);
+    if (key && ACCOUNT_STORAGE_KEY.test(key)) keys.push(key);
+  }
+  for (const key of keys) storageArea.removeItem(key);
+}
+
+function deleteIndexedDatabase(factory: IDBFactory, name: string): Promise<void> {
+  return new Promise((resolve) => {
+    const request = factory.deleteDatabase(name);
+    request.onsuccess = () => resolve();
+    request.onerror = () => resolve();
+    request.onblocked = () => resolve();
+  });
+}
+
+export async function clearAccountScopedStorage(): Promise<void> {
+  try { clearMatchingStorage(window.localStorage); } catch { /* storage may be blocked */ }
+  try { clearMatchingStorage(window.sessionStorage); } catch { /* storage may be blocked */ }
+
+  try {
+    const factory = window.indexedDB;
+    if (factory && typeof factory.databases === 'function') {
+      const databases = await factory.databases();
+      const accountDatabases = databases
+        .map((database) => database.name)
+        .filter((name): name is string => Boolean(name && /^(isoko|neon-auth|better-auth)([-_]|$)/i.test(name)));
+      await Promise.all(accountDatabases.map((name) => deleteIndexedDatabase(factory, name)));
+    }
+  } catch {
+    // IndexedDB may be unavailable or unsupported on the current browser.
+  }
+}

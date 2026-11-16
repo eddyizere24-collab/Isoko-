@@ -13,6 +13,7 @@ import {
   recordCategoryInterest,
   recordRecentProduct,
   saveAuthSession,
+  clearAccountScopedStorage,
   saveCart,
   saveLocation,
   saveMySize,
@@ -61,7 +62,7 @@ interface MarketplaceContextValue {
   authProfile: Profile | null;
   authShop: Shop | null;
   setAuthData: (sess: StoredAuthSession | null, profile: Profile | null, shop: Shop | null) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   visitCount: number;
 }
 
@@ -249,14 +250,28 @@ export const MarketplaceProvider: React.FC<{ children: React.ReactNode }> = ({ c
     []
   );
 
-  const logout = useCallback(() => {
-    void neon.auth.signOut();
-    saveAuthSession(null);
-    setAuthSession(null);
-    setAuthProfile(null);
-    setAuthShop(null);
-    navigate('/');
-  }, [navigate]);
+  const logout = useCallback(async () => {
+    let signOutConfirmed = false;
+    try {
+      const result = await neon.auth.signOut() as any;
+      signOutConfirmed = !result?.error;
+    } catch (error) {
+      if (import.meta.env.DEV) console.warn('[ISOKO] Neon Auth sign-out did not confirm success.', error);
+    } finally {
+      await clearAccountScopedStorage();
+      saveAuthSession(null);
+      setAuthSession(null);
+      setAuthProfile(null);
+      setAuthShop(null);
+      // Replace the private route instead of pushing Home onto the history stack.
+      window.history.replaceState({}, '', '/');
+      setUrlState({ pathname: '/', search: '' });
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    }
+    if (!signOutConfirmed && import.meta.env.DEV) {
+      console.warn('[ISOKO] Local account data was cleared, but the server sign-out response was not confirmed.');
+    }
+  }, []);
 
   const cartCount = cart.reduce((sum, it) => sum + it.qty, 0);
 
