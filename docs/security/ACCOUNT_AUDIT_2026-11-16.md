@@ -36,7 +36,7 @@ Scope: production configuration, source-code review and CI workflow review for t
 - Public assets bucket is public-read; KYC bucket is private.
 - Migration `016_seller_profile_storefront_capacity` is present.
 - Migrations `017` and `018` were not present in the reviewed schema_migrations read-back.
-- The photo PR proposes migration `019_seller_upload_daily_quota`; it is not yet proven applied to Production.
+- Migrations `019`–`022` are release-candidate changes only; none is applied to Production. They remain behind explicit owner approval.
 
 ## QA test gate still required
 
