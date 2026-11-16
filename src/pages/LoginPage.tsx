@@ -164,7 +164,7 @@ export const LoginPage: React.FC = () => {
 </form>
 
           <p className="mt-4 text-xs text-[#64748B]">
-            Iyo winjiye, ukomeza kuba uri muri konti iminsi 30 kuri iyi telefoni keretse ukanda {t('logout')}.
+            Ntugasangize abandi ijambo ry’ibanga. Sohoka muri konti urangije kuyikoresha ku gikoresho usangiye n’abandi.
           </p>
 
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#E5E7EB] pt-4">
