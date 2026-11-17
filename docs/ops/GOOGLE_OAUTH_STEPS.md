@@ -1,57 +1,112 @@
 # Gushyiraho Google OAuth kuri ISOKO (kuri Android)
 
-Google sign-in iracyahishe inyuma ya feature flag. Ntuyifungure kugeza Google credentials zibitswe muri Neon Auth kandi login igeragejwe kuri QA account.
+Google sign-in iracyahishe inyuma ya feature flag. Ntuyifungure kugeza Google credentials zibitswe muri Neon Auth kandi login igeragejwe neza kuri QA frontend ikoresha QA Neon Auth.
 
-## 1. Kora Google Cloud project
-1. Fungura Chrome kuri telefoni ya Android ujye kuri https://console.cloud.google.com/.
-2. Injira muri konti ya Google izacunga ISOKO.
-3. Kanda ku izina rya project hejuru, uhitemo **New Project**.
-4. Andika izina `ISOKO Marketplace`, ukande **Create**.
-5. Hitamo project nshya umaze kuyikora.
+## 1. Ibyo ufite mbere yo gutangira
 
-## 2. Tegura OAuth consent screen
-1. Fungura **Google Auth Platform** cyangwa **APIs & Services → OAuth consent screen** (amazina ashobora gutandukana bitewe na Google Console).
-2. Hitamo **External** niba abaguzi n'abacuruzi bo hanze y'umuryango wa Google Workspace bazayikoresha.
-3. Andika App name: `ISOKO`.
-4. Shyiramo email yo gushyigikira App n'email ya Developer contact ukoresha.
-5. Emeza Privacy Policy URL na Terms URL bya ISOKO:
-   - `https://isoko-marketplace-9i69.onrender.com/ibanga`
-   - `https://isoko-marketplace-9i69.onrender.com/amategeko`
-6. Mu gihe Google app ikiri muri Testing, ongeramo email yawe mu **Test users**.
-7. Bika. Ntugasabe scopes zirenze iz'ibanze za profile na email.
+- Telefoni ya Android ifite Chrome.
+- Konti ya Google izacunga ISOKO.
+- Email ukoresha nka Developer contact na Support contact.
+- Ntushyire Client Secret muri GitHub, WhatsApp, screenshot, chat cyangwa Render environment.
+- Google sign-in flag igume `false` kugeza QA OAuth login yatsinze.
 
-## 3. Kora Web OAuth Client
-1. Jya kuri **Google Auth Platform → Clients** cyangwa **APIs & Services → Credentials**.
-2. Hitamo **Create Client → Web application**.
-3. Izina: `ISOKO Production Web`.
-4. Muri **Authorised JavaScript origins**, shyiramo neza:
+## 2. Kora Google Cloud project
+
+1. Fungura Chrome ujye kuri https://console.cloud.google.com/.
+2. Injira muri Google account yawe.
+3. Kanda project selector iri hejuru.
+4. Kanda **New Project**.
+5. Andika izina `ISOKO Marketplace`, ukande **Create**.
+6. Hitamo project umaze gukora.
+
+## 3. Tegura OAuth consent screen
+
+1. Fungura **Google Auth Platform → Branding** (cyangwa **APIs & Services → OAuth consent screen**).
+2. Hitamo **External** kuko abaguzi n'abacuruzi bashobora gukoresha Google account zitari muri Workspace yawe.
+3. App name: `ISOKO`.
+4. Shyiramo email yo gushyigikira App na Developer contact email.
+5. Privacy Policy URL: `https://isoko-marketplace-9i69.onrender.com/ibanga`.
+6. Terms URL: `https://isoko-marketplace-9i69.onrender.com/amategeko`.
+7. Mu gihe app ikiri muri Testing, shyiramo email yawe muri **Test users**.
+8. Koresha scopes z'ibanze gusa: `openid`, `email`, `profile`. Bika.
+
+## 4. Kora Web OAuth Client
+
+1. Jya kuri **Google Auth Platform → Clients** (cyangwa **APIs & Services → Credentials**).
+2. Kanda **Create Client**.
+3. Application type: **Web application**.
+4. Izina: `ISOKO Production Web`.
+5. Muri **Authorised JavaScript origins**, shyiramo:
+
    `https://isoko-marketplace-9i69.onrender.com`
-5. Muri **Authorised redirect URIs**, shyiramo callback ya Neon Auth Production:
+
+6. Muri **Authorised redirect URIs**, shyiramo Production callback URI ikurikira:
+
    `https://ep-damp-poetry-ba0bdwcn.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth/callback/google`
-6. Mbere yo kubika, fungura Neon Console → project `isoko-marketplace` → branch `isoko-production` → **Auth → Social providers → Google**, ugenzure ko Neon yerekana callback URI imwe n'iyi. Iyo Console yerekanye indi URL, koresha iyo Neon yerekanye, ntukoreshe URL itandukanye.
-7. Kanda **Create**. Google izaguha Client ID na Client Secret. Ntuzishyire muri GitHub, chat, screenshot cyangwa Render environment.
 
-## 4. Bika credentials muri Neon Auth
-1. Fungura Neon Console kuri telefoni: https://console.neon.tech/.
-2. Hitamo project `isoko-marketplace`, branch `isoko-production`.
-3. Jya kuri **Auth → Social providers → Google**.
-4. Shyiramo Client ID na Client Secret mu mirima ya Google, ubike.
-5. Ntufungure feature flag ubu. OAuth credentials zitarageragezwa ntizihagije ngo tuvuge ko login ikora.
+7. Kanda **Create**. Google izerekana **Client ID** na **Client Secret**. Uzibike mu buryo bwizewe; ntuzohereze screenshot irimo Secret.
 
-## 5. Gerageza kuri QA mbere ya Production
-1. Hitamo branch ya QA/Setup, si Production.
-2. Kora Google OAuth Web Client ya QA cyangwa wongere QA redirect URI nk'uko Neon Auth ibigaragaza.
-3. Shyira credentials muri Neon Auth ya QA gusa.
-4. Gerageza konti nshya n'iyari isanzweho; urebe ko session isubira neza, email y'umukoresha iboneka, kandi seller atabasha gukora shop atanyujije ku masezerano.
-5. Emeza ko callback ijyana ku rubuga rwa QA, atari Production.
+## 5. Aho Client ID na Client Secret bizashyirwa muri Neon Auth
 
-## 6. Igihe feature flag izafungurirwa
-Feature flag ikoreshwa na frontend ni:
+**Ntushyire credentials muri Production ubu.** Kuri ubu Production Google Client ID/Secret biracyari null; dukomeze tubigumane bityo kugeza QA login yatsinze. Uburyo bwo kubishyiramo ni ubu:
+
+1. Fungura https://console.neon.tech/ kuri telefoni.
+2. Hitamo project **isoko-marketplace**.
+3. Hitamo branch **QA** (`br-cold-forest-badn9wlr`), si Production.
+4. Mu ruhande rw'ibumoso fungura **Auth**.
+5. Hitamo **Social providers**.
+6. Hitamo **Google**.
+7. Muri **Client ID**, shyiramo Google Web Client ID ya QA.
+8. Muri **Client Secret**, shyiramo Client Secret ya QA.
+9. Fungura Google provider toggle niba Neon isaba kuyifungura, ukande **Save**.
+10. Ibi bikorwe gusa igihe QA frontend origin nyayo imaze kuboneka kandi yemejwe. Ntukoreshe Production callback cyangwa Production credentials mu kizamini cya QA.
+
+Iyo QA round trip imaze gutsinda kandi habonetse uruhushya rwo gushyira Google kuri Production, hitamo branch **isoko-production** (`br-blue-bread-ba2wywua`) muri iyo menu nyine, ushyiremo Production Client ID na Client Secret, hanyuma ubike. Icyo ni Production configuration change, bityo ntikorerwe mbere y'uko QA yemezwa.
+
+## 6. QA callback n'impamvu tutarayigerageza kuri Production site
+
+Neon Auth ikoresha URL itandukanye kuri buri branch. QA branch ya ISOKO ni `br-cold-forest-badn9wlr`. Base URL yayo ni:
+
+`https://ep-jolly-poetry-ba3o1jwc.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth`
+
+QA Google callback URI ni:
+
+`https://ep-jolly-poetry-ba3o1jwc.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth/callback/google`
+
+**Ntukoreshe Production website nk'aho ari QA:** frontend ya Production ihuzwa na Production Neon Auth. QA callback ntizakoreshwa neza keretse hari QA frontend URL yihariye, yashyizwe muri QA Neon Auth trusted origins kandi yubatswe ikoresheje QA Auth/Data API/Function endpoints. Iyi QA frontend origin ntiyemejwe ko iri live ubu, bityo Google login round trip ntirakorwa.
+
+Igihe QA frontend izaba yemejwe:
+1. Kora Web OAuth client ya QA cyangwa wongere QA callback URI kuri client usanzwe.
+2. Muri **Authorised JavaScript origins**, shyiramo QA frontend origin nyayo Neon/Render yemeje. Ntugahimbe URL.
+3. Muri Neon Console, hitamo QA branch `isoko-full-flow-qa-20261114` → **Auth → Social providers → Google**.
+4. Shyiramo QA Client ID na QA Client Secret muri ayo mafishi ya QA gusa, ukande **Save**.
+5. Gerageza Google sign-in kuri QA frontend. Emeza callback, email, session no kugaruka ku rubuga rwa QA.
+6. Gerageza konti nshya n'iyari isanzweho. Ntukoreshe cyangwa ngo uhindure konti ya Production muri iki kizamini.
+
+## 7. Igihe feature flag izafungurirwa
+
+Flag ya frontend ni:
+
 `VITE_ISOKO_GOOGLE_SIGNIN_ENABLED=true`
 
-Kuri ubu ntiri muri `render.production.yaml`, bityo Google buttons ziguma zihishe. Nyuma ya QA yatsinze, Production flag izashyirwaho gusa nyuma yo kwandika impinduka muri `docs/ops/PRODUCTION_STEPS.md` no kubona uburenganzira bw'umuyobozi w'umushinga.
+Kuri ubu Production flag iguma `false`. Izafungurwa gusa nyuma y'uko:
+- QA frontend origin nyayo yemejwe;
+- QA Neon Auth ifite credentials;
+- QA Google OAuth redirect/login/session round trip yatsinze;
+- CI yatsinze;
+- habonetse uburenganzira bwihariye bwo gukora Production config change.
 
-## Ibyo bitarashyirwaho
-- Google Client ID na Client Secret ntibiraboneka muri Neon Auth.
-- Google One Tap / account chooser ntiyashyizwemo. Ubu buryo bukoresha Better Auth social redirect button isanzwe; One Tap ntiyongerwaho tutabanje kwemeza ko Neon Auth 0.9.0-beta iyishyigikira.
-- Seller Google onboarding isaba izina ry'iduka, WhatsApp n'amasezerano gusa igomba kugeragezwa kuri QA mbere yo gufungura flag.
+Google One Tap/account chooser ntabwo iri muri implementation iriho; ubu ni redirect-button isanzwe ya Neon Auth social login.
+
+## 8. Igenzura rya nyuma
+
+- [ ] Google project na External consent screen byakozwe.
+- [ ] Production Web client ifite origin nyayo n'uriya Production redirect URI.
+- [ ] Production Client ID/Secret byashyizwe muri Neon Auth Social providers → Google.
+- [ ] QA frontend origin nyayo iraboneka kandi yemejwe.
+- [ ] QA callback URI yongewe kuri QA Google client.
+- [ ] QA Client ID/Secret byashyizwe muri QA Neon Auth.
+- [ ] QA Google sign-in yageragejwe kandi session yemejwe.
+- [ ] Feature flag iracyazimye kugeza release yemejwe.
+
+**Imiterere y'ubu (2026-11-16):** Production Client ID/Secret biracyari null; QA Google OAuth round trip ntiyageragejwe; QA frontend origin yihariye ntiramenyekana. Ntukoreshe Google button kuri Production ubu.

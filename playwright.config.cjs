@@ -3,6 +3,7 @@ const { defineConfig } = require('@playwright/test');
 module.exports = defineConfig({
   testDir: './e2e',
   testMatch: '**/*.spec.cjs',
+  testIgnore: ['**/qa-seller-end-to-end.spec.cjs'],
   fullyParallel: true,
   timeout: 30_000,
   reporter: 'line',

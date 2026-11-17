@@ -30,6 +30,7 @@ export const SIZE_SETS: Record<string, string[]> = {
   ],
   socks: ['36-40', '41-45', 'Ubunini bumwe', 'S', 'M', 'L', 'XL', 'XXL'],
   accessories: ['Ubunini bumwe', 'S', 'M', 'L'],
+  general: [],
   phone_models: [
     'iPhone 13', 'iPhone 14', 'iPhone 15', 'Samsung A14', 'Samsung A24',
     'Samsung S23', 'Tecno Spark', 'Infinix Hot', 'Universal / Byose',
@@ -46,7 +47,7 @@ export const INITIAL_CATEGORIES: Category[] = [
   { id: 1, parent_id: null, slug: 'inkweto', name_rw: 'Inkweto', name_en: 'Shoes', sort: 1, size_set: 'shoes_all', active: true, phase: 'P1' },
   { id: 2, parent_id: null, slug: 'imyenda', name_rw: 'Imyenda', name_en: 'Clothing', sort: 2, size_set: 'clothes_all', active: true, phase: 'P1' },
   { id: 3, parent_id: null, slug: 'amasogisi', name_rw: "Amasogisi n'imyenda y'imbere", name_en: 'Socks & Underwear', sort: 3, size_set: 'socks', active: true, phase: 'P1' },
-  { id: 4, parent_id: null, slug: 'ibindi', name_rw: 'Ibindi byo kwambara', name_en: 'Accessories', sort: 4, size_set: 'accessories', active: true, phase: 'P1' },
+  { id: 4, parent_id: null, slug: 'ibindi', name_rw: 'Ibindi byose', name_en: 'Everything else', sort: 4, size_set: 'general', active: true, phase: 'P1' },
   { id: 5, parent_id: null, slug: 'amatelefoni', name_rw: "Ibikoresho by'amatelefoni", name_en: 'Phone Accessories', sort: 5, size_set: 'phone_models', active: false, phase: 'P3' },
 
   // Subcategories for Inkweto (parent_id: 1)

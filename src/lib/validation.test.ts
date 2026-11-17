@@ -45,6 +45,33 @@ test('product form validation passes for valid product data', () => {
   assert.deepEqual(ok, {});
 });
 
+test('product validation accepts general-marketplace prices up to two billion RWF', () => {
+  const highValue = validateProductForm({
+    photosCount: 1,
+    categoryId: 4,
+    name: 'Inzu iri mu mujyi wa Kigali',
+    price: 1_850_000_000,
+    condition: 'used',
+    authentic: false,
+    variants: [{ size_label: 'Ntibireba', in_stock: true, qty: null }],
+    colors: [],
+    description: 'Inzu ifite ibyangombwa byayo.',
+  });
+  assert.deepEqual(highValue, {});
+
+  const tooHigh = validateProductForm({
+    photosCount: 1,
+    categoryId: 4,
+    name: 'Ikibanza kinini cya Kigali',
+    price: 2_000_000_001,
+    condition: 'used',
+    authentic: false,
+    variants: [{ size_label: 'Ntibireba', in_stock: true, qty: null }],
+    colors: [],
+  });
+  assert.ok(tooHigh.price);
+});
+
 test('shop profile and report validation catch bad phone formats and short descriptions', () => {
   const badShop = validateShopProfile({
     name: 'A',

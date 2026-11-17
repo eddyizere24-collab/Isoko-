@@ -1,0 +1,161 @@
+{
+  "viewport": {
+    "width": 360,
+    "height": 800,
+    "label": "360x800"
+  },
+  "routes": [
+    {
+      "route": "/",
+      "status": 200,
+      "documentLanguage": "rw",
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "mainBackground": "rgb(250, 250, 247)",
+      "bodyBackground": "rgb(250, 250, 247)"
+    },
+    {
+      "route": "/c/inkweto",
+      "status": 200,
+      "documentLanguage": "rw",
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "mainBackground": null,
+      "bodyBackground": "rgb(250, 250, 247)"
+    },
+    {
+      "route": "/c/ibindi",
+      "status": 200,
+      "documentLanguage": "rw",
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "mainBackground": null,
+      "bodyBackground": "rgb(250, 250, 247)"
+    },
+    {
+      "route": "/p/prod-b60bf47d986d49348438dcf1891df209",
+      "status": 200,
+      "documentLanguage": "rw",
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "mainBackground": null,
+      "bodyBackground": "rgb(250, 250, 247)"
+    },
+    {
+      "route": "/i/muhire-rwanda",
+      "status": 200,
+      "documentLanguage": "rw",
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "mainBackground": null,
+      "bodyBackground": "rgb(250, 250, 247)"
+    },
+    {
+      "route": "/abacuruzi",
+      "status": 200,
+      "documentLanguage": "rw",
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "mainBackground": "rgba(0, 0, 0, 0)",
+      "bodyBackground": "rgb(250, 250, 247)"
+    },
+    {
+      "route": "/injira",
+      "status": 200,
+      "documentLanguage": "rw",
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "mainBackground": "rgba(0, 0, 0, 0)",
+      "bodyBackground": "rgb(250, 250, 247)"
+    },
+    {
+      "route": "/konti",
+      "status": 200,
+      "documentLanguage": "rw",
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "mainBackground": "rgba(0, 0, 0, 0)",
+      "bodyBackground": "rgb(250, 250, 247)"
+    },
+    {
+      "route": "/amategeko",
+      "status": 200,
+      "documentLanguage": "rw",
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "mainBackground": "rgba(0, 0, 0, 0)",
+      "bodyBackground": "rgb(250, 250, 247)"
+    },
+    {
+      "route": "/ibanga",
+      "status": 200,
+      "documentLanguage": "rw",
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "mainBackground": "rgba(0, 0, 0, 0)",
+      "bodyBackground": "rgb(250, 250, 247)"
+    },
+    {
+      "route": "/ubufasha",
+      "status": 200,
+      "documentLanguage": "rw",
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "mainBackground": "rgba(0, 0, 0, 0)",
+      "bodyBackground": "rgb(250, 250, 247)"
+    },
+    {
+      "route": "/ibyerekeye",
+      "status": 200,
+      "documentLanguage": "rw",
+      "documentWidth": 360,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "mainBackground": "rgba(0, 0, 0, 0)",
+      "bodyBackground": "rgb(250, 250, 247)"
+    }
+  ],
+  "languages": [
+    {
+      "code": "rw",
+      "lang": "rw"
+    },
+    {
+      "code": "en",
+      "lang": "en"
+    },
+    {
+      "code": "fr",
+      "lang": "fr"
+    },
+    {
+      "code": "sw",
+      "lang": "sw"
+    },
+    {
+      "code": "rn",
+      "lang": "rn"
+    },
+    {
+      "code": "ln",
+      "lang": "ln"
+    },
+    {
+      "code": "lg",
+      "lang": "lg"
+    }
+  ],
+  "pageErrors": [],
+  "blockedMutations": []
+}

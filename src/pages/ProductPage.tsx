@@ -20,11 +20,12 @@ import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { calculateDiscountPercent, getLowStockCount, interleaveBySeller } from '../lib/algorithm';
 import { fetchProductDetail } from '../lib/api';
+import { isShopIdentityVerified } from '../lib/shopVerification';
 import { recordCategoryInterest } from '../lib/storage';
 import { trackEvent } from '../lib/track';
 import {
   buildSingleProductWhatsAppMessage,
-  buildWhatsAppLink,
+  buildSellerWhatsAppLink,
   formatRwfCurrency,
 } from '../lib/whatsapp';
 import type { Product } from '../types/marketplace';
@@ -249,7 +250,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
   const discountPct = calculateDiscountPercent(product.price, product.old_price);
   const lowStock = product.status === 'active' ? getLowStockCount(product.variants) : null;
   const shop = product.shop;
-  const isShopVerified = shop?.status === 'approved' || shop?.identity_status === 'verified';
+  const isShopVerified = isShopIdentityVerified(shop);
 
   const productUrl = `${window.location.origin}/p/${product.id}`;
   // WhatsApp messages stay in Kinyarwanda (rw) per Multi-Language Specification
@@ -262,7 +263,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
     productUrl,
     location,
   });
-  const waUrl = buildWhatsAppLink(shop?.whatsapp ?? '250788000000', waMsg);
+  const waUrl = buildSellerWhatsAppLink(shop?.whatsapp, waMsg);
 
   const performAddToCart = (goToCart = false) => {
     if (isSoldOut) return;
@@ -332,6 +333,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
   const sizeSet = product.category?.size_set ?? product.parent_category?.size_set ?? '';
   const isShoe = sizeSet.includes('shoe') || product.parent_category?.slug === 'inkweto';
   const isClothing = sizeSet.includes('cloth') || product.parent_category?.slug === 'imyenda';
+  const isGeneralListing = product.variants.length === 1 && product.variants[0]?.size_label === 'Ntibireba';
 
   return (
     <div className="mx-auto max-w-6xl px-2 py-3 pb-20 sm:px-6 lg:pb-12">
@@ -539,6 +541,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
           )}
 
           {/* 32px Visible Variant / Size Buttons (NO drop-down!) */}
+          {!isGeneralListing && (
           <div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-[12.5px] font-semibold text-[#202724]">
@@ -611,6 +614,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
               </div>
             )}
           </div>
+          )}
 
           {/* 32px Visible Color Chips */}
           {product.colors.length > 0 && (
@@ -643,6 +647,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
 
           {/* Desktop Primary Actions */}
           <div className="hidden lg:flex gap-2.5 pt-1">
+            {waUrl && (
             <a
               href={waUrl}
               target="_blank"
@@ -656,6 +661,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
               <MessageCircle className="h-4 w-4" aria-hidden="true" />
               <span>{t('chat_seller')} (WhatsApp)</span>
             </a>
+            )}
             <button
               type="button"
               disabled={isSoldOut}
@@ -849,6 +855,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
 
       {/* 52px Sticky Bottom Bar: [Vugana | Igare (icon) | Gura] (§8) */}
       <div className="fixed bottom-0 inset-x-0 z-40 h-[52px] border-t border-[#E3E0D8] bg-white px-2.5 flex items-center gap-2 lg:hidden">
+        {waUrl && (
         <a
           href={waUrl}
           target="_blank"
@@ -862,6 +869,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
           <MessageCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
           <span>{t('chat_seller')}</span>
         </a>
+        )}
 
         <button
           type="button"

@@ -2,10 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   buildCartWhatsAppMessages,
+  buildSellerWhatsAppLink,
   buildSingleProductWhatsAppMessage,
   formatRwf,
   formatRwfCurrency,
   isValidRwandaPhone,
+  isUsableSellerWhatsAppPhone,
   normalizeRwandaPhone,
 } from './whatsapp';
 import type { CartItem } from '../types/marketplace';
@@ -52,6 +54,22 @@ test('single product WhatsApp message includes location and Google Maps link whe
   assert.match(msg, /Aho ndi: Gasabo, Kimironko \(Hafi ya gare\)/);
   assert.match(msg, /https:\/\/maps\.google\.com\/\?q=-1\.944072,30\.105584/);
   assert.ok(msg.length <= 1500);
+});
+
+test('general listing WhatsApp message omits irrelevant size and color details', () => {
+  const msg = buildSingleProductWhatsAppMessage({
+    shopName: 'Iduka rya Aline',
+    productName: 'Inzu iri i Kicukiro',
+    size: 'Ntibireba',
+    color: '',
+    price: 12000000,
+    productUrl: 'https://isoko.rw/p/house-1',
+    location: null,
+  });
+
+  assert.match(msg, /Inzu iri i Kicukiro/);
+  assert.equal(msg.includes('Size:'), false);
+  assert.equal(msg.includes('Ibara:'), false);
 });
 
 test('single product WhatsApp message omits empty location lines when unset', () => {
@@ -102,4 +120,47 @@ test('cart WhatsApp splits orders > 10 items per seller and ignores sold_out ite
   assert.equal(batches[1].subtotal, 20000);
   assert.ok(batches[0].message.length <= 1500);
   assert.ok(batches[1].url.startsWith('https://wa.me/250788123456?text='));
+});
+
+
+test('general listing cart WhatsApp message omits the placeholder variant', () => {
+  const item: CartItem = {
+    productId: 'p-general', shopId: 'shop-1', shopName: 'Iduka', shopSlug: 'iduka',
+    shopWhatsapp: '250788123456', shopPhone: '250788123456', productName: 'Imodoka Toyota',
+    thumbUrl: '/img.webp', size: 'Ntibireba', color: '', priceSeen: 4500000,
+    currentPrice: 4500000, qty: 1, status: 'active', sizeInStock: true, addedAt: 1,
+  };
+  const batches = buildCartWhatsAppMessages({
+    shopName: 'Iduka', shopWhatsapp: '250788123456', items: [item],
+  });
+  assert.equal(batches.length, 1);
+  assert.match(batches[0].message, /Imodoka Toyota/);
+  assert.match(batches[0].message, /4 500 000 RWF/);
+  assert.equal(batches[0].message.includes('size Ntibireba'), false);
+});
+
+test('seller WhatsApp CTA rejects missing, invalid and placeholder phone numbers', () => {
+  assert.equal(isUsableSellerWhatsAppPhone(null), false);
+  assert.equal(isUsableSellerWhatsAppPhone(''), false);
+  assert.equal(isUsableSellerWhatsAppPhone('12345'), false);
+  assert.equal(isUsableSellerWhatsAppPhone('250788000000'), false);
+  assert.equal(isUsableSellerWhatsAppPhone('0788123456'), true);
+  assert.equal(buildSellerWhatsAppLink(undefined, 'Muraho'), null);
+  assert.equal(buildSellerWhatsAppLink('250788000000', 'Muraho'), null);
+  assert.match(
+    buildSellerWhatsAppLink('0788123456', 'Muraho') ?? '',
+    /^https:\/\/wa\.me\/250788123456\?text=/
+  );
+});
+
+test('cart does not construct a WhatsApp URL from the placeholder number', () => {
+  const item: CartItem = {
+    productId: 'p-1', shopId: 'shop-1', shopName: 'Iduka', shopSlug: 'iduka',
+    shopWhatsapp: '250788000000', shopPhone: '', productName: 'Inkweto',
+    thumbUrl: '/img.webp', size: '42', color: '', priceSeen: 20000,
+    qty: 1, status: 'active', sizeInStock: true, addedAt: 1,
+  };
+  assert.deepEqual(buildCartWhatsAppMessages({
+    shopName: 'Iduka', shopWhatsapp: '250788000000', items: [item],
+  }), []);
 });

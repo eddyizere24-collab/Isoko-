@@ -1,0 +1,53 @@
+name: ISOKO live public visual QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/live-public-visual-qa.yml'
+      - 'playwright.live.config.cjs'
+      - 'e2e/live-public-visual-qa.spec.cjs'
+
+permissions:
+  contents: read
+
+jobs:
+  live-public-visual:
+    name: Live public pages at 360x800 and 320x800
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Install Playwright
+        run: |
+          mkdir -p "$RUNNER_TEMP/isoko-live-playwright"
+          npm install --prefix "$RUNNER_TEMP/isoko-live-playwright" --no-save --no-package-lock --ignore-scripts --no-audit --no-fund @playwright/test@1.65.0
+
+      - name: Install Chromium
+        run: '"$RUNNER_TEMP/isoko-live-playwright/node_modules/.bin/playwright" install --with-deps chromium'
+
+      - name: Capture live pages and all seven languages
+        id: capture
+        continue-on-error: true
+        env:
+          NODE_PATH: ${{ runner.temp }}/isoko-live-playwright/node_modules
+        run: '"$RUNNER_TEMP/isoko-live-playwright/node_modules/.bin/playwright" test --config=playwright.live.config.cjs'
+
+      - name: Upload live screenshots and observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: isoko-live-public-qa-360x800-320x800
+          path: docs/design/qa/2026-11-16-live/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Preserve visual QA result
+        if: steps.capture.outcome == 'failure'
+        run: |
+          echo "Live visual QA captured any available evidence, but one or more checks need review." >> "$GITHUB_STEP_SUMMARY"
+          exit 1

@@ -6,6 +6,7 @@ import {
   getNeonJwt, getNeonUser, neon, neonFunctionUrl, normalizePhone,
   objectKeyFromPublicUrl, publicAssetUrl,
 } from './neon';
+import { isRetryableNeonAuthContextError } from './neonAuthContext';
 
 export async function claimFirstAdminAccount(payload:{
   fullName:string;phone:string;password:string;bootstrapCode:string;
@@ -121,6 +122,16 @@ function mapShop(row: any): Shop {
   } as Shop;
 }
 
+function mapCategory(row: any) {
+  if (!row || row.slug !== 'ibindi') return row;
+  return {
+    ...row,
+    name_rw: 'Ibindi byose',
+    name_en: 'Everything else',
+    size_set: 'general',
+  };
+}
+
 function mapProduct(row: any): Product {
   return {
     ...row,
@@ -133,6 +144,8 @@ function mapProduct(row: any): Product {
     })),
     variants: row.variants ?? row.product_variants ?? [],
     shop: row.shop ? mapShop(row.shop) : undefined,
+    category: row.category ? mapCategory(row.category) : undefined,
+    parent_category: row.parent_category ? mapCategory(row.parent_category) : undefined,
     popularity_7d: Number(row.popularity_7d ?? 0),
     views_7d: Number(row.views_7d ?? 0),
     wa_clicks_7d: Number(row.wa_clicks_7d ?? 0),
@@ -208,7 +221,7 @@ export async function fetchBootstrap(): Promise<BootstrapResponse> {
   const payload = row?.payload;
   if (!payload) throw new Error('Amakuru y’Isoko ntaraboneka.');
   return {
-    categories: payload.categories ?? [], areas: payload.areas ?? [],
+    categories: (payload.categories ?? []).map(mapCategory), areas: payload.areas ?? [],
     synonyms: payload.synonyms ?? [], campaigns: (payload.campaigns ?? []).map(mapCampaign),
     settings: payload.settings ?? {}, shops: (payload.shops ?? []).map(mapShop),
     products: (payload.products ?? []).map(mapProduct),
@@ -328,6 +341,27 @@ export async function resetAccountPassword(token:string,newPassword:string):Prom
   if(result?.error) fail(result.error,'Link yo guhindura password ntiyemewe. Saba indi nshya.');
 }
 
+async function startSellerRegistrationDraft(phone:string):Promise<void> {
+  const maxAttempts=3;
+  for(let attempt=0;attempt<maxAttempts;attempt+=1) {
+    const response=await neon.rpc('start_seller_registration_v1',{p_phone:phone});
+    if(!response?.error) {
+      dataOf<any>(response,'Ntibishobotse gutangiza iduka. Reba nimero ya WhatsApp wongere ugerageze.');
+      return;
+    }
+
+    // This RPC only upserts the user's short-lived draft by auth_user_id, so
+    // repeating this exact operation is idempotent. Never retry profile/shop
+    // creation, product writes, permission denials or unrelated SQL errors.
+    if(!isRetryableNeonAuthContextError(response.error) || attempt===maxAttempts-1) {
+      fail(response.error,'Ntibishobotse gutangiza iduka. Reba nimero ya WhatsApp wongere ugerageze.');
+    }
+
+    await getNeonJwt();
+    await new Promise((resolve)=>setTimeout(resolve,120*(attempt+1)));
+  }
+}
+
 export async function registerSellerAccount(payload:Record<string,any>):Promise<{token:string;expiresAt:number;profile:Profile;shop:Shop}> {
   const phone=normalizePhone(String(payload.phone??payload.whatsapp??''));
   const email=String(payload.email??'').trim().toLowerCase();
@@ -377,12 +411,9 @@ export async function registerSellerAccount(payload:Record<string,any>):Promise<
   }
 
 
-  // The short-lived registration draft protects first-time seller profile creation.
+  // The short-lived, idempotent draft protects first-time seller profile creation.
   // No national ID, TIN, selfie or identity-document images are requested here.
-  dataOf<any>(
-    await neon.rpc('start_seller_registration_v1',{p_phone:phone}),
-    'Ntibishobotse gutangiza iduka. Reba nimero ya WhatsApp wongere ugerageze.'
-  );
+  await startSellerRegistrationDraft(phone);
 
   const result=dataOf<any>(await neon.rpc('register_basic_seller_v1',{
     p_shop_name:shopName,
@@ -533,42 +564,64 @@ export async function updateSellerProfile(payload:Record<string,unknown>):Promis
 
 export async function updateSellerShop(payload:Record<string,unknown>):Promise<{shop:Shop}> {
   const current=await currentAccount();
-  const districtId=Number(payload.district_id);
-  const district=first<any>(dataOf<any>(
-    await neon.from('areas').select('id,district,province,sector,parent_id')
-      .eq('id',districtId).is('sector',null).maybeSingle(),
-    'Akarere wahisemo ntikabonetse.'
-  ));
-  if(!district) throw new Error('Hitamo akarere kari ku rutonde.');
-  const sectorId=payload.sector_id==null?null:Number(payload.sector_id);
-  let sector:any=null;
-  if(sectorId!==null) {
-    sector=first<any>(dataOf<any>(
-      await neon.from('areas').select('id,sector,parent_id')
-        .eq('id',sectorId).eq('parent_id',districtId).maybeSingle(),
-      'Umurenge ntubonetse.'
-    ));
-    if(!sector) throw new Error('Umurenge wahisemo nturi muri aka karere.');
+  const has=(key:string) => Object.prototype.hasOwnProperty.call(payload,key);
+  const updates:Record<string,unknown> = {};
+
+  // Update only fields actually supplied. This endpoint is also used during
+  // first-time onboarding to save a district; partial location updates must
+  // never blank the shop's WhatsApp number, phone, name, photos or profile.
+  if(has('name')) updates.name=String(payload.name??'').trim();
+  if(has('about')) updates.about=String(payload.about??'').slice(0,3000);
+  if(has('logoPath')) updates.logo_key=payload.logoPath ? storageKey(String(payload.logoPath)) : null;
+  if(has('coverPath')) updates.cover_key=payload.coverPath ? storageKey(String(payload.coverPath)) : null;
+  if(has('socialLinks')) {
+    const socialLinks=payload.socialLinks && typeof payload.socialLinks === 'object'
+      ? payload.socialLinks as Record<string,unknown>
+      : {};
+    updates.social_links=Object.fromEntries(Object.entries(socialLinks)
+      .map(([key,value])=>[key,String(value??'').trim()])
+      .filter(([,value])=>/^https:\/\//i.test(String(value))));
   }
+  if(has('whatsapp')) updates.whatsapp=normalizePhone(String(payload.whatsapp??''));
+  if(has('phone')) updates.phone=normalizePhone(String(payload.phone??''));
+  if(has('landmark')) updates.landmark=String(payload.landmark??'');
+  if(has('hours_text')) updates.hours_text=String(payload.hours_text??'');
+  if(has('delivery_text')) updates.delivery_text=String(payload.delivery_text??'');
+
+  if(has('district_id')) {
+    const districtId=Number(payload.district_id);
+    const district=first<any>(dataOf<any>(
+      await neon.from('areas').select('id,district,province,sector,parent_id')
+        .eq('id',districtId).is('sector',null).maybeSingle(),
+      'Akarere wahisemo ntikabonetse.'
+    ));
+    if(!district) throw new Error('Hitamo akarere kari ku rutonde.');
+
+    const sectorId=payload.sector_id==null?null:Number(payload.sector_id);
+    let sector:any=null;
+    if(sectorId!==null) {
+      sector=first<any>(dataOf<any>(
+        await neon.from('areas').select('id,sector,parent_id')
+          .eq('id',sectorId).eq('parent_id',districtId).maybeSingle(),
+        'Umurenge ntubonetse.'
+      ));
+      if(!sector) throw new Error('Umurenge wahisemo nturi muri aka karere.');
+    }
+    updates.district_id=districtId;
+    updates.sector_id=sectorId;
+    updates.district_name=district.district;
+    updates.sector_name=sector?.sector??null;
+  } else if(has('sector_id')) {
+    throw new Error('Hitamo akarere mbere yo guhitamo umurenge.');
+  }
+
+  if(Object.keys(updates).length===0) {
+    throw new Error('Nta makuru mashya yo kuvugurura iduka.');
+  }
+
   const row=first<any>(dataOf<any>(
-    await neon.from('shops').update({
-      name:String(payload.name??'').trim(),
-      about:String(payload.about??'').slice(0,3000),
-      logo_key:payload.logoPath ? storageKey(String(payload.logoPath)) : null,
-      cover_key:payload.coverPath ? storageKey(String(payload.coverPath)) : null,
-      social_links:Object.fromEntries(Object.entries((payload.socialLinks && typeof payload.socialLinks === 'object' ? payload.socialLinks : {}) as Record<string,unknown>)
-        .map(([key,value])=>[key,String(value??'').trim()])
-        .filter(([,value])=>/^https:\/\//i.test(value))),
-      whatsapp:normalizePhone(String(payload.whatsapp??'')),
-      phone:normalizePhone(String(payload.phone??'')),
-      district_id:districtId,
-      sector_id:sectorId,
-      district_name:district.district,
-      sector_name:sector?.sector??null,
-      landmark:String(payload.landmark??''),
-      hours_text:String(payload.hours_text??''),
-      delivery_text:String(payload.delivery_text??''),
-    }).eq('owner_id',current.profile.id).select('*').maybeSingle(),
+    await neon.from('shops').update(updates)
+      .eq('owner_id',current.profile.id).select('*').maybeSingle(),
     'Ntibishobotse kuvugurura amakuru y’iduka.'
   ));
   if(!row) throw new Error('Iduka ntiriboneka.');
