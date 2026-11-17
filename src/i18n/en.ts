@@ -6,7 +6,7 @@ export const en = {
   hero_title: 'Rwanda’s marketplace for everything — buy on WhatsApp',
   hero_subtitle: 'Vehicles, furniture, farming, clothing & more · Zero fees, chat directly with the seller.',
   hero_msg1_title: 'A marketplace for everything',
-  hero_msg1_body: 'Vehicles, furniture, farming tools, clothing and more — all in one place.',
+  hero_msg1_body: 'Vehicles, furniture, farming, clothing and more.',
   hero_msg2_title: 'Using Isoko is free',
   hero_msg2_body: 'No commission. Chat with the seller on WhatsApp right away.',
   hero_msg3_title: 'Don’t pay before you see the goods',

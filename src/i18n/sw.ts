@@ -6,7 +6,7 @@ export const sw = {
   hero_title: 'Soko la Rwanda la kila kitu — nunua kupitia WhatsApp',
   hero_subtitle: 'Magari, samani, kilimo, nguo na zaidi · Hakuna ada, zungumza moja kwa moja na muuzaji.',
   hero_msg1_title: 'Soko la kila kitu',
-  hero_msg1_body: 'Magari, samani, zana za kilimo, nguo na zaidi — vyote mahali pamoja.',
+  hero_msg1_body: 'Magari, samani, kilimo, nguo na zaidi.',
   hero_msg2_title: 'Kutumia Isoko ni bure',
   hero_msg2_body: 'Hakuna ada. Zungumza na muuzaji kwenye WhatsApp mara moja.',
   hero_msg3_title: 'Usilipe kabla ya kuona bidhaa',

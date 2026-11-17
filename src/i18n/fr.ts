@@ -6,7 +6,7 @@ export const fr = {
   hero_title: 'Le marché du Rwanda pour tout — achetez sur WhatsApp',
   hero_subtitle: 'Véhicules, meubles, agriculture, vêtements et plus · Zéro commission, échangez directement.',
   hero_msg1_title: 'Un marché pour tout',
-  hero_msg1_body: 'Véhicules, meubles, outils agricoles, vêtements et plus, au même endroit.',
+  hero_msg1_body: 'Véhicules, meubles, agriculture, vêtements et plus.',
   hero_msg2_title: 'Isoko est gratuit',
   hero_msg2_body: 'Aucune commission. Discutez avec le vendeur sur WhatsApp tout de suite.',
   hero_msg3_title: 'Ne payez pas avant d’avoir vu le produit',

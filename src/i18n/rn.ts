@@ -6,7 +6,7 @@ export const rn = {
   hero_title: 'Isoko ry’ibintu vyose mu Rwanda — gura kuri WhatsApp',
   hero_subtitle: 'Imodoka, ibikoresho vyo mu nzu, ubuhinzi, impuzu n’ibindi · Nta mafaranga akatwa, uvugana n’umudandaza.',
   hero_msg1_title: 'Isoko ry’ibintu vyose',
-  hero_msg1_body: 'Imodoka, ibikoresho vyo mu nzu, ibikoresho vy’ubuhinzi, impuzu n’ibindi — vyose ahantu hamwe.',
+  hero_msg1_body: 'Imodoka, ibikoresho vyo mu nzu, ubuhinzi, impuzu n’ibindi.',
   hero_msg2_title: 'Gukoresha Isoko ni ubuntu',
   hero_msg2_body: 'Nta mafaranga akatwa. Uvugana n’umudandaza kuri WhatsApp ako kanya.',
   hero_msg3_title: 'Ntugatange amahera utarabona igicuruzwa',

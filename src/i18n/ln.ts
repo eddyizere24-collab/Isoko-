@@ -6,7 +6,7 @@ export const ln = {
   hero_title: 'Zando ya biloko nyonso na Rwanda — somba na WhatsApp',
   hero_subtitle: 'Motuka, ba meuble, bilanga, bilamba mpe koleka · Frais ezali te, solola mbala moko na moteki.',
   hero_msg1_title: 'Zando ya biloko nyonso',
-  hero_msg1_body: 'Motuka, ba meuble, bisalelo ya bilanga, bilamba mpe koleka — nyonso esika moko.',
+  hero_msg1_body: 'Motuka, ba meuble, bilanga, bilamba mpe koleka.',
   hero_msg2_title: 'Kosalela Isoko ezali ofele',
   hero_msg2_body: 'Commission ezali te. Solola na moteki na WhatsApp mbala moko.',
   hero_msg3_title: 'Kofuta te liboso ya komona eloko',

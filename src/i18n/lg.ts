@@ -6,7 +6,7 @@ export const lg = {
   hero_title: "Akatale k’ebintu byonna mu Rwanda — gula ku WhatsApp",
   hero_subtitle: "Emmotoka, ebikozesebwa mu nnyumba, ebyobulimi, engoye n’ebirala · Tewali commission, yogera butereevu n’omusuubuzi.",
   hero_msg1_title: "Akatale k’ebintu byonna",
-  hero_msg1_body: "Emmotoka, ebikozesebwa mu nnyumba, ebyobulimi, engoye n’ebirala — byonna mu kifo kimu.",
+  hero_msg1_body: "Emmotoka, ebikozesebwa mu nnyumba, ebyobulimi, engoye n’ebirala.",
   hero_msg2_title: "Okukozesa Isoko kwa bwereere",
   hero_msg2_body: "Tewali commission. Yogera n’omusuubuzi ku WhatsApp mangu ddala.",
   hero_msg3_title: "Tosasula nga tonnalaba kintu",
