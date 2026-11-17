@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Briefcase,
   ChevronRight,
@@ -10,7 +10,7 @@ import {
   Store,
   Tag,
 } from 'lucide-react';
-import { IsokoMark, IsokoVerifiedSeal } from '../components/IsokoLogo';
+import { IsokoVerifiedSeal } from '../components/IsokoLogo';
 import { ProductCard } from '../components/ProductCard';
 import { PromoCarousel } from '../components/PromoCarousel';
 import { useT } from '../context/LangContext';
@@ -26,6 +26,48 @@ interface HomePageProps {
 
 const DENSE_GRID_CLS =
   'grid grid-cols-3 gap-2 min-[480px]:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 sm:gap-3';
+
+const RotatingMarketplaceMessage: React.FC = () => {
+  const { t } = useT();
+  const [index, setIndex] = useState(0);
+  const messages = [
+    t('marketplace_message_1'),
+    t('marketplace_message_2'),
+    t('marketplace_message_3'),
+  ];
+
+  useEffect(() => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setInterval(() => {
+      setIndex((current) => (current + 1) % 3);
+    }, 4200);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return (
+    <div
+      aria-label="Isoko"
+      className="flex min-h-[40px] min-w-0 flex-1 items-center gap-2 rounded-full border border-[#D7DED8] bg-white px-3 py-2 shadow-[0_1px_3px_rgba(26,31,28,0.04)]"
+    >
+      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#E9F2EC] text-[#0B6E4F]">
+        <Store className="h-3.5 w-3.5" aria-hidden="true" />
+      </span>
+      <p key={index} aria-live="off" className="min-w-0 flex-1 text-[11.5px] font-semibold leading-4 text-[#25483C]">
+        {messages[index]}
+      </p>
+      <span aria-hidden="true" className="flex shrink-0 items-center gap-1">
+        {messages.map((message, itemIndex) => (
+          <span
+            key={message}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              itemIndex === index ? 'w-3 bg-[#0B6E4F]' : 'w-1.5 bg-[#C9D5CD]'
+            }`}
+          />
+        ))}
+      </span>
+    </div>
+  );
+};
 
 function getCategoryIcon(slug: string) {
   if (slug.includes('inkweto') || slug.includes('sandali') || slug.includes('bote')) return Footprints;
@@ -103,38 +145,19 @@ export const HomePage: React.FC<HomePageProps> = () => {
 
   return (
     <main className="mx-auto max-w-7xl space-y-5 bg-[#FAFAF7] pb-8">
-      {/* Compact editorial hero. The mark is the colour-rich brand focal point;
-          the surrounding interface stays calm and deliberately restrained. */}
+      {/* Compact, rotating marketplace message replaces the oversized sales hero. */}
       <section className="px-2 pt-2 sm:px-6">
-        <div className="relative overflow-hidden rounded-xl border border-[#D7DED8] bg-white px-4 pb-4 pt-5 sm:px-6 sm:pb-5 sm:pt-6">
-          <div className="relative z-10 flex min-h-[96px] items-center justify-between gap-3 sm:min-h-[112px]">
-            <div className="min-w-0 flex-1 pr-1">
-              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#C0392B]">
-                ISOKO · RWANDA
-              </p>
-              <h1 className="mt-1 max-w-[280px] text-[22px] font-extrabold leading-[27px] text-[#1A1F1C] sm:max-w-[560px] sm:text-[26px] sm:leading-[32px]">
-                {t('hero_title')}
-              </h1>
-              <p className="mt-1 max-w-[420px] text-[13px] leading-[18px] text-[#4B544F]">
-                {t('hero_subtitle')}
-              </p>
-            </div>
-            <div className="flex shrink-0 items-center justify-center">
-              <IsokoMark className="h-12 w-12 sm:h-14 sm:w-14" />
-            </div>
-          </div>
-          <div aria-hidden="true" className="imigongo-band absolute inset-x-0 top-0 z-20" />
-        </div>
-        <div className="mt-2 flex items-center justify-end px-1">
+        <div className="flex items-center gap-2">
+          <RotatingMarketplaceMessage />
           <a
             href="/abacuruzi"
             onClick={(event) => {
               event.preventDefault();
               navigate('/abacuruzi');
             }}
-            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-[#0B6E4F] px-5 text-[13px] font-bold text-white transition-colors hover:bg-[#075A43]"
+            className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1.5 rounded-full border border-[#0B6E4F]/25 bg-[#E9F2EC] px-3 text-[11px] font-bold text-[#0B6E4F] transition-colors hover:bg-[#DCEBE1]"
           >
-            <Store className="h-4 w-4" aria-hidden="true" />
+            <Store className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{t('register_seller')}</span>
           </a>
         </div>
