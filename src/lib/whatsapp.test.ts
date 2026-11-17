@@ -56,6 +56,22 @@ test('single product WhatsApp message includes location and Google Maps link whe
   assert.ok(msg.length <= 1500);
 });
 
+test('general listing WhatsApp message omits irrelevant size and color details', () => {
+  const msg = buildSingleProductWhatsAppMessage({
+    shopName: 'Iduka rya Aline',
+    productName: 'Inzu iri i Kicukiro',
+    size: 'Ntibireba',
+    color: '',
+    price: 12000000,
+    productUrl: 'https://isoko.rw/p/house-1',
+    location: null,
+  });
+
+  assert.match(msg, /Inzu iri i Kicukiro/);
+  assert.equal(msg.includes('Size:'), false);
+  assert.equal(msg.includes('Ibara:'), false);
+});
+
 test('single product WhatsApp message omits empty location lines when unset', () => {
   const msg = buildSingleProductWhatsAppMessage({
     shopName: 'Iduka rya Aline',
@@ -106,6 +122,22 @@ test('cart WhatsApp splits orders > 10 items per seller and ignores sold_out ite
   assert.ok(batches[1].url.startsWith('https://wa.me/250788123456?text='));
 });
 
+
+test('general listing cart WhatsApp message omits the placeholder variant', () => {
+  const item: CartItem = {
+    productId: 'p-general', shopId: 'shop-1', shopName: 'Iduka', shopSlug: 'iduka',
+    shopWhatsapp: '250788123456', shopPhone: '250788123456', productName: 'Imodoka Toyota',
+    thumbUrl: '/img.webp', size: 'Ntibireba', color: '', priceSeen: 4500000,
+    currentPrice: 4500000, qty: 1, status: 'active', sizeInStock: true, addedAt: 1,
+  };
+  const batches = buildCartWhatsAppMessages({
+    shopName: 'Iduka', shopWhatsapp: '250788123456', items: [item],
+  });
+  assert.equal(batches.length, 1);
+  assert.match(batches[0].message, /Imodoka Toyota/);
+  assert.match(batches[0].message, /4 500 000 RWF/);
+  assert.equal(batches[0].message.includes('size Ntibireba'), false);
+});
 
 test('seller WhatsApp CTA rejects missing, invalid and placeholder phone numbers', () => {
   assert.equal(isUsableSellerWhatsAppPhone(null), false);
