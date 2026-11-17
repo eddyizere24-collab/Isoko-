@@ -4,8 +4,9 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 
 const RUN_ID = process.env.GITHUB_RUN_ID || `local-${Date.now()}`;
-const EMAIL = `isoko-qa-e2e-${RUN_ID}@example.com`;
-const RUN_PHONE_SUFFIX = String(RUN_ID.replace(/\D/g, '').slice(-6) || Date.now()).slice(-6).padStart(6, '0');
+const RUN_ATTEMPT = process.env.GITHUB_RUN_ATTEMPT || '1';
+const EMAIL = `isoko-qa-e2e-${RUN_ID}-${RUN_ATTEMPT}@example.com`;
+const RUN_PHONE_SUFFIX = String(`${RUN_ID}${RUN_ATTEMPT}`.replace(/\D/g, '').slice(-6) || Date.now()).slice(-6).padStart(6, '0');
 const PHONE = `0788${RUN_PHONE_SUFFIX}`;
 const PASSWORD = `Qa!${crypto.randomBytes(24).toString('base64url')}`;
 const RESULTS_DIR = path.join(process.cwd(), 'test-results', 'qa-seller-e2e');
