@@ -540,8 +540,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
             </div>
           )}
 
-          {!isGeneralListing && (
           {/* 32px Visible Variant / Size Buttons (NO drop-down!) */}
+          {!isGeneralListing && (
           <div>
             <div className="flex items-center justify-between gap-2">
               <span className="text-[12.5px] font-semibold text-[#202724]">
