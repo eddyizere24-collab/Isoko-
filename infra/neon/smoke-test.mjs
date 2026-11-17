@@ -52,8 +52,12 @@ for (const shop of publicShops ?? []) {
     throw new Error(`Unexpected public identity status: ${shop.identity_status}`);
   }
 }
-if (payload.categories?.length !== 34) {
-  throw new Error(`Expected 34 visible categories, got ${payload.categories?.length ?? 0}`);
+// 34 fashion categories everywhere; Production also carries the 20 general-marketplace
+// categories from migration 026 (vehicles, home & furniture, farming, electronics, building, other).
+const expectedCategories = process.env.ISOKO_EXPECTED_NEON_BRANCH === "isoko-production" ? 54 : null;
+const categoryCount = payload.categories?.length ?? 0;
+if (expectedCategories ? categoryCount !== expectedCategories : categoryCount < 34) {
+  throw new Error(`Expected ${expectedCategories ?? "at least 34"} visible categories, got ${categoryCount}`);
 }
 if (payload.areas?.length !== 65) {
   throw new Error(`Expected 65 areas, got ${payload.areas?.length ?? 0}`);
