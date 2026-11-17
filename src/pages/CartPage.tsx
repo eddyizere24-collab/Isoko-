@@ -214,10 +214,13 @@ export const CartPage: React.FC = () => {
                         >
                           {item.productName}
                         </a>
-                        <p className="mt-0.5 text-xs text-slate-600">
-                          Size: {item.size}
-                          {item.color ? ` · Ibara: ${item.color}` : ''}
-                        </p>
+                        {(item.size !== 'Ntibireba' || item.color) && (
+                          <p className="mt-0.5 text-xs text-slate-600">
+                            {item.size !== 'Ntibireba' ? `Size: ${item.size}` : ''}
+                            {item.size !== 'Ntibireba' && item.color ? ' · ' : ''}
+                            {item.color ? `Ibara: ${item.color}` : ''}
+                          </p>
+                        )}
 
                         {unavailable ? (
                           <p className="mt-1 inline-flex items-center gap-1 text-xs font-bold text-[#C0392B]">
