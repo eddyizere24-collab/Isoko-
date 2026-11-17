@@ -90,10 +90,10 @@ async function createGeneralListing(page, imageFile) {
   await page.getByRole('button', { name: 'Bika kandi utangaze', exact: true }).click();
 
   await expect(page.getByRole('heading', { name: 'Igicuruzwa cyashyizwe ahagaragara!' })).toBeVisible({ timeout: 120_000 });
-  await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
+  await expect(page.getByText(name, { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Reba uko abaguzi bakibona', exact: true }).click();
   await expect(page).toHaveURL(new RegExp('/p/'));
-  await expect(page.getByText(name, { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
   await expect(page.getByText('Ntibireba', { exact: true })).toHaveCount(0);
 
   const whatsappLink = page.locator('a[href*="wa.me"]').first();
