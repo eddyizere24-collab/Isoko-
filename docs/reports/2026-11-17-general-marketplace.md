@@ -51,19 +51,36 @@ Tested on a fresh Neon branch cloned from the current Production branch:
 - QA clone retained the same 1 profile, 1 shop and 1 product as Production.
 - The clone's category ID 4 remains `ibindi`, active, and its existing product is untouched.
 
+## Authentication hardening migration 027
+
+File: `infra/neon/migrations/027_jwt_context_safe_rpc_entry.sql`
+
+- The seller E2E trace showed a verified Neon Auth JWT reaching the Data API, but the first call into a SECURITY DEFINER function with a pinned `search_path` could lose the lazy-loaded JWT claims before `auth.user_id()` was evaluated.
+- This matches the first-use JWT claim context issue documented in [neondatabase/neon#12988](https://github.com/neondatabase/neon/issues/12988). The issue remains external to Isoko; the application must still fail closed when no authenticated identity is available.
+- Migration 027 wraps the 12 current SECURITY DEFINER RPC entry points that use a pinned `search_path`. Each wrapper validates `auth.user_id()` first, raises `AUTH_REQUIRED` when absent, then calls the original protected implementation.
+- The original implementations retain their SECURITY DEFINER status, pinned search paths, validation and ownership checks. Direct API execution of the renamed internal implementations is revoked. Wrapper grants match the original function grants.
+- Applied and inspected on QA branch `br-cold-forest-badn9wlr` only. The wrapper owner is `isoko_owner`; the original protected functions retain their original search path and are no longer directly executable by API roles. Production has not received migration 027.
+
+## Seller profile partial-update correction
+
+- `updateSellerShop` now updates only the fields supplied by the caller.
+- This prevents onboarding's district-only update from overwriting the newly registered shop's phone, WhatsApp number, name, images and other profile fields with empty values.
+- QA database inspection confirmed a new seller retains valid phone and WhatsApp values after saving the district. The public product page can therefore show the configured WhatsApp contact without weakening phone validation.
+
 ## Current PR verification
 
-- PR #64 head: `c95498f33e8318d1b94b7f2c829bb1df1948cf94` (branch `final-release`); mergeable with `main`, not merged.
-- TypeScript, unit tests, seven-language parity, Neon Setup smoke, Production read-only smoke, seller-upload CORS smoke and production build passed at the recorded PR check.
+- PR #64 targets `main`; branch: `final-release`. Current head SHA is verified from GitHub at release time.
+- TypeScript, unit tests, seven-language parity, Neon Setup smoke, Production read-only smoke, seller-upload CORS smoke and production build passed on the preceding checked commit.
 - Live public visual QA passed at 320px and 360px.
-- Seller signup E2E currently stops at `start_seller_registration_v1` with SQLSTATE `28000 / AUTH_REQUIRED`. Its Playwright trace shows an authenticated Neon Auth JWT in the Data API request, but PostgreSQL returns no `auth.user_id()` inside the protected RPC. This is not a reason to bypass authentication.
-- The symptom resembles the open Neon Data API JWT-claims issue [neondatabase/neon#12985](https://github.com/neondatabase/neon/issues/12985), but this relationship is not confirmed as the root cause.
-- No auth policy, Production function, Production database, Render environment or seller account was changed to hide this test failure.
+- The full seller E2E has successfully reached registration, shop setup, photo upload, general-category selection, product publication, product detail display and WhatsApp link generation on QA. Remaining Playwright assertions are being aligned with duplicate breadcrumb/title headings and duplicate category buttons; no authentication bypass has been introduced.
+- General-marketplace database migrations 026 and 027 have only been applied to QA. Production's profiles, shop and product remain untouched.
 
-## Release gate
 
-- Run the full GitHub CI suite on the exact PR head SHA.
-- Review mobile layout and seller flow at 320px and 360px widths.
-- Obtain explicit owner approval for applying migration 026 to Production.
-- Do not merge/deploy until the migration plan and release checks have been reviewed. Render deploys from `main`, not `final-release`.
-- Do not alter the existing Production seller account, shop, product, images, or any prior work.
+## Production release procedure
+
+1. Verify all required GitHub checks are green on the exact PR head.
+2. Take a fresh Neon branch snapshot from the current Production branch.
+3. Apply migrations 026 and 027 to Production in one controlled release window; verify the migration markers, price constraint, authenticated RPC permissions and seller/shop/product counts immediately afterwards.
+4. Merge PR #64 into `main` with the exact verified head SHA. Render auto-deploys the `main` branch.
+5. Verify the new Render deployment is live, then inspect the public homepage, general category, product detail and seller contact on the real domain.
+6. Do not modify the existing Production seller account, shop, product or images except through the approved forward migrations.
