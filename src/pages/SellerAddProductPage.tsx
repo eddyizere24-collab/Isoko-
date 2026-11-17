@@ -698,7 +698,7 @@ export const SellerAddProductPage: React.FC = () => {
               <div className="rounded-xl border border-[#CFE0D4] bg-[#F1F7F2] p-4">
                 <h2 className="text-sm font-bold text-[#1A1F1C]">Ibicuruzwa rusange</h2>
                 <p className="mt-1 text-xs leading-relaxed text-[#4B544F]">
-                  {t('general_listing_help')}
+                  {RW.general_listing_help}
                 </p>
               </div>
             ) : (
