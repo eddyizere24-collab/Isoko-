@@ -4,7 +4,7 @@ import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { calculateDiscountPercent } from '../lib/algorithm';
 import { isShopIdentityVerified } from '../lib/shopVerification';
-import { formatRwfCurrency } from '../lib/whatsapp';
+import { formatRwf } from '../lib/whatsapp';
 import type { Product } from '../types/marketplace';
 import { IsokoVerifiedSeal } from './IsokoLogo';
 
@@ -81,8 +81,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         <div className="flex flex-1 flex-col p-[6px]">
-          <span className="text-[18px] font-extrabold leading-[22px] text-[#0B6E4F] tabular-nums truncate sm:text-[20px] sm:leading-[24px] lg:text-[24px] lg:leading-[28px]">
-            {formatRwfCurrency(product.price)}
+          <span className="flex items-baseline gap-1 whitespace-nowrap text-[#0B6E4F] tabular-nums">
+            <span className="text-[16px] max-[374px]:text-[14px] font-extrabold leading-[22px] sm:text-[20px] sm:leading-[24px] lg:text-[24px] lg:leading-[28px]">
+              {formatRwf(product.price)}
+            </span>
+            <span className="text-[10px] font-bold leading-[22px] sm:text-[12px]">RWF</span>
           </span>
 
           <h3 className="mt-1 text-[13px] font-semibold leading-[17px] text-[#1A1F1C] line-clamp-2 min-h-[34px] sm:text-[15px] sm:leading-[20px] sm:min-h-[40px]">
