@@ -51,15 +51,13 @@ Tested on a fresh Neon branch cloned from the current Production branch:
 - QA clone retained the same 1 profile, 1 shop and 1 product as Production.
 - The clone's category ID 4 remains `ibindi`, active, and its existing product is untouched.
 
-## Authentication hardening migration 027
+## Neon Data API authentication context — release blocker
 
-File: `infra/neon/migrations/027_jwt_context_safe_rpc_entry.sql`
-
-- The seller E2E trace showed a verified Neon Auth JWT reaching the Data API, but the first call into a SECURITY DEFINER function with a pinned `search_path` could lose the lazy-loaded JWT claims before `auth.user_id()` was evaluated.
-- This matches the first-use JWT claim context issue documented in [neondatabase/neon#12988](https://github.com/neondatabase/neon/issues/12988). The issue remains external to Isoko; the application must still fail closed when no authenticated identity is available.
-- Migration 027 wraps the 12 current SECURITY DEFINER RPC entry points that use a pinned `search_path`. Each wrapper validates `auth.user_id()` first, raises `AUTH_REQUIRED` when absent, then calls the original protected implementation.
-- The original implementations retain their SECURITY DEFINER status, pinned search paths, validation and ownership checks. Direct API execution of the renamed internal implementations is revoked. Wrapper grants match the original function grants.
-- Applied and inspected on QA branch `br-cold-forest-badn9wlr` only. The wrapper owner is `isoko_owner`; the original protected functions retain their original search path and are no longer directly executable by API roles. Production has not received migration 027.
+- The seller E2E trace confirms the browser sends a JWT with `role=authenticated` and the signed-in user's `sub`; the Data API still returns SQLSTATE `28000 / AUTH_REQUIRED` inside `start_seller_registration_v1`.
+- This matches two open Neon reports: [neondatabase/neon#12985](https://github.com/neondatabase/neon/issues/12985) and [neondatabase/neon#12988](https://github.com/neondatabase/neon/issues/12988), which describe missing JWT claims inside `SECURITY DEFINER` execution. The Neon reports do not establish a confirmed root cause or a generally safe workaround.
+- A proposed wrapper migration 027 was applied to QA and did **not** resolve the error. It has been removed from `final-release` and must not be applied to Production.
+- The app now retries only the idempotent `start_seller_registration_v1` draft upsert, and only for the exact `AUTH_REQUIRED` / SQLSTATE `28000` error, at most twice after refreshing the verified session JWT. It does not retry profile/shop creation, product writes, general permission errors or other SQL failures. This mitigation is still awaiting a successful QA E2E confirmation.
+- Authentication continues to fail closed: no claim is invented, no role is elevated, and no RLS or authorization guard is bypassed.
 
 ## Seller profile partial-update correction
 
@@ -72,15 +70,16 @@ File: `infra/neon/migrations/027_jwt_context_safe_rpc_entry.sql`
 - PR #64 targets `main`; branch: `final-release`. Current head SHA is verified from GitHub at release time.
 - TypeScript, unit tests, seven-language parity, Neon Setup smoke, Production read-only smoke, seller-upload CORS smoke and production build passed on the preceding checked commit.
 - Live public visual QA passed at 320px and 360px.
-- The full seller E2E has successfully reached registration, shop setup, photo upload, general-category selection, product publication, product detail display and WhatsApp link generation on QA. Remaining Playwright assertions are being aligned with duplicate breadcrumb/title headings and duplicate category buttons; no authentication bypass has been introduced.
-- General-marketplace database migrations 026 and 027 have only been applied to QA. Production's profiles, shop and product remain untouched.
+- The full seller E2E has previously reached general-category selection, product publication and product detail on QA, but the latest full-flow run still failed during seller registration with `AUTH_REQUIRED` from Neon Data API. The exact cause is still being investigated against Neon issues #12985 and #12988.
+- Migration 026 has been applied only to QA. Experimental migration 027 was removed from the release and must not be applied.
+- Production's profiles, shop and product remain untouched. No Production migration or Render deploy has been performed.
 
 
 ## Production release procedure
 
-1. Verify all required GitHub checks are green on the exact PR head.
-2. Take a fresh Neon branch snapshot from the current Production branch.
-3. Apply migrations 026 and 027 to Production in one controlled release window; verify the migration markers, price constraint, authenticated RPC permissions and seller/shop/product counts immediately afterwards.
+1. Obtain a passing seller E2E on the exact PR head, or a confirmed Neon-supported resolution for the authenticated RPC context issue.
+2. Create and verify a fresh Production branch snapshot. The Neon project currently reports its branch limit reached; do not delete any existing QA or backup branch just to free a slot.
+3. Apply migration 026 only to Production, after the fresh snapshot is available. Verify the migration marker, price constraint, both seller-product RPCs and unchanged seller/shop/product counts.
 4. Merge PR #64 into `main` with the exact verified head SHA. Render auto-deploys the `main` branch.
 5. Verify the new Render deployment is live, then inspect the public homepage, general category, product detail and seller contact on the real domain.
-6. Do not modify the existing Production seller account, shop, product or images except through the approved forward migrations.
+6. Do not apply experimental migration 027. Do not modify the existing Production seller account, shop, product or images except through the approved migration 026.
