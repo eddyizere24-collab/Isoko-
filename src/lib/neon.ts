@@ -59,13 +59,34 @@ export function normalizePhone(phone: string): string {
 
 export async function getNeonJwt(): Promise<string> {
   try {
-    // Managed Neon Auth keeps the Data API JWT on session.access_token.
-    // auth.token() is not part of the documented SDK session flow.
-    const sessionResult = await neon.auth.getSession() as any;
+    // A fresh sign-up response may be cached before Neon has injected its
+    // JWKS-verifiable Data API JWT. Force a real /get-session request so the
+    // Neon JWT plugin can return the set-auth-jwt header and refresh session.token.
+    // The SDK consumes this same refreshed session when it sends the next RPC.
+    const sessionResult = await neon.auth.getSession({
+      fetchOptions: {
+        headers: { 'X-Force-Fetch': '1' },
+      },
+    }) as any;
     const credentials = resolveAuthenticatedCredentials(sessionResult);
-    if (credentials) return credentials.token;
+    if (!credentials) throw new Error('SESSION_TOKEN_MISSING');
+
+    const parts = credentials.token.split('.');
+    if (parts.length !== 3) throw new Error('SESSION_JWT_MISSING');
+    const payloadPart = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const paddedPayload = payloadPart.padEnd(Math.ceil(payloadPart.length / 4) * 4, '=');
+    const claims = JSON.parse(atob(paddedPayload));
+    if (
+      claims?.role !== 'authenticated' ||
+      typeof claims?.sub !== 'string' ||
+      claims.sub !== credentials.userId
+    ) {
+      throw new Error('AUTHENTICATED_JWT_CLAIMS_MISMATCH');
+    }
+    return credentials.token;
   } catch {
-    // Treat an unavailable or expired session as signed out for protected writes.
+    // Do not treat a cached opaque session token or anonymous JWT as proof
+    // of authentication for protected seller/admin operations.
   }
   throw new Error('Igihe winjiraga cyarangiye cyangwa ntiwemejwe. Ongera winjire muri konti yawe.');
 }
