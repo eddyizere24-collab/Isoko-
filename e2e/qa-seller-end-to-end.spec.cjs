@@ -73,7 +73,7 @@ async function createPublishedProduct(page, imageFiles, index) {
 async function createGeneralListing(page, imageFile) {
   await page.goto('/umucuruzi/ongeraho');
   await page.locator('input[type="file"]').nth(1).setInputFiles([imageFile]);
-  await expect(page.getByText(/Amafoto washyizeho \\(1\\/5\\)/)).toBeVisible({ timeout: 120_000 });
+  await expect(page.getByText('Amafoto washyizeho (1/5)')).toBeVisible({ timeout: 120_000 });
 
   await page.getByRole('button', { name: 'Komeza', exact: true }).click();
   await page.locator('main').getByRole('button', { name: 'Ibindi byose', exact: true }).click();
@@ -90,14 +90,14 @@ async function createGeneralListing(page, imageFile) {
   await expect(page.getByRole('heading', { name: 'Igicuruzwa cyashyizwe ahagaragara!' })).toBeVisible({ timeout: 120_000 });
   await expect(page.getByText(name, { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Reba uko abaguzi bakibona', exact: true }).click();
-  await expect(page).toHaveURL(/\\/p\\//);
+  await expect(page).toHaveURL(new RegExp('/p/'));
   await expect(page.getByText(name, { exact: true })).toBeVisible();
   await expect(page.getByText('Ntibireba', { exact: true })).toHaveCount(0);
 
   const whatsappLink = page.locator('a[href*="wa.me"]').first();
   await expect(whatsappLink).toHaveCount(1);
   const href = await whatsappLink.getAttribute('href');
-  expect(decodeURIComponent(href || '')).not.toMatch(/size\\s*:/i);
+  expect(decodeURIComponent(href || '')).not.toContain('Size:');
   return name;
 }
 
