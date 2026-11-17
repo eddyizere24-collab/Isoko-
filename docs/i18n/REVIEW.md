@@ -11,3 +11,8 @@
 | `lg` | Luganda | Luganda | `reviewed: false` | AI-assisted draft; native-speaker review required |
 
 The product UI does not show beta or unreviewed badges. The internal review flag must remain accurate until a native-speaker review is recorded.
+
+
+## Per-string checklist
+
+The full 155-key checklist for each pending language is maintained in [NATIVE_REVIEW_CHECKLIST.md](./NATIVE_REVIEW_CHECKLIST.md). No pending language is marked reviewed until its complete checklist is signed off by a native speaker.
