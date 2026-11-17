@@ -94,3 +94,47 @@ jobs:
           path: ${{ runner.temp }}/isoko-neon-function.zip
           if-no-files-found: error
           retention-days: 7
+
+  brand-preview:
+    name: Redesign visual screenshots (read-only Production data)
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'design/brand-clarity-20261116' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR merge ref
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build redesigned frontend using public Production read endpoints
+        run: bun run build
+        env:
+          VITE_ISOKO_PREVIEW: "false"
+          VITE_NEON_AUTH_URL: https://ep-damp-poetry-ba0bdwcn.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth
+          VITE_NEON_DATA_API_URL: https://ep-damp-poetry-ba0bdwcn.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
+          VITE_NEON_FUNCTION_URL: https://br-blue-bread-ba2wywua-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
+          VITE_NEON_PUBLIC_STORAGE_URL: https://br-blue-bread-ba2wywua.storage.c-8.eu-central-1.aws.neon.tech/isoko-public-assets/
+
+      - name: Install Playwright
+        run: |
+          mkdir -p "$RUNNER_TEMP/isoko-brand-playwright"
+          npm install --prefix "$RUNNER_TEMP/isoko-brand-playwright" --no-save --no-package-lock --ignore-scripts --no-audit --no-fund @playwright/test@1.65.0
+
+      - name: Install Chromium
+        run: '"$RUNNER_TEMP/isoko-brand-playwright/node_modules/.bin/playwright" install --with-deps chromium'
+
+      - name: Capture redesigned screenshots at 360x800 and 320x800
+        env:
+          NODE_PATH: ${{ runner.temp }}/isoko-brand-playwright/node_modules
+        run: '"$RUNNER_TEMP/isoko-brand-playwright/node_modules/.bin/playwright" test --config=playwright.brand-preview.config.cjs'
+
+      - name: Upload after-screenshot gallery
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: isoko-brand-preview-after-360x800-320x800
+          path: docs/design/qa/2026-11-16-after/
+          if-no-files-found: error
+          retention-days: 30

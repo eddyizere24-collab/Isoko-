@@ -9,21 +9,21 @@
 }
 
 :root {
-  --isoko-green: #214E43;
-  --isoko-green-dark: #183B33;
-  --isoko-green-hover: #28584B;
-  --isoko-green-soft: #E9F0EB;
-  --isoko-red: #BD594A;
-  --isoko-red-dark: #8F493F;
-  --isoko-red-soft: #FAF0ED;
-  --isoko-wa: #1A7F43;
-  --isoko-wa-hover: #146635;
-  --isoko-ink: #202724;
-  --isoko-muted: #68716D;
-  --isoko-bg: #F7F5F0;
+  --isoko-green: #0B6E4F;
+  --isoko-green-dark: #075A43;
+  --isoko-green-hover: #075A43;
+  --isoko-green-soft: #FFFFFF;
+  --isoko-red: #C0392B;
+  --isoko-red-dark: #A93226;
+  --isoko-red-soft: #FFFFFF;
+  --isoko-wa: #0B6E4F;
+  --isoko-wa-hover: #075A43;
+  --isoko-ink: #1A1F1C;
+  --isoko-muted: #4B544F;
+  --isoko-bg: #FAFAF7;
   --isoko-surface: #FFFFFF;
-  --isoko-border: #E3E0D8;
-  --isoko-border-strong: #C9CEC7;
+  --isoko-border: #D7DED8;
+  --isoko-border-strong: #BCC8BF;
   --font-sans: 'IsokoSans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -69,33 +69,24 @@
   text-wrap: balance;
 }
 
-/* Restrained Imigongo line signature: nested diamonds and a continuous angular path.
-   It is a crafted brand rule, not a full-page wallpaper or a coloured panel. */
+/* One 12×12px square Imigongo tile, repeated without distortion. The 12px band
+   uses green/red/ochre geometry with a minimum 1.5px stroke at a 1:1 ratio. */
 .imigongo-band,
-.imigongo-header-strip {
-  height: 7px;
-  width: 100%;
-  background-color: #F7F5F0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='12' viewBox='0 0 72 12'%3E%3Crect width='72' height='12' fill='%23F7F5F0'/%3E%3Cpath d='M6 1 11 6 6 11 1 6Z' fill='none' stroke='%23214E43' stroke-width='1'/%3E%3Cpath d='M6 3.5 8.5 6 6 8.5 3.5 6Z' fill='none' stroke='%23BD594A' stroke-width='.8'/%3E%3Cpath d='M17 1H27V11H20V4H24V8H22' fill='none' stroke='%23214E43' stroke-width='.85' stroke-linejoin='miter'/%3E%3Cpath d='M34 6 39 1 44 6 39 11Z' fill='none' stroke='%23C99A4B' stroke-width='.9'/%3E%3Cpath d='M50 1H60V11H53V4H57V8H55' fill='none' stroke='%23BD594A' stroke-width='.85'/%3E%3Cpath d='M66 1 71 6 66 11 61 6Z' fill='none' stroke='%23214E43' stroke-width='.9'/%3E%3C/svg%3E");
-  background-repeat: repeat-x;
-  background-size: 72px 7px;
-}
-
+.imigongo-header-strip,
 .imigongo-footer-strip {
-  height: 11px;
+  display: block;
   width: 100%;
-  background-color: #F7F5F0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='12' viewBox='0 0 72 12'%3E%3Crect width='72' height='12' fill='%23F7F5F0'/%3E%3Cpath d='M6 1 11 6 6 11 1 6Z' fill='none' stroke='%23214E43' stroke-width='1.1'/%3E%3Cpath d='M6 3 9 6 6 9 3 6Z' fill='none' stroke='%23BD594A' stroke-width='.85'/%3E%3Cpath d='M17 1H27V11H20V4H24V8H22' fill='none' stroke='%23214E43' stroke-width='.95' stroke-linejoin='miter'/%3E%3Cpath d='M34 6 39 1 44 6 39 11Z' fill='none' stroke='%23C99A4B' stroke-width='1'/%3E%3Cpath d='M50 1H60V11H53V4H57V8H55' fill='none' stroke='%23BD594A' stroke-width='.95'/%3E%3Cpath d='M66 1 71 6 66 11 61 6Z' fill='none' stroke='%23214E43' stroke-width='1'/%3E%3C/svg%3E");
+  height: 12px;
+  background-color: var(--isoko-bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Crect width='12' height='12' fill='%23FAFAF7'/%3E%3Cpath d='M6 .75 11.25 6 6 11.25 .75 6Z' fill='none' stroke='%230B6E4F' stroke-width='1.5'/%3E%3Cpath d='M6 3.1 8.9 6 6 8.9 3.1 6Z' fill='none' stroke='%23C0392B' stroke-width='1.5'/%3E%3Cpath d='M1 1 3 3' fill='none' stroke='%23C99A4B' stroke-width='1.5'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
-  background-size: 72px 11px;
+  background-size: 12px 12px;
 }
 
-/* Soft Imigongo cover placeholder. Keep the pattern subtle and the photo area calm. */
+/* Fallback media surfaces remain neutral white; actual seller photography is never replaced. */
 .imigongo-surface {
-  background-color: #EEECE6;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='36' viewBox='0 0 72 36'%3E%3Crect width='72' height='36' fill='%23EEECE6'/%3E%3Cpath d='M18 2 34 18 18 34 2 18Z' fill='none' stroke='%23214E43' stroke-opacity='.22' stroke-width='1.2'/%3E%3Cpath d='M18 9 27 18 18 27 9 18Z' fill='none' stroke='%23BD594A' stroke-opacity='.2' stroke-width='1'/%3E%3Cpath d='M40 2H68V34H47V9H61V27H53' fill='none' stroke='%23214E43' stroke-opacity='.18' stroke-width='1.2'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 72px 36px;
+  background-color: var(--isoko-surface);
+  background-image: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -104,3 +95,35 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* Legacy utility aliases keep every existing page on the shared brand tokens.
+   These selectors are intentionally centralized here while pages are polished incrementally. */
+[class~="bg-[#214E43]"], [class~="bg-[#1A7F43]"] { background-color: var(--isoko-green) !important; }
+[class~="bg-[#183B33]"], [class~="bg-[#28584B]"], [class~="bg-[#146635]"] { background-color: var(--isoko-green-dark) !important; }
+[class~="bg-[#E9F0EB]"], [class~="bg-[#FAF0ED]"] { background-color: var(--isoko-surface) !important; }
+[class~="bg-[#F7F5F0]"], [class~="bg-[#F7F8FA]"], [class~="bg-[#EEECE6]"] { background-color: var(--isoko-bg) !important; }
+[class~="bg-[#FFFEFB]"] { background-color: var(--isoko-surface) !important; }
+[class~="bg-[#202724]/75"], [class~="bg-[#202724]/80"], [class~="bg-[#202724]/85"] { background-color: var(--isoko-ink) !important; }
+[class~="text-[#214E43]"], [class~="text-[#1A7F43]"] { color: var(--isoko-green) !important; }
+[class~="text-[#202724]"], [class~="text-[#333D38]"] { color: var(--isoko-ink) !important; }
+[class~="text-[#68716D]"], [class~="text-[#49524D]"], [class~="text-[#505A55]"], [class~="text-[#929A95]"], [class~="text-[#767D78]"] { color: var(--isoko-muted) !important; }
+[class~="text-[#BD594A]"] { color: var(--isoko-red) !important; }
+[class~="text-[#8F493F]"] { color: var(--isoko-red-dark) !important; }
+[class~="border-[#E3E0D8]"], [class~="border-[#D9D6CE]"] { border-color: var(--isoko-border) !important; }
+[class~="border-[#C9CEC7]"] { border-color: var(--isoko-border-strong) !important; }
+[class~="border-[#214E43]"] { border-color: var(--isoko-green) !important; }
+[class~="border-[#BD594A]"] { border-color: var(--isoko-red) !important; }
+[class~="hover:bg-[#E9F0EB]"]:hover,
+[class~="hover:bg-[#F7F5F0]"]:hover,
+[class~="hover:bg-[#FAF0ED]"]:hover { background-color: var(--isoko-bg) !important; }
+[class~="hover:bg-[#183B33]"]:hover,
+[class~="hover:bg-[#146635]"]:hover { background-color: var(--isoko-green-dark) !important; }
+[class~="hover:text-[#214E43]"]:hover { color: var(--isoko-green) !important; }
+[class~="hover:border-[#214E43]"]:hover,
+[class~="hover:border-[#214E43]/45"]:hover,
+[class~="hover:border-[#214E43]/60"]:hover { border-color: var(--isoko-green) !important; }
+[class~="focus:border-[#214E43]"]:focus,
+[class~="focus-within:border-[#214E43]"]:focus-within { border-color: var(--isoko-green) !important; }
+[class~="placeholder:text-[#929A95]"]::placeholder,
+[class~="placeholder:text-[#68716D]"]::placeholder { color: var(--isoko-muted) !important; }
