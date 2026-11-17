@@ -31,10 +31,10 @@ jobs:
         run: bun run build
         env:
           VITE_ISOKO_PREVIEW: "false"
-          VITE_NEON_AUTH_URL: https://ep-jolly-poetry-ba3o1jwc.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth
-          VITE_NEON_DATA_API_URL: https://ep-jolly-poetry-ba3o1jwc.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
-          VITE_NEON_FUNCTION_URL: https://br-cold-forest-badn9wlr-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
-          VITE_NEON_PUBLIC_STORAGE_URL: https://br-cold-forest-badn9wlr.storage.c-8.eu-central-1.aws.neon.tech/isoko-public-assets/
+          VITE_NEON_AUTH_URL: https://ep-aged-river-bao1xxwe.neonauth.c-8.eu-central-1.aws.neon.tech/isoko/auth
+          VITE_NEON_DATA_API_URL: https://ep-aged-river-bao1xxwe.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
+          VITE_NEON_FUNCTION_URL: https://br-green-haze-batl4xq0-isokoapi.compute.c-8.eu-central-1.aws.neon.tech/
+          VITE_NEON_PUBLIC_STORAGE_URL: https://br-green-haze-batl4xq0.storage.c-8.eu-central-1.aws.neon.tech/isoko-public-assets/
       - name: Install Playwright
         run: |
           mkdir -p "$RUNNER_TEMP/isoko-qa-seller-playwright"
