@@ -1,0 +1,183 @@
+{
+  "viewport": {
+    "width": 320,
+    "height": 800,
+    "label": "320x800"
+  },
+  "routes": [
+    {
+      "route": "/",
+      "status": 200,
+      "lang": "rw",
+      "viewportWidth": 320,
+      "documentWidth": 320,
+      "bodyWidth": 320,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "placeholderWhatsAppLinks": [],
+      "visibleVerifiedText": []
+    },
+    {
+      "route": "/c/inkweto",
+      "status": 200,
+      "lang": "rw",
+      "viewportWidth": 320,
+      "documentWidth": 320,
+      "bodyWidth": 320,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "placeholderWhatsAppLinks": [],
+      "visibleVerifiedText": []
+    },
+    {
+      "route": "/c/ibindi",
+      "status": 200,
+      "lang": "rw",
+      "viewportWidth": 320,
+      "documentWidth": 320,
+      "bodyWidth": 320,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "placeholderWhatsAppLinks": [],
+      "visibleVerifiedText": []
+    },
+    {
+      "route": "/p/prod-b60bf47d986d49348438dcf1891df209",
+      "status": 200,
+      "lang": "rw",
+      "viewportWidth": 320,
+      "documentWidth": 336,
+      "bodyWidth": 336,
+      "horizontalOverflow": true,
+      "brokenVisibleImages": [],
+      "placeholderWhatsAppLinks": [],
+      "visibleVerifiedText": [
+        "Yagenzuwe"
+      ]
+    },
+    {
+      "route": "/i/muhire-rwanda",
+      "status": 200,
+      "lang": "rw",
+      "viewportWidth": 320,
+      "documentWidth": 320,
+      "bodyWidth": 320,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "placeholderWhatsAppLinks": [],
+      "visibleVerifiedText": []
+    },
+    {
+      "route": "/abacuruzi",
+      "status": 200,
+      "lang": "rw",
+      "viewportWidth": 320,
+      "documentWidth": 320,
+      "bodyWidth": 320,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "placeholderWhatsAppLinks": [],
+      "visibleVerifiedText": []
+    },
+    {
+      "route": "/injira",
+      "status": 200,
+      "lang": "rw",
+      "viewportWidth": 320,
+      "documentWidth": 320,
+      "bodyWidth": 320,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "placeholderWhatsAppLinks": [],
+      "visibleVerifiedText": []
+    },
+    {
+      "route": "/konti",
+      "status": 200,
+      "lang": "rw",
+      "viewportWidth": 320,
+      "documentWidth": 320,
+      "bodyWidth": 320,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "placeholderWhatsAppLinks": [],
+      "visibleVerifiedText": []
+    },
+    {
+      "route": "/amategeko",
+      "status": 200,
+      "lang": "rw",
+      "viewportWidth": 320,
+      "documentWidth": 320,
+      "bodyWidth": 320,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "placeholderWhatsAppLinks": [],
+      "visibleVerifiedText": []
+    },
+    {
+      "route": "/ibanga",
+      "status": 200,
+      "lang": "rw",
+      "viewportWidth": 320,
+      "documentWidth": 320,
+      "bodyWidth": 320,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "placeholderWhatsAppLinks": [],
+      "visibleVerifiedText": []
+    },
+    {
+      "route": "/ubufasha",
+      "status": 200,
+      "lang": "rw",
+      "viewportWidth": 320,
+      "documentWidth": 320,
+      "bodyWidth": 320,
+      "horizontalOverflow": false,
+      "brokenVisibleImages": [],
+      "placeholderWhatsAppLinks": [],
+      "visibleVerifiedText": [
+        "Reba ikimenyetso cya Isoko Verified ku iduka. Amaduka ataragira icyo kimenyetso aba ataremezwa ku rwego rw’indangamuntu; kuba agaragara kuri Isoko ntibihita bivuga ko nyirayo yamaze kugenzurwa."
+      ]
+    }
+  ],
+  "languages": [
+    {
+      "code": "rw",
+      "label": "Ikinyarwanda",
+      "documentLanguage": "rw"
+    },
+    {
+      "code": "en",
+      "label": "English",
+      "documentLanguage": "en"
+    },
+    {
+      "code": "fr",
+      "label": "Français",
+      "documentLanguage": "fr"
+    },
+    {
+      "code": "sw",
+      "label": "Kiswahili",
+      "documentLanguage": "sw"
+    },
+    {
+      "code": "rn",
+      "label": "Ikirundi",
+      "documentLanguage": "rn"
+    },
+    {
+      "code": "ln",
+      "label": "Lingála",
+      "documentLanguage": "ln"
+    },
+    {
+      "code": "lg",
+      "label": "Luganda",
+      "documentLanguage": "lg"
+    }
+  ],
+  "pageErrors": []
+}
