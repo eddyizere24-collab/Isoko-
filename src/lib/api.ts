@@ -6,6 +6,7 @@ import {
   getNeonJwt, getNeonUser, neon, neonFunctionUrl, normalizePhone,
   objectKeyFromPublicUrl, publicAssetUrl,
 } from './neon';
+import { isRetryableNeonAuthContextError } from './neonAuthContext';
 
 export async function claimFirstAdminAccount(payload:{
   fullName:string;phone:string;password:string;bootstrapCode:string;
@@ -340,6 +341,27 @@ export async function resetAccountPassword(token:string,newPassword:string):Prom
   if(result?.error) fail(result.error,'Link yo guhindura password ntiyemewe. Saba indi nshya.');
 }
 
+async function startSellerRegistrationDraft(phone:string):Promise<void> {
+  const maxAttempts=3;
+  for(let attempt=0;attempt<maxAttempts;attempt+=1) {
+    const response=await neon.rpc('start_seller_registration_v1',{p_phone:phone});
+    if(!response?.error) {
+      dataOf<any>(response,'Ntibishobotse gutangiza iduka. Reba nimero ya WhatsApp wongere ugerageze.');
+      return;
+    }
+
+    // This RPC only upserts the user's short-lived draft by auth_user_id, so
+    // repeating this exact operation is idempotent. Never retry profile/shop
+    // creation, product writes, permission denials or unrelated SQL errors.
+    if(!isRetryableNeonAuthContextError(response.error) || attempt===maxAttempts-1) {
+      fail(response.error,'Ntibishobotse gutangiza iduka. Reba nimero ya WhatsApp wongere ugerageze.');
+    }
+
+    await getNeonJwt();
+    await new Promise((resolve)=>setTimeout(resolve,120*(attempt+1)));
+  }
+}
+
 export async function registerSellerAccount(payload:Record<string,any>):Promise<{token:string;expiresAt:number;profile:Profile;shop:Shop}> {
   const phone=normalizePhone(String(payload.phone??payload.whatsapp??''));
   const email=String(payload.email??'').trim().toLowerCase();
@@ -389,12 +411,9 @@ export async function registerSellerAccount(payload:Record<string,any>):Promise<
   }
 
 
-  // The short-lived registration draft protects first-time seller profile creation.
+  // The short-lived, idempotent draft protects first-time seller profile creation.
   // No national ID, TIN, selfie or identity-document images are requested here.
-  dataOf<any>(
-    await neon.rpc('start_seller_registration_v1',{p_phone:phone}),
-    'Ntibishobotse gutangiza iduka. Reba nimero ya WhatsApp wongere ugerageze.'
-  );
+  await startSellerRegistrationDraft(phone);
 
   const result=dataOf<any>(await neon.rpc('register_basic_seller_v1',{
     p_shop_name:shopName,
