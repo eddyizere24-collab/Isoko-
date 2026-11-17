@@ -170,7 +170,10 @@ test('QA seller registration, separate brand photos, 3-photo publish and 10×3 b
     const bodyText = await page.locator('body').innerText();
     expect(bodyText).not.toMatch(/UPLOAD_(?:DAILY_QUOTA_EXCEEDED|RATE_LIMIT_EXCEEDED)|Wageze ku mubare ntarengwa|Wohereje amafoto menshi/i);
     if (index < 10) {
-      await page.waitForTimeout(8_000);
+      // Keep the regression batch within the server-enforced rolling 60-second quota.
+      // The upload quota is intentionally not weakened to make this test pass.
+      if (index === 6) await page.waitForTimeout(65_000);
+      else await page.waitForTimeout(8_000);
       await page.getByRole('button', { name: /Shyiraho ikindi/ }).click();
     }
   }
