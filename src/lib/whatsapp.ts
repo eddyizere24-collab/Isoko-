@@ -56,7 +56,10 @@ export function buildSingleProductWhatsAppMessage(input: SingleProductWhatsAppIn
     `nabonye iki gicuruzwa ku Isoko:`,
     ``,
     input.productName,
-    `Size: ${input.size}  Ibara: ${input.color || 'Bisanzwe'}`,
+    ...[
+      input.size && input.size !== 'Ntibireba' ? `Size: ${input.size}` : '',
+      input.color ? `Ibara: ${input.color}` : '',
+    ].filter(Boolean),
     `Igiciro: ${formatRwfCurrency(input.price)}`,
     input.productUrl,
     ``,
@@ -117,9 +120,13 @@ export function buildCartWhatsAppMessages(params: {
           it.productName.length > maxDescLen
             ? `${it.productName.slice(0, maxDescLen - 1)}…`
             : it.productName;
-        const colorPart = it.color ? `, ${it.color}` : '';
+        const optionParts = [
+          it.size && it.size !== 'Ntibireba' ? `size ${it.size}` : '',
+          it.color || '',
+        ].filter(Boolean);
+        const optionPart = optionParts.length > 0 ? ` - ${optionParts.join(', ')}` : '';
         lines.push(
-          `${idx + 1}. ${nameTrimmed} - size ${it.size}${colorPart} - ${formatRwfCurrency(unitPrice)} x ${it.qty}`
+          `${idx + 1}. ${nameTrimmed}${optionPart} - ${formatRwfCurrency(unitPrice)} x ${it.qty}`
         );
       });
 
