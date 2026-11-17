@@ -577,7 +577,7 @@ export const SellerProductsPage: React.FC = () => {
                 type="number"
                 inputMode="numeric"
                 min={500}
-                max={5000000}
+                max={2000000000}
                 required
                 value={newPrice}
                 onChange={(e) => setNewPrice(e.target.value)}
@@ -673,7 +673,7 @@ export const SellerProductsPage: React.FC = () => {
                   id="edit-prod-price"
                   type="number"
                   min={500}
-                  max={5000000}
+                  max={2000000000}
                   required
                   value={editPrice}
                   onChange={(e) => setEditPrice(e.target.value)}
@@ -688,7 +688,7 @@ export const SellerProductsPage: React.FC = () => {
                   id="edit-prod-old-price"
                   type="number"
                   min={0}
-                  max={5000000}
+                  max={2000000000}
                   value={editOldPrice}
                   onChange={(e) => setEditOldPrice(e.target.value)}
                   placeholder="Nta na kimwe"
