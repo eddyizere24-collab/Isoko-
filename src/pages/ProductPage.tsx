@@ -333,6 +333,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
   const sizeSet = product.category?.size_set ?? product.parent_category?.size_set ?? '';
   const isShoe = sizeSet.includes('shoe') || product.parent_category?.slug === 'inkweto';
   const isClothing = sizeSet.includes('cloth') || product.parent_category?.slug === 'imyenda';
+  const isGeneralListing = product.variants.length === 1 && product.variants[0]?.size_label === 'Ntibireba';
 
   return (
     <div className="mx-auto max-w-6xl px-2 py-3 pb-20 sm:px-6 lg:pb-12">
@@ -539,6 +540,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
             </div>
           )}
 
+          {!isGeneralListing && (
           {/* 32px Visible Variant / Size Buttons (NO drop-down!) */}
           <div>
             <div className="flex items-center justify-between gap-2">
@@ -612,6 +614,7 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
               </div>
             )}
           </div>
+          )}
 
           {/* 32px Visible Color Chips */}
           {product.colors.length > 0 && (
