@@ -45,6 +45,7 @@ jobs:
         env:
           NODE_PATH: ${{ runner.temp }}/isoko-qa-seller-playwright/node_modules
           GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
         run: '"$RUNNER_TEMP/isoko-qa-seller-playwright/node_modules/.bin/playwright" test --config=playwright.qa-seller.config.cjs'
       - name: Upload QA seller evidence
         if: always()
