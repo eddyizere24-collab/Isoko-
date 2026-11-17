@@ -92,7 +92,7 @@ test('QA seller registration, separate brand photos, 3-photo publish and 10×3 b
 
   await page.locator('#reg-shopname').fill(`ISOKO QA ${RUN_ID}`);
   await page.locator('#reg-wa').fill('0788123456');
-  await page.locator('label').filter({ hasText: /amategeko|terms/i }).locator('input[type="checkbox"]').check();
+  await page.getByRole('checkbox', { name: /Nemeye Amategeko/i }).check();
   await page.locator('button[type="submit"]').click();
   await expect(page).toHaveURL(/\/umucuruzi(?:\/|$)/, { timeout: 120_000 });
 
