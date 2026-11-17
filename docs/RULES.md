@@ -8,6 +8,9 @@
 - Public storefront images must render an accessible fallback on load failure — broken image glyphs are not a usable empty state.
 - A shop receives the Isoko Verified seal only when `profiles.identity_status = 'verified'` on every public surface — seller approval for listing products is not identity verification.
 - Seller WhatsApp actions must use a configured, valid Rwanda number; suppress the CTA when no number is configured and never publish the placeholder `250788000000` — a fake contact link misdirects buyers.
+- The `ibindi` top-level category is Isoko's general marketplace category for any lawful item or property listing, including homes, land, vehicles and household goods; keep its existing category ID and child categories stable so current listings remain intact.
+- General listings must not require clothing or shoe sizes. The internal `Ntibireba` variant exists only to satisfy the current product RPC shape and must never be shown as a size to buyers, in carts or in WhatsApp messages.
+- The product price ceiling is 2,000,000,000 RWF across the seller form, edit flows, client validation, PostgreSQL product constraint and create/update RPCs; test any change on a fresh Production-derived QA branch before requesting the separately approved Production migration.
 - Seller avatar and logo must occupy separate, clearly labelled spaces outside the cover — overlapping brand assets cause identity confusion.
 - No Production migration or Function deployment is performed from a feature PR — schema and Function deployment require owner review and explicit Production steps.
 - Logout must await the Neon Auth sign-out action before clearing account-scoped local/session/IndexedDB caches — a fire-and-forget request can leave a live server session.
