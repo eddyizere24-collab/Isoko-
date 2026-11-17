@@ -121,6 +121,16 @@ function mapShop(row: any): Shop {
   } as Shop;
 }
 
+function mapCategory(row: any) {
+  if (!row || row.slug !== 'ibindi') return row;
+  return {
+    ...row,
+    name_rw: 'Ibindi byose',
+    name_en: 'Everything else',
+    size_set: 'general',
+  };
+}
+
 function mapProduct(row: any): Product {
   return {
     ...row,
@@ -133,6 +143,8 @@ function mapProduct(row: any): Product {
     })),
     variants: row.variants ?? row.product_variants ?? [],
     shop: row.shop ? mapShop(row.shop) : undefined,
+    category: row.category ? mapCategory(row.category) : undefined,
+    parent_category: row.parent_category ? mapCategory(row.parent_category) : undefined,
     popularity_7d: Number(row.popularity_7d ?? 0),
     views_7d: Number(row.views_7d ?? 0),
     wa_clicks_7d: Number(row.wa_clicks_7d ?? 0),
@@ -208,7 +220,7 @@ export async function fetchBootstrap(): Promise<BootstrapResponse> {
   const payload = row?.payload;
   if (!payload) throw new Error('Amakuru y’Isoko ntaraboneka.');
   return {
-    categories: payload.categories ?? [], areas: payload.areas ?? [],
+    categories: (payload.categories ?? []).map(mapCategory), areas: payload.areas ?? [],
     synonyms: payload.synonyms ?? [], campaigns: (payload.campaigns ?? []).map(mapCampaign),
     settings: payload.settings ?? {}, shops: (payload.shops ?? []).map(mapShop),
     products: (payload.products ?? []).map(mapProduct),
