@@ -78,7 +78,7 @@ async function createGeneralListing(page, imageFile) {
   await expect(page.getByText('Amafoto washyizeho (1/5)')).toBeVisible({ timeout: 120_000 });
 
   await page.getByRole('button', { name: 'Komeza', exact: true }).click();
-  await page.locator('main').getByRole('button', { name: 'Ibindi byose', exact: true }).click();
+  await page.locator('main').getByRole('button', { name: 'Ibindi byose', exact: true }).first().click();
   const name = `ISOKO QA Imodoka Toyota ${RUN_ID}`;
   await page.locator('#wiz-name').fill(name);
   await page.locator('#wiz-price').fill('4500000');
