@@ -56,7 +56,7 @@ async function createPublishedProduct(page, imageFiles, index) {
   await expect(page.getByText(/Amafoto washyizeho \(3\/5\)/)).toBeVisible({ timeout: 120_000 });
 
   await page.getByRole('button', { name: 'Komeza', exact: true }).click();
-  await page.locator('main').getByRole('button', { name: 'Inkweto', exact: true }).click();
+  await page.locator('main').getByRole('button', { name: 'Inkweto', exact: true }).first().click();
   await page.locator('main').getByRole('button', { name: "Z'abagabo", exact: true }).click();
   const name = `ISOKO QA Inkweto ${String(index).padStart(2, '0')} ${RUN_ID}`;
   await page.locator('#wiz-name').fill(name);
