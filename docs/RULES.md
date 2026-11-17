@@ -33,3 +33,8 @@
 - Imigongo bands use a 12×12 square repeating tile with green/red/ochre strokes at least 1.5px — background-size must preserve a 1:1 ratio, never stretch the pattern.
 - Mobile category tiles provide at least 44px touch targets and readable labels; product listings keep three columns while price and name typography scale up — dense commerce layouts must remain tappable and legible.
 - The multicolour sun mark keeps a hollow centre and clearly visible beads at 24px — the primary brand mark must not turn into a tiny indistinct ring.
+- Production migration instructions must always begin with a current read-only `schema_migrations` read-back; never replay a migration that is already recorded — accidental DDL replay can break live seller workflows.
+- The current Production upload quota is 300 original seller photos per UTC day and 30 per rolling 60 seconds; a paired thumbnail does not consume a second attempt — keep docs and tests aligned to migration 025.
+- The backup branch `isoko-production-backup-before-release-20261116` must be preserved until a PostgreSQL and Object Storage restore drill has been completed and reviewed — a branch snapshot alone is not a verified media backup.
+- Do not use the owner's Production test account or product for E2E, load, upload or visual tests — isolated QA sellers protect real account and shop data.
+- Production documentation must distinguish an existing backup snapshot from a completed restore rehearsal and a live Function health check from an authenticated seller upload test — operational claims require evidence at the exact level described.

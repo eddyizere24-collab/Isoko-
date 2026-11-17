@@ -1,120 +1,107 @@
-# ISOKO Production steps requiring owner approval
+# ISOKO Production status and operational steps
 
-These are Production-only steps. Do not apply migrations, deploy the Neon Function, change Auth settings, Render variables, or publish the frontend until the owner explicitly approves the release.
+Last verified: **2026-11-16**  
+This document describes the live Production deployment after the 2026-11-16 release. It is not a migration instruction to replay work already applied.
 
-## Verified Production baseline — 2026-11-16
+## Current live Production snapshot
 
+- Website: https://isoko-marketplace-9i69.onrender.com
+- Git repository: https://github.com/eddyizere24-collab/Isoko-
+- Production branch: `main`
+- Live commit: `1f46194c625537b0b3cbcdc72153a5695d8b2856`
+- Render deployment: `dep-dbt9qjvf3r2c73f8b8tg`, status `live`, finished `2026-11-16T06:06:23Z`
+- Render service: `isoko-marketplace-9i69`, service ID `srv-dbrn6tjbc2fs73ckgojg`
 - Neon project: `isoko-marketplace` (`square-queen-83418379`)
 - Production branch: `isoko-production` (`br-blue-bread-ba2wywua`)
 - Database: `isoko`
-- Migration `016_seller_profile_storefront_capacity` is present.
-- Migrations `019`, `020`, `021`, `022`, and `023` are not recorded in Production.
-- Production currently has 1 seller profile, 1 shop, and 1 active public product. That product is in the `ibindi` category; current Production has no active products in Inkweto, Imyenda, or Amasogisi. Do not create demo products to disguise that.
-- Production has no valid `SUPPORT_WHATSAPP` setting. The frontend must not invent a support number.
+- Neon Function: `isokoapi`, deployment **#3**, `nodejs24`, status `completed`
+- Production Function health: `/health` returns `status=healthy`, `branch=isoko-production`, `databaseApi=true`, `objectStorage=true`
+- Production currently contains exactly **1 seller profile, 1 shop and 1 product**, which belong to the owner's real test account. The single product is active and in `ibindi`; no active items were found in Inkweto, Imyenda or Amasogisi. Never delete, change or replace this account/data for a visual test. Never add demo data.
+- The seller's identity status is `unverified`. Seller approval is not identity verification.
+- There is no configured valid `SUPPORT_WHATSAPP`. Do not invent a support number.
+- Google OAuth Client ID/Secret are null in Production Neon Auth. Google sign-in stays disabled.
+- Email/password sign-in is enabled. Email verification on sign-up/sign-in and `require_email_verification` are false. Do not claim that sign-up email addresses are verified.
+- The existing Neon shared sender is `auth@mail.myneon.app`; delivery to a real mailbox and custom SMTP have not been verified.
+- No Production Admin profile appeared in the current profile role/status read-back.
 
-## Read-only preflight checks
+## Production migrations: already applied
 
-Run only after confirming project, branch, and database at the top of the Neon SQL Editor:
+A read-only query on the live Production branch confirmed migration markers **016 through 025**, inclusive. Do not replay any of these migrations.
+
+| Migration | Purpose / final Production behavior |
+|---|---|
+| 016 `seller_profile_storefront_capacity` | Seller/shop capacity base used by the current product workflow |
+| 017 `server_side_product_validation` | Validates product names (5–60 characters), rejects phone numbers and links in name/description, validates price and description length, active category, image count and variants |
+| 018 `abuse_hardening` | Adds throttling/deduplication to selected public report, subscription and event RPCs; this is not a trusted-IP firewall for every anonymous RPC |
+| 019 `seller_upload_daily_quota` | Creates server-side seller upload accounting, keyed by authenticated Neon Auth seller identity |
+| 020 `seller_upload_quota_cap_alignment` | Aligns the daily quota function to its then-intended cap; superseded by 025's current limit |
+| 021 `public_product_identity_status` | Exposes the seller's explicit `identity_status` in nested public product shop JSON; never exposes KYC documents |
+| 022 `product_image_owner_prefix` | Requires full and thumbnail product image keys to use the authenticated seller's `products/<profile-id>/` prefix |
+| 023 `seller_upload_burst_limit` | Adds a per-seller rolling 60-second upload counter; its original limit is superseded by 025 |
+| 024 `product_rpc_validation_security_definer` | Reconciles 017 and 022: retains 017's product validation together with 022's image ownership guard under `SECURITY DEFINER` |
+| 025 `seller_upload_limits_for_real_listing` | Current server-side per-seller limits: **300 original photo uploads per UTC day and 30 per rolling 60 seconds** |
+
+The Function deliberately does not consume an additional quota attempt for the paired `thumb` upload. It consumes quota for the original seller photo, then accepts the corresponding thumbnail separately. The quota identity is derived from the authenticated Neon Auth session, not from a browser-supplied seller ID.
+
+### Read-only Production verification
+
+Run only after confirming the Neon project, branch and database shown above. This SQL reads migration markers and row counts; it does not update data:
 
 ```sql
 SELECT version
 FROM public.schema_migrations
-WHERE version IN (
-  '016_seller_profile_storefront_capacity',
-  '019_seller_upload_daily_quota',
-  '020_seller_upload_quota_cap_alignment',
-  '021_public_product_identity_status',
-  '022_product_image_owner_prefix',
-  '023_seller_upload_burst_limit'
-)
+WHERE version BETWEEN
+  '016_seller_profile_storefront_capacity'
+  AND '025_seller_upload_limits_for_real_listing'
 ORDER BY version;
 
 SELECT
-  to_regclass('public.seller_upload_daily_usage') AS quota_table,
-  to_regprocedure('public.consume_seller_upload_quota_v1()') AS quota_function;
-
-SELECT column_name, data_type
-FROM information_schema.columns
-WHERE table_schema = 'public'
-  AND table_name = 'profiles'
-  AND column_name IN ('id', 'auth_user_id', 'identity_status');
+  (SELECT count(*) FROM public.profiles) AS profiles,
+  (SELECT count(*) FROM public.shops) AS shops,
+  (SELECT count(*) FROM public.products) AS products,
+  (SELECT count(*) FROM public.products WHERE status='active') AS active_products;
 ```
 
-Expected current state: migration 016 is present, migrations 019–023 are absent, and the quota table/function are absent. The profile IDs and auth user IDs are text in this project. If the read-back differs, stop and re-inspect rather than replaying a migration.
+Expected current result: markers 016–025; profiles=1, shops=1, products=1, active_products=1. Stop and inspect if the read-back changes. Do not replay DDL to “make it match”.
 
-## Ordered release migrations
+## Backup status and limits
 
-### 019 — seller upload daily quota
+- The owner-created Neon branch snapshot `isoko-production-backup-before-release-20261116` exists as `br-falling-darkness-ba6qwviu`.
+- It is a child of Production `br-blue-bread-ba2wywua`, created at `2026-11-16T05:57:12Z`, with parent timestamp `2026-11-16T05:56:52Z`.
+- The backup branch itself has no compute endpoint. A separate child branch `isoko-restore-drill-20261116` (`br-broad-feather-ba73vmad`) was created from that snapshot, queried successfully, and then its 0.25 CU compute was suspended.
+- The restored PostgreSQL clone read back 1 seller profile, 1 shop and 1 active product, matching Production. It contained the migration history through 016 only, as expected for a snapshot taken before 017–025. Its original product row remained the same ID and category.
+- Neon Storage was enabled on Production, backup and restore clone. The public-assets bucket had 11 objects in each; object-size/ETag metadata matched between Production, backup and clone. The private KYC bucket had 0 objects in all three.
+- Neon Auth was **not enabled on the restore clone**, so user identities, provider configuration, email settings and session restore were not tested. The drill proves PostgreSQL branch cloning and Object Storage metadata parity only, not a complete identity/auth restore. Preserve the original backup branch.
 
-File: `infra/neon/migrations/019_seller_upload_daily_quota.sql`
+## Production deployment safety
 
-Creates the text-keyed quota table and an RPC that derives seller identity from Neon Auth `auth.user_id()`. It limits authenticated seller image upload attempts to 30 per seller per UTC calendar day. The browser must never supply a seller ID to this RPC.
+Do not apply further Production SQL, deploy a Function, alter Neon Auth, change Render variables, change DNS or publish a new frontend unless the owner explicitly approves that specific Production action.
 
-### 020 — quota cap alignment
+For future releases:
+1. Review the exact PR diff and its report.
+2. Require current CI to pass on the exact head SHA.
+3. Confirm the approved PR merge SHA is the intended production release.
+4. Confirm Render's deploy is `live` and its commit SHA equals the approved `main` commit.
+5. Run the read-only Production smoke checks, including Function health, public routes, identity-seal behavior and public contact links.
+6. Do not use the Production seller account to test signup, upload, publishing, KYC or destructive actions. Use a separate isolated QA branch/account.
 
-File: `infra/neon/migrations/020_seller_upload_quota_cap_alignment.sql`
+## Current security follow-ups
 
-Replaces the quota function with the 30-attempt implementation. This is included because the isolated QA branch read-back found an earlier function definition with a cap of 50. Apply after migration 019.
+- Real authenticated QA seller signup, avatar/logo/cover persistence, three-photo product publish and 10×3 bulk upload remain unverified.
+- QA currently has zero populated KYC rows; owner/admin KYC access behavior has not been demonstrated end-to-end.
+- Migration 025's current 300/day and 30/minute limits were tested against a disposable clone of QA with the 025 function installed: 300th allowed, 301st denied as daily; 30th in 60s allowed, 31st denied as rate with retry_after_seconds=60. Both test sections were rolled back and the clone quota table read back 0 rows. The clone compute was suspended. Actual image uploads and the full Function `thumb` path still require the authenticated seller E2E.
+- Email verification is disabled; delivery has not been verified. A publish-only verified-email gate must not be enabled until a real QA email journey is proven.
+- Multi-device session revocation and admin recovery are not proven. Production has no Admin profile in the current read-back.
+- GitHub main branch protection is not confirmed. The connected GitHub app could read repository rulesets (none were returned) but classic protection access returned 403; set/verify it in GitHub repository Settings with a required CI check.
+- PostgreSQL branch clone and public/private Storage metadata parity were rehearsed from the preserved backup; Neon Auth was not enabled on the clone, so full account/session restore remains untested.
+- Google sign-in is disabled until real Google credentials exist and the QA OAuth round trip succeeds.
 
-### 021 — public product identity status
+## Production smoke-test constraints
 
-File: `infra/neon/migrations/021_public_product_identity_status.sql`
-
-Adds the seller's explicit `identity_status` to the nested shop JSON in `v_public_products`. It does not add a new public product column or expose KYC documents. It lets the frontend show the Isoko Verified seal only when identity status is actually `verified`.
-
-### 022 — product image owner prefix
-
-File: `infra/neon/migrations/022_product_image_owner_prefix.sql`
-
-Replaces the seller create/update product RPCs so both full and thumbnail image keys must start with `products/<seller-profile-id>/`. The authenticated seller profile ID is derived inside the security-definer RPC; the browser cannot choose another seller's prefix. This migration does not rewrite existing product images.
-
-### 023 — seller upload burst limit
-
-File: `infra/neon/migrations/023_seller_upload_burst_limit.sql`
-
-Adds a rolling 60-second per-seller upload window with a 15-attempt limit. The same authenticated seller identity from Neon Auth is used, not an IP address or browser-supplied session key. It complements the daily limit; it does not replace it.
-
-### Apply only after explicit owner approval
-
-1. Open the approved GitHub PR and review all five migration files.
-2. In Neon Console, confirm project `isoko-marketplace`, branch `isoko-production`, and database `isoko`.
-3. Apply migration 019 once, then read back its table, function, and marker.
-4. Apply migration 020, then read back that `consume_seller_upload_quota_v1()` returns JSONB and uses `v_limit = 30`.
-5. Apply migration 021, then read back that `v_public_products.shop` contains `identity_status` for each row.
-6. Apply migration 022, then read back the create/update seller product RPCs and verify the `PRODUCT_IMAGE_OWNERSHIP_INVALID` guard is present.
-7. Apply migration 023, then verify the counter columns, `window_limit = 15`, and the `reason = 'rate'` response after the 16th attempt within 60 seconds.
-8. Confirm the quota function ACL grants `authenticated` and does not grant `PUBLIC` or `anonymous`.
-9. Do not paste database passwords, API keys, connection strings, or private seller information into GitHub or chat.
-
-## Public frontend deployment — verified Render configuration
-
-- Public static site: `isoko-marketplace-9i69`
-- Render service ID: `srv-dbrn6tjbc2fs73ckgojg`
-- Public URL: `https://isoko-marketplace-9i69.onrender.com`
-- Linked repository: `eddyizere24-collab/Isoko-`
-- Production deploy branch: `main`
-- Auto-deploy: enabled on commit
-- Pull request previews: disabled
-- Last verified live deployment: `dep-dbt3g8lbedkc73cr60g0`
-- Last live commit: `4da491c1cb38d6622dab1a3d4bb7c63f8332e997`, completed at `2026-11-15T22:54:38Z`.
-
-The current release-candidate branch is not the Render Production branch. No PR preview is created automatically because previews are disabled. After PR #56 is reviewed and explicitly approved for release, merge it to `main`; Render should then auto-deploy the new `main` commit. Confirm the Render deploy is `live` and its commit SHA matches the approved merge commit before calling the public site updated. Do not change the service branch to a feature branch or manually trigger a Production deploy during review.
-
-## Neon Function and frontend release gates
-
-The feature Function source supports the distinct `logo` upload kind and calls the quota RPC before Object Storage writes. Deploy the matching Node.js 24 Function bundle only after migrations 019–023 have been verified in Production and the owner explicitly approves Function deployment. Deploy frontend code only from the reviewed, merged release head. Do not deploy the Function or frontend from an unmerged feature branch.
-
-The Production smoke test must then verify:
-- unauthenticated upload is rejected;
-- non-seller roles cannot use seller image upload;
-- seller avatar, logo, and cover save to their distinct paths;
-- public image URLs render and reload;
-- quota allows 30 attempts/day and denies the 31st;
-- upload burst limiter allows 15 attempts per 60 seconds and denies the 16th;
-- unverified shops do not receive the Verified seal;
-- a genuinely verified shop receives the seal on storefront and product cards;
-- a seller cannot create or update a product using another seller's `products/<profile-id>/` image keys.
-
-## Rollback note
-
-Do not drop the quota table, remove quota history, or replace the public view with an earlier definition as a casual rollback. If uploads fail after release, disable seller image uploads at the Function level only through a reviewed hotfix and preserve quota records for audit.
+- Unauthenticated upload should return 401.
+- A seller may upload only to their own role-specific prefix.
+- A thumbnail paired to a full photo must not consume a second upload quota attempt.
+- Product image keys must match `products/<authenticated-profile-id>/`.
+- Unverified identity must never display the Verified seal on a shop page or product card.
+- No missing seller/support contact must turn into a fake WhatsApp URL.
+- Never run a destructive smoke test against the owner's Production profile, shop, product or images.
