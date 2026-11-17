@@ -46,8 +46,8 @@ export function validateProductForm(input: ProductFormInput): Record<string, str
     errors.name = 'Ntukandike izina mu nyuguti nkuru zose.';
   }
 
-  if (!Number.isInteger(input.price) || input.price < 500 || input.price > 5_000_000) {
-    errors.price = 'Igiciro kigomba kuba hagati ya 500 na 5 000 000 RWF.';
+  if (!Number.isInteger(input.price) || input.price < 500 || input.price > 2_000_000_000) {
+    errors.price = 'Igiciro kigomba kuba hagati ya 500 na 2 000 000 000 RWF.';
   }
 
   if (input.oldPrice !== undefined && input.oldPrice !== null && input.oldPrice > 0) {
