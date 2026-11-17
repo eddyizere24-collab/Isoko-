@@ -665,7 +665,7 @@ export const SellerAddProductPage: React.FC = () => {
                   type="number"
                   inputMode="numeric"
                   min={500}
-                  max={5000000}
+                  max={2000000000}
                   value={draft.price}
                   onChange={(e) => setDraft((d) => ({ ...d, price: e.target.value }))}
                   placeholder="35000"
