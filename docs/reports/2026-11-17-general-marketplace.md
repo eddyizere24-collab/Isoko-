@@ -51,6 +51,15 @@ Tested on a fresh Neon branch cloned from the current Production branch:
 - QA clone retained the same 1 profile, 1 shop and 1 product as Production.
 - The clone's category ID 4 remains `ibindi`, active, and its existing product is untouched.
 
+## Current PR verification
+
+- PR #64 head: `c95498f33e8318d1b94b7f2c829bb1df1948cf94` (branch `final-release`); mergeable with `main`, not merged.
+- TypeScript, unit tests, seven-language parity, Neon Setup smoke, Production read-only smoke, seller-upload CORS smoke and production build passed at the recorded PR check.
+- Live public visual QA passed at 320px and 360px.
+- Seller signup E2E currently stops at `start_seller_registration_v1` with SQLSTATE `28000 / AUTH_REQUIRED`. Its Playwright trace shows an authenticated Neon Auth JWT in the Data API request, but PostgreSQL returns no `auth.user_id()` inside the protected RPC. This is not a reason to bypass authentication.
+- The symptom resembles the open Neon Data API JWT-claims issue [neondatabase/neon#12985](https://github.com/neondatabase/neon/issues/12985), but this relationship is not confirmed as the root cause.
+- No auth policy, Production function, Production database, Render environment or seller account was changed to hide this test failure.
+
 ## Release gate
 
 - Run the full GitHub CI suite on the exact PR head SHA.
