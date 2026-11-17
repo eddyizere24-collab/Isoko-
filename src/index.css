@@ -89,6 +89,13 @@
   background-image: none;
 }
 
+/* Rotating home banner message: short fade-in when the text changes. */
+@keyframes isoko-ticker-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+.isoko-ticker-in { animation: isoko-ticker-in 0.35s ease-out both; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

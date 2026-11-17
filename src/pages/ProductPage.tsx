@@ -331,6 +331,9 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
   const images = product.images;
   const activeImg = images[activeImgIdx] ?? images[0];
   const sizeSet = product.category?.size_set ?? product.parent_category?.size_set ?? '';
+  // Goods without sizes (cars, furniture, tools) carry one "Ubunini bumwe" variant: no size picker.
+  const hideSizePicker =
+    product.variants.length === 1 && product.variants[0].size_label === 'Ubunini bumwe';
   const isShoe = sizeSet.includes('shoe') || product.parent_category?.slug === 'inkweto';
   const isClothing = sizeSet.includes('cloth') || product.parent_category?.slug === 'imyenda';
 
@@ -541,6 +544,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
 
           {/* 32px Visible Variant / Size Buttons (NO drop-down!) */}
           <div>
+            {!hideSizePicker && (
+              <>
             <div className="flex items-center justify-between gap-2">
               <span className="text-[12.5px] font-semibold text-[#202724]">
                 {t('choose_size')}
@@ -582,6 +587,8 @@ export const ProductPage: React.FC<ProductPageProps> = ({ productId }) => {
                 );
               })}
             </div>
+              </>
+            )}
 
             {/* Baymard Footwear / Apparel Sizing Chart */}
             {showSizeGuide && (isShoe || isClothing) && (

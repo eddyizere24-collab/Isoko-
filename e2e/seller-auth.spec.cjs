@@ -52,7 +52,7 @@ test('homepage keeps buyer discovery visible without product data', async ({ pag
   // Search, the introduction and reference categories must render even when
   // the backend is unavailable. The public fixture contains no products.
   await expect(page.locator('#global-search')).toBeVisible();
-  await expect(page.getByRole('heading', { level: 1, name: 'Gura mu maduka y’u Rwanda kuri WhatsApp' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'Isoko ry’ibintu byose mu Rwanda — gura kuri WhatsApp' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Inkweto' })).toBeVisible();
   await expect(page.locator('a[href^="/p/"]')).toHaveCount(0);
 });

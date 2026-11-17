@@ -1,16 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import {
-  Briefcase,
-  ChevronRight,
-  Footprints,
-  Package,
-  ShieldCheck,
-  Shirt,
-  Sparkles,
-  Store,
-  Tag,
-} from 'lucide-react';
-import { IsokoMark, IsokoVerifiedSeal } from '../components/IsokoLogo';
+import { ChevronRight, Package, ShieldCheck, Store, Tag } from 'lucide-react';
+import { HeroTicker } from '../components/HeroTicker';
+import { IsokoVerifiedSeal } from '../components/IsokoLogo';
 import { ProductCard } from '../components/ProductCard';
 import { PromoCarousel } from '../components/PromoCarousel';
 import { useT } from '../context/LangContext';
@@ -18,6 +9,7 @@ import { useMarketplace } from '../context/MarketplaceContext';
 import { INITIAL_CATEGORIES } from '../data/categories';
 import { buildHomeShelves, interleaveBySeller } from '../lib/algorithm';
 import { loadInterest } from '../lib/storage';
+import { getCategoryIcon, getCategoryIconColor } from '../lib/categoryVisual';
 import { isShopIdentityVerified } from '../lib/shopVerification';
 
 interface HomePageProps {
@@ -26,20 +18,6 @@ interface HomePageProps {
 
 const DENSE_GRID_CLS =
   'grid grid-cols-3 gap-2 min-[480px]:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 sm:gap-3';
-
-function getCategoryIcon(slug: string) {
-  if (slug.includes('inkweto') || slug.includes('sandali') || slug.includes('bote')) return Footprints;
-  if (slug.includes('imyenda') || slug.includes('ankara') || slug.includes('ikoti')) return Shirt;
-  if (slug.includes('amasogisi') || slug.includes('imbere')) return Sparkles;
-  return Briefcase;
-}
-
-function getCategoryIconColor(slug: string) {
-  if (slug.includes('inkweto') || slug.includes('sandali') || slug.includes('bote')) return '#0B6E4F';
-  if (slug.includes('imyenda') || slug.includes('ankara') || slug.includes('ikoti')) return '#C0392B';
-  if (slug.includes('amasogisi') || slug.includes('imbere')) return '#C99A4B';
-  return '#2F80ED';
-}
 
 export const HomePage: React.FC<HomePageProps> = () => {
   const {
@@ -103,41 +81,9 @@ export const HomePage: React.FC<HomePageProps> = () => {
 
   return (
     <main className="mx-auto max-w-7xl space-y-5 bg-[#FAFAF7] pb-8">
-      {/* Compact editorial hero. The mark is the colour-rich brand focal point;
-          the surrounding interface stays calm and deliberately restrained. */}
+      {/* Compact rotating banner: what Isoko is, that it is free, safety advice, open a shop. */}
       <section className="px-2 pt-2 sm:px-6">
-        <div className="relative overflow-hidden rounded-xl border border-[#D7DED8] bg-white px-4 pb-4 pt-5 sm:px-6 sm:pb-5 sm:pt-6">
-          <div className="relative z-10 flex min-h-[96px] items-center justify-between gap-3 sm:min-h-[112px]">
-            <div className="min-w-0 flex-1 pr-1">
-              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#C0392B]">
-                ISOKO · RWANDA
-              </p>
-              <h1 className="mt-1 max-w-[280px] text-[22px] font-extrabold leading-[27px] text-[#1A1F1C] sm:max-w-[560px] sm:text-[26px] sm:leading-[32px]">
-                {t('hero_title')}
-              </h1>
-              <p className="mt-1 max-w-[420px] text-[13px] leading-[18px] text-[#4B544F]">
-                {t('hero_subtitle')}
-              </p>
-            </div>
-            <div className="flex shrink-0 items-center justify-center">
-              <IsokoMark className="h-12 w-12 sm:h-14 sm:w-14" />
-            </div>
-          </div>
-          <div aria-hidden="true" className="imigongo-band absolute inset-x-0 top-0 z-20" />
-        </div>
-        <div className="mt-2 flex items-center justify-end px-1">
-          <a
-            href="/abacuruzi"
-            onClick={(event) => {
-              event.preventDefault();
-              navigate('/abacuruzi');
-            }}
-            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-[#0B6E4F] px-5 text-[13px] font-bold text-white transition-colors hover:bg-[#075A43]"
-          >
-            <Store className="h-4 w-4" aria-hidden="true" />
-            <span>{t('register_seller')}</span>
-          </a>
-        </div>
+        <HeroTicker />
       </section>
 
       {/* Compact visual category rail: real category definitions, never demo products. */}

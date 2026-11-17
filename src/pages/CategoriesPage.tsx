@@ -1,27 +1,9 @@
 import React, { useMemo, useState } from 'react';
-import { ChevronRight, Footprints, Glasses, Shirt, Smartphone, Sparkles, Tag } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
 import { INITIAL_CATEGORIES } from '../data/categories';
-
-function categoryIcon(slug: string) {
-  if (slug.includes('inkweto') || slug.includes('sandali') || slug.includes('bote')) {
-    return Footprints;
-  }
-  if (slug.includes('imyenda') || slug.includes('ankara') || slug.includes('ibikoti')) {
-    return Shirt;
-  }
-  if (slug.includes('telefoni') || slug.includes('cases') || slug.includes('power')) {
-    return Smartphone;
-  }
-  if (slug.includes('indorerwamo') || slug.includes('amasaha') || slug.includes('ingofero')) {
-    return Glasses;
-  }
-  if (slug.includes('amasogisi')) {
-    return Sparkles;
-  }
-  return Tag;
-}
+import { getCategoryIcon as categoryIcon } from '../lib/categoryVisual';
 
 /**
  * Mobile & Desktop Category Split View (/ibyiciro):

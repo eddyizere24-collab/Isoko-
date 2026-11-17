@@ -3,6 +3,12 @@ const { defineConfig } = require('@playwright/test');
 module.exports = defineConfig({
   testDir: './e2e',
   testMatch: '**/*.spec.cjs',
+  // Live-site, isolated-QA and screenshot specs have their own configs and workflows.
+  testIgnore: [
+    '**/live-public-visual-qa.spec.cjs',
+    '**/qa-seller-end-to-end.spec.cjs',
+    '**/brand-clarity-preview.spec.cjs',
+  ],
   fullyParallel: true,
   timeout: 30_000,
   reporter: 'line',

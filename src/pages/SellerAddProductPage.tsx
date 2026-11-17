@@ -115,6 +115,18 @@ export const SellerAddProductPage: React.FC = () => {
     return SIZE_SETS[setKey] ?? SIZE_SETS.shoes_adult;
   }, [selectedCategory]);
 
+  // Goods without sizes (vehicles, furniture, farm tools, electronics) use a single "Ubunini bumwe" variant.
+  const isSingleVariantCategory = availableSizes.length === 1;
+  useEffect(() => {
+    if (draft.step !== 3 || !isSingleVariantCategory) return;
+    const only = availableSizes[0];
+    setDraft((d) =>
+      d.selectedSizes.length === 1 && d.selectedSizes[0].size_label === only
+        ? d
+        : { ...d, selectedSizes: [{ size_label: only, in_stock: true, qty: d.selectedSizes.find((s) => s.size_label === only)?.qty ?? null }] }
+    );
+  }, [draft.step, isSingleVariantCategory, availableSizes]);
+
   const handlePhotoFiles = async (files: FileList | File[] | null) => {
     if (!files || files.length === 0) return;
     setError(null);
@@ -688,30 +700,35 @@ export const SellerAddProductPage: React.FC = () => {
         {draft.step === 3 && (
           <div className="space-y-5">
             <div>
-              <h2 className="text-base font-bold text-[#202724]">Hitamo size ziboneka *</h2>
+              <h2 className="text-base font-bold text-[#202724]">
+                {isSingleVariantCategory ? 'Umubare w’ibihari' : 'Hitamo size ziboneka *'}
+              </h2>
               <p className="mt-0.5 text-xs text-slate-600">
-                Kanda kuri size buri yose ufite. Ushobora no kwandikamo umubare w’ibisigaye (1-3
-                bituma igaragara nka “Hasigaye N”).
+                {isSingleVariantCategory
+                  ? 'Iki gicuruzwa nta size gifite. Ushobora kwandika umubare w’ibihari (si ngombwa).'
+                  : 'Kanda kuri size buri yose ufite. Ushobora no kwandikamo umubare w’ibisigaye (1-3 bituma igaragara nka “Hasigaye N”).'}
               </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {availableSizes.map((sz) => {
-                  const chosen = draft.selectedSizes.find((s) => s.size_label === sz);
-                  return (
-                    <button
-                      key={sz}
-                      type="button"
-                      onClick={() => toggleSize(sz)}
-                      className={`min-h-[44px] min-w-[48px] rounded-xl px-3 text-xs font-semibold transition ${
-                        chosen
-                          ? 'bg-[#214E43] text-white'
-                          : 'border border-[#E3E0D8] bg-white text-[#202724] hover:bg-[#E9F0EB]'
-                      }`}
-                    >
-                      {sz}
-                    </button>
-                  );
-                })}
-              </div>
+              {!isSingleVariantCategory && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {availableSizes.map((sz) => {
+                    const chosen = draft.selectedSizes.find((s) => s.size_label === sz);
+                    return (
+                      <button
+                        key={sz}
+                        type="button"
+                        onClick={() => toggleSize(sz)}
+                        className={`min-h-[44px] min-w-[48px] rounded-xl px-3 text-xs font-semibold transition ${
+                          chosen
+                            ? 'bg-[#214E43] text-white'
+                            : 'border border-[#E3E0D8] bg-white text-[#202724] hover:bg-[#E9F0EB]'
+                        }`}
+                      >
+                        {sz}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
 
               {draft.selectedSizes.length > 0 && (
                 <div className="mt-3 grid gap-2 sm:grid-cols-3">
@@ -720,7 +737,7 @@ export const SellerAddProductPage: React.FC = () => {
                       key={sz.size_label}
                       className="flex items-center justify-between gap-2 rounded-xl border border-[#E3E0D8] bg-[#E9F0EB] px-3 py-2"
                     >
-                      <span className="text-xs font-bold text-[#202724]">Size {sz.size_label}</span>
+                      <span className="text-xs font-bold text-[#202724]">{isSingleVariantCategory ? 'Umubare' : `Size ${sz.size_label}`}</span>
                       <input
                         type="number"
                         inputMode="numeric"

@@ -30,6 +30,8 @@ export const SIZE_SETS: Record<string, string[]> = {
   ],
   socks: ['36-40', '41-45', 'Ubunini bumwe', 'S', 'M', 'L', 'XL', 'XXL'],
   accessories: ['Ubunini bumwe', 'S', 'M', 'L'],
+  // Goods without sizes (vehicles, furniture, farm tools, electronics): one variant, only the stock count matters.
+  one_size: ['Ubunini bumwe'],
   phone_models: [
     'iPhone 13', 'iPhone 14', 'iPhone 15', 'Samsung A14', 'Samsung A24',
     'Samsung S23', 'Tecno Spark', 'Infinix Hot', 'Universal / Byose',
@@ -48,6 +50,14 @@ export const INITIAL_CATEGORIES: Category[] = [
   { id: 3, parent_id: null, slug: 'amasogisi', name_rw: "Amasogisi n'imyenda y'imbere", name_en: 'Socks & Underwear', sort: 3, size_set: 'socks', active: true, phase: 'P1' },
   { id: 4, parent_id: null, slug: 'ibindi', name_rw: 'Ibindi byo kwambara', name_en: 'Accessories', sort: 4, size_set: 'accessories', active: true, phase: 'P1' },
   { id: 5, parent_id: null, slug: 'amatelefoni', name_rw: "Ibikoresho by'amatelefoni", name_en: 'Phone Accessories', sort: 5, size_set: 'phone_models', active: false, phase: 'P3' },
+
+  // General-marketplace top-level categories (migration 026). Goods without sizes use size_set 'one_size'.
+  { id: 6, parent_id: null, slug: 'imodoka', name_rw: "Imodoka n'ibinyabiziga", name_en: 'Vehicles', sort: 6, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 7, parent_id: null, slug: 'ibikoresho-byo-mu-nzu', name_rw: 'Ibikoresho byo mu nzu', name_en: 'Home & Furniture', sort: 7, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 8, parent_id: null, slug: 'ubuhinzi', name_rw: "Ubuhinzi n'ubworozi", name_en: 'Farming & Livestock', sort: 8, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 9, parent_id: null, slug: 'ikoranabuhanga', name_rw: "Telefoni n'ikoranabuhanga", name_en: 'Phones & Electronics', sort: 9, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 10, parent_id: null, slug: 'ubwubatsi', name_rw: "Ubwubatsi n'ibikoresho", name_en: 'Building & Tools', sort: 10, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 11, parent_id: null, slug: 'ibindi-bicuruzwa', name_rw: 'Ibindi bicuruzwa', name_en: 'Other goods', sort: 11, size_set: 'one_size', active: true, phase: 'P1' },
 
   // Subcategories for Inkweto (parent_id: 1)
   { id: 101, parent_id: 1, slug: 'inkweto-abagabo', name_rw: "Z'abagabo", name_en: 'Men Shoes', sort: 1, size_set: 'shoes_adult', active: true, phase: 'P1' },
@@ -88,4 +98,20 @@ export const INITIAL_CATEGORIES: Category[] = [
   { id: 503, parent_id: 5, slug: 'chargers', name_rw: 'Chargers', name_en: 'Chargers', sort: 3, size_set: 'phone_models', active: true, phase: 'P3' },
   { id: 504, parent_id: 5, slug: 'earphones', name_rw: 'Earphones', name_en: 'Earphones', sort: 4, size_set: 'phone_models', active: true, phase: 'P3' },
   { id: 505, parent_id: 5, slug: 'power-banks', name_rw: 'Power banks', name_en: 'Power Banks', sort: 5, size_set: 'phone_models', active: true, phase: 'P3' },
+
+  // Subcategories for the general-marketplace categories
+  { id: 601, parent_id: 6, slug: 'imodoka-zigendera', name_rw: 'Imodoka', name_en: 'Cars', sort: 1, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 602, parent_id: 6, slug: 'moto-amagare', name_rw: 'Moto n’amagare', name_en: 'Motorbikes & Bicycles', sort: 2, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 603, parent_id: 6, slug: 'ibyuma-by-imodoka', name_rw: 'Ibyuma n’ibikoresho by’imodoka', name_en: 'Vehicle Parts', sort: 3, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 701, parent_id: 7, slug: 'intebe-ameza', name_rw: 'Intebe n’ameza', name_en: 'Chairs & Tables', sort: 1, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 702, parent_id: 7, slug: 'ibitanda-matela', name_rw: 'Ibitanda na matela', name_en: 'Beds & Mattresses', sort: 2, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 703, parent_id: 7, slug: 'igikoni', name_rw: 'Ibikoresho byo mu gikoni', name_en: 'Kitchenware', sort: 3, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 801, parent_id: 8, slug: 'ibikoresho-by-ubuhinzi', name_rw: 'Ibikoresho by’ubuhinzi', name_en: 'Farm Tools & Machines', sort: 1, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 802, parent_id: 8, slug: 'imbuto-ifumbire', name_rw: 'Imbuto n’ifumbire', name_en: 'Seeds & Fertilizer', sort: 2, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 803, parent_id: 8, slug: 'amatungo', name_rw: 'Amatungo n’ibiryo byayo', name_en: 'Livestock & Feed', sort: 3, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 901, parent_id: 9, slug: 'telefoni', name_rw: 'Telefoni', name_en: 'Phones', sort: 1, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 902, parent_id: 9, slug: 'mudasobwa-televiziyo', name_rw: 'Mudasobwa na televiziyo', name_en: 'Computers & TVs', sort: 2, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 903, parent_id: 9, slug: 'ibikoresho-by-amashanyarazi', name_rw: 'Ibikoresho by’amashanyarazi', name_en: 'Electrical Goods', sort: 3, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 1001, parent_id: 10, slug: 'ibikoresho-byo-kubaka', name_rw: 'Ibikoresho byo kubaka', name_en: 'Building Materials', sort: 1, size_set: 'one_size', active: true, phase: 'P1' },
+  { id: 1002, parent_id: 10, slug: 'ibikoresho-by-intoki', name_rw: 'Ibikoresho by’intoki n’imashini', name_en: 'Tools & Machines', sort: 2, size_set: 'one_size', active: true, phase: 'P1' },
 ];
