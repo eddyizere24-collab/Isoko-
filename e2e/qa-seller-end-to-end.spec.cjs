@@ -147,7 +147,7 @@ test('QA seller registration, separate brand photos, 3-photo publish and 10×3 b
   const firstName = await createPublishedProduct(page, productFiles, 1);
   await page.getByRole('button', { name: 'Reba uko abaguzi bakibona', exact: true }).click();
   await expect(page).toHaveURL(/\/p\//);
-  await expect(page.getByText(firstName, { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: firstName, exact: true })).toBeVisible();
   const productImageSources = await page.locator('img').evaluateAll(images =>
     images.map(img => img.getAttribute('src') || '').filter(src => src.includes('/products/'))
   );
@@ -158,7 +158,7 @@ test('QA seller registration, separate brand photos, 3-photo publish and 10×3 b
   const shopPath = await shopLink.getAttribute('href');
   await shopLink.click();
   await expect(page).toHaveURL(/\/i\//);
-  await expect(page.getByText(firstName, { exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: firstName, exact: true })).toBeVisible();
 
   // Allow the first 6 original uploads to leave the rolling 60-second window.
   await page.waitForTimeout(65_000);
