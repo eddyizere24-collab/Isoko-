@@ -108,10 +108,26 @@ test('QA seller registration, separate brand photos, 3-photo publish and 10×3 b
   test.setTimeout(35 * 60 * 1000);
   const browserErrors = [];
   const failedApiResponses = [];
+  const recoveredSellerDraftRetries = [];
+  let sellerRegistrationDraftSucceeded = false;
   page.on('pageerror', error => browserErrors.push(error.message));
   page.on('response', response => {
-    if (response.status() >= 400 && /\/api\/upload|apirest|neonauth/i.test(response.url())) {
-      failedApiResponses.push({ status: response.status(), url: response.url() });
+    const url = response.url();
+    if (url.includes('/rpc/start_seller_registration_v1')) {
+      if (response.status() < 400) {
+        sellerRegistrationDraftSucceeded = true;
+      } else if (response.status() === 403) {
+        // A freshly issued Better Auth JWT can briefly reach Postgres before
+        // auth.user_id() is populated. The app retries this idempotent draft RPC
+        // and must eventually receive a successful response.
+        recoveredSellerDraftRetries.push({ status: response.status(), url });
+      } else {
+        failedApiResponses.push({ status: response.status(), url });
+      }
+      return;
+    }
+    if (response.status() >= 400 && /\/api\/upload|apirest|neonauth/i.test(url)) {
+      failedApiResponses.push({ status: response.status(), url });
     }
   });
 
@@ -181,7 +197,9 @@ test('QA seller registration, separate brand photos, 3-photo publish and 10×3 b
 
   expect(browserErrors).toEqual([]);
   expect(failedApiResponses).toEqual([]);
+  expect(sellerRegistrationDraftSucceeded).toBe(true);
   const evidence = {
+    recoveredSellerDraftRetries: recoveredSellerDraftRetries.length,
     runId: RUN_ID,
     email: EMAIL,
     shopName: `ISOKO QA ${RUN_ID}`,
