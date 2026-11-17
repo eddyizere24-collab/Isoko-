@@ -32,19 +32,24 @@ jobs:
           QA_DATA_API_URL: https://ep-aged-river-bao1xxwe.apirest.c-8.eu-central-1.aws.neon.tech/isoko/rest/v1
         run: |
           node --input-type=module <<'NODE'
+          import https from 'node:https';
           const url = new URL('v_public_bootstrap?select=payload&limit=1', process.env.QA_DATA_API_URL.endsWith('/') ? process.env.QA_DATA_API_URL : process.env.QA_DATA_API_URL + '/');
-          const response = await fetch(url, {
+          const request = https.request(url, {
             method: 'OPTIONS',
             headers: {
               Origin: 'http://localhost:5173',
               'Access-Control-Request-Method': 'GET',
               'Access-Control-Request-Headers': 'authorization,accept,x-neon-client-info',
             },
+          }, response => {
+            const headers = Object.fromEntries(
+              Object.entries(response.headers).filter(([key]) => key.toLowerCase().startsWith('access-control-'))
+            );
+            console.log(JSON.stringify({ status: response.statusCode, headers }, null, 2));
+            response.resume();
           });
-          const headers = Object.fromEntries(
-            [...response.headers.entries()].filter(([key]) => key.toLowerCase().startsWith('access-control-'))
-          );
-          console.log(JSON.stringify({ status: response.status, headers }, null, 2));
+          request.on('error', error => { console.error(error); process.exitCode = 1; });
+          request.end();
           NODE
       - name: Build frontend against isolated Neon QA endpoints only
         run: bun run build
