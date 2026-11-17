@@ -12,6 +12,7 @@ on:
       - 'src/lib/api.ts'
       - 'src/lib/image.ts'
       - 'infra/neon/functions/isokoapi/index.mjs'
+      - 'infra/neon/migrations/**'
 permissions:
   contents: read
 jobs:
