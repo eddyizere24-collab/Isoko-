@@ -5,6 +5,8 @@ const crypto = require('node:crypto');
 
 const RUN_ID = process.env.GITHUB_RUN_ID || `local-${Date.now()}`;
 const EMAIL = `isoko-qa-e2e-${RUN_ID}@example.com`;
+const RUN_PHONE_SUFFIX = String(RUN_ID.replace(/\\D/g, '').slice(-6) || Date.now()).slice(-6).padStart(6, '0');
+const PHONE = `0788${RUN_PHONE_SUFFIX}`;
 const PASSWORD = `Qa!${crypto.randomBytes(24).toString('base64url')}`;
 const RESULTS_DIR = path.join(process.cwd(), 'test-results', 'qa-seller-e2e');
 fs.mkdirSync(RESULTS_DIR, { recursive: true });
@@ -122,7 +124,7 @@ test('QA seller registration, separate brand photos, 3-photo publish and 10×3 b
   await page.getByRole('button', { name: 'Komeza', exact: true }).click();
 
   await page.locator('#reg-shopname').fill(`ISOKO QA ${RUN_ID}`);
-  await page.locator('#reg-wa').fill('0788123456');
+  await page.locator('#reg-wa').fill(PHONE);
   await page.getByRole('checkbox', { name: /Nemeye Amategeko/i }).check();
   await page.getByRole('button', { name: 'Fungura iduka ubu', exact: true }).click();
   await expect(page).toHaveURL(/\/umucuruzi(?:\/|$)/, { timeout: 120_000 });
