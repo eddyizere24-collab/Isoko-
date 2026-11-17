@@ -61,6 +61,8 @@ const EMPTY_DRAFT: WizardDraft = {
   description: '',
 };
 
+const GENERAL_PRODUCT_VARIANT = 'Ntibireba';
+
 const QUICK_SAMPLE_PHOTOS = [
   {
     label: 'Inkweto (White)',
@@ -109,6 +111,8 @@ export const SellerAddProductPage: React.FC = () => {
     () => categories.find((c) => c.id === draft.categoryId) ?? categories.find((c) => c.id === draft.topCategoryId),
     [categories, draft.categoryId, draft.topCategoryId]
   );
+
+  const isGeneralListing = selectedCategory?.slug === 'ibindi';
 
   const availableSizes = useMemo(() => {
     const setKey = selectedCategory?.size_set ?? 'shoes_adult';
@@ -236,7 +240,7 @@ export const SellerAddProductPage: React.FC = () => {
       }
     }
     if (draft.step === 3) {
-      if (draft.selectedSizes.length === 0) {
+      if (!isGeneralListing && draft.selectedSizes.length === 0) {
         setError('Hitamo nibura size 1 iboneka.');
         return;
       }
@@ -252,6 +256,9 @@ export const SellerAddProductPage: React.FC = () => {
     setError(null);
     const priceVal = Number(draft.price.replace(/\D/g, ''));
     const oldPriceVal = draft.oldPrice ? Number(draft.oldPrice.replace(/\D/g, '')) : null;
+    const productVariants = isGeneralListing
+      ? [{ size_label: GENERAL_PRODUCT_VARIANT, in_stock: true, qty: null }]
+      : draft.selectedSizes;
 
     const errs = validateProductForm({
       photosCount: draft.photos.length,
@@ -262,7 +269,7 @@ export const SellerAddProductPage: React.FC = () => {
       condition: draft.condition,
       brand: draft.brand,
       authentic: draft.authentic,
-      variants: draft.selectedSizes,
+      variants: productVariants,
       colors: draft.colors,
       description: draft.description,
     });
@@ -286,7 +293,7 @@ export const SellerAddProductPage: React.FC = () => {
         colors: draft.colors,
         isDraft,
         images: draft.photos,
-        variants: draft.selectedSizes,
+        variants: productVariants,
       });
       saveProductDraft(null);
       setSavedProduct(res.product);
@@ -409,7 +416,7 @@ export const SellerAddProductPage: React.FC = () => {
         {[
           { s: 1, label: '1. Ifoto' },
           { s: 2, label: '2. Icyo ari cyo' },
-          { s: 3, label: '3. Sizes n’amabara' },
+          { s: 3, label: '3. Ibiranga' },
           { s: 4, label: '4. Suzuma' },
         ].map((item) => (
           <button
@@ -587,7 +594,7 @@ export const SellerAddProductPage: React.FC = () => {
                       setDraft((d) => ({
                         ...d,
                         topCategoryId: cat.id,
-                        categoryId: null,
+                        categoryId: cat.slug === 'ibindi' ? cat.id : null,
                         selectedSizes: [],
                       }))
                     }
@@ -687,6 +694,14 @@ export const SellerAddProductPage: React.FC = () => {
         {/* STEP 3: Sizes, Colors, Condition, Brand, Description */}
         {draft.step === 3 && (
           <div className="space-y-5">
+            {isGeneralListing ? (
+              <div className="rounded-xl border border-[#CFE0D4] bg-[#F1F7F2] p-4">
+                <h2 className="text-sm font-bold text-[#1A1F1C]">Ibicuruzwa rusange</h2>
+                <p className="mt-1 text-xs leading-relaxed text-[#4B544F]">
+                  {t('general_listing_help')}
+                </p>
+              </div>
+            ) : (
             <div>
               <h2 className="text-base font-bold text-[#202724]">Hitamo size ziboneka *</h2>
               <p className="mt-0.5 text-xs text-slate-600">
@@ -737,7 +752,7 @@ export const SellerAddProductPage: React.FC = () => {
                 </div>
               )}
             </div>
-
+            )}
             <div>
               <p className="text-sm font-semibold text-[#202724]">Amabara (kugeza kuri 5)</p>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -881,7 +896,9 @@ export const SellerAddProductPage: React.FC = () => {
                   {authShop?.name || 'Iduka ryawe'} · {draft.condition === 'new' ? RW.condition_new : RW.condition_used}
                 </p>
                 <p className="mt-1 text-xs text-slate-500">
-                  Sizes: {draft.selectedSizes.map((s) => s.size_label).join(', ')}
+                  {isGeneralListing
+                    ? selectedCategory?.name_rw ?? 'Ibindi byose'
+                    : `Sizes: ${draft.selectedSizes.map((s) => s.size_label).join(', ')}`}
                 </p>
               </div>
             </div>
