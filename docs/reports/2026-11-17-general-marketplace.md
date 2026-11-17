@@ -18,6 +18,7 @@ Unrelated account, seller, security, checkout, image, language and prior design 
 - General listings do not require apparel or shoe sizes. The current product RPC still requires one variant, so the form writes the internal `Ntibireba` sentinel. Product detail, cart and WhatsApp output suppress that sentinel so buyers never see a fake size.
 - Home, land, vehicles and household goods are explicit examples in the Kinyarwanda, English, French, Swahili, Kirundi, Lingala and Luganda copy. Sellers should describe the actual item in its title and details.
 - Raise the price ceiling consistently to **2,000,000,000 RWF** in the new/edit forms, client-side validation, PostgreSQL table constraint and create/update RPC validation.
+- The bulk uploader also exposes the general category, automatically uses the internal no-size variant, hides the size controls for general listings and accepts the same 2,000,000,000 RWF ceiling. Existing clothing and shoe bulk batches keep their size selection unchanged.
 
 ## Compact rotating home message
 
