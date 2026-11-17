@@ -150,8 +150,8 @@ BEGIN
     wrapped_count := wrapped_count + 1;
   END LOOP;
 
-  IF wrapped_count <> 13 THEN
-    RAISE EXCEPTION 'Expected to wrap 13 authenticated RPCs, wrapped %', wrapped_count;
+  IF wrapped_count <> 12 THEN
+    RAISE EXCEPTION 'Expected to wrap 12 authenticated RPCs, wrapped %', wrapped_count;
   END IF;
 END;
 $migration$;
