@@ -128,7 +128,7 @@ test('QA seller registration, separate brand photos, 3-photo publish and 10×3 b
   await page.locator('#reg-wa').fill(PHONE);
   await page.getByRole('checkbox', { name: /Nemeye Amategeko/i }).check();
   await page.getByRole('button', { name: 'Fungura iduka ubu', exact: true }).click();
-  await expect(page).toHaveURL(/\/abacuruzi(?:\/|$)/, { timeout: 120_000 });
+  await expect(page).toHaveURL(/\/umucuruzi(?:\/|$)/, { timeout: 120_000 });
 
   await page.goto('/umucuruzi/iduka');
   await expect(page.getByText('Hindura cover')).toBeVisible({ timeout: 90_000 });
