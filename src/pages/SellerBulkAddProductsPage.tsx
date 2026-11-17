@@ -39,7 +39,7 @@ export const SellerBulkAddProductsPage: React.FC = () => {
   const { navigate, authSession, bootstrap, refreshBootstrap: refreshMarketplace } = useMarketplace();
   const categories: Category[] = bootstrap?.categories ?? INITIAL_CATEGORIES;
   const sellableCategories = useMemo(
-    () => categories.filter((category) => category.active && category.parent_id !== null),
+    () => categories.filter((category) => category.active && (category.parent_id !== null || category.slug === 'ibindi')),
     [categories]
   );
 
@@ -56,6 +56,7 @@ export const SellerBulkAddProductsPage: React.FC = () => {
     () => sellableCategories.find((category) => category.id === categoryId) ?? null,
     [sellableCategories, categoryId]
   );
+  const isGeneralListing = selectedCategory?.slug === 'ibindi';
   const availableSizes = useMemo(
     () => SIZE_SETS[selectedCategory?.size_set ?? 'accessories'] ?? SIZE_SETS.accessories,
     [selectedCategory]
@@ -66,9 +67,10 @@ export const SellerBulkAddProductsPage: React.FC = () => {
   }, [authSession, navigate]);
 
   useEffect(() => {
-    if (availableSizes.includes('Ubunini bumwe')) setSelectedSizes(['Ubunini bumwe']);
+    if (selectedCategory?.slug === 'ibindi') setSelectedSizes(['Ntibireba']);
+    else if (availableSizes.includes('Ubunini bumwe')) setSelectedSizes(['Ubunini bumwe']);
     else setSelectedSizes([]);
-  }, [categoryId]);
+  }, [categoryId, selectedCategory, availableSizes]);
 
   const addBlankRow = () => {
     if (rows.length >= MAX_PRODUCTS_PER_BATCH) {
@@ -187,7 +189,7 @@ export const SellerBulkAddProductsPage: React.FC = () => {
       setFeedback('Banza uhitemo icyiciro cy’ibicuruzwa.');
       return;
     }
-    if (selectedSizes.length === 0) {
+    if (!isGeneralListing && selectedSizes.length === 0) {
       setFeedback('Hitamo nibura size imwe izaboneka kuri ibi bicuruzwa.');
       return;
     }
@@ -205,7 +207,7 @@ export const SellerBulkAddProductsPage: React.FC = () => {
     setFeedback(null);
     let savedCount = 0;
     let failedCount = 0;
-    const variants: ProductVariant[] = selectedSizes.map((size) => ({
+    const variants: ProductVariant[] = (isGeneralListing ? ['Ntibireba'] : selectedSizes).map((size) => ({
       id: '',
       product_id: '',
       size_label: size,
@@ -251,7 +253,7 @@ export const SellerBulkAddProductsPage: React.FC = () => {
           colors: [],
           isDraft: false,
           images: row.photos,
-          variants: selectedSizes.map((size) => ({ size_label: size, in_stock: true, qty: null })),
+          variants: (isGeneralListing ? ['Ntibireba'] : selectedSizes).map((size) => ({ size_label: size, in_stock: true, qty: null })),
         });
         savedCount += 1;
         setRows((previous) => previous.map((item) =>
@@ -328,18 +330,27 @@ export const SellerBulkAddProductsPage: React.FC = () => {
           </div>
         </div>
         <div className="mt-4">
-          <p className="text-xs font-semibold text-slate-700">Sizes ziboneka kuri ibi bicuruzwa byose *</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {availableSizes.map((size) => {
-              const chosen = selectedSizes.includes(size);
-              return (
-                <button key={size} type="button" disabled={saving || rows.some((row) => row.savedId)} onClick={() => setSelectedSizes((previous) => chosen ? previous.filter((value) => value !== size) : [...previous, size])} className={`min-h-10 rounded-lg px-3 text-xs font-semibold ${chosen ? 'bg-[#0B6E4F] text-white' : 'border border-slate-200 bg-white text-slate-700'} disabled:opacity-40`}>
-                  {size}
-                </button>
-              );
-            })}
-          </div>
-          <p className="mt-2 text-xs leading-5 text-slate-500">Iyi batch iba ifite icyiciro, imiterere na sizes bihuriweho. Ku kindi cyiciro cyangwa sizes zitandukanye, fungura indi batch.</p>
+          {isGeneralListing ? (
+            <div className="rounded-xl border border-[#CFE0D4] bg-[#F1F7F2] p-4">
+              <p className="text-sm font-bold text-[#1A1F1C]">Ibicuruzwa rusange</p>
+              <p className="mt-1 text-xs leading-5 text-[#4B544F]">{RW.general_listing_help}</p>
+            </div>
+          ) : (
+            <>
+              <p className="text-xs font-semibold text-slate-700">Sizes ziboneka kuri ibi bicuruzwa byose *</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {availableSizes.map((size) => {
+                  const chosen = selectedSizes.includes(size);
+                  return (
+                    <button key={size} type="button" disabled={saving || rows.some((row) => row.savedId)} onClick={() => setSelectedSizes((previous) => chosen ? previous.filter((value) => value !== size) : [...previous, size])} className={`min-h-10 rounded-lg px-3 text-xs font-semibold ${chosen ? 'bg-[#0B6E4F] text-white' : 'border border-slate-200 bg-white text-slate-700'} disabled:opacity-40`}>
+                      {size}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-2 text-xs leading-5 text-slate-500">Iyi batch iba ifite icyiciro, imiterere na sizes bihuriweho. Ku kindi cyiciro cyangwa sizes zitandukanye, fungura indi batch.</p>
+            </>
+          )}
         </div>
       </section>
 
@@ -401,7 +412,7 @@ export const SellerBulkAddProductsPage: React.FC = () => {
                   <div className="grid grid-cols-2 gap-2">
                     <div>
                       <label className="block text-xs font-semibold text-slate-700">Igiciro (RWF) *</label>
-                      <input type="number" inputMode="numeric" min={500} max={5000000} value={row.price} disabled={saving || Boolean(row.savedId)} onChange={(event)=>updateRow(row.key,{price:event.target.value})} placeholder="35000" className="mt-1 min-h-11 w-full rounded-xl border border-slate-300 px-3 text-sm tabular-nums disabled:bg-slate-50" />
+                      <input type="number" inputMode="numeric" min={500} max={2000000000} value={row.price} disabled={saving || Boolean(row.savedId)} onChange={(event)=>updateRow(row.key,{price:event.target.value})} placeholder="35000" className="mt-1 min-h-11 w-full rounded-xl border border-slate-300 px-3 text-sm tabular-nums disabled:bg-slate-50" />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold text-slate-700">Igiciro cya kera</label>
