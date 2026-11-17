@@ -139,7 +139,7 @@ export const rn = {
   new_version: 'Verisiyo nshasha irahari.',
   back_home: 'Subira mw’itanguriro',
   try_again: 'Subira ugerageze',
-  onboarding_title: 'Ugurura idinga mu munota 1',
+  onboarding_title: 'Ugurura idinga mu munota\u00A01',
   onboarding_sub: 'Ntibisaba karangamuntu canke TIN ubu.',
   onboarding_step1: '1. Konte (~30s)',
   onboarding_step2: '2. Idinga (~30s)',

@@ -137,7 +137,7 @@ export const rw = {
   new_version: 'Verisiyo nshya irahari. Kanda ngo uyigereho',
   back_home: 'Subira ahabanza',
   try_again: 'Ongera ugerageze',
-  onboarding_title: 'Fungura iduka ryawe mu munota 1',
+  onboarding_title: 'Fungura iduka ryawe mu munota\u00A01',
   onboarding_sub: 'Ntibisaba indangamuntu cyangwa TIN ubu. Tangira gucuruza ako kanya.',
   onboarding_step1: '1. Konti (~30s)',
   onboarding_step2: '2. Iduka (~30s)',
