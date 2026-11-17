@@ -545,42 +545,64 @@ export async function updateSellerProfile(payload:Record<string,unknown>):Promis
 
 export async function updateSellerShop(payload:Record<string,unknown>):Promise<{shop:Shop}> {
   const current=await currentAccount();
-  const districtId=Number(payload.district_id);
-  const district=first<any>(dataOf<any>(
-    await neon.from('areas').select('id,district,province,sector,parent_id')
-      .eq('id',districtId).is('sector',null).maybeSingle(),
-    'Akarere wahisemo ntikabonetse.'
-  ));
-  if(!district) throw new Error('Hitamo akarere kari ku rutonde.');
-  const sectorId=payload.sector_id==null?null:Number(payload.sector_id);
-  let sector:any=null;
-  if(sectorId!==null) {
-    sector=first<any>(dataOf<any>(
-      await neon.from('areas').select('id,sector,parent_id')
-        .eq('id',sectorId).eq('parent_id',districtId).maybeSingle(),
-      'Umurenge ntubonetse.'
-    ));
-    if(!sector) throw new Error('Umurenge wahisemo nturi muri aka karere.');
+  const has=(key:string) => Object.prototype.hasOwnProperty.call(payload,key);
+  const updates:Record<string,unknown> = {};
+
+  // Update only fields actually supplied. This endpoint is also used during
+  // first-time onboarding to save a district; partial location updates must
+  // never blank the shop's WhatsApp number, phone, name, photos or profile.
+  if(has('name')) updates.name=String(payload.name??'').trim();
+  if(has('about')) updates.about=String(payload.about??'').slice(0,3000);
+  if(has('logoPath')) updates.logo_key=payload.logoPath ? storageKey(String(payload.logoPath)) : null;
+  if(has('coverPath')) updates.cover_key=payload.coverPath ? storageKey(String(payload.coverPath)) : null;
+  if(has('socialLinks')) {
+    const socialLinks=payload.socialLinks && typeof payload.socialLinks === 'object'
+      ? payload.socialLinks as Record<string,unknown>
+      : {};
+    updates.social_links=Object.fromEntries(Object.entries(socialLinks)
+      .map(([key,value])=>[key,String(value??'').trim()])
+      .filter(([,value])=>/^https:\/\//i.test(String(value))));
   }
+  if(has('whatsapp')) updates.whatsapp=normalizePhone(String(payload.whatsapp??''));
+  if(has('phone')) updates.phone=normalizePhone(String(payload.phone??''));
+  if(has('landmark')) updates.landmark=String(payload.landmark??'');
+  if(has('hours_text')) updates.hours_text=String(payload.hours_text??'');
+  if(has('delivery_text')) updates.delivery_text=String(payload.delivery_text??'');
+
+  if(has('district_id')) {
+    const districtId=Number(payload.district_id);
+    const district=first<any>(dataOf<any>(
+      await neon.from('areas').select('id,district,province,sector,parent_id')
+        .eq('id',districtId).is('sector',null).maybeSingle(),
+      'Akarere wahisemo ntikabonetse.'
+    ));
+    if(!district) throw new Error('Hitamo akarere kari ku rutonde.');
+
+    const sectorId=payload.sector_id==null?null:Number(payload.sector_id);
+    let sector:any=null;
+    if(sectorId!==null) {
+      sector=first<any>(dataOf<any>(
+        await neon.from('areas').select('id,sector,parent_id')
+          .eq('id',sectorId).eq('parent_id',districtId).maybeSingle(),
+        'Umurenge ntubonetse.'
+      ));
+      if(!sector) throw new Error('Umurenge wahisemo nturi muri aka karere.');
+    }
+    updates.district_id=districtId;
+    updates.sector_id=sectorId;
+    updates.district_name=district.district;
+    updates.sector_name=sector?.sector??null;
+  } else if(has('sector_id')) {
+    throw new Error('Hitamo akarere mbere yo guhitamo umurenge.');
+  }
+
+  if(Object.keys(updates).length===0) {
+    throw new Error('Nta makuru mashya yo kuvugurura iduka.');
+  }
+
   const row=first<any>(dataOf<any>(
-    await neon.from('shops').update({
-      name:String(payload.name??'').trim(),
-      about:String(payload.about??'').slice(0,3000),
-      logo_key:payload.logoPath ? storageKey(String(payload.logoPath)) : null,
-      cover_key:payload.coverPath ? storageKey(String(payload.coverPath)) : null,
-      social_links:Object.fromEntries(Object.entries((payload.socialLinks && typeof payload.socialLinks === 'object' ? payload.socialLinks : {}) as Record<string,unknown>)
-        .map(([key,value])=>[key,String(value??'').trim()])
-        .filter(([,value])=>/^https:\/\//i.test(value))),
-      whatsapp:normalizePhone(String(payload.whatsapp??'')),
-      phone:normalizePhone(String(payload.phone??'')),
-      district_id:districtId,
-      sector_id:sectorId,
-      district_name:district.district,
-      sector_name:sector?.sector??null,
-      landmark:String(payload.landmark??''),
-      hours_text:String(payload.hours_text??''),
-      delivery_text:String(payload.delivery_text??''),
-    }).eq('owner_id',current.profile.id).select('*').maybeSingle(),
+    await neon.from('shops').update(updates)
+      .eq('owner_id',current.profile.id).select('*').maybeSingle(),
     'Ntibishobotse kuvugurura amakuru y’iduka.'
   ));
   if(!row) throw new Error('Iduka ntiriboneka.');
