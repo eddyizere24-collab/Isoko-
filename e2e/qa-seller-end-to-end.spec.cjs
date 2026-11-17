@@ -70,6 +70,37 @@ async function createPublishedProduct(page, imageFiles, index) {
   return name;
 }
 
+async function createGeneralListing(page, imageFile) {
+  await page.goto('/umucuruzi/ongeraho');
+  await page.locator('input[type="file"]').nth(1).setInputFiles([imageFile]);
+  await expect(page.getByText(/Amafoto washyizeho \\(1\\/5\\)/)).toBeVisible({ timeout: 120_000 });
+
+  await page.getByRole('button', { name: 'Komeza', exact: true }).click();
+  await page.locator('main').getByRole('button', { name: 'Ibindi byose', exact: true }).click();
+  const name = `ISOKO QA Imodoka Toyota ${RUN_ID}`;
+  await page.locator('#wiz-name').fill(name);
+  await page.locator('#wiz-price').fill('4500000');
+
+  await page.getByRole('button', { name: 'Komeza', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Ibicuruzwa rusange' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Hitamo size ziboneka/i })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Komeza', exact: true }).click();
+  await page.getByRole('button', { name: 'Bika kandi utangaze', exact: true }).click();
+
+  await expect(page.getByRole('heading', { name: 'Igicuruzwa cyashyizwe ahagaragara!' })).toBeVisible({ timeout: 120_000 });
+  await expect(page.getByText(name, { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Reba uko abaguzi bakibona', exact: true }).click();
+  await expect(page).toHaveURL(/\\/p\\//);
+  await expect(page.getByText(name, { exact: true })).toBeVisible();
+  await expect(page.getByText('Ntibireba', { exact: true })).toHaveCount(0);
+
+  const whatsappLink = page.locator('a[href*="wa.me"]').first();
+  await expect(whatsappLink).toHaveCount(1);
+  const href = await whatsappLink.getAttribute('href');
+  expect(decodeURIComponent(href || '')).not.toMatch(/size\\s*:/i);
+  return name;
+}
+
 test('QA seller registration, separate brand photos, 3-photo publish and 10×3 batch', async ({ page }) => {
   test.setTimeout(35 * 60 * 1000);
   const browserErrors = [];
@@ -110,6 +141,7 @@ test('QA seller registration, separate brand photos, 3-photo publish and 10×3 b
   await expect(page.getByAltText('Ifoto ya profile yawe')).toHaveAttribute('src', new RegExp('/profiles/'));
   await expect(page.getByAltText('Logo y’iduka')).toHaveAttribute('src', new RegExp('/logos/'));
 
+  const generalListingName = await createGeneralListing(page, productFiles[0]);
   const firstName = await createPublishedProduct(page, productFiles, 1);
   await page.getByRole('button', { name: 'Reba uko abaguzi bakibona', exact: true }).click();
   await expect(page).toHaveURL(/\/p\//);
@@ -151,6 +183,7 @@ test('QA seller registration, separate brand photos, 3-photo publish and 10×3 b
     coverPrefix: coverSource.split('/shops/')[1]?.split('/')[0] || null,
     logoPrefix: logoSource.split('/logos/')[1]?.split('/')[0] || null,
     productsPublished: published.length,
+    generalListingName,
     productNames: published,
     photosPerProduct: 3,
     bulkOriginalPhotoUploads: 30,
