@@ -34,11 +34,17 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/isoko-live-playwright/node_modules
         run: '"$RUNNER_TEMP/isoko-live-playwright/node_modules/.bin/playwright" test --config=playwright.live.config.cjs'
 
+      - name: Audit leftover Kinyarwanda in every other language
+        continue-on-error: true
+        env:
+          NODE_PATH: ${{ runner.temp }}/isoko-live-playwright/node_modules
+        run: '"$RUNNER_TEMP/isoko-live-playwright/node_modules/.bin/playwright" test --config=playwright.audit.config.cjs'
+
       - name: Commit screenshots back to the verify branch
         if: always()
         run: |
           git config user.name "isoko-live-verify"
           git config user.email "isoko-live-verify@users.noreply.github.com"
-          git add -f docs/design/qa/2026-11-16-live/
+          git add -f docs/design/qa/2026-11-16-live/ docs/design/qa/language-audit/
           git commit -m "chore(qa): live verification screenshots" || echo "nothing to commit"
           git push origin "HEAD:${GITHUB_REF_NAME}"
