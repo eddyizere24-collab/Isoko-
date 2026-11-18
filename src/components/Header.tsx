@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { ChevronDown, MapPin, Search, ShoppingCart, User } from 'lucide-react';
 import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
-import { IsokoWordmark, RwandanGeometricPattern } from './IsokoLogo';
+import { IsokoWordmark } from './IsokoLogo';
 import { LanguageSwitcher } from './LanguageSwitcher';
 
 const FALLBACK_CATEGORIES = [
@@ -120,8 +120,8 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
 
   return (
     <>
-      {/* Sticky Top Header (52px mobile / 58px desktop) + 8px 100%-opacity SVG Imigongo strip */}
-      <header className="sticky top-0 z-40 bg-white">
+      {/* Sticky top header (52px mobile / 58px desktop) with a 3px brand-yellow line; no decorative strip above the products */}
+      <header className="sticky top-0 z-40 border-b-[3px] border-b-[#FFC928] bg-white">
         <div className="mx-auto flex h-[52px] max-w-7xl items-center gap-2 px-2.5 sm:px-6 lg:h-[58px] lg:gap-4">
           <a
             href="/"
@@ -132,10 +132,7 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
             aria-label={`Isoko ${t('home')}`}
             className="inline-flex min-h-[40px] items-center whitespace-nowrap shrink-0"
           >
-            <IsokoWordmark
-              markClassName="h-6 w-6 lg:h-7 lg:w-7"
-              wordmarkClassName="h-[16px] w-auto lg:h-[18px]"
-            />
+            <IsokoWordmark className="h-[30px] w-auto lg:h-9" />
           </a>
 
           {showBuyerRows ? (
@@ -143,7 +140,7 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
               <label htmlFor="global-search" className="sr-only">
                 {t('search_placeholder')}
               </label>
-              <div className="relative flex h-9 items-center rounded-full border border-[#D9D6CE] bg-[#F7F5F0] pl-3 pr-1 transition-colors focus-within:border-[#214E43] focus-within:bg-white lg:h-10">
+              <div className="relative flex h-9 items-center rounded-full border-2 border-[#FFC928] bg-white pl-3 pr-1 transition-colors focus-within:border-[#214E43] focus-within:bg-white lg:h-10">
                 <input
                   id="global-search"
                   type="search"
@@ -234,7 +231,6 @@ export const Header: React.FC<{ onOpenCategories?: () => void }> = ({ onOpenCate
             </button>
           </div>
         </div>
-        <RwandanGeometricPattern size="header" />
       </header>
 
       {/* Desktop/Tablet Secondary Navigation Rows (hidden on narrow mobile to keep 360x640 first screen ultra-compact) */}

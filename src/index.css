@@ -16,6 +16,10 @@
   --isoko-red: #C0392B;
   --isoko-red-dark: #A93226;
   --isoko-red-soft: #FFFFFF;
+  /* Brand roles: red = actions, prices, active states; yellow = header line, banner, highlights; green = WhatsApp, verified, success. */
+  --isoko-yellow: #FFC928;
+  --isoko-yellow-deep: #E6A800;
+  --isoko-yellow-soft: #FFF4CC;
   --isoko-wa: #0B6E4F;
   --isoko-wa-hover: #075A43;
   --isoko-ink: #1A1F1C;
@@ -46,7 +50,7 @@
   input,
   textarea {
     &:focus-visible {
-      outline: 2px solid var(--isoko-green);
+      outline: 2px solid var(--isoko-red);
       outline-offset: 2px;
     }
   }
@@ -105,32 +109,40 @@
 
 
 /* Legacy utility aliases keep every existing page on the shared brand tokens.
-   These selectors are intentionally centralized here while pages are polished incrementally. */
-[class~="bg-[#214E43]"], [class~="bg-[#1A7F43]"] { background-color: var(--isoko-green) !important; }
-[class~="bg-[#183B33]"], [class~="bg-[#28584B]"], [class~="bg-[#146635]"] { background-color: var(--isoko-green-dark) !important; }
+   Old forest-green classes (#214E43, #0B6E4F) now render as the brand red; the separate
+   WhatsApp green (#1A7F43) stays green so chat buttons keep their familiar colour. */
+[class~="bg-[#214E43]"], [class~="bg-[#0B6E4F]"] { background-color: var(--isoko-red) !important; }
+[class~="bg-[#1A7F43]"] { background-color: var(--isoko-green) !important; }
+[class~="bg-[#183B33]"], [class~="bg-[#28584B]"] { background-color: var(--isoko-red-dark) !important; }
+[class~="bg-[#146635]"] { background-color: var(--isoko-green-dark) !important; }
 [class~="bg-[#E9F0EB]"], [class~="bg-[#FAF0ED]"] { background-color: var(--isoko-surface) !important; }
 [class~="bg-[#F7F5F0]"], [class~="bg-[#F7F8FA]"], [class~="bg-[#EEECE6]"] { background-color: var(--isoko-bg) !important; }
 [class~="bg-[#FFFEFB]"] { background-color: var(--isoko-surface) !important; }
 [class~="bg-[#202724]/75"], [class~="bg-[#202724]/80"], [class~="bg-[#202724]/85"] { background-color: var(--isoko-ink) !important; }
-[class~="text-[#214E43]"], [class~="text-[#1A7F43]"] { color: var(--isoko-green) !important; }
+[class~="text-[#214E43]"], [class~="text-[#0B6E4F]"] { color: var(--isoko-red) !important; }
+[class~="text-[#1A7F43]"] { color: var(--isoko-green) !important; }
 [class~="text-[#202724]"], [class~="text-[#333D38]"] { color: var(--isoko-ink) !important; }
 [class~="text-[#68716D]"], [class~="text-[#49524D]"], [class~="text-[#505A55]"], [class~="text-[#929A95]"], [class~="text-[#767D78]"] { color: var(--isoko-muted) !important; }
 [class~="text-[#BD594A]"] { color: var(--isoko-red) !important; }
 [class~="text-[#8F493F]"] { color: var(--isoko-red-dark) !important; }
 [class~="border-[#E3E0D8]"], [class~="border-[#D9D6CE]"] { border-color: var(--isoko-border) !important; }
 [class~="border-[#C9CEC7]"] { border-color: var(--isoko-border-strong) !important; }
-[class~="border-[#214E43]"] { border-color: var(--isoko-green) !important; }
+[class~="border-[#214E43]"], [class~="border-[#0B6E4F]"] { border-color: var(--isoko-red) !important; }
+[class~="border-[#1A7F43]"] { border-color: var(--isoko-green) !important; }
 [class~="border-[#BD594A]"] { border-color: var(--isoko-red) !important; }
 [class~="hover:bg-[#E9F0EB]"]:hover,
 [class~="hover:bg-[#F7F5F0]"]:hover,
 [class~="hover:bg-[#FAF0ED]"]:hover { background-color: var(--isoko-bg) !important; }
 [class~="hover:bg-[#183B33]"]:hover,
+[class~="hover:bg-[#08553D]"]:hover,
+[class~="hover:bg-[#075A43]"]:hover { background-color: var(--isoko-red-dark) !important; }
 [class~="hover:bg-[#146635]"]:hover { background-color: var(--isoko-green-dark) !important; }
-[class~="hover:text-[#214E43]"]:hover { color: var(--isoko-green) !important; }
+[class~="hover:text-[#214E43]"]:hover { color: var(--isoko-red) !important; }
 [class~="hover:border-[#214E43]"]:hover,
 [class~="hover:border-[#214E43]/45"]:hover,
-[class~="hover:border-[#214E43]/60"]:hover { border-color: var(--isoko-green) !important; }
+[class~="hover:border-[#214E43]/60"]:hover,
+[class~="hover:border-[#0B6E4F]"]:hover { border-color: var(--isoko-red) !important; }
 [class~="focus:border-[#214E43]"]:focus,
-[class~="focus-within:border-[#214E43]"]:focus-within { border-color: var(--isoko-green) !important; }
+[class~="focus-within:border-[#214E43]"]:focus-within { border-color: var(--isoko-red) !important; }
 [class~="placeholder:text-[#929A95]"]::placeholder,
 [class~="placeholder:text-[#68716D]"]::placeholder { color: var(--isoko-muted) !important; }

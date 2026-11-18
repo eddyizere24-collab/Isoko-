@@ -233,7 +233,64 @@ export const IsokoWordmarkOptionC: React.FC<{
 };
 
 // Active header/footer wordmark uses Option A (clean, sharp diamond inside final "o")
-export const IsokoWordmark = IsokoWordmarkOptionA;
+/**
+ * ISOKO logo (approved): shopping bag with the letter i, green swoosh, "soko" wordmark with a yellow final o.
+ * One inline SVG, no external font file: the letters are drawn as text in the app font.
+ */
+export const IsokoLogo: React.FC<{
+  className?: string;
+  showTagline?: boolean;
+  tagline?: string;
+  variant?: 'default' | 'white';
+}> = ({ className = 'h-8 w-auto', showTagline = false, tagline = 'Easy shopping', variant = 'default' }) => {
+  const dark = variant === 'white' ? '#FFFFFF' : '#0F5132';
+  return (
+    <svg
+      viewBox={showTagline ? '0 0 128 52' : '0 0 128 44'}
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="isoko"
+      className={className}
+    >
+      <defs>
+        <linearGradient id="isoko-bag-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#FFC928" />
+          <stop offset="1" stopColor="#F59A00" />
+        </linearGradient>
+      </defs>
+      {/* bag handles */}
+      <path d="M12 15V9.5a6.5 6.5 0 0 1 13 0V15" fill="none" stroke="#0F8A43" strokeWidth="3" strokeLinecap="round" />
+      <path d="M16 15V10.5a2.5 2.5 0 0 1 5 0V15" fill="none" stroke="#0F8A43" strokeWidth="1.6" strokeLinecap="round" opacity=".55" />
+      {/* bag body */}
+      <path d="M6 15h26.5c1 0 1.8.7 1.9 1.7l2.2 20.6c.1 1.2-.8 2.2-2 2.2H5c-1.2 0-2.1-1-2-2.2L4.2 16.7C4.3 15.7 5 15 6 15Z" fill="url(#isoko-bag-grad)" />
+      {/* letter i */}
+      <circle cx="19" cy="22.5" r="2.4" fill="#FFFFFF" />
+      <rect x="17.2" y="27" width="3.6" height="9.5" rx="1.8" fill="#FFFFFF" />
+      {/* swoosh */}
+      <path d="M1.5 35.5C7 43 29 39 37.5 20.5" fill="none" stroke="#0F8A43" strokeWidth="3.2" strokeLinecap="round" />
+      {/* wordmark */}
+      <text x="44" y="35" fontFamily="IsokoSans, Inter, system-ui, sans-serif" fontWeight="800" fontSize="35" letterSpacing="-1" fill={dark}>
+        sok<tspan fill="#FFC928">o</tspan>
+      </text>
+      {showTagline && (
+        <text x="44" y="49" fontFamily="IsokoSans, Inter, system-ui, sans-serif" fontWeight="600" fontSize="10" fill={dark}>
+          {tagline}
+        </text>
+      )}
+    </svg>
+  );
+};
+
+// Header, footer and auth pages use the approved bag logo; the old sun mark is kept only for the brand preview page.
+export const IsokoWordmark: React.FC<{
+  className?: string;
+  markClassName?: string;
+  wordmarkClassName?: string;
+  showTagline?: boolean;
+  variant?: 'default' | 'white';
+}> = ({ className, showTagline, variant }) => (
+  <IsokoLogo className={className ?? 'h-8 w-auto'} showTagline={showTagline} variant={variant} />
+);
 
 /**
  * Verified Merchant Seal: compact green trust badge paired explicitly with text on shop cards and storefronts.
@@ -263,12 +320,11 @@ export const IsokoVerifiedSeal: React.FC<{ className?: string }> = ({ className 
 export const RwandanGeometricPattern: React.FC<{
   className?: string;
   size?: 'header' | 'footer';
-}> = ({ className, size = 'header' }) => (
-  <div
-    aria-hidden="true"
-    className={className ?? (size === 'footer' ? 'imigongo-footer-strip' : 'imigongo-header-strip')}
-  />
-);
+}> = ({ className, size = 'header' }) =>
+  // Marketplace rule: no decorative strip above the products. Imigongo stays in the footer only.
+  size === 'header' ? null : (
+    <div aria-hidden="true" className={className ?? 'imigongo-footer-strip'} />
+  );
 
 /**
  * 120px Corner Imigongo SVG artwork rendered on the right edge of the compact Home Hero at 14% opacity.

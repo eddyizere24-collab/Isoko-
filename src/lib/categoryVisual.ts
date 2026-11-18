@@ -34,16 +34,7 @@ export function getCategoryIcon(slug: string): LucideIcon {
   return Briefcase;
 }
 
-/** Brand-palette colour for a category icon (green, red, ochre, blue accents). */
-export function getCategoryIconColor(slug: string): string {
-  if (VEHICLES.includes(slug)) return '#C0392B';
-  if (HOME.includes(slug)) return '#C99A4B';
-  if (FARM.includes(slug)) return '#0B6E4F';
-  if (ELECTRONICS.includes(slug)) return '#2F80ED';
-  if (BUILDING.includes(slug)) return '#C99A4B';
-  if (slug === 'ibindi-bicuruzwa') return '#4B544F';
-  if (slug.includes('inkweto') || slug.includes('sandali') || slug.includes('bote')) return '#0B6E4F';
-  if (slug.includes('imyenda') || slug.includes('ankara') || slug.includes('ikoti')) return '#C0392B';
-  if (slug.includes('amasogisi') || slug.includes('imbere')) return '#C99A4B';
-  return '#2F80ED';
+/** Category icons share the brand red on a soft yellow tile, so the rail reads as one family. */
+export function getCategoryIconColor(_slug: string): string {
+  return '#C0392B';
 }

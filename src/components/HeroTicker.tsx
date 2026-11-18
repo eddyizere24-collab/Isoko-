@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Store } from 'lucide-react';
-import { IsokoMark } from './IsokoLogo';
 import { useT } from '../context/LangContext';
 import { useMarketplace } from '../context/MarketplaceContext';
 
@@ -43,7 +42,7 @@ export const HeroTicker: React.FC = () => {
     <section
       aria-roledescription="carousel"
       aria-label={t('app_tagline')}
-      className="relative overflow-hidden rounded-xl border border-[#D7DED8] bg-white"
+      className="relative overflow-hidden rounded-xl bg-[#FFC928]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onTouchStart={(e) => {
@@ -63,16 +62,14 @@ export const HeroTicker: React.FC = () => {
       }}
     >
       <h1 className="sr-only">{t('hero_title')}</h1>
-      <div aria-hidden="true" className="imigongo-band" />
-      <div className="flex items-center gap-2.5 px-3 pb-2 pt-2.5">
-        <IsokoMark className="hidden h-8 w-8 shrink-0 min-[400px]:block" />
+      <div className="flex items-center gap-2.5 px-3 pb-1 pt-2.5">
         <div
           key={index}
           aria-live="polite"
           className="isoko-ticker-in min-h-[52px] min-w-0 flex-1"
         >
-          <p className="text-[14px] font-extrabold leading-[18px] text-[#1A1F1C]">{t(current.title)}</p>
-          <p className="mt-0.5 text-[12px] leading-[16px] text-[#4B544F] line-clamp-2">{t(current.body)}</p>
+          <p className="text-[15px] font-extrabold leading-[19px] text-[#1A1F1C]">{t(current.title)}</p>
+          <p className="mt-0.5 text-[12px] leading-[16px] text-[#1A1F1C]/85 line-clamp-2">{t(current.body)}</p>
         </div>
         <a
           href="/abacuruzi"
@@ -80,7 +77,7 @@ export const HeroTicker: React.FC = () => {
             event.preventDefault();
             navigate('/abacuruzi');
           }}
-          className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#0B6E4F] px-2.5 text-[12px] font-bold text-white transition-colors hover:bg-[#075A43]"
+          className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#C0392B] px-2.5 text-[12px] font-bold text-white transition-colors hover:bg-[#A93226]"
         >
           <Store className="hidden h-4 w-4 min-[400px]:block" aria-hidden="true" />
           <span>{t('register_seller')}</span>
@@ -99,7 +96,7 @@ export const HeroTicker: React.FC = () => {
           >
             <span
               className={`block h-1.5 rounded-full transition-all ${
-                i === index ? 'w-4 bg-[#C0392B]' : 'w-1.5 bg-[#C9D2CB]'
+                i === index ? 'w-4 bg-[#1A1F1C]' : 'w-1.5 bg-[#1A1F1C]/30'
               }`}
             />
           </button>

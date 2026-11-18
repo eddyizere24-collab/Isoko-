@@ -28,6 +28,7 @@ test('ISOKO brand tokens use the approved clear mobile palette', () => {
     '--isoko-muted: #4B544F;',
     '--isoko-green: #0B6E4F;',
     '--isoko-red: #C0392B;',
+    '--isoko-yellow: #FFC928;',
   ]) {
     assert.ok(css.includes(token), `missing palette token: ${token}`);
   }
@@ -53,5 +54,11 @@ test('Imigongo band uses a square 12px tile and at least 1.5px strokes', () => {
 test('legacy utility aliases map old washed-out colours to the central tokens', () => {
   assert.ok(css.includes('[class~="bg-[#F7F5F0]"], [class~="bg-[#F7F8FA]"], [class~="bg-[#EEECE6]"] { background-color: var(--isoko-bg)'));
   assert.ok(css.includes('[class~="text-[#68716D]"], [class~="text-[#49524D]"], [class~="text-[#505A55]"], [class~="text-[#929A95]"], [class~="text-[#767D78]"] { color: var(--isoko-muted)'));
-  assert.ok(css.includes('[class~="bg-[#214E43]"], [class~="bg-[#1A7F43]"] { background-color: var(--isoko-green)'));
+  assert.ok(css.includes('[class~="bg-[#214E43]"], [class~="bg-[#0B6E4F]"] { background-color: var(--isoko-red)'));
+  assert.ok(css.includes('[class~="bg-[#1A7F43]"] { background-color: var(--isoko-green)'));
+});
+
+test('brand roles keep text readable: white on red and ink on yellow meet AA', () => {
+  assert.ok(contrastRatio('#FFFFFF', '#C0392B') >= 4.5, 'white on brand red');
+  assert.ok(contrastRatio('#1A1F1C', '#FFC928') >= 7, 'ink on brand yellow');
 });

@@ -49,11 +49,7 @@ export const Footer: React.FC = () => {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-10">
         <div className="grid gap-6 md:grid-cols-4 md:gap-8">
           <div>
-            <IsokoWordmark
-              variant="default"
-              markClassName="h-6 w-6"
-              wordmarkClassName="h-[17px] w-auto"
-            />
+            <IsokoWordmark className="h-[46px] w-auto" showTagline />
             <p className="mt-2.5 max-w-xs text-[12.5px] leading-relaxed text-[#68716D]">
               {t('app_tagline')} — {t('hero_subtitle')}
             </p>

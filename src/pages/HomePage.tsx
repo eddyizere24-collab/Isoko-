@@ -112,7 +112,7 @@ export const HomePage: React.FC<HomePageProps> = () => {
                 className="flex min-h-[92px] w-[96px] shrink-0 flex-col items-center justify-center gap-2 rounded-lg border border-[#D7DED8] bg-white px-2 py-3 text-center transition-colors hover:border-[#0B6E4F]"
                 aria-label={category.name_rw}
               >
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#D7DED8] bg-[#FAFAF7]">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FFF4CC]">
                   <Icon className="h-5 w-5" strokeWidth={1.85} style={{ color: getCategoryIconColor(category.slug) }} aria-hidden="true" />
                 </span>
                 <span className="max-w-full text-[11.5px] font-semibold leading-[15px] text-[#1A1F1C] line-clamp-2">
